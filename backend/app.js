@@ -9,10 +9,15 @@ const serviceAccount = require('./firebase/serviceAccountKey.json');
 // Initialize Firebase Admin SDK
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: 'https://<your-project-id>.firebaseio.com',  // Replace with your project URL
+  databaseURL: "https://fishmugger-is216.firebaseio.com", // Replace with your project URL
 });
 
 const app = express();
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
 
 // Use CORS middleware to allow frontend communication
 app.use(cors({
