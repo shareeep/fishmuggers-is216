@@ -1,52 +1,51 @@
-const express = require('express');
-const admin = require('firebase-admin');
-const bodyParser = require('body-parser');
-const cors = require('cors');  // Add CORS package
-
-// Load the service account key
-const serviceAccount = require('./firebase/serviceAccountKey.json');
-
-// Initialize Firebase Admin SDK
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://fishmugger-is216.firebaseio.com", // Replace with your project URL
-});
+// app.js
+const express = require("express");
+const cors = require("cors");
+const bodyParser = require("body-parser");
+const { db } = require("./services/firebase"); // Import Firestore instance
 
 const app = express();
-
 const PORT = process.env.PORT || 3000;
+
+// Middleware
+app.use(
+  cors({
+    origin: "http://localhost:5173", // Replace with your frontend's URL
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  })
+);
+app.use(bodyParser.json());
+
+// Example route to test the server
+app.get("/", (req, res) => {
+  res.send("Firebase Backend is Running");
+});
+
+// Import Routes
+const eventsRoutes = require("./routes/events");
+// Import other routes as needed
+
+// Use Routes
+app.use("/api/events", eventsRoutes);
+// Use other routes similarly
+
+// Start Server
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
 
-// Use CORS middleware to allow frontend communication
-app.use(cors({
-  origin: 'http://localhost:5173',  // Replace with your frontend's URL
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],  // Allow these methods
-  credentials: true  // Enable credentials if needed
-}));
-
-// Parse incoming JSON requests
-app.use(bodyParser.json());
-
-// Example route to test the server
-app.get('/', (req, res) => {
-  res.send('Firebase Backend is Running');
-});
-
-// User Registration Route
-app.post('/register', async (req, res) => {
-  const { email, password, displayName } = req.body;
-
+const testFirestore = async () => {
   try {
-    const userRecord = await admin.auth().createUser({
-      email,
-      password,
-      displayName: displayName || email.split('@')[0],  // Optional displayName
+    const testDocRef = db.collection("TestCollection3").doc("testDocument");
+    await testDocRef.set({
+      testField: "This is a test document",
     });
-    res.status(201).send({ message: 'User created successfully', user: userRecord });
+    console.log("Document written successfully");
   } catch (error) {
-    console.error("Signup Error:", error);
-    res.status(400).send({ error: error.message });
+    console.error("Error writing document to Firestore:", error);
   }
-});
+};
+
+// Call the function
+testFirestore();
