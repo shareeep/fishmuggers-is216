@@ -24,6 +24,12 @@ app.use(cors({
 // Parse incoming JSON requests
 app.use(bodyParser.json());
 
+// Start the server
+const port = process.env.PORT || 3000;
+app.listen(port, () => {
+  console.log(`Server running on port ${port}`);
+});
+
 // Example route to test the server
 app.get('/', (req, res) => {
   res.send('Firebase Backend is Running');
