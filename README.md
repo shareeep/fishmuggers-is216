@@ -16,6 +16,9 @@ See [Vite Configuration Reference](https://vitejs.dev/config/).
 npm install
 ```
 
+## Create .env for private keys
+Copy paste private keys into .env
+
 ### Compile and Hot-Reload for Development
 
 ```sh

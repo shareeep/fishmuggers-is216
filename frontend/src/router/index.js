@@ -1,53 +1,64 @@
-import { createRouter, createWebHistory } from "vue-router";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { createRouter, createWebHistory } from 'vue-router';
+import Home from '../views/Protected/Home.vue';
+import Profile from '../views/Protected/Profile.vue';
+import Login from '../views/Public/Login.vue';
+import Register from '../views/Public/Register.vue';
+import PublicLayout from '../layouts/PublicLayout.vue'; // Import your PublicLayout
+import { getAuth } from 'firebase/auth';
 
 const router = createRouter({
   history: createWebHistory(),
   routes: [
-    { path: "/", 
-      component: () => import("../views/Home.vue") 
+    {
+      path: '/',
+      name: 'Home',
+      component: Home,
+      meta: { requiresAuth: true } // Protected route
     },
-    { path: "/register", 
-      component: () => import("../views/Register.vue") 
+    {
+      path: '/profile',
+      name: 'Profile',
+      component: Profile,
+      meta: { requiresAuth: true } // Protected route
     },
-    { path: "/sign-in", 
-      component: () => import("../views/SignIn.vue") 
+    {
+      path: '/login',
+      name: 'Login',
+      component: PublicLayout, // Use PublicLayout
+      children: [
+        {
+          path: '/login',
+          component: Login, // Render Login as a child component
+        },
+      ],
+      meta: { requiresAuth: false } // Public route
     },
-    { 
-      path: "/feed", 
-      component: () => import("../views/Feed.vue"),
-      meta: {
-        requiresAuth: true,
-      },
+    {
+      path: '/register',
+      name: 'Register',
+      component: PublicLayout, // Use PublicLayout
+      children: [
+        {
+          path: '/register',
+          component: Register, // Render Register as a child component
+        },
+      ],
+      meta: { requiresAuth: false } // Public route
     },
-  ],
+  ]
 });
 
-const getCurrentUser = () => {
-  return new Promise((resolve, reject) => {
-    const removeListener = onAuthStateChanged(
-      getAuth(),
-      (user) => {
-        removeListener();
-        resolve(user);
-      },
-      reject
-    );
-  });
-};
+// Add route guard to check Firebase authentication status
+router.beforeEach((to, from, next) => {
+  const auth = getAuth();
+  const user = auth.currentUser;
+  const requiresAuth = to.meta.requiresAuth;
 
-router.beforeEach(async (to, from, next) => {
-  if (to.matched.some((record) => record.meta.requiresAuth)) {
-    if (await getCurrentUser()) {
-      next();
-    } else {
-      alert ("You dont have access!");
-      next("/");
-    }
+  if (requiresAuth && !user) {
+    next({ name: 'Login' }); // Redirect to login if not authenticated
   } else {
-    next();
+    next(); // Proceed to route
   }
-  }
-)
+});
 
 export default router;
