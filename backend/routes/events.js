@@ -2,7 +2,9 @@
 const express = require("express");
 const router = express.Router();
 const { db } = require("../services/firebase"); // Correctly import Firestore instance
+const admin = require("firebase-admin"); // Import Firebase Admin SDK
 const { body, validationResult } = require("express-validator");
+
 // --------------------
 // Helper Functions
 // --------------------
@@ -49,7 +51,18 @@ router.get("/:id", async (req, res) => {
       return res.status(404).json({ error: "Event not found" });
     }
 
-    res.status(200).json({ eventId: eventDoc.id, ...eventDoc.data() });
+    const eventData = eventDoc.data();
+
+    // Convert Firestore Timestamps to ISO strings
+    if (eventData.createdAt && eventData.createdAt.toDate) {
+      eventData.createdAt = eventData.createdAt.toDate().toISOString();
+    }
+
+    if (eventData.updatedAt && eventData.updatedAt.toDate) {
+      eventData.updatedAt = eventData.updatedAt.toDate().toISOString();
+    }
+
+    res.status(200).json({ eventId: eventDoc.id, ...eventData });
   } catch (error) {
     console.error(`Error fetching event with ID ${eventId}:`, error);
     res.status(500).json({ error: "Failed to fetch event" });
@@ -59,74 +72,68 @@ router.get("/:id", async (req, res) => {
 // @route   POST /api/events
 // @desc    Create a new event
 // @access  Public
-// router.post("/", async (req, res) => {
-//   const { host, title, date, locationId, petType, eventSize } = req.body;
+router.post("/", async (req, res) => {
+  const { host, title, date, locationId, petType, eventSize } = req.body;
 
-//   // Validate incoming data
-//   if (!validateEventData(req.body)) {
-//     return res.status(400).json({ error: "Missing required fields" });
-//   }
+  // Validate incoming data
+  if (!validateEventData(req.body)) {
+    return res.status(400).json({ error: "Missing required fields" });
+  }
 
-//   // Construct the new event object
-//   const newEvent = {
-//     host,
-//     title,
-//     date: new Date(date), // Ensure date is stored as a Timestamp
-//     locationId,
-//     petType,
-//     eventSize,
-//     interestedUsers: [], // Initialize as empty array
-//   };
+  try {
+    // Generate a new document reference with a unique ID
+    const eventRef = db.collection("events").doc();
+    const eventId = eventRef.id;
 
-//   try {
-//     const eventRef = await db.collection("events").add(newEvent);
-//     console.log(`New event added with ID: ${eventRef.id}`);
-//     res.status(201).json({ eventId: eventRef.id, ...newEvent });
-//   } catch (error) {
-//     console.error("Error creating event:", error);
-//     res.status(500).json({ error: "Failed to create event" });
-//   }
-// });
-router.post(
-  "/",
-  [
-    body("host").notEmpty().withMessage("Host is required"),
-    body("title").notEmpty().withMessage("Title is required"),
-    body("date").isISO8601().withMessage("Valid date is required"),
-    body("locationId").notEmpty().withMessage("Location ID is required"),
-    body("petType").notEmpty().withMessage("Pet type is required"),
-    body("eventSize").notEmpty().withMessage("Event size is required"),
-  ],
-  async (req, res) => {
-    // Validate request data using express-validator
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
-    const { host, title, date, locationId, petType, eventSize } = req.body;
-
-    // Construct the new event object
+    // Construct the new event object with eventId included
     const newEvent = {
+      eventId, // Include the unique event ID
       host,
       title,
-      date: new Date(date), // Ensure date is stored as a Timestamp
+      date: new Date(date), // Ensure date is stored as a Date object
       locationId,
       petType,
       eventSize,
       interestedUsers: [], // Initialize as empty array
+      createdAt: admin.firestore.FieldValue.serverTimestamp(), // Add a creation timestamp
+      updatedAt: admin.firestore.FieldValue.serverTimestamp(), // Add an updated timestamp
     };
 
-    try {
-      const eventRef = await db.collection("events").add(newEvent);
-      console.log(`New event added with ID: ${eventRef.id}`);
-      res.status(201).json({ eventId: eventRef.id, ...newEvent });
-    } catch (error) {
-      console.error("Error creating event:", error);
-      res.status(500).json({ error: "Failed to create event" });
+    // Set the document with the new event data
+    await eventRef.set(newEvent);
+
+    console.log(`New event added with ID: ${eventId}`);
+
+    // Retrieve the newly created event to get the actual `createdAt` and `updatedAt` values
+    const createdEventDoc = await eventRef.get();
+    if (!createdEventDoc.exists) {
+      // This should rarely happen, but it's good to handle it
+      return res
+        .status(500)
+        .json({ error: "Failed to retrieve the created event" });
     }
+
+    const createdEventData = createdEventDoc.data();
+
+    // Convert Firestore Timestamp to ISO string if they exist
+    if (createdEventData.createdAt && createdEventData.createdAt.toDate) {
+      createdEventData.createdAt = createdEventData.createdAt
+        .toDate()
+        .toISOString();
+    }
+
+    if (createdEventData.updatedAt && createdEventData.updatedAt.toDate) {
+      createdEventData.updatedAt = createdEventData.updatedAt
+        .toDate()
+        .toISOString();
+    }
+
+    res.status(201).json({ eventId: createdEventDoc.id, ...createdEventData });
+  } catch (error) {
+    console.error("Error creating event:", error);
+    res.status(500).json({ error: "Failed to create event" });
   }
-);
+});
 
 // @route   PUT /api/events/:id
 // @desc    Update an existing event by ID
@@ -142,6 +149,9 @@ router.put("/:id", async (req, res) => {
     updatedData.date = new Date(updatedData.date);
   }
 
+  // Update the updatedAt timestamp
+  updatedData.updatedAt = admin.firestore.FieldValue.serverTimestamp();
+
   try {
     const eventRef = db.collection("events").doc(eventId);
     const eventDoc = await eventRef.get();
@@ -153,7 +163,22 @@ router.put("/:id", async (req, res) => {
     await eventRef.update(updatedData);
     const updatedEvent = await eventRef.get();
 
-    res.status(200).json({ eventId: updatedEvent.id, ...updatedEvent.data() });
+    const updatedEventData = updatedEvent.data();
+
+    // Convert Firestore Timestamps to ISO strings
+    if (updatedEventData.createdAt && updatedEventData.createdAt.toDate) {
+      updatedEventData.createdAt = updatedEventData.createdAt
+        .toDate()
+        .toISOString();
+    }
+
+    if (updatedEventData.updatedAt && updatedEventData.updatedAt.toDate) {
+      updatedEventData.updatedAt = updatedEventData.updatedAt
+        .toDate()
+        .toISOString();
+    }
+
+    res.status(200).json({ eventId: updatedEvent.id, ...updatedEventData });
   } catch (error) {
     console.error(`Error updating event with ID ${eventId}:`, error);
     res.status(500).json({ error: "Failed to update event" });
@@ -222,6 +247,7 @@ router.post("/:id/interested", async (req, res) => {
         displayName,
         profileImage,
       }),
+      updatedAt: admin.firestore.FieldValue.serverTimestamp(), // Update the updatedAt timestamp
     });
 
     res.status(200).json({ message: "User added to interestedUsers" });
@@ -258,6 +284,7 @@ router.delete("/:id/interested/:userId", async (req, res) => {
     // Remove the user from interestedUsers array
     await eventRef.update({
       interestedUsers: admin.firestore.FieldValue.arrayRemove(userToRemove),
+      updatedAt: admin.firestore.FieldValue.serverTimestamp(), // Update the updatedAt timestamp
     });
 
     res.status(200).json({ message: "User removed from interestedUsers" });
