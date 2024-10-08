@@ -1,39 +1,26 @@
 <template>
-  <nav>
-    <router-link to="/"> Home </router-link>
-    <router-link to="/register"> Register </router-link>
-    <router-link to="/sign-in"> Login </router-link>
-    <router-link to="/feed"> Feed </router-link>
-    <button @click="handleSignOut" v-if="isLoggedIn"> Sign Out </button>
-  </nav>
-  <RouterView />
+  <component :is="layoutComponent">
+    <router-view />
+  </component>
 </template>
 
 <script setup>
-import { onMounted, ref } from "vue";
-import { getAuth, onAuthStateChanged, signOut } from "firebase/auth";
-import { useRouter } from 'vue-router';
 
+import { ref, computed, onMounted } from "vue";  // Ensure computed is imported here
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import PublicLayout from './layouts/PublicLayout.vue';
+import ProtectedLayout from './layouts/ProtectedLayout.vue';
 
-const router = useRouter()
-const isLoggedIn = ref(false);
+const auth = getAuth();
+const isAuthenticated = ref(false);  // Track if the user is authenticated
 
-let auth;
 onMounted(() => {
-  auth = getAuth();
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        isLoggedIn.value = true;
-      }
-      else {
-        isLoggedIn.value = false;
-      }
-    })
-})
+  // Check Firebase authentication state
+  onAuthStateChanged(auth, (user) => {
+    isAuthenticated.value = !!user; // Set true if the user is logged in, false otherwise
+  });
+});
 
-const handleSignOut = () => {
-  signOut(auth).then(() =>{
-    router.push("/");
-  })
-}
+// Dynamically load layouts based on authentication status
+const layoutComponent = computed(() => isAuthenticated.value ? 'ProtectedLayout' : 'PublicLayout');
 </script>
