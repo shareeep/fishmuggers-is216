@@ -1,59 +1,47 @@
-// backend/routes/events.js
+// routes/events.js
 const express = require("express");
 const router = express.Router();
-const admin = require("firebase-admin");
-const authenticate = require("../middleware/authenticate");
+const { db } = require("../services/firebase"); // Correctly import Firestore instance
+const admin = require("firebase-admin"); // Import Firebase Admin SDK
+const { body, validationResult } = require("express-validator");
 
-const db = admin.firestore();
+// --------------------
+// Helper Functions
+// --------------------
 
-// **Create a New Event**
-router.post("/", authenticate, async (req, res) => {
-  const { title, date, location, petType, eventSize } = req.body;
-  const host = req.user.uid;
-
-  // Validate required fields
-  if (!title || !date || !location || !petType || !eventSize) {
-    return res.status(400).json({ error: "Missing required fields" });
+// Function to validate event data
+const validateEventData = (data) => {
+  const { host, title, date, locationId, petType, eventSize } = data;
+  if (!host || !title || !date || !locationId || !petType || !eventSize) {
+    return false;
   }
+  return true;
+};
 
-  const eventData = {
-    title,
-    date: admin.firestore.Timestamp.fromDate(new Date(date)),
-    location,
-    petType,
-    eventSize,
-    interestedUsers: [],
-    host,
-    createdAt: admin.firestore.FieldValue.serverTimestamp(),
-  };
+// --------------------
+// Routes
+// --------------------
 
-  try {
-    const eventRef = await db.collection("events").add(eventData);
-    res
-      .status(201)
-      .json({ message: "Event created successfully", id: eventRef.id });
-  } catch (error) {
-    console.error("Error creating event:", error);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-});
-
-// **Get All Events**
+// @route   GET /api/events
+// @desc    Get all events
+// @access  Public
 router.get("/", async (req, res) => {
   try {
-    const snapshot = await db.collection("events").get();
+    const eventsSnapshot = await db.collection("events").get();
     const events = [];
-    snapshot.forEach((doc) => {
-      events.push({ id: doc.id, ...doc.data() });
+    eventsSnapshot.forEach((doc) => {
+      events.push({ eventId: doc.id, ...doc.data() });
     });
-    res.json(events);
+    res.status(200).json(events);
   } catch (error) {
     console.error("Error fetching events:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    res.status(500).json({ error: "Failed to fetch events" });
   }
 });
 
-// **Get a Single Event by ID**
+// @route   GET /api/events/:id
+// @desc    Get a single event by ID
+// @access  Public
 router.get("/:id", async (req, res) => {
   const eventId = req.params.id;
 
@@ -62,75 +50,107 @@ router.get("/:id", async (req, res) => {
     if (!eventDoc.exists) {
       return res.status(404).json({ error: "Event not found" });
     }
-    res.json({ id: eventDoc.id, ...eventDoc.data() });
+
+    const eventData = eventDoc.data();
+
+    // Convert Firestore Timestamps to ISO strings
+    if (eventData.createdAt && eventData.createdAt.toDate) {
+      eventData.createdAt = eventData.createdAt.toDate().toISOString();
+    }
+
+    if (eventData.updatedAt && eventData.updatedAt.toDate) {
+      eventData.updatedAt = eventData.updatedAt.toDate().toISOString();
+    }
+
+    res.status(200).json({ eventId: eventDoc.id, ...eventData });
   } catch (error) {
-    console.error("Error fetching event:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    console.error(`Error fetching event with ID ${eventId}:`, error);
+    res.status(500).json({ error: "Failed to fetch event" });
   }
 });
 
-// **Update an Event**
-router.put("/:id", authenticate, async (req, res) => {
-  const eventId = req.params.id;
-  const updateData = req.body;
+// @route   POST /api/events
+// @desc    Create a new event
+// @access  Public
+router.post("/", async (req, res) => {
+  const { host, title, date, locationId, petType, eventSize } = req.body;
+
+  // Validate incoming data
+  if (!validateEventData(req.body)) {
+    return res.status(400).json({ error: "Missing required fields" });
+  }
 
   try {
-    const eventDoc = await db.collection("events").doc(eventId).get();
-    if (!eventDoc.exists) {
-      return res.status(404).json({ error: "Event not found" });
-    }
+    // Generate a new document reference with a unique ID
+    const eventRef = db.collection("events").doc();
+    const eventId = eventRef.id;
 
-    // Ensure the user is the host of the event
-    if (eventDoc.data().host !== req.user.uid) {
+    // Construct the new event object with eventId included
+    const newEvent = {
+      eventId, // Include the unique event ID
+      host,
+      title,
+      date: new Date(date), // Ensure date is stored as a Date object
+      locationId,
+      petType,
+      eventSize,
+      interestedUsers: [], // Initialize as empty array
+      createdAt: admin.firestore.FieldValue.serverTimestamp(), // Add a creation timestamp
+      updatedAt: admin.firestore.FieldValue.serverTimestamp(), // Add an updated timestamp
+    };
+
+    // Set the document with the new event data
+    await eventRef.set(newEvent);
+
+    console.log(`New event added with ID: ${eventId}`);
+
+    // Retrieve the newly created event to get the actual `createdAt` and `updatedAt` values
+    const createdEventDoc = await eventRef.get();
+    if (!createdEventDoc.exists) {
+      // This should rarely happen, but it's good to handle it
       return res
-        .status(403)
-        .json({ error: "Forbidden: You are not the host of this event" });
+        .status(500)
+        .json({ error: "Failed to retrieve the created event" });
     }
 
-    // If date is being updated, convert it to Firestore Timestamp
-    if (updateData.date) {
-      updateData.date = admin.firestore.Timestamp.fromDate(
-        new Date(updateData.date)
-      );
+    const createdEventData = createdEventDoc.data();
+
+    // Convert Firestore Timestamp to ISO string if they exist
+    if (createdEventData.createdAt && createdEventData.createdAt.toDate) {
+      createdEventData.createdAt = createdEventData.createdAt
+        .toDate()
+        .toISOString();
     }
 
-    await db.collection("events").doc(eventId).update(updateData);
-    res.json({ message: "Event updated successfully" });
+    if (createdEventData.updatedAt && createdEventData.updatedAt.toDate) {
+      createdEventData.updatedAt = createdEventData.updatedAt
+        .toDate()
+        .toISOString();
+    }
+
+    res.status(201).json({ eventId: createdEventDoc.id, ...createdEventData });
   } catch (error) {
-    console.error("Error updating event:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    console.error("Error creating event:", error);
+    res.status(500).json({ error: "Failed to create event" });
   }
 });
 
-// **Delete an Event**
-router.delete("/:id", authenticate, async (req, res) => {
+// @route   PUT /api/events/:id
+// @desc    Update an existing event by ID
+// @access  Public
+router.put("/:id", async (req, res) => {
   const eventId = req.params.id;
+  const updatedData = req.body;
 
-  try {
-    const eventDoc = await db.collection("events").doc(eventId).get();
-    if (!eventDoc.exists) {
-      return res.status(404).json({ error: "Event not found" });
-    }
+  // Optional: Add validation for updatedData if necessary
 
-    // Ensure the user is the host of the event
-    if (eventDoc.data().host !== req.user.uid) {
-      return res
-        .status(403)
-        .json({ error: "Forbidden: You are not the host of this event" });
-    }
-
-    await db.collection("events").doc(eventId).delete();
-    res.json({ message: "Event deleted successfully" });
-  } catch (error) {
-    console.error("Error deleting event:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+  // If updating the date, ensure it's converted to a Date object
+  if (updatedData.date) {
+    updatedData.date = new Date(updatedData.date);
   }
-});
 
-// **Mark Interest in an Event**
-router.post("/:id/interested", authenticate, async (req, res) => {
-  const eventId = req.params.id;
-  const userId = req.user.uid;
+  // Update the updatedAt timestamp
+  updatedData.updatedAt = admin.firestore.FieldValue.serverTimestamp();
 
   try {
     const eventRef = db.collection("events").doc(eventId);
@@ -140,21 +160,36 @@ router.post("/:id/interested", authenticate, async (req, res) => {
       return res.status(404).json({ error: "Event not found" });
     }
 
-    await eventRef.update({
-      interestedUsers: admin.firestore.FieldValue.arrayUnion(userId),
-    });
+    await eventRef.update(updatedData);
+    const updatedEvent = await eventRef.get();
 
-    res.json({ message: "Marked as interested in the event" });
+    const updatedEventData = updatedEvent.data();
+
+    // Convert Firestore Timestamps to ISO strings
+    if (updatedEventData.createdAt && updatedEventData.createdAt.toDate) {
+      updatedEventData.createdAt = updatedEventData.createdAt
+        .toDate()
+        .toISOString();
+    }
+
+    if (updatedEventData.updatedAt && updatedEventData.updatedAt.toDate) {
+      updatedEventData.updatedAt = updatedEventData.updatedAt
+        .toDate()
+        .toISOString();
+    }
+
+    res.status(200).json({ eventId: updatedEvent.id, ...updatedEventData });
   } catch (error) {
-    console.error("Error marking interest:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    console.error(`Error updating event with ID ${eventId}:`, error);
+    res.status(500).json({ error: "Failed to update event" });
   }
 });
 
-// **Remove Interest from an Event**
-router.delete("/:id/interested", authenticate, async (req, res) => {
+// @route   DELETE /api/events/:id
+// @desc    Delete an event by ID
+// @access  Public
+router.delete("/:id", async (req, res) => {
   const eventId = req.params.id;
-  const userId = req.user.uid;
 
   try {
     const eventRef = db.collection("events").doc(eventId);
@@ -164,14 +199,101 @@ router.delete("/:id/interested", authenticate, async (req, res) => {
       return res.status(404).json({ error: "Event not found" });
     }
 
+    await eventRef.delete();
+    res.status(200).json({ message: "Event deleted successfully" });
+  } catch (error) {
+    console.error(`Error deleting event with ID ${eventId}:`, error);
+    res.status(500).json({ error: "Failed to delete event" });
+  }
+});
+
+// --------------------
+// Additional Routes
+// --------------------
+
+// @route   POST /api/events/:id/interested
+// @desc    Add a user to interestedUsers array
+// @access  Public
+router.post("/:id/interested", async (req, res) => {
+  const eventId = req.params.id;
+  const { userId, displayName, profileImage } = req.body;
+
+  if (!userId || !displayName) {
+    return res.status(400).json({ error: "Missing required user information" });
+  }
+
+  try {
+    const eventRef = db.collection("events").doc(eventId);
+    const eventDoc = await eventRef.get();
+
+    if (!eventDoc.exists) {
+      return res.status(404).json({ error: "Event not found" });
+    }
+
+    // Check if the user is already interested
+    const interestedUsers = eventDoc.data().interestedUsers || [];
+    const userExists = interestedUsers.some((user) => user.userId === userId);
+
+    if (userExists) {
+      return res
+        .status(400)
+        .json({ error: "User already interested in this event" });
+    }
+
+    // Add the user to interestedUsers array
     await eventRef.update({
-      interestedUsers: admin.firestore.FieldValue.arrayRemove(userId),
+      interestedUsers: admin.firestore.FieldValue.arrayUnion({
+        userId,
+        displayName,
+        profileImage,
+      }),
+      updatedAt: admin.firestore.FieldValue.serverTimestamp(), // Update the updatedAt timestamp
     });
 
-    res.json({ message: "Removed interest from the event" });
+    res.status(200).json({ message: "User added to interestedUsers" });
   } catch (error) {
-    console.error("Error removing interest:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    console.error(`Error adding interested user to event ${eventId}:`, error);
+    res.status(500).json({ error: "Failed to add interested user" });
+  }
+});
+
+// @route   DELETE /api/events/:id/interested/:userId
+// @desc    Remove a user from interestedUsers array
+// @access  Public
+router.delete("/:id/interested/:userId", async (req, res) => {
+  const eventId = req.params.id;
+  const userId = req.params.userId;
+
+  try {
+    const eventRef = db.collection("events").doc(eventId);
+    const eventDoc = await eventRef.get();
+
+    if (!eventDoc.exists) {
+      return res.status(404).json({ error: "Event not found" });
+    }
+
+    const interestedUsers = eventDoc.data().interestedUsers || [];
+    const userToRemove = interestedUsers.find((user) => user.userId === userId);
+
+    if (!userToRemove) {
+      return res
+        .status(400)
+        .json({ error: "User not found in interestedUsers" });
+    }
+
+    // Remove the user from interestedUsers array
+    await eventRef.update({
+      interestedUsers: admin.firestore.FieldValue.arrayRemove(userToRemove),
+      updatedAt: admin.firestore.FieldValue.serverTimestamp(), // Update the updatedAt timestamp
+    });
+
+    res.status(200).json({ message: "User removed from interestedUsers" });
+  } catch (error) {
+    console.error(
+      `Error removing interested user from event ${eventId}:`,
+      error
+    );
+    res.status(500).json({ error: "Failed to remove interested user" });
   }
 });
 
