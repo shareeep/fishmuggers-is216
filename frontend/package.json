@@ -10,8 +10,10 @@
   },
   "dependencies": {
     "bootstrap": "^5.3.3",
+    "bootstrap-icons": "^1.11.3",
     "dotenv": "^16.4.5",
     "firebase": "^10.14.0",
+    "flatpickr": "^4.6.13",
     "jquery": "^3.7.1",
     "popper.js": "^1.16.1",
     "vue": "^3.4.29",

@@ -36,137 +36,112 @@
 
             <!-- Date Range Picker -->
             <div class="custom-input">
-                <input type="text" id="rangeDate" placeholder="Date Range" data-input>
+                <input type="text" id="rangeDate" placeholder="Date Range" data-input />
             </div>
             <!-- Reset Filters -->
             <span class="reset-filters" @click="resetFilters">Reset Filters</span>
         </div>
-
     </div>
 </template>
+
 <script>
+
 export default {
     methods: {
         resetFilters() {
-            // Reset each custom select to the first option
-            const customSelects = this.$el.getElementsByClassName("custom-select");
+    const customSelects = this.$el.getElementsByClassName("custom-select");
 
-            for (let i = 0; i < customSelects.length; i++) {
-                const selectElement = customSelects[i].getElementsByTagName("select")[0];
-                selectElement.selectedIndex = 0; // Reset to the first option (default)
+    for (let i = 0; i < customSelects.length; i++) {
+        const selectElement = customSelects[i].getElementsByTagName("select")[0];
+        selectElement.selectedIndex = 0; // Reset to the first option (default)
 
-                // Update the displayed text of the custom select
-                const selectedDiv = customSelects[i].getElementsByClassName("select-selected")[0];
-                selectedDiv.innerHTML = selectElement.options[selectElement.selectedIndex].innerHTML;
+        // Update the displayed text of the custom select
+        const selectedDiv = customSelects[i].getElementsByClassName("select-selected")[0];
+        selectedDiv.innerHTML = selectElement.options[selectElement.selectedIndex].innerHTML;
 
-                // Reset background color to default
-                // Reset class to default
-                selectedDiv.style.backgroundColor = '#FFF3B3';
-            }
+        // Reset background color to default
+        selectedDiv.style.backgroundColor = '#FFF3B3';
+        
+        // Ensure hover class is maintained
+        selectedDiv.classList.remove("same-as-selected"); // Remove hover effect only if needed, keep it for hover state
+        selectedDiv.classList.add("select-selected"); // Always keep this class for hover effect
+    }
 
-            const rangeDateInput = document.getElementById('rangeDate');
-            rangeDateInput.value = ""; // Clear the input value
-            rangeDateInput.placeholder = "Date Range"; // Set placeholder text
-            rangeDateInput.style.backgroundColor = '#FFF3B3'; // Reset background color
-        }
+    const rangeDateInput = document.getElementById('rangeDate');
+    rangeDateInput.value = ""; // Clear the input value
+    rangeDateInput.placeholder = "Date Range"; // Set placeholder text
+    rangeDateInput.style.backgroundColor = '#FFF3B3'; // Reset background color
+}
+
 
     },
     mounted() {
-        $(document).ready(function () {
+        // Add Bootstrap and Flatpickr scripts
+
+        $(document).ready(() => {
             // Initialize Flatpickr for date range selection
             $("#rangeDate").flatpickr({
                 mode: 'range',
                 dateFormat: "Y-m-d",
-                onChange: function (selectedDates) {
+                onChange: (selectedDates) => {
                     const rangeDateInput = document.getElementById('rangeDate');
 
                     // Change the background color if two dates are selected
-                    if (selectedDates.length === 2) {
-                        rangeDateInput.style.backgroundColor = 'goldenrod'; // Set to desired color
-                    } else {
-                        rangeDateInput.style.backgroundColor = '#FFF3B3'; // Reset to default color
-                    }
+                    rangeDateInput.style.backgroundColor = selectedDates.length === 2 ? 'goldenrod' : '#FFF3B3';
                 }
             });
-            // Dropdown colors
-            var x, i, j, l, ll, selElmnt, a, b, c;
-            x = document.getElementsByClassName("custom-select");
-            l = x.length;
 
-            for (i = 0; i < l; i++) {
-                selElmnt = x[i].getElementsByTagName("select")[0];
-                ll = selElmnt.length;
+            // Initialize custom select dropdown
+            var customSelects = document.getElementsByClassName("custom-select");
+            Array.from(customSelects).forEach(select => {
+                const selectElement = select.getElementsByTagName("select")[0];
+                const selectedDiv = document.createElement("DIV");
+                selectedDiv.setAttribute("class", "select-selected");
+                selectedDiv.innerHTML = selectElement.options[selectElement.selectedIndex].innerHTML;
+                select.appendChild(selectedDiv);
 
-                // Create a new DIV for the selected item
-                a = document.createElement("DIV");
-                a.setAttribute("class", "select-selected");
-                a.innerHTML = selElmnt.options[selElmnt.selectedIndex].innerHTML;
-                x[i].appendChild(a);
+                const optionsDiv = document.createElement("DIV");
+                optionsDiv.setAttribute("class", "select-items select-hide");
 
-                // Create a new DIV for the option list
-                b = document.createElement("DIV");
-                b.setAttribute("class", "select-items select-hide");
+                for (let j = 1; j < selectElement.length; j++) {
+                    const optionDiv = document.createElement("DIV");
+                    optionDiv.innerHTML = selectElement.options[j].innerHTML;
 
-                for (j = 1; j < ll; j++) {
-                    c = document.createElement("DIV");
-                    c.innerHTML = selElmnt.options[j].innerHTML;
+                    optionDiv.addEventListener("click", function () {
+                        selectElement.selectedIndex = j;
+                        selectedDiv.innerHTML = this.innerHTML;
+                        selectedDiv.style.backgroundColor = 'goldenrod'; // Set selected background color
 
-                    c.addEventListener("click", function (e) {
-                        var y, i, k, s, h, sl, yl;
-                        s = this.parentNode.parentNode.getElementsByTagName("select")[0];
-                        sl = s.length;
-                        h = this.parentNode.previousSibling;
-
-                        for (i = 0; i < sl; i++) {
-                            if (s.options[i].innerHTML == this.innerHTML) {
-                                s.selectedIndex = i;
-                                h.innerHTML = this.innerHTML;
-
-                                // Change the selected item background color to red
-                                h.style.backgroundColor = 'goldenrod';
-
-                                y = this.parentNode.getElementsByClassName("same-as-selected");
-                                yl = y.length;
-                                for (k = 0; k < yl; k++) {
-                                    y[k].removeAttribute("class");
-                                }
-                                this.setAttribute("class", "same-as-selected");
-                                break;
-                            }
-                        }
-                        h.click();
+                        Array.from(optionsDiv.getElementsByClassName("same-as-selected")).forEach(item => {
+                            item.classList.remove("same-as-selected");
+                        });
+                        this.classList.add("same-as-selected");
+                        selectedDiv.click(); // Close the options
                     });
 
-                    b.appendChild(c);
+                    optionsDiv.appendChild(optionDiv);
                 }
-                x[i].appendChild(b);
 
-                a.addEventListener("click", function (e) {
+                select.appendChild(optionsDiv);
+
+                selectedDiv.addEventListener("click", function (e) {
                     e.stopPropagation();
                     closeAllSelect(this);
-                    this.nextSibling.classList.toggle("select-hide");
+                    optionsDiv.classList.toggle("select-hide");
                     this.classList.toggle("select-arrow-active");
                 });
-            }
+            });
 
             function closeAllSelect(elmnt) {
-                var x, y, i, xl, yl, arrNo = [];
-                x = document.getElementsByClassName("select-items");
-                y = document.getElementsByClassName("select-selected");
-                xl = x.length;
-                yl = y.length;
-
-                for (i = 0; i < yl; i++) {
-                    if (elmnt == y[i]) {
-                        arrNo.push(i);
-                    } else {
-                        y[i].classList.remove("select-arrow-active");
+                var items = document.getElementsByClassName("select-items");
+                var selecteds = document.getElementsByClassName("select-selected");
+                for (let i = 0; i < selecteds.length; i++) {
+                    if (elmnt !== selecteds[i]) {
+                        selecteds[i].classList.remove("select-arrow-active");
                     }
                 }
-                for (i = 0; i < xl; i++) {
-                    if (arrNo.indexOf(i)) {
-                        x[i].classList.add("select-hide");
-                    }
+                for (let i = 0; i < items.length; i++) {
+                    items[i].classList.add("select-hide");
                 }
             }
             // Close all select boxes if the user clicks outside
@@ -176,20 +151,13 @@ export default {
 };
 </script>
 
-
 <style>
-
-
 #rangeDate {
     margin-right: 7px;
     position: relative;
     font-family: Arial;
-    /* border: 1px solid #C99F25; */
-    /* Border color */
     border-radius: 9px;
-    /* Border radius */
     background-color: #FFF3B3;
-    /* Fill color */
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
     color: black;
     padding: 8px 16px;
@@ -197,34 +165,25 @@ export default {
 
 #rangeDate[type="text"]::placeholder {
     color: black;
-    /* Change this to your desired color */
     opacity: 1;
-    /* Ensure the opacity is set to 1 for visibility */
 }
-
 
 .custom-select {
     margin-right: 7px;
     position: relative;
-    font-family:'Poppins', sans-serif; ;
-    /* border: 1px solid #C99F25; */
-    /* Border color */
+    font-family: 'Poppins', sans-serif;
     border-radius: 9px;
-    /* Border radius */
     background-color: #FFF3B3;
-    /* Fill color */
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    /* Drop shadow */
 }
 
-/* Hide the original SELECT element: */
 .custom-select select {
     display: none;
+    /* Hide the original SELECT element */
 }
 
 .select-selected {
     background-color: #FFF3B3;
-    /* Background color */
 }
 
 .select-selected:hover {
@@ -233,11 +192,8 @@ export default {
 
 #rangeDate:hover {
     background-color: #e8dca4;
-    /* Match to .select-selected hover */
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
 }
 
-/* Style the arrow inside the select element: */
 .select-selected:after {
     position: absolute;
     content: "";
@@ -250,36 +206,30 @@ export default {
     /* Arrow color */
 }
 
-/* Point the arrow upwards when the select box is open (active): */
 .select-selected.select-arrow-active:after {
     border-color: transparent transparent #fff transparent;
+    /* Arrow color when active */
     top: 7px;
 }
 
-/* Style the items (options), including the selected item: */
 .select-items div,
 .select-selected {
     color: black;
     padding: 8px 16px;
-    /* border: 1px solid transparent; */
-    border-color: transparent transparent rgba(0, 0, 0, 0.1) transparent;
     cursor: pointer;
     border-radius: 9px;
 }
 
-/* Style items (options): */
 .select-items {
     position: absolute;
     border-radius: 9px;
     background-color: #FFF3B3;
-    /* Background color */
     top: 100%;
     left: 0;
     right: 0;
     z-index: 99;
 }
 
-/* Hide the items when the select box is closed: */
 .select-hide {
     display: none;
 }
@@ -287,7 +237,6 @@ export default {
 .select-items div:hover {
     background-color: rgba(0, 0, 0, 0.1);
 }
-
 
 .search-bar {
     position: relative;
@@ -304,14 +253,12 @@ export default {
     font-family: 'Rubik', sans-serif;
 }
 
-/* Placeholder Styling */
 .search-bar input::placeholder {
     color: #777;
     font-size: 16px;
     font-family: 'Rubik', sans-serif;
 }
 
-/* Positioning the search icon inside the search bar */
 .search-bar .search-icon {
     position: absolute;
     left: 10px;
@@ -325,18 +272,19 @@ export default {
 }
 
 .sort-by-text {
-    font-size: 14px;
-    font-family: 'Rubik', sans-serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: #C99F25;
 }
-
 
 .reset-filters {
-    color: goldenrod;
-    font-size: 14px;
-    margin-left: 10px;
+    color: #C99F25;
     cursor: pointer;
-    font-family: 'Rubik', sans-serif;
-    font-weight: bold;
+    font-weight: 600;
+    margin-left: 10px;
 }
 
+.reset-filters:hover {
+    color: #a1883d;
+}
 </style>

@@ -52,6 +52,7 @@
 
 
 <script>
+
 export default {
     data() {
         return {
@@ -130,7 +131,8 @@ export default {
 };
 </script>
 
-<style>
+<style >
+
 
 .carousel {
     overflow: hidden; /* Prevents overflow */
