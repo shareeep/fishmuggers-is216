@@ -3,6 +3,7 @@
       <Navbar />
       <main> <!-- Wrap content in a main tag -->
         <h1>EVENTS</h1>
+        <h2>testing</h2>
       </main>
     </div>
   </template>
