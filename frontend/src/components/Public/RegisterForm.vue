@@ -1,6 +1,6 @@
 <template>
   <div class="w-full max-w-md mx-auto bg-white p-8 rounded-lg shadow-md">
-    <h2 class="text-2xl font-bold mb-6 text-center">Sign up for petlink</h2>
+    <h2 class="text-2xl font-bold mb-6 text-center">Sign up for PetConnect</h2>
     <form @submit.prevent="handleRegister">
       <input 
         v-model="email" 
