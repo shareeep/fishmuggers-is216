@@ -1,15 +1,20 @@
 <template>
   <div class="home-container"> <!-- Use a wrapper for flex layout -->
     <Navbar />
-    <main> <!-- Wrap content in a main tag -->
-      <h1>EVENTS</h1>
+    <main>
+      <!-- <h1>EVENTS</h1> -->
+      <search_filter/>
+      <carousel/>
+
     </main>
+    
   </div>
 </template>
 
 <script setup>
 // Any Home page-specific logic 
-import eventsContainer from '@/components/Protected/Search&Filter.vue';
+import search_filter from '@/components/Protected/Search&Filter.vue';
+import carousel from '@/components/Protected/Carousel.vue';
 import Navbar from '@/components/Protected/Navbar.vue';
 </script>
 
@@ -19,6 +24,15 @@ import Navbar from '@/components/Protected/Navbar.vue';
   /* Width of the navbar */
   height: 100vh;
   /* Full height of the viewport */
+}
+
+.search_filter{
+  background-color: white;
+  padding-left: 30px;
+}
+
+.carousel{
+  padding-left: 50px;
 }
 
 .home-container {
@@ -34,7 +48,7 @@ main {
   padding: 20px;
   /* Add padding for spacing */
   /* Optional styling */
-  background-color: goldenrod;
+  background-color: white;
   /* Example background color */
   overflow-y: auto;
   /* Allow scrolling if content overflows */

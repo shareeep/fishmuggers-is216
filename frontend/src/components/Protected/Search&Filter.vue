@@ -82,7 +82,7 @@ export default {
 
                     // Change the background color if two dates are selected
                     if (selectedDates.length === 2) {
-                        rangeDateInput.style.backgroundColor = '#C99F25'; // Set to desired color
+                        rangeDateInput.style.backgroundColor = 'goldenrod'; // Set to desired color
                     } else {
                         rangeDateInput.style.backgroundColor = '#FFF3B3'; // Reset to default color
                     }
@@ -123,7 +123,7 @@ export default {
                                 h.innerHTML = this.innerHTML;
 
                                 // Change the selected item background color to red
-                                h.style.backgroundColor = '#C99F25';
+                                h.style.backgroundColor = 'goldenrod';
 
                                 y = this.parentNode.getElementsByClassName("same-as-selected");
                                 yl = y.length;
@@ -178,6 +178,8 @@ export default {
 
 
 <style>
+
+
 #rangeDate {
     margin-right: 7px;
     position: relative;
@@ -204,7 +206,7 @@ export default {
 .custom-select {
     margin-right: 7px;
     position: relative;
-    font-family: Arial;
+    font-family:'Poppins', sans-serif; ;
     /* border: 1px solid #C99F25; */
     /* Border color */
     border-radius: 9px;
@@ -285,4 +287,56 @@ export default {
 .select-items div:hover {
     background-color: rgba(0, 0, 0, 0.1);
 }
+
+
+.search-bar {
+    position: relative;
+}
+
+.search-bar input {
+    padding: 12px 20px 12px 40px;
+    border: 2px solid #C99F25;
+    border-radius: 20px;
+    width: 400px;
+    font-size: 16px;
+    outline: none;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    font-family: 'Rubik', sans-serif;
+}
+
+/* Placeholder Styling */
+.search-bar input::placeholder {
+    color: #777;
+    font-size: 16px;
+    font-family: 'Rubik', sans-serif;
+}
+
+/* Positioning the search icon inside the search bar */
+.search-bar .search-icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #C99F25;
+}
+
+.sort-by {
+    margin-top: 20px;
+}
+
+.sort-by-text {
+    font-size: 14px;
+    font-family: 'Rubik', sans-serif;
+}
+
+
+.reset-filters {
+    color: goldenrod;
+    font-size: 14px;
+    margin-left: 10px;
+    cursor: pointer;
+    font-family: 'Rubik', sans-serif;
+    font-weight: bold;
+}
+
 </style>
