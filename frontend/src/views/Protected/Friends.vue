@@ -1,38 +1,46 @@
 <template>
-    <div class="home-container"> <!-- Use a wrapper for flex layout -->
-      <Navbar />
-      <main> <!-- Wrap content in a main tag -->
-        <h1>FRIENDS</h1>
-      </main>
-    </div>
-  </template>
-  
-  <script setup>
-  // Any Home page-specific logic
-  import Navbar from '@/components/Protected/Navbar.vue';
-  </script>
-  
-  <style scoped>
-  .navbar {
-    width: 250px; /* Width of the navbar */
-    height: 100vh; /* Full height of the viewport */
-  }
-  .home-container {
-    display: flex; /* Set flexbox layout for the container */
-  }
-  
-  
-  /* can change */
-  main {
-    flex-grow: 1; /* Allow main to take the remaining width */
-    padding: 20px; /* Add padding for spacing */
-    /* Optional styling */
-    background-color: goldenrod; /* Example background color */
-    overflow-y: auto; /* Allow scrolling if content overflows */
-  }
-  
-  h1 {
-    text-align: center; /* Center text in the main area */
-  }
-  </style>
-  
+  <div class="home-container">
+    <Navbar />
+    <main>
+      <SearchBar />
+      <FriendRequests />
+      <FriendsList />
+      <RequestsSent />
+      <InviteFriends />
+    </main>
+  </div>
+</template>
+
+<script setup>
+import Navbar from '@/components/Protected/Navbar.vue';
+import SearchBar from '@/components/Protected/Friends/Searchbar.vue';
+import FriendRequests from '@/components/Protected/Friends/FriendRequests.vue';
+import FriendsList from '@/components/Protected/Friends/FriendsList.vue';
+import RequestsSent from '@/components/Protected/Friends/RequestsSent.vue';
+import InviteFriends from '@/components/Protected/Friends/InviteFriends.vue';
+</script>
+
+<style scoped>
+.navbar {
+  width: 250px; /* Width of the navbar */
+  height: 100vh; /* Full height of the viewport */
+}
+
+.home-container {
+  display: flex; /* Set flexbox layout for the container */
+}
+
+main {
+  flex-grow: 1;
+  padding: 5%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* This adds spacing between the components */
+  background-color: goldenrod;
+  overflow-y: auto; /* Allow scrolling if content overflows */
+}
+
+h1 {
+  text-align: center; /* Center text in the main area */
+}
+</style>
