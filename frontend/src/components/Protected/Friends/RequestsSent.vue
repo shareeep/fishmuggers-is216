@@ -9,7 +9,7 @@
           <p>Sent {{ request.daysAgo }} days ago</p>
         </div>
         <div class="actions">
-          <button @click="cancelRequest(request.id)">Cancel</button>
+          <button @click="cancelRequest(request.id)" class="cancel-button">Cancel</button>
         </div>
       </div>
     </div>
@@ -54,53 +54,64 @@ export default {
 
 <style scoped>
 .requests-sent {
-  background-color: #222;
+  background-color: #ffffff;
   padding: 10px;
   border-radius: 8px;
-  margin-top: 20px;
+  margin-top: 20px; /* Add spacing from previous section */
 }
+
 .request-list {
   display: flex;
   flex-direction: row;
-  gap: 10px;
+  gap: 15px; /* Add spacing between items */
   overflow-x: auto; /* Allows horizontal scrolling if content overflows */
   padding: 10px 0;
 }
+
 .request-item {
   display: flex;
-  flex-direction: column;
   align-items: center;
   padding: 10px;
-  background-color: #333;
+  border: 1px solid #ddd; /* Add border for separation */
   border-radius: 8px;
-  color: white;
-  min-width: 150px; /* Adjust as needed for layout */
+  background-color: #f9f9f9;
+  min-width: 250px; /* Adjust to fit the layout and make it more similar to friend requests */
+  flex-shrink: 0; /* Prevent items from shrinking */
 }
+
 .request-item img {
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  margin-bottom: 10px;
-}
-.details {
-  text-align: center;
-}
-.actions {
-  margin-top: 10px;
-}
-button {
-  padding: 6px 12px;
-  border: none;
-  background-color: #f39c12;
-  color: #fff;
-  border-radius: 5px;
-  cursor: pointer;
-}
-button:hover {
-  background-color: #e67e22;
+  margin-right: 10px;
+  object-fit: cover; /* Ensure images are cropped properly */
 }
 
-h3{
-    color:white;
+.details {
+  flex-grow: 1;
+}
+
+.actions {
+  margin-left: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px; /* Add spacing between buttons */
+}
+
+.cancel-button {
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: #f44336; /* Red color for cancel button, consistent with reject button */
+  color: #ffffff;
+}
+
+.cancel-button:hover {
+  background-color: #e53935; /* Darker shade on hover */
+}
+
+h3 {
+  color: #333; /* Set text color for the heading */
 }
 </style>

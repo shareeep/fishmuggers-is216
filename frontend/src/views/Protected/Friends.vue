@@ -6,7 +6,6 @@
       <FriendRequests />
       <FriendsList />
       <RequestsSent />
-      <InviteFriends />
     </main>
   </div>
 </template>
@@ -17,7 +16,6 @@ import SearchBar from '@/components/Protected/Friends/Searchbar.vue';
 import FriendRequests from '@/components/Protected/Friends/FriendRequests.vue';
 import FriendsList from '@/components/Protected/Friends/FriendsList.vue';
 import RequestsSent from '@/components/Protected/Friends/RequestsSent.vue';
-import InviteFriends from '@/components/Protected/Friends/InviteFriends.vue';
 </script>
 
 <style scoped>
@@ -28,19 +26,33 @@ import InviteFriends from '@/components/Protected/Friends/InviteFriends.vue';
 
 .home-container {
   display: flex; /* Set flexbox layout for the container */
+  height: 100vh; /* Full height of the viewport */
+  overflow: hidden; /* Prevent overflow */
 }
 
 main {
   flex-grow: 1;
   padding: 5%;
   display: flex;
-  flex-direction: column;
-  gap: 20px; /* This adds spacing between the components */
+  flex-direction: column; /* Stack children vertically */
+  gap: 20px; /* Add spacing between the components */
   background-color: goldenrod;
-  overflow-y: auto; /* Allow scrolling if content overflows */
+  overflow: hidden; /* Prevent scrolling */
 }
 
-h1 {
-  text-align: center; /* Center text in the main area */
+main > * {
+  flex: 0 1 auto; /* Ensure components don't grow disproportionately */
+  display: flex;
+  flex-direction: column; /* Stack headers and content vertically */
+  align-items: flex-start; /* Align content to the left */
+  box-sizing: border-box; /* Ensure padding and borders are included in the width/height calculations */
+  width: 100%; /* Take full width of the container */
+  gap: 10px; /* Add spacing between header and content */
+}
+
+h3 {
+  margin: 0;
+  padding-bottom: 5px; /* Add padding to separate header from content */
+  font-weight: bold;
 }
 </style>
