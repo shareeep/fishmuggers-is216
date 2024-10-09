@@ -6,52 +6,56 @@
         <!-- Events Owl Carousel -->
         <div class="eventscarousel owl-carousel owl-theme" style="width:1000px;">
             <div class="item" v-for="(event, index) in events" :key="index">
-                <div class="card">
-                    <img :src="event.image" alt="Event Image">
-                    <div class="card-body">
-                        <div class="card-left">
-                            <div class="date">{{ event.date }}</div>
-                            <div class="date-month">{{ event.year }}</div>
-                        </div>
-                        <div class="card-right">
-                            <div class="event-title">{{ event.title }}</div>
-                            <div class="event-subtitle">{{ event.time }}</div>
-                            <div class="event-subtitle"><i class="fas fa-star star-icon"></i> {{ event.interested }}
-                                Interested</div>
+                <router-link to="/eventdetail">
+                    <div class="card">
+                        <img :src="event.image" alt="Event Image">
+                        <div class="card-body">
+                            <div class="card-left">
+                                <div class="date">{{ event.date }}</div>
+                                <div class="date-month">{{ event.year }}</div>
+                            </div>
+                            <div class="card-right">
+                                <div class="event-title">{{ event.title }}</div>
+                                <div class="event-subtitle">{{ event.time }}</div>
+                                <div class="event-subtitle"><i class="fas fa-star star-icon"></i> {{ event.interested }}
+                                    Interested</div>
+                            </div>
                         </div>
                     </div>
-                </div>
+                </router-link>
             </div>
         </div>
+    </div>
 
-        <!-- "Trending" -->
-        <h1 class="title">Trending</h1>
+    <!-- "Trending" -->
+    <h1 class="title">Trending</h1>
 
-        <!-- Trending Owl Carousel -->
-        <div class="owl-carousel owl-theme trending-carousel" style="width:1000px;">
-            <div class="item" v-for="(event, index) in trending" :key="index">
-                <div class="card">
-                    <img :src="event.image" alt="Trending Image">
-                    <div class="card-body">
-                        <div class="card-left">
-                            <div class="date">{{ event.date }}</div>
-                            <div class="date-month">{{ event.year }}</div>
-                        </div>
-                        <div class="card-right">
-                            <div class="event-title">{{ event.title }}</div>
-                            <div class="event-subtitle">{{ event.time }}</div>
-                            <div class="event-subtitle"><i class="fas fa-star star-icon"></i> {{ event.interested }}
-                                Interested</div>
-                        </div>
+    <!-- Trending Owl Carousel -->
+    <div class="owl-carousel owl-theme trending-carousel" style="width:1000px;">
+        <div class="item" v-for="(event, index) in trending" :key="index">
+            <div class="card">
+                <img :src="event.image" alt="Trending Image">
+                <div class="card-body">
+                    <div class="card-left">
+                        <div class="date">{{ event.date }}</div>
+                        <div class="date-month">{{ event.year }}</div>
+                    </div>
+                    <div class="card-right">
+                        <div class="event-title">{{ event.title }}</div>
+                        <div class="event-subtitle">{{ event.time }}</div>
+                        <div class="event-subtitle"><i class="fas fa-star star-icon"></i> {{ event.interested }}
+                            Interested</div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
 </template>
 
 
 <script>
+import { useRouter } from 'vue-router'; // Import useRouter
 
 export default {
     data() {
@@ -72,6 +76,32 @@ export default {
         };
     },
     methods: {
+        goToEvent(eventTitle) {
+            const router = useRouter(); // Get the router instance
+            router.push({ name: 'eventDetail', params: { title: eventTitle } }); // Navigate to the event detail page
+        },
+        resetFilters() {
+            // Reset each custom select to the first option
+            const customSelects = this.$el.getElementsByClassName("custom-select");
+
+            for (let i = 0; i < customSelects.length; i++) {
+                const selectElement = customSelects[i].getElementsByTagName("select")[0];
+                selectElement.selectedIndex = 0; // Reset to the first option (default)
+
+                // Update the displayed text of the custom select
+                const selectedDiv = customSelects[i].getElementsByClassName("select-selected")[0];
+                selectedDiv.innerHTML = selectElement.options[selectElement.selectedIndex].innerHTML;
+
+                // Reset background color to default
+                // Reset class to default
+                selectedDiv.style.backgroundColor = '#FFF3B3';
+            }
+
+            const rangeDateInput = document.getElementById('rangeDate');
+            rangeDateInput.value = ""; // Clear the input value
+            rangeDateInput.placeholder = "Date Range"; // Set placeholder text
+            rangeDateInput.style.backgroundColor = '#FFF3B3'; // Reset background color
+        }
 
 
     },
@@ -131,11 +161,10 @@ export default {
 };
 </script>
 
-<style >
-
-
+<style>
 .carousel {
-    overflow: hidden; /* Prevents overflow */
+    overflow: hidden;
+    /* Prevents overflow */
 }
 
 
@@ -144,12 +173,12 @@ export default {
     font-size: 30px;
     font-weight: bold;
     margin-top: 40px;
-    margin-bottom:10px;
+    margin-bottom: 10px;
 }
 
 /* Carousel and Card Styles */
 .card {
-    height:100%;
+    height: 100%;
     border: none;
     border-radius: 15px;
     overflow: hidden;
