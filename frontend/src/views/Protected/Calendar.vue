@@ -3,6 +3,11 @@
       <Navbar />
       <main> <!-- Wrap content in a main tag -->
         <h1>CALENDAR</h1>
+
+
+        <CalendarComponent />
+
+
       </main>
     </div>
   </template>
@@ -10,6 +15,11 @@
   <script setup>
   // Any Home page-specific logic
   import Navbar from '@/components/Protected/Navbar.vue';
+
+
+  import CalendarComponent from '@/components/Protected/CalendarComponent.vue';
+
+
   </script>
   
   <style scoped>
@@ -34,5 +44,9 @@
   h1 {
     text-align: center; /* Center text in the main area */
   }
+  .calendar-container{
+    margin-top: 60px;
+  }
+  
   </style>
   
