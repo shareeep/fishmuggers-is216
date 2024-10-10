@@ -152,10 +152,11 @@ export default {
 
 <style>
 
+
 #rangeDate {
     margin-right: 7px;
     position: relative;
-    font-family: Arial;
+    font-family: Open sans, sans-serif;
     border-radius: 9px;
     background-color: #FFF3B3;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);

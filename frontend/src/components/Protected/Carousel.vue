@@ -31,7 +31,7 @@
         </Carousel>
 
         <h1 class="title">Trending</h1>
-        <Carousel :itemsToShow="3.95" :wrapAround="true" :transition="500" class="custom-carousel">
+        <Carousel :itemsToShow="3" :wrapAround="true" :transition="500" class="custom-carousel">
             <Slide v-for="(event, index) in trending" :key="index">
                 <router-link :to="{ name: 'eventDetail', params: { title: event.title } }">
                     <div class="carousel__item">
