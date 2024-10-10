@@ -33,7 +33,7 @@ const router = createRouter({
           component: Events,
         },
         {
-          path: 'eventdetail',
+          path: 'eventdetail/:title',
           name: 'eventDetail',
           component: EventDetail,
         },

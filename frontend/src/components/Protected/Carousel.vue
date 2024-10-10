@@ -6,7 +6,8 @@
         <!-- Events Owl Carousel -->
         <div class="eventscarousel owl-carousel owl-theme" style="width:1000px;">
             <div class="item" v-for="(event, index) in events" :key="index">
-                <router-link to="/eventdetail">
+                <router-link :to="{ name: 'eventDetail', params: { title: event.title } }">
+
                     <div class="card">
                         <img :src="event.image" alt="Event Image">
                         <div class="card-body">
@@ -33,21 +34,24 @@
     <!-- Trending Owl Carousel -->
     <div class="owl-carousel owl-theme trending-carousel" style="width:1000px;">
         <div class="item" v-for="(event, index) in trending" :key="index">
-            <div class="card">
-                <img :src="event.image" alt="Trending Image">
-                <div class="card-body">
-                    <div class="card-left">
-                        <div class="date">{{ event.date }}</div>
-                        <div class="date-month">{{ event.year }}</div>
-                    </div>
-                    <div class="card-right">
-                        <div class="event-title">{{ event.title }}</div>
-                        <div class="event-subtitle">{{ event.time }}</div>
-                        <div class="event-subtitle"><i class="fas fa-star star-icon"></i> {{ event.interested }}
-                            Interested</div>
+            <router-link :to="{ name: 'eventDetail', params: { title: event.title } }">
+
+                <div class="card">
+                    <img :src="event.image" alt="Trending Image">
+                    <div class="card-body">
+                        <div class="card-left">
+                            <div class="date">{{ event.date }}</div>
+                            <div class="date-month">{{ event.year }}</div>
+                        </div>
+                        <div class="card-right">
+                            <div class="event-title">{{ event.title }}</div>
+                            <div class="event-subtitle">{{ event.time }}</div>
+                            <div class="event-subtitle"><i class="fas fa-star star-icon"></i> {{ event.interested }}
+                                Interested</div>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </router-link>
         </div>
     </div>
 
