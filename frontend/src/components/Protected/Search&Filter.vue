@@ -270,6 +270,8 @@ export default {
 
 .sort-by {
     margin-top: 20px;
+    display:flex;
+
 }
 
 .sort-by-text {

@@ -78,22 +78,21 @@ export default defineComponent({
     data() {
         return {
             events: [
-                { image: "https://via.placeholder.com/300x150", date: "DEC", year: "2022", title: "Event Title 1", time: "1:00pm - 3:00pm", interested: 5 },
-                { image: "https://via.placeholder.com/300x150", date: "DEC", year: "2022", title: "Event Title 2", time: "1:00pm - 3:00pm", interested: 5 },
-                { image: "https://via.placeholder.com/300x150", date: "DEC", year: "2022", title: "Event Title 3", time: "1:00pm - 3:00pm", interested: 5 },
-                { image: "https://via.placeholder.com/300x150", date: "DEC", year: "2022", title: "Event Title 4", time: "1:00pm - 3:00pm", interested: 5 }
+                { id: 1, image: "https://via.placeholder.com/300x150", date: "DEC", year: "2022", title: "Event Title 1", time: "1:00pm - 3:00pm", interested: 5 },
+                { id: 2, image: "https://via.placeholder.com/300x150", date: "DEC", year: "2022", title: "Event Title 2", time: "1:00pm - 3:00pm", interested: 5 },
+                { id: 3, image: "https://via.placeholder.com/300x150", date: "DEC", year: "2022", title: "Event Title 3", time: "1:00pm - 3:00pm", interested: 5 },
+                { id: 4, image: "https://via.placeholder.com/300x150", date: "DEC", year: "2022", title: "Event Title 4", time: "1:00pm - 3:00pm", interested: 5 }
             ],
             trending: [
-                { image: "https://via.placeholder.com/300x150", date: "JAN", year: "2023", title: "Trending Event 1", time: "10:00am - 12:00pm", interested: 10 },
-                { image: "https://via.placeholder.com/300x150", date: "JAN", year: "2023", title: "Trending Event 2", time: "10:00am - 12:00pm", interested: 10 },
-                { image: "https://via.placeholder.com/300x150", date: "JAN", year: "2023", title: "Trending Event 3", time: "10:00am - 12:00pm", interested: 10 },
-                { image: "https://via.placeholder.com/300x150", date: "JAN", year: "2023", title: "Trending Event 4", time: "10:00am - 12:00pm", interested: 10 },
+                { id: 1, image: "https://via.placeholder.com/300x150", date: "JAN", year: "2023", title: "Trending Event 1", time: "10:00am - 12:00pm", interested: 10 },
+                { id: 2, image: "https://via.placeholder.com/300x150", date: "JAN", year: "2023", title: "Trending Event 2", time: "10:00am - 12:00pm", interested: 10 },
+                { id: 3, image: "https://via.placeholder.com/300x150", date: "JAN", year: "2023", title: "Trending Event 3", time: "10:00am - 12:00pm", interested: 10 },
+                { id: 4, image: "https://via.placeholder.com/300x150", date: "JAN", year: "2023", title: "Trending Event 4", time: "10:00am - 12:00pm", interested: 10 },
             ]
         };
     },
 });
 </script>
-
 <style scoped>
 /* ARROW STYLES */
 .carousel__prev,

@@ -13,9 +13,10 @@
 
 <script setup>
 // Any Home page-specific logic 
+import Navbar from '@/components/Protected/Navbar.vue';
 import search_filter from '@/components/Protected/Search&Filter.vue';
 import carousel from '@/components/Protected/Carousel.vue';
-import Navbar from '@/components/Protected/Navbar.vue';
+
 </script>
 
 <style scoped>
