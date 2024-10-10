@@ -1,13 +1,9 @@
 <template>
     <div class="carousel">
-        <!-- "Events Near You" -->
         <h1 class="title">Events Near You</h1>
-
-        <!-- Events Owl Carousel -->
-        <div class="eventscarousel owl-carousel owl-theme" style="width:1000px;">
-            <div class="item" v-for="(event, index) in events" :key="index">
-                <router-link :to="{ name: 'eventDetail', params: { title: event.title } }">
-
+        <Carousel :itemsToShow="3" :wrapAround="true" :transition="500" :partialVisible="false">
+            <Slide v-for="(event, index) in events" :key="index">
+                <div class="carousel__item">
                     <div class="card">
                         <img :src="event.image" alt="Event Image">
                         <div class="card-body">
@@ -18,58 +14,72 @@
                             <div class="card-right">
                                 <div class="event-title">{{ event.title }}</div>
                                 <div class="event-subtitle">{{ event.time }}</div>
-                                <div class="event-subtitle"><i class="fas fa-star star-icon"></i> {{ event.interested }}
-                                    Interested</div>
+                                <div class="event-subtitle">
+                                    <i class="fas fa-star star-icon"></i> {{ event.interested }} Interested
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </Slide>
+            <template #addons>
+                <Navigation />
+                <Pagination />
+            </template>
+        </Carousel>
+
+        <h1 class="title">Trending</h1>
+        <Carousel :itemsToShow="3.95" :wrapAround="true" :transition="500" class="custom-carousel">
+            <Slide v-for="(event, index) in trending" :key="index">
+                <router-link :to="{ name: 'eventDetail', params: { title: event.title } }">
+                    <div class="carousel__item">
+                        <div class="card">
+                            <img :src="event.image" alt="Trending Image">
+                            <div class="card-body">
+                                <div class="card-left">
+                                    <div class="date">{{ event.date }}</div>
+                                    <div class="date-month">{{ event.year }}</div>
+                                </div>
+                                <div class="card-right">
+                                    <div class="event-title">{{ event.title }}</div>
+                                    <div class="event-subtitle">{{ event.time }}</div>
+                                    <div class="event-subtitle">
+                                        <i class="fas fa-star star-icon"></i> {{ event.interested }} Interested
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </router-link>
-            </div>
-        </div>
+            </Slide>
+            <template #addons>
+                <!-- <Navigation /> -->
+                <Pagination />
+            </template>
+        </Carousel>
     </div>
-
-    <!-- "Trending" -->
-    <h1 class="title">Trending</h1>
-
-    <!-- Trending Owl Carousel -->
-    <div class="owl-carousel owl-theme trending-carousel" style="width:1000px;">
-        <div class="item" v-for="(event, index) in trending" :key="index">
-            <router-link :to="{ name: 'eventDetail', params: { title: event.title } }">
-
-                <div class="card">
-                    <img :src="event.image" alt="Trending Image">
-                    <div class="card-body">
-                        <div class="card-left">
-                            <div class="date">{{ event.date }}</div>
-                            <div class="date-month">{{ event.year }}</div>
-                        </div>
-                        <div class="card-right">
-                            <div class="event-title">{{ event.title }}</div>
-                            <div class="event-subtitle">{{ event.time }}</div>
-                            <div class="event-subtitle"><i class="fas fa-star star-icon"></i> {{ event.interested }}
-                                Interested</div>
-                        </div>
-                    </div>
-                </div>
-            </router-link>
-        </div>
-    </div>
-
 </template>
 
-
 <script>
-import { useRouter } from 'vue-router'; // Import useRouter
+import { defineComponent } from 'vue';
+import { Carousel, Navigation, Pagination, Slide } from 'vue3-carousel';
+import 'vue3-carousel/dist/carousel.css';
 
-export default {
+export default defineComponent({
+    name: 'EventCarousel',
+    components: {
+        Carousel,
+        Navigation,
+        Pagination,
+        Slide,
+    },
     data() {
         return {
-            dateRange: [],
             events: [
                 { image: "https://via.placeholder.com/300x150", date: "DEC", year: "2022", title: "Event Title 1", time: "1:00pm - 3:00pm", interested: 5 },
                 { image: "https://via.placeholder.com/300x150", date: "DEC", year: "2022", title: "Event Title 2", time: "1:00pm - 3:00pm", interested: 5 },
                 { image: "https://via.placeholder.com/300x150", date: "DEC", year: "2022", title: "Event Title 3", time: "1:00pm - 3:00pm", interested: 5 },
-                { image: "https://via.placeholder.com/300x150", date: "DEC", year: "2022", title: "Event Title 4", time: "1:00pm - 3:00pm", interested: 5 },
+                { image: "https://via.placeholder.com/300x150", date: "DEC", year: "2022", title: "Event Title 4", time: "1:00pm - 3:00pm", interested: 5 }
             ],
             trending: [
                 { image: "https://via.placeholder.com/300x150", date: "JAN", year: "2023", title: "Trending Event 1", time: "10:00am - 12:00pm", interested: 10 },
@@ -79,123 +89,140 @@ export default {
             ]
         };
     },
-    methods: {
-        goToEvent(eventTitle) {
-            const router = useRouter(); // Get the router instance
-            router.push({ name: 'eventDetail', params: { title: eventTitle } }); // Navigate to the event detail page
-        },
-        resetFilters() {
-            // Reset each custom select to the first option
-            const customSelects = this.$el.getElementsByClassName("custom-select");
-
-            for (let i = 0; i < customSelects.length; i++) {
-                const selectElement = customSelects[i].getElementsByTagName("select")[0];
-                selectElement.selectedIndex = 0; // Reset to the first option (default)
-
-                // Update the displayed text of the custom select
-                const selectedDiv = customSelects[i].getElementsByClassName("select-selected")[0];
-                selectedDiv.innerHTML = selectElement.options[selectElement.selectedIndex].innerHTML;
-
-                // Reset background color to default
-                // Reset class to default
-                selectedDiv.style.backgroundColor = '#FFF3B3';
-            }
-
-            const rangeDateInput = document.getElementById('rangeDate');
-            rangeDateInput.value = ""; // Clear the input value
-            rangeDateInput.placeholder = "Date Range"; // Set placeholder text
-            rangeDateInput.style.backgroundColor = '#FFF3B3'; // Reset background color
-        }
-
-
-    },
-    mounted() {
-        $(document).ready(function () {
-            // Initialize main events carousel
-            const $eventsCarousel = $('.eventscarousel').owlCarousel({
-                center: true,
-                items: 3,
-                loop: true,
-                margin: 20,
-                nav: true,
-                dots: true,
-                dotsEach: true,
-                navigationText: ["<i class='fa fa-angle-left'></i>", "<i class='fa fa-angle-right'></i>"],
-                responsive: {
-                    0: {
-                        items: 1
-                    },
-                    768: {
-                        items: 3
-                    }
-                },
-                animateOut: 'fadeOut',
-                animateIn: 'fadeIn',
-                autoplay: false,
-                autoplayHoverPause: false,
-                smartSpeed: 450,
-            });
-
-            // Initialize trending events carousel
-            const $trendingCarousel = $('.trending-carousel').owlCarousel({
-                center: true,
-                items: 3,
-                loop: true,
-                margin: 20,
-                nav: true,
-                navigationText: ["<i class='fa fa-angle-left'></i>", "<i class='fa fa-angle-right'></i>"],
-                responsive: {
-                    0: {
-                        items: 1
-                    },
-                    768: {
-                        items: 3
-                    }
-                },
-                animateOut: 'fadeOut',
-                animateIn: 'fadeIn',
-                autoplay: false,
-                autoplayHoverPause: false,
-                smartSpeed: 450,
-            });
-
-
-        });
-    }
-};
+});
 </script>
 
-<style>
-.carousel {
-    overflow: hidden;
-    /* Prevents overflow */
+<style scoped>
+/* ARROW STYLES */
+.carousel__prev,
+.carousel__next {
+    box-sizing: content-box;
+    background: var(--vc-nav-background);
+    border-radius: var(--vc-nav-border-radius);
+    width: var(--vc-nav-width);
+    height: var(--vc-nav-height);
+    text-align: center;
+    font-size: var(--vc-nav-height);
+    padding: 0;
+    color: var(--vc-nav-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    border: 0;
+    cursor: pointer;
+    margin: 0 10px;
+    top: 50%;
+    transform: translateY(-50%);
 }
 
+.carousel__next--disabled,
+.carousel__prev--disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+
+.carousel__prev {
+    left: 0;
+}
+
+.carousel__next {
+    right: 0;
+}
+
+.carousel--rtl .carousel__prev {
+    left: auto;
+    right: 0;
+}
+
+.carousel--rtl .carousel__next {
+    right: auto;
+    left: 0;
+}
+
+@media (hover: hover) {
+
+    .carousel__prev:hover,
+    .carousel__next:hover {
+        color: var(--vc-nav-color-hover);
+    }
+}
+
+/* PAGINATION STYLES */
+.carousel {
+    --vc-pgn-margin: 5px;
+    /* Adjust margin as needed */
+    --vc-pgn-width: 15px;
+    /* Width of the pagination dots */
+    --vc-pgn-height: 15px;
+    /* Height of the pagination dots */
+    --vc-pgn-border-radius: 50%;
+    /* Rounded pagination dots */
+    --vc-pgn-background-color: goldenrod;
+    /* Default background color */
+    --vc-pgn-active-color: #FFF3B3;
+    /* Active pagination dot color */
+}
+
+.carousel__pagination {
+    display: flex;
+    justify-content: center;
+    list-style: none;
+    line-height: 0;
+    margin: 10px 0 0;
+    padding: 0;
+}
+
+.carousel__pagination-button {
+    display: block;
+    border: 0;
+    margin: 0;
+    cursor: pointer;
+    padding: var(--vc-pgn-margin);
+    background: transparent;
+}
+
+.carousel__pagination-button::after {
+    display: block;
+    content: '';
+    width: var(--vc-pgn-width);
+    height: var(--vc-pgn-height);
+    border-radius: var(--vc-pgn-border-radius);
+    background-color: var(--vc-pgn-background-color);
+    /* Use your custom color */
+}
+
+.carousel__pagination-button--active::after {
+    background-color: #FFF3B3;
+    /* Use your custom active color */
+}
+
+@media(hover: hover) {
+    .carousel__pagination-button:hover::after {
+        background-color: goldenrod;
+        /* Hover effect */
+    }
+}
+
+* {
+    box-sizing: border-box;
+}
 
 .title {
+    text-align: center;
     font-family: 'Montserrat', sans-serif;
     font-size: 30px;
     font-weight: bold;
     margin-top: 40px;
-    margin-bottom: 10px;
 }
 
-/* Carousel and Card Styles */
+/*  Card Styles */
 .card {
-    height: 100%;
     border: none;
     border-radius: 15px;
     overflow: hidden;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     transition: transform 0.5s ease, box-shadow 0.3s ease;
-}
-
-.card:hover {
-    transform: scale(1.03);
-    /* Scale up on hover */
-    overflow: visible;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-    /* Increase shadow on hover */
 }
 
 .card img {
@@ -242,60 +269,72 @@ export default {
     margin-right: 5px;
 }
 
-.owl-nav {
-    position: absolute;
-    top: 50%;
-    width: 100%;
-    transform: translateY(-50%);
-    display: flex;
-    justify-content: space-between;
-    /* Space between left and right buttons */
-    padding: 0 10px;
-    /* Optional: padding to adjust distance from edges */
+.card:hover {
+    transform: scale(1.03);
+    /* Scale up on hover */
+    overflow: visible;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+    /* Increase shadow on hover */
 }
 
-.owl-nav .owl-prev {
-    left: -60px;
-    /* Move left button outside */
+/* CAROUSEL */
+
+.carousel {
+    padding: 0;
+    width: 1200px;
+    color: #2c3e50;
 }
 
-.owl-nav .owl-next {
-    right: -60px;
-    /* Move right button outside */
+.carousel__item {
+    margin: 0 5px;
+    /* Consistent horizontal spacing */
+    flex: 0 0 280px;
+    /* Make sure items take equal width */
+    max-width: 400px;
+    /* Ensure items do not exceed this width */
 }
 
-.owl-nav button {
-    color: black !important;
-    width: 50px;
-    /* Button width */
-    height: 50px;
-    /* Button height */
-    background-color: #C99F25;
-    /* Button color */
-    border: none;
-    /* Remove border */
-    border-radius: 50% !important;
-    /* Make it circular */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: background-color 0.3s ease, transform 0.3s ease;
-    /* Smooth transitions */
-    cursor: pointer;
-    /* Change cursor to pointer */
+.carousel__slide {
+
+    padding: 25px 5px;
 }
 
-.owl-nav button:hover {
-    background-color: #C99F25 !important;
-    /* Change color on hover */
-    transform: scale(1.1);
-    /* Slightly enlarge on hover */
+.carousel__viewport {
+    perspective: 2000px;
 }
 
-.owl-nav button i {
-    font-size: 50px !important;
-    /* Icon size */
-    color: white;
-    /* Icon color */
+.carousel__track {
+    transform-style: preserve-3d;
 }
+
+.carousel__slide--sliding {
+    transition: 0.8s;
+}
+
+.carousel__slide {
+    opacity: 0.9;
+    transform: rotateY(-20deg) scale(0.9);
+}
+
+.carousel__slide--active~.carousel__slide {
+    transform: rotateY(20deg) scale(0.9);
+}
+
+.carousel__slide--prev {
+    opacity: 1;
+    transform: rotateY(-20deg) scale(0.9);
+}
+
+.carousel__slide--next {
+    opacity: 1;
+    transform: rotateY(20deg) scale(0.9);
+}
+
+.carousel__slide--active {
+    opacity: 1;
+    transform: rotateY(0) scale(1.1);
+}
+
+
+/* ARROWS*/
 </style>

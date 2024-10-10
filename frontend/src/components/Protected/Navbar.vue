@@ -64,7 +64,7 @@
   };
   </script>
   
-  <style scoped>
+  <style>
   .navbar {
     width: 250px;
     height: 100vh;

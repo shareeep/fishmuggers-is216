@@ -45,33 +45,32 @@
 </template>
 
 <script>
-
 export default {
     methods: {
         resetFilters() {
-    const customSelects = this.$el.getElementsByClassName("custom-select");
+            const customSelects = this.$el.getElementsByClassName("custom-select");
 
-    for (let i = 0; i < customSelects.length; i++) {
-        const selectElement = customSelects[i].getElementsByTagName("select")[0];
-        selectElement.selectedIndex = 0; // Reset to the first option (default)
+            for (let i = 0; i < customSelects.length; i++) {
+                const selectElement = customSelects[i].getElementsByTagName("select")[0];
+                selectElement.selectedIndex = 0; // Reset to the first option (default)
 
-        // Update the displayed text of the custom select
-        const selectedDiv = customSelects[i].getElementsByClassName("select-selected")[0];
-        selectedDiv.innerHTML = selectElement.options[selectElement.selectedIndex].innerHTML;
+                // Update the displayed text of the custom select
+                const selectedDiv = customSelects[i].getElementsByClassName("select-selected")[0];
+                selectedDiv.innerHTML = selectElement.options[selectElement.selectedIndex].innerHTML;
 
-        // Reset background color to default
-        selectedDiv.style.backgroundColor = '#FFF3B3';
-        
-        // Ensure hover class is maintained
-        selectedDiv.classList.remove("same-as-selected"); // Remove hover effect only if needed, keep it for hover state
-        selectedDiv.classList.add("select-selected"); // Always keep this class for hover effect
-    }
+                // Reset background color to default
+                selectedDiv.style.backgroundColor = '#FFF3B3';
 
-    const rangeDateInput = document.getElementById('rangeDate');
-    rangeDateInput.value = ""; // Clear the input value
-    rangeDateInput.placeholder = "Date Range"; // Set placeholder text
-    rangeDateInput.style.backgroundColor = '#FFF3B3'; // Reset background color
-}
+                // Ensure hover class is maintained
+                selectedDiv.classList.remove("same-as-selected"); // Remove hover effect only if needed, keep it for hover state
+                selectedDiv.classList.add("select-selected"); // Always keep this class for hover effect
+            }
+
+            const rangeDateInput = document.getElementById('rangeDate');
+            rangeDateInput.value = ""; // Clear the input value
+            rangeDateInput.placeholder = "Date Range"; // Set placeholder text
+            rangeDateInput.style.backgroundColor = '#FFF3B3'; // Reset background color
+        }
 
 
     },
@@ -152,6 +151,7 @@ export default {
 </script>
 
 <style>
+
 #rangeDate {
     margin-right: 7px;
     position: relative;

@@ -31,9 +31,6 @@ import Navbar from '@/components/Protected/Navbar.vue';
   padding-left: 30px;
 }
 
-.carousel{
-  padding-left: 50px;
-}
 
 .home-container {
   display: flex;
