@@ -109,7 +109,7 @@ export default {
                     optionDiv.addEventListener("click", function () {
                         selectElement.selectedIndex = j;
                         selectedDiv.innerHTML = this.innerHTML;
-                        selectedDiv.style.backgroundColor = 'goldenrod'; // Set selected background color
+                        selectedDiv.style.backgroundColor = 'gold'; // Set selected background color
 
                         Array.from(optionsDiv.getElementsByClassName("same-as-selected")).forEach(item => {
                             item.classList.remove("same-as-selected");

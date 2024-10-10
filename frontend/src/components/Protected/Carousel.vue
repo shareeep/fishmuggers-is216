@@ -278,7 +278,7 @@ export default defineComponent({
 }
 
 .star-icon {
-    color: #C99F25;
+    color: gold;
     margin-right: 5px;
 }
 
