@@ -53,7 +53,7 @@
                 </router-link>
             </Slide>
             <template #addons>
-                <!-- <Navigation /> -->
+                <Navigation />
                 <Pagination />
             </template>
         </Carousel>
@@ -97,7 +97,7 @@ export default defineComponent({
 .carousel__prev,
 .carousel__next {
     box-sizing: content-box;
-    background: var(--vc-nav-background);
+    background: transparent; /* Make the default background transparent */
     border-radius: var(--vc-nav-border-radius);
     width: var(--vc-nav-width);
     height: var(--vc-nav-height);
@@ -114,6 +114,17 @@ export default defineComponent({
     margin: 0 10px;
     top: 50%;
     transform: translateY(-50%);
+    transition: color 0.3s ease
+}
+
+.carousel__prev:hover,
+.carousel__next:hover {
+    color: white; /* Change arrow color on hover */
+    background-color: goldenrod; /* Circle color when hovering */
+    border-radius: 50%; /* Make it a circle */
+    width: 60px; /* Slightly increase the width to accommodate the circle */
+    height: 60px; /* Slightly increase the height to accommodate the circle */
+    padding: 0; /* Reset padding to fit the new size */
 }
 
 .carousel__next--disabled,
@@ -140,13 +151,7 @@ export default defineComponent({
     left: 0;
 }
 
-@media (hover: hover) {
 
-    .carousel__prev:hover,
-    .carousel__next:hover {
-        color: var(--vc-nav-color-hover);
-    }
-}
 
 /* PAGINATION STYLES */
 .carousel {
@@ -222,7 +227,7 @@ export default defineComponent({
     border-radius: 15px;
     overflow: hidden;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    transition: transform 0.5s ease, box-shadow 0.3s ease;
+    transition: transform 0.8s ease, box-shadow 0.8s ease;
 }
 
 .card img {
@@ -308,7 +313,7 @@ export default defineComponent({
 }
 
 .carousel__slide--sliding {
-    transition: 0.8s;
+    transition: 1.0s ease;
 }
 
 .carousel__slide {
@@ -323,6 +328,7 @@ export default defineComponent({
 .carousel__slide--prev {
     opacity: 1;
     transform: rotateY(-20deg) scale(0.9);
+    transition: 0.6s ease;
 }
 
 .carousel__slide--next {
@@ -333,8 +339,7 @@ export default defineComponent({
 .carousel__slide--active {
     opacity: 1;
     transform: rotateY(0) scale(1.1);
+    transition: 0.6s ease;
 }
-
-
 /* ARROWS*/
 </style>
