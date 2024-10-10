@@ -3,24 +3,26 @@
         <h1 class="title">Events Near You</h1>
         <Carousel :itemsToShow="3" :wrapAround="true" :transition="500" :partialVisible="false">
             <Slide v-for="(event, index) in events" :key="index">
-                <div class="carousel__item">
-                    <div class="card">
-                        <img :src="event.image" alt="Event Image">
-                        <div class="card-body">
-                            <div class="card-left">
-                                <div class="date">{{ event.date }}</div>
-                                <div class="date-month">{{ event.year }}</div>
-                            </div>
-                            <div class="card-right">
-                                <div class="event-title">{{ event.title }}</div>
-                                <div class="event-subtitle">{{ event.time }}</div>
-                                <div class="event-subtitle">
-                                    <i class="fas fa-star star-icon"></i> {{ event.interested }} Interested
+                <router-link :to="{ name: 'eventDetail', params: { title: event.title } }">
+                    <div class="carousel__item">
+                        <div class="card">
+                            <img :src="event.image" alt="Event Image">
+                            <div class="card-body">
+                                <div class="card-left">
+                                    <div class="date">{{ event.date }}</div>
+                                    <div class="date-month">{{ event.year }}</div>
+                                </div>
+                                <div class="card-right">
+                                    <div class="event-title">{{ event.title }}</div>
+                                    <div class="event-subtitle">{{ event.time }}</div>
+                                    <div class="event-subtitle">
+                                        <i class="fas fa-star star-icon"></i> {{ event.interested }} Interested
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
+                </router-link>
             </Slide>
             <template #addons>
                 <Navigation />
@@ -64,7 +66,7 @@
 import { defineComponent } from 'vue';
 import { Carousel, Navigation, Pagination, Slide } from 'vue3-carousel';
 import 'vue3-carousel/dist/carousel.css';
-
+ 
 export default defineComponent({
     name: 'EventCarousel',
     components: {
@@ -97,7 +99,8 @@ export default defineComponent({
 .carousel__prev,
 .carousel__next {
     box-sizing: content-box;
-    background: transparent; /* Make the default background transparent */
+    background: transparent;
+    /* Make the default background transparent */
     border-radius: var(--vc-nav-border-radius);
     width: var(--vc-nav-width);
     height: var(--vc-nav-height);
@@ -119,12 +122,18 @@ export default defineComponent({
 
 .carousel__prev:hover,
 .carousel__next:hover {
-    color: white; /* Change arrow color on hover */
-    background-color: goldenrod; /* Circle color when hovering */
-    border-radius: 50%; /* Make it a circle */
-    width: 60px; /* Slightly increase the width to accommodate the circle */
-    height: 60px; /* Slightly increase the height to accommodate the circle */
-    padding: 0; /* Reset padding to fit the new size */
+    color: white;
+    /* Change arrow color on hover */
+    background-color: goldenrod;
+    /* Circle color when hovering */
+    border-radius: 50%;
+    /* Make it a circle */
+    width: 60px;
+    /* Slightly increase the width to accommodate the circle */
+    height: 60px;
+    /* Slightly increase the height to accommodate the circle */
+    padding: 0;
+    /* Reset padding to fit the new size */
 }
 
 .carousel__next--disabled,
@@ -300,7 +309,6 @@ export default defineComponent({
 }
 
 .carousel__slide {
-
     padding: 25px 5px;
 }
 
@@ -313,33 +321,34 @@ export default defineComponent({
 }
 
 .carousel__slide--sliding {
-    transition: 1.0s ease;
+    transition: transform 0.5s ease, opacity 1.0s ease;
 }
 
 .carousel__slide {
     opacity: 0.9;
-    transform: rotateY(-20deg) scale(0.9);
+    transform: scale(0.9);
 }
 
 .carousel__slide--active~.carousel__slide {
-    transform: rotateY(20deg) scale(0.9);
+    transform: scale(0.9);
+
 }
 
 .carousel__slide--prev {
     opacity: 1;
-    transform: rotateY(-20deg) scale(0.9);
-    transition: 0.6s ease;
+    transform: scale(0.95);
+
 }
 
 .carousel__slide--next {
     opacity: 1;
-    transform: rotateY(20deg) scale(0.9);
+    transform: scale(0.95);
+
 }
 
 .carousel__slide--active {
     opacity: 1;
-    transform: rotateY(0) scale(1.1);
-    transition: 0.6s ease;
+    transform: scale(1.1);
+
 }
-/* ARROWS*/
 </style>
