@@ -66,7 +66,7 @@
 import { defineComponent } from 'vue';
 import { Carousel, Navigation, Pagination, Slide } from 'vue3-carousel';
 import 'vue3-carousel/dist/carousel.css';
- 
+
 export default defineComponent({
     name: 'EventCarousel',
     components: {
@@ -217,9 +217,9 @@ export default defineComponent({
     }
 }
 
-* {
+/* * {
     box-sizing: border-box;
-}
+} */
 
 .title {
     text-align: center;
@@ -227,12 +227,11 @@ export default defineComponent({
     font-size: 30px;
     font-weight: bold;
     margin-top: 40px;
-    color:black;
+    color: black;
 }
 
 /*  Card Styles */
 .card {
-    border: none;
     border-radius: 15px;
     overflow: hidden;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -287,9 +286,10 @@ export default defineComponent({
 .card:hover {
     transform: scale(1.03);
     /* Scale up on hover */
-    overflow: visible;
+    overflow: hidden;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
     /* Increase shadow on hover */
+
 }
 
 /* CAROUSEL */
@@ -298,6 +298,7 @@ export default defineComponent({
     padding: 0;
     width: 1200px;
     color: #2c3e50;
+    overflow: hidden;
 }
 
 .carousel__item {
