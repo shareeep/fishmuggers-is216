@@ -3,11 +3,10 @@
     <Navbar />
     <main>
       <!-- <h1>EVENTS</h1> -->
-      <search_filter/>
-      <carousel/>
-
+      <search_filter />
+      <carousel />
     </main>
-    
+
   </div>
 </template>
 
@@ -25,11 +24,11 @@ import carousel from '@/components/Protected/Carousel.vue';
   /* Width of the navbar */
   height: 100vh;
   /* Full height of the viewport */
-  position:sticky;
-  top:0;
+  position: sticky;
+  top: 0;
 }
 
-.search_filter{
+.search_filter {
   background-color: goldenrod;
   padding-left: 30px;
 }
@@ -52,10 +51,10 @@ main {
   /* Example background color */
   overflow-y: auto;
   /* Allow scrolling if content overflows */
-}
-
-h1 {
-  text-align: center;
-  /* Center text in the main area */
+  display: flex;
+  flex-direction: column; /* Ensure content stacks vertically */
+  justify-content: center; /* Center horizontally */
+  align-items: center; /* Center vertically */
+   /* Make the main take full viewport height */
 }
 </style>
