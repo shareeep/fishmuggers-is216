@@ -25,10 +25,12 @@ import carousel from '@/components/Protected/Carousel.vue';
   /* Width of the navbar */
   height: 100vh;
   /* Full height of the viewport */
+  position:sticky;
+  top:0;
 }
 
 .search_filter{
-  background-color: white;
+  background-color: goldenrod;
   padding-left: 30px;
 }
 
@@ -46,7 +48,7 @@ main {
   padding: 20px;
   /* Add padding for spacing */
   /* Optional styling */
-  background-color: white;
+  background-color: goldenrod;
   /* Example background color */
   overflow-y: auto;
   /* Allow scrolling if content overflows */

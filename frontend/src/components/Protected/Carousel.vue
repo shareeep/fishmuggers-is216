@@ -3,7 +3,7 @@
         <h1 class="title">Events Near You</h1>
         <Carousel :itemsToShow="3" :wrapAround="true" :transition="500" :partialVisible="false">
             <Slide v-for="(event, index) in events" :key="index">
-                <router-link :to="{ name: 'eventDetail', params: { title: event.title } }">
+                <router-link :to="`/eventdetail/${encodeURIComponent(event.title)}`">
                     <div class="carousel__item">
                         <div class="card">
                             <img :src="event.image" alt="Event Image">
@@ -123,7 +123,7 @@ export default defineComponent({
 .carousel__next:hover {
     color: white;
     /* Change arrow color on hover */
-    background-color: goldenrod;
+    background-color: #FFF3B3;
     /* Circle color when hovering */
     border-radius: 50%;
     /* Make it a circle */
@@ -171,7 +171,7 @@ export default defineComponent({
     /* Height of the pagination dots */
     --vc-pgn-border-radius: 50%;
     /* Rounded pagination dots */
-    --vc-pgn-background-color: goldenrod;
+    --vc-pgn-background-color: white;
     /* Default background color */
     --vc-pgn-active-color: #FFF3B3;
     /* Active pagination dot color */
@@ -212,7 +212,7 @@ export default defineComponent({
 
 @media(hover: hover) {
     .carousel__pagination-button:hover::after {
-        background-color: goldenrod;
+        background-color: #FFF3B3;
         /* Hover effect */
     }
 }
@@ -227,6 +227,7 @@ export default defineComponent({
     font-size: 30px;
     font-weight: bold;
     margin-top: 40px;
+    color:black;
 }
 
 /*  Card Styles */
@@ -246,6 +247,7 @@ export default defineComponent({
 .card-body {
     display: flex;
     padding: 20px;
+    background-color: white;
 }
 
 .card-left {

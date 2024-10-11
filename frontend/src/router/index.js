@@ -10,6 +10,7 @@ import Calendar from '@/views/Protected/Calendar.vue';
 import Friends from '@/views/Protected/Friends.vue';
 import Profile from '../views/Protected/Profile.vue';
 
+
 import PublicLayout from '../layouts/PublicLayout.vue';
 import ProtectedLayout from '../layouts/ProtectedLayout.vue'; 
 import { getAuth } from 'firebase/auth';
@@ -31,7 +32,7 @@ const router = createRouter({
           path: 'events',
           name: 'Events',
           component: Events,
-        },
+        }, 
         {
           path: 'eventdetail/:title',
           name: 'eventDetail',

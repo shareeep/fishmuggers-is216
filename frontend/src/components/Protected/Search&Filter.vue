@@ -86,7 +86,7 @@ export default {
                     const rangeDateInput = document.getElementById('rangeDate');
 
                     // Change the background color if two dates are selected
-                    rangeDateInput.style.backgroundColor = selectedDates.length === 2 ? 'goldenrod' : '#FFF3B3';
+                    rangeDateInput.style.backgroundColor = selectedDates.length === 2 ? 'gold' : '#FFF3B3';
                 }
             });
 
@@ -151,8 +151,6 @@ export default {
 </script>
 
 <style>
-
-
 #rangeDate {
     margin-right: 7px;
     position: relative;
@@ -202,13 +200,12 @@ export default {
     right: 10px;
     width: 0;
     height: 0;
-    border: 6px solid transparent;
-    border-color: black transparent transparent transparent;
+    border-color: #FFF3B3;
     /* Arrow color */
 }
 
 .select-selected.select-arrow-active:after {
-    border-color: transparent transparent #fff transparent;
+    border-color: #FFF3B3;
     /* Arrow color when active */
     top: 7px;
 }
@@ -245,7 +242,7 @@ export default {
 
 .search-bar input {
     padding: 12px 20px 12px 40px;
-    border: 2px solid #C99F25;
+    border: 2px solid black;
     border-radius: 20px;
     width: 400px;
     font-size: 16px;
@@ -270,18 +267,20 @@ export default {
 
 .sort-by {
     margin-top: 20px;
-    display:flex;
+    display: flex;
 
 }
 
 .sort-by-text {
+    padding-top: 5px;
     font-size: 18px;
     font-weight: 600;
-    color: #C99F25;
+    color: black;
 }
 
 .reset-filters {
-    color: #C99F25;
+    padding-top: 5px;
+    color: black;
     cursor: pointer;
     font-weight: 600;
     margin-left: 10px;
