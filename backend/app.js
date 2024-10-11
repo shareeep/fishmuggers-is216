@@ -24,11 +24,13 @@ app.get("/", (req, res) => {
 // Import Routes
 const eventsRoutes = require("./routes/events");
 const postsRoutes = require("./routes/posts");
+const petsRoutes = require("./routes/pets");
 // Import other routes as needed
 
 // Use Routes
 app.use("/api/events", eventsRoutes);
 app.use("/api/posts", postsRoutes);
+app.use("/api/pets", petsRoutes);
 // Use other routes similarly
 
 // Remove the duplicate app.listen call
