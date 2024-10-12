@@ -29,25 +29,28 @@
                 <h3>Date & Time</h3>
                 <div class="date-time">
                     <div class="date">
-                        <span class="icon calendar-icon">📅</span>
-                        <span>{{ event.day }}, {{ event.date }}</span>
+                        <span class="icon calendar-icon">📅 </span>
+                        <span> {{ event.day }}, {{ event.date }}</span>
                     </div>
                     <div class="time">
-                        <span class="icon clock-icon">⏰</span>
-                        <span>{{ event.time }}</span>
+                        <span class="icon clock-icon">⏰ </span>
+                        <span> {{ event.time }}</span>
                     </div>
                 </div>
                 <p class="add-to-calendar">+Add to Calendar</p>
 
                 <h3>Location</h3>
                 <div class="location">
-                    <span class="icon location-icon">📍</span>
+                    <span class="icon location-icon">📍 </span>
                     <span>{{ event.address }}</span>
                 </div>
             </div>
         </div>
     </div>
 </template>
+
+
+
 
 <script>
 import { onMounted } from 'vue';
@@ -56,7 +59,29 @@ export default {
     name: "EventDetail",
     data() {
         return {
-            // Example event data
+            event: null,  // Initialize event as null
+            isInterested: false,
+        };
+    },
+    mounted() {
+        const eventId = this.$route.params.id;
+        fetch(`/api/events/${eventId}`)
+            .then(response => response.json())
+            .then(data => {
+                this.event = data;  // Set the event data from the API
+            })
+            .catch(error => {
+                console.error('Failed to fetch event:', error);
+            });
+    },
+    methods: {
+        toggleInterested() {
+            this.isInterested = !this.isInterested; // Toggle interest state
+        }
+    },
+     // Example static event data for now 
+    data() {
+        return {
             event: {
                 title: "Sample Event",
                 image: "https://via.placeholder.com/800x400",
@@ -73,11 +98,6 @@ export default {
             },
             isInterested: false,
         };
-    },
-    methods: {
-        toggleInterested() {
-            this.isInterested = !this.isInterested; // Toggle interest state
-        }
     },
 };
 </script>

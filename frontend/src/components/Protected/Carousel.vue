@@ -3,7 +3,7 @@
         <h1 class="title">Events Near You</h1>
         <Carousel :itemsToShow="3" :wrapAround="true" :transition="500" :partialVisible="false">
             <Slide v-for="(event, index) in events" :key="index">
-                <router-link :to="`/eventdetail/${encodeURIComponent(event.title)}`">
+                <router-link :to="`/eventdetail/${event.id}`">
                     <div class="carousel__item">
                         <div class="card">
                             <img :src="event.image" alt="Event Image">
