@@ -193,7 +193,7 @@ export default {
     /* display: flex;
     flex-grow: 1; */
     margin-top: 15px;
-    width: 500px;
+    width: 600px;
     height: 400px;
 }
 
