@@ -185,7 +185,7 @@ table {
   height: 350px;
 }
 th, td {
-  border: 3px solid #ddd;
+  border: 3px solid #c8c7c7;
   padding: 10px;
   text-align: center;
 }
@@ -196,7 +196,7 @@ th, td {
 .current-date {
   /* background-color: rgba(239, 86, 21, 0.2);
   color: red; */
-  border: 3.9px solid rgba(66, 71, 76, 0.511);
+  border: 3.9px solid rgba(0, 0, 0, 0.475);
 }
 .clickable-date:hover {
   cursor: pointer;
