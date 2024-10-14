@@ -24,7 +24,6 @@ import RSVPbar from '@/components/Protected/RSVPbar.vue';
     /* Set flexbox layout for the container */
 }
 
-
 /* can change */
 main {
     flex-grow: 1;
@@ -36,6 +35,7 @@ main {
     /* Example background color */
     overflow-y: auto;
     /* Allow scrolling if content overflows */
+    margin-bottom: 20px;
 }
 /* 
 h1 {

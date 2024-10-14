@@ -19,6 +19,30 @@ export default {
     name: "EventDetail",
     data() {
         return {
+            event: null,  // Initialize event as null
+            isInterested: false,
+        };
+    },
+    mounted() {
+        const eventId = this.$route.params.id;
+        fetch(`/api/events/${eventId}`)
+            .then(response => response.json())
+            .then(data => {
+                this.event = data;  // Set the event data from the API
+
+            })
+            .catch(error => {
+                console.error('Failed to fetch event:', error);
+            });
+    },
+    methods: {
+        toggleInterested() {
+            this.isInterested = !this.isInterested; // Toggle interest state
+        },
+
+    },
+    data() {
+        return {
             // Example event data
             event: {
                 title: "Sample Event",
@@ -71,6 +95,9 @@ export default {
 }
 
 .bottom-bar {
+
+    z-index: 1000000;
+
     position: fixed;
     bottom: 0;
     left: 0;
