@@ -30,11 +30,7 @@ main {
   flex-grow: 1; /* Allow main to take the remaining width */
   padding: 20px; /* Add padding for spacing */
   /* Optional styling */
-  background-color: goldenrod; /* Example background color */
+  background-color: #FCEFB4; /* Example background color */
   overflow-y: auto; /* Allow scrolling if content overflows */
-}
-
-h1 {
-  text-align: center; /* Center text in the main area */
 }
 </style>
