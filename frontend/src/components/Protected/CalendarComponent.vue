@@ -196,7 +196,7 @@ th, td {
 .current-date {
   /* background-color: rgba(239, 86, 21, 0.2);
   color: red; */
-  border: 3.9px solid gray;
+  border: 3.9px solid rgba(66, 71, 76, 0.511);
 }
 .clickable-date:hover {
   cursor: pointer;
