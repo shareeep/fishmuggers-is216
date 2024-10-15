@@ -13,7 +13,7 @@
 <script setup>
 // Any Home page-specific logic 
 import Navbar from '@/components/Protected/Navbar.vue';
-import search_filter from '@/components/Protected/Search&Filter.vue';
+import search_filter from '@/components/Protected/SearchandFilter.vue';
 import carousel from '@/components/Protected/Carousel.vue';
 
 </script>
@@ -29,7 +29,7 @@ import carousel from '@/components/Protected/Carousel.vue';
 }
 
 .search_filter {
-  background-color: goldenrod;
+  background-color: #FCEFB4;
   padding-left: 30px;
 }
 
@@ -47,7 +47,7 @@ main {
   padding: 20px;
   /* Add padding for spacing */
   /* Optional styling */
-  background-color: goldenrod;
+  background-color: #FCEFB4;
   /* Example background color */
   overflow-y: auto;
   /* Allow scrolling if content overflows */

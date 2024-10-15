@@ -173,19 +173,26 @@ export default {
 </script>
 
 <style scoped>
-
 .pet-type-container {
-    display: flex; /* Align items inline */
-    gap: 10px; /* Space between each pet type */
+    display: flex;
+    /* Align items inline */
+    gap: 10px;
+    /* Space between each pet type */
 }
 
 .pet-type {
-    border: 2px solid #7B61FF; /* Gold border */
-    border-radius: 15px;    /* Rounded corners */
-    padding: 5px 15px;      /* Padding for spacing */
-    background-color: transparent; /* No fill */
-    color: #7B61FF; /* Text color */
-    font-weight: bold; Optional: make the text bold
+    border: 2px solid #7B61FF;
+    /* Gold border */
+    border-radius: 15px;
+    /* Rounded corners */
+    padding: 5px 15px;
+    /* Padding for spacing */
+    background-color: transparent;
+    /* No fill */
+    color: #7B61FF;
+    /* Text color */
+    font-weight: bold;
+    /*Optional: make the text bold */
 }
 
 
