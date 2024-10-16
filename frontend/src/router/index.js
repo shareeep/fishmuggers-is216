@@ -4,10 +4,12 @@ import Register from '../views/Public/Register.vue';
 
 import Home from '../views/Protected/Home.vue';
 import Events from '@/views/Protected/Events.vue';
+import EventDetail from '@/views/Protected/EventDetail.vue'; 
 import Notifications from '@/views/Protected/Notifications.vue';
 import Calendar from '@/views/Protected/Calendar.vue';
 import Friends from '@/views/Protected/Friends.vue';
 import Profile from '../views/Protected/Profile.vue';
+
 
 import PublicLayout from '../layouts/PublicLayout.vue';
 import ProtectedLayout from '../layouts/ProtectedLayout.vue'; 
@@ -30,6 +32,11 @@ const router = createRouter({
           path: 'events',
           name: 'Events',
           component: Events,
+        }, 
+        {
+          path: 'eventdetail/:title',
+          name: 'eventDetail',
+          component: EventDetail,
         },
         {
           path: 'notifications',
