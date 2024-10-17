@@ -290,7 +290,7 @@ export default defineComponent({
     /* Rounded pagination dots */
     --vc-pgn-background-color: white;
     /* Default background color */
-    --vc-pgn-active-color: #FFF3B3;
+    --vc-pgn-active-color: gold;
     /* Active pagination dot color */
 }
 
@@ -323,13 +323,13 @@ export default defineComponent({
 }
 
 .carousel__pagination-button--active::after {
-    background-color: #FFF3B3;
+    background-color: gold;
     /* Use your custom active color */
 }
 
 @media(hover: hover) {
     .carousel__pagination-button:hover::after {
-        background-color: #FFF3B3;
+        background-color: gold;
         /* Hover effect */
     }
 }
