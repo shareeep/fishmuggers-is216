@@ -2,6 +2,7 @@
     <div class="max-w-md mx-auto">
         <!--SEARCH BAR-->
         <div class="relative">
+            <img src="../../assets/images/search_image.png" style="width:300px; margin-bottom: -10px;margin-left: 48px;position:relative;" class="block mx-auto z-30 md:w-2/3 lg:w-1/2">
             <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none z-10">
                 <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
                     xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
