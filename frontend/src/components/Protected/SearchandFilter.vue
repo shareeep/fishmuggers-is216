@@ -1,8 +1,11 @@
 <template>
-    <div class="max-w-md mx-auto">
+    <div class="max-w-md mx-auto relative">
+        <img src="../../assets/images/search_image.png"
+            style="width:300px; margin-bottom: -10px;margin-left: 48px;position:relative;"
+            class="block mx-auto z-30 md:w-2/3 lg:w-1/2">
+
         <!--SEARCH BAR-->
-        <div class="relative">
-            <img src="../../assets/images/search_image.png" style="width:300px; margin-bottom: -10px;margin-left: 48px;position:relative;" class="block mx-auto z-30 md:w-2/3 lg:w-1/2">
+        <div class="relative z-20 flex flex-col md:flex-row">
             <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none z-10">
                 <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
                     xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
@@ -13,9 +16,12 @@
             <input type="search" id="default-search"
                 class="block w-full pl-10 p-4 text-sm text-gray-900 border border-gray-300 rounded-lg bg-white focus:ring-[#FDF4CB] focus:border-[#FDF4CB] dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-[#FDF4CB] dark:focus:border-[#FDF4CB] drop-shadow-md"
                 placeholder="Search for an event" required />
-            <button
-                class="text-black absolute end-2.5 bottom-2.5 bg-[#FFD700] hover:bg-[#E6C200] font-bold rounded-lg text-sm px-4 py-2">Search
-            </button>
+            <div style="margin-left:25px;">
+                <button
+                    class="text-black absolute end-12 bottom-2.5 bg-[#FFD700] hover:bg-[#E6C200] font-bold rounded-lg text-sm px-4 py-2">Search
+                </button>
+            </div>
+
         </div>
     </div>
 
