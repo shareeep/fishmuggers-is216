@@ -8,29 +8,76 @@
         <h2>{{ currentDay }}</h2>
         <h3>{{ currentDate }}</h3>
       </div>
+      <hr>
       <div class="filters">
         <h3>Filter Events</h3>
-        <div>
-          <label>
-            <input type="checkbox" value="Dog" v-model="selectedFilters" />
-            Dog
-          </label>
+
+        <!-- Pet Type Filter -->
+        <div class="pet-type">
+          <h4>Pet Type</h4>
+          <div>
+            <label>
+              <input type="checkbox" value="Dog" v-model="selectedPetTypes" />
+              Dog
+            </label>
+          </div>
+          <div>
+            <label>
+              <input type="checkbox" value="Cat" v-model="selectedPetTypes" />
+              Cat
+            </label>
+          </div>
+          <div>
+            <label>
+              <input type="checkbox" value="Hamster" v-model="selectedPetTypes" />
+              Hamster
+            </label>
+          </div>
         </div>
-        <div>
-          <label>
-            <input type="checkbox" value="Cat" v-model="selectedFilters" />
-            Cat
-          </label>
+
+        <!-- Event Size Filter -->
+        <div class="event-size">
+          <h4>Event Size</h4>
+          <div>
+            <label>
+              <input type="checkbox" value="Small" v-model="selectedEventSizes" />
+              Small
+            </label>
+          </div>
+          <div>
+            <label>
+              <input type="checkbox" value="Large" v-model="selectedEventSizes" />
+              Large
+            </label>
+          </div>
         </div>
-        <div>
-          <label>
-            <input type="checkbox" value="Hamster" v-model="selectedFilters" />
-            Hamster
-          </label>
+
+        <!-- Location Filter -->
+        <div class="location">
+          <h4>Location</h4>
+          <div>
+            <label>
+              <input type="checkbox" value="Central Park" v-model="selectedLocations" />
+              Central Park
+            </label>
+          </div>
+          <div>
+            <label>
+              <input type="checkbox" value="City Hall" v-model="selectedLocations" />
+              City Hall
+            </label>
+          </div>
         </div>
-        <!-- Add more filters as needed -->
-         <p>{{ selectedFilters }}</p>
+        
+        <!-- Display selected filters -->
+        <div class="filter-display">
+          <p>{{ selectedPetTypes }}</p>
+          <p>{{ selectedEventSizes }}</p>
+          <p>{{ selectedLocations }}</p>
+        </div>
+        
       </div>
+
     </div>
     <div class="calendar">
       <div class="calendar-header">
@@ -69,117 +116,123 @@ import EventPopup from './EventPopup.vue';
 
 export default {
   data() {
-    return {
-      events: [
-        { EventId: "1", UserId: "123", Title: "Dog Walking", Description: "Walk the dog in the park", EventDate: "2024-10-13", Location: "Central Park" },
-        { EventId: "2", UserId: "124", Title: "Pet Adoption Fair", Description: "Adoption event for pets", EventDate: "2024-10-20", Location: "City Hall" },
-        // Add more events as needed
-      ],
-      selectedEvent: null,
-      showPopup: false,
-      currentYear: new Date().getFullYear(),
-      currentMonthIndex: new Date().getMonth(),
-      days: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-      today: new Date().getDate(),
-      todayMonth: new Date().getMonth(),
-      todayYear: new Date().getFullYear(),
-      selectedFilters: [],
-    };
+  return {
+    events: [
+      { EventId: "1", UserId: "123", Title: "Dog Walking", Description: "Walk the dog in the park", EventDate: "2024-10-13", Location: "Central Park", PetType: "Dog", EventSize: "Small" },
+      { EventId: "2", UserId: "124", Title: "Pet Adoption Fair", Description: "Adoption event for pets", EventDate: "2024-10-20", Location: "City Hall", PetType: "Cat", EventSize: "Large" },
+      // Add more events as needed
+    ],
+    selectedEvent: null,
+    showPopup: false,
+    currentYear: new Date().getFullYear(),
+    currentMonthIndex: new Date().getMonth(),
+    days: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+    today: new Date().getDate(),
+    todayMonth: new Date().getMonth(),
+    todayYear: new Date().getFullYear(),
+    selectedPetTypes: [],
+    selectedEventSizes: [],
+    selectedLocations: [],
+  };
+},
+computed: {
+  currentMonth() {
+    return new Date(this.currentYear, this.currentMonthIndex).toLocaleString('default', { month: 'long', year: 'numeric' });
   },
-  computed: {
-    currentMonth() {
-      return new Date(this.currentYear, this.currentMonthIndex).toLocaleString('default', { month: 'long', year: 'numeric' });
-    },
-    currentDay() {
-      return new Date().toLocaleDateString('default', { weekday: 'long' });
-    },
-    currentDate() {
-      return new Date().toLocaleDateString('default', { day: 'numeric', month: 'long', year: 'numeric' });
-    },
-    calendar() {
-      const startDate = new Date(this.currentYear, this.currentMonthIndex, 1);
-      const endDate = new Date(this.currentYear, this.currentMonthIndex + 1, 0);
-      const daysInMonth = endDate.getDate();
+  currentDay() {
+    return new Date().toLocaleDateString('default', { weekday: 'long' });
+  },
+  currentDate() {
+    return new Date().toLocaleDateString('default', { day: 'numeric', month: 'long', year: 'numeric' });
+  },
+  calendar() {
+    const startDate = new Date(this.currentYear, this.currentMonthIndex, 1);
+    const endDate = new Date(this.currentYear, this.currentMonthIndex + 1, 0);
+    const daysInMonth = endDate.getDate();
 
-      const calendar = [];
-      let week = [];
-      let currentDate = new Date(startDate);
+    const calendar = [];
+    let week = [];
+    let currentDate = new Date(startDate);
 
-      // Fill the first week with the previous month's dates if needed
-      for (let i = 0; i < startDate.getDay(); i++) {
-        const prevMonthDate = new Date(startDate);
-        prevMonthDate.setDate(startDate.getDate() - (startDate.getDay() - i));
-        week.push({ date: prevMonthDate.getDate(), isCurrentMonth: false });
-      }
+    for (let i = 0; i < startDate.getDay(); i++) {
+      const prevMonthDate = new Date(startDate);
+      prevMonthDate.setDate(startDate.getDate() - (startDate.getDay() - i));
+      week.push({ date: prevMonthDate.getDate(), isCurrentMonth: false });
+    }
 
-      // Fill the calendar with the current month's dates
-      for (let day = 1; day <= daysInMonth; day++) {
-        week.push({ date: day, isCurrentMonth: true });
+    for (let day = 1; day <= daysInMonth; day++) {
+      week.push({ date: day, isCurrentMonth: true });
 
-        if (week.length === 7) {
-          calendar.push(week);
-          week = [];
-        }
-      }
-
-      // Fill the last week with the next month's dates if needed
-      let dayCounter = 1;
-      while (week.length < 7) {
-        week.push({ date: dayCounter++, isCurrentMonth: false });
-      }
-      if (week.length > 0) {
+      if (week.length === 7) {
         calendar.push(week);
+        week = [];
       }
+    }
 
-      // Remove the last week if it's completely from the next month
-      if (calendar[calendar.length - 1].every(day => !day.isCurrentMonth)) {
-        calendar.pop();
-      }
+    let dayCounter = 1;
+    while (week.length < 7) {
+      week.push({ date: dayCounter++, isCurrentMonth: false });
+    }
+    if (week.length > 0) {
+      calendar.push(week);
+    }
 
-      return calendar;
-    },
-    eventDates() {
-      return this.events.map(event => event.EventDate);
-    },
+    if (calendar[calendar.length - 1].every(day => !day.isCurrentMonth)) {
+      calendar.pop();
+    }
+
+    return calendar;
   },
-  methods: {
-    isEventDate(date, isCurrentMonth) {
-      if (!isCurrentMonth) return false;
-      const formattedDate = `${this.currentYear}-${String(this.currentMonthIndex + 1).padStart(2, '0')}-${String(date).padStart(2, '0')}`;
-      return this.eventDates.includes(formattedDate);
-    },
-    isCurrentDate(date, isCurrentMonth) {
-      return isCurrentMonth && this.currentYear === this.todayYear && this.currentMonthIndex === this.todayMonth && date === this.today;
-    },
-    showEventDetails(date, isCurrentMonth) {
-      if (!isCurrentMonth) return;
-      const formattedDate = `${this.currentYear}-${String(this.currentMonthIndex + 1).padStart(2, '0')}-${String(date).padStart(2, '0')}`;
-      const event = this.events.find(event => event.EventDate === formattedDate);
-      if (event) {
-        this.selectedEvent = event;
-        this.showPopup = true;
-      }
-    },
-    prevMonth() {
-      if (this.currentMonthIndex === 0) {
-        this.currentMonthIndex = 11;
-        this.currentYear--;
-      } else {
-        this.currentMonthIndex--;
-      }
-    },
-    nextMonth() {
-      if (this.currentMonthIndex === 11) {
-        this.currentMonthIndex = 0;
-        this.currentYear++;
-      } else {
-        this.currentMonthIndex++;
-      }
-    },
+  filteredEvents() {
+    return this.events.filter(event => {
+      return (this.selectedPetTypes.length === 0 || this.selectedPetTypes.includes(event.PetType)) &&
+             (this.selectedEventSizes.length === 0 || this.selectedEventSizes.includes(event.EventSize)) &&
+             (this.selectedLocations.length === 0 || this.selectedLocations.includes(event.Location));
+    });
   },
-  components: {
-    EventPopup,
+  eventDates() {
+    return this.filteredEvents.map(event => event.EventDate);
   },
+},
+methods: {
+  isEventDate(date, isCurrentMonth) {
+    if (!isCurrentMonth) return false;
+    const formattedDate = `${this.currentYear}-${String(this.currentMonthIndex + 1).padStart(2, '0')}-${String(date).padStart(2, '0')}`;
+    return this.eventDates.includes(formattedDate);
+  },
+  isCurrentDate(date, isCurrentMonth) {
+    return isCurrentMonth && this.currentYear === this.todayYear && this.currentMonthIndex === this.todayMonth && date === this.today;
+  },
+  showEventDetails(date, isCurrentMonth) {
+    if (!isCurrentMonth) return;
+    const formattedDate = `${this.currentYear}-${String(this.currentMonthIndex + 1).padStart(2, '0')}-${String(date).padStart(2, '0')}`;
+    const event = this.filteredEvents.find(event => event.EventDate === formattedDate);
+    if (event) {
+      this.selectedEvent = event;
+      this.showPopup = true;
+    }
+  },
+  prevMonth() {
+    if (this.currentMonthIndex === 0) {
+      this.currentMonthIndex = 11;
+      this.currentYear--;
+    } else {
+      this.currentMonthIndex--;
+    }
+  },
+  nextMonth() {
+    if (this.currentMonthIndex === 11) {
+      this.currentMonthIndex = 0;
+      this.currentYear++;
+    } else {
+      this.currentMonthIndex++;
+    }
+  },
+},
+components: {
+  EventPopup,
+},
+
 };
 </script>
 
@@ -187,36 +240,75 @@ export default {
 .calendar-container {
   display: flex;
   width: 100%;
-  max-width: 930px;
-  
+  max-width: 70vw;
   margin: auto;
-  margin-top: 7vh;
+  height: 80vh;
+  margin-top: 5vh;
   border: solid 4px #c8c7c7;
   border-radius: 12px;
   overflow: hidden;
 }
-
 /* sidepanel */
 .side-panel {
-  width: 200px;
+  width: 25%;
+  height: 100%;
   background-color: white;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
   display: flex;
   flex-direction: column;
+  overflow-y: scroll;
 }
-.current-day {
-  font-size: 30px;
-  padding-left: 5px;
+.calendar-img {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 5%;
+  padding-bottom: 0px;
+  width: 75%;
+  border-radius: 50%;
+  margin: 0 auto; /* Center the container horizontally */
+
+}
+.calendar-img img {
+  /* width: 90%; */
+  height: auto ;
+  display: block;
+  border-radius: 50%;
+}
+.current-day{
+  text-align: center;
+}
+.current-day h2{
+  font-size: 28px;
+
   font-weight: bolder;
-  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
-  -webkit-text-stroke-width: 0.1px;
-  -webkit-text-stroke-color: white;
-  border-top: 4px solid #c8c7c7;
+  font-family: 'Arial Rounded MT';
+}
+.current-day h3{
+  font-size: 20px;
+  /* text-align: center; */
+  font-weight: bolder;
+  font-family: 'Arial Rounded MT';
+  color:#414141bf;
+}
+.side-panel hr{
+  border: 1px solid #c8c7c7;
 }
 .filters {
-
+  /* padding-left: 8%; */
 }
-
+.filters h3{
+  font-family: 'Arial Rounded MT';
+  font-weight: bolder;
+  font-size: 20px;
+  padding-left: 4%;
+}
+.filters .pet-type, .event-size, .location{
+  padding-left: 8%;
+}
+.filters .filter-display{
+  padding-left: 4%;
+}
 input[type="checkbox"]:focus {
   outline: none; /* Ensure the outline remains removed on focus */
   box-shadow: none; /* Customize the focus style */
@@ -226,6 +318,7 @@ input[type="checkbox"]:focus {
 .calendar {
   flex: 1;
   border-left: 4px solid #c8c7c7;
+  
 }
 
 .calendar-header {
@@ -239,11 +332,12 @@ input[type="checkbox"]:focus {
   border: 3px solid #c8c7c7;
   border-bottom: 0px; */
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  height: 150px;
+  height: 30%;
   background-image: url(../../assets/images/pet_calendar.avif);
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center bottom;
+  border-bottom: 4px solid #c8c7c7;
 }
 .calendar-header h1 {
   font-size: 48px;
@@ -253,26 +347,27 @@ input[type="checkbox"]:focus {
   text-shadow: 6px 6px 6px white;
 }
 .calendar-header button {
-  background-color: #fff;
-  color: #000;
+  background-color: #48434B;
+  color: white;
   border: none;
-  border-radius: 8px;
-  padding: 8px 12px;
+  padding: 8px 20px;
   cursor: pointer;
   transition: background-color 0.3s;
 }
 .calendar-header button:hover {
-  background-color: #f0f0f0;
+  background-color: #89848c;
 }
 table {
   width: 100%;
   background-color: white;
-  height: 350px;
+  height: 70%;
   border-collapse: separate;
   border-spacing: 4px;
 }
 th {
-  background-color: rgba(54, 242, 242, 0.368);
+  background-color: #ffd700;
+  border: 1.5px solid black;
+  border-radius: 12px;
   padding: 6px;
   padding-bottom: 3px;
   font-size: x-large;
@@ -284,13 +379,16 @@ th {
 }
 
 td {
-  background-color: rgba(255, 192, 203, 0.429);
+  /* background-color: rgba(255, 192, 203, 0.429); */
+  background-color: #FCEFB4;
   border-radius: 12px;
+  border: 1px solid black;
   padding: 6px;
-  text-align: center;
+  text-align: center; 
 }
 .event-date {
-  background-color: rgba(21, 86, 239, 0.2);
+  /* background-color: rgba(21, 86, 239, 0.2); */
+  background-color: rgba(234, 148, 0, 0.559);
   color: #000;
   cursor: pointer;
 }
@@ -300,12 +398,15 @@ td {
 }
 .clickable-date:hover {
   cursor: pointer;
-  background-color: rgb(126, 165, 255);
+  /* background-color: rgb(126, 165, 255); */
+  background-color: #b97200e7;
+  color: white;
+  /* border: 2px solid #7b61ff; */
 }
 .current-month {
   color: #000;
 }
 .other-month {
-  color: #d3d3d3;
+  color: #bdbdbd;
 }
 </style>

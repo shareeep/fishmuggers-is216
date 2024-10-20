@@ -44,8 +44,10 @@
   }
   
   .popup-title {
-    background-color: #4dcdc3; /* Change this to any color you like */
-    color: white;
+    /* background-color: #4dcdc3; Change this to any color you like */
+    background-color: #ffd700;
+    font-family: 'Arial Rounded MT';
+    border-bottom: black solid 3px;
     padding: 10px;
     /* border-radius:; */
     text-align: center;
