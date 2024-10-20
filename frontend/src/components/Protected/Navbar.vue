@@ -1,7 +1,10 @@
 <template>
     <nav class="navbar">
       <div class="logo">
-        <h1>PetConnect</h1>
+        <h1>
+          <img src="../../assets/images/logo.png" alt="Profile" class="profile-pic" />  
+          PetConnect
+        </h1>
       </div>
       <ul>
         <li>
@@ -36,8 +39,15 @@
         </li>
         <li>
           <router-link to="/profile">
-            <img src="../../assets/images/logo.png" alt="Profile" class="profile-pic" />
+        
+            <i class="fas fa-user"></i>
             Profile
+          </router-link>
+        </li>
+        <li>
+          <router-link to="/chats">
+            <i class="fas fa-message"></i>
+            Chats
           </router-link>
         </li>
       </ul>
