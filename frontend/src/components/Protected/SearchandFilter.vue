@@ -1,25 +1,249 @@
 <template>
-    <div class="max-w-md mx-auto">
-        <!--SEARCH BAR-->
-        <div class="relative">
-            <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none z-10">
-                <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
-                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
-                </svg>
+    <div class="max-w-md mx-auto relative">
+        <img src="../../assets/images/search_image.png"
+            style="width:300px; margin-bottom: -10px;margin-left: 48px;position:relative;"
+            class="block mx-auto z-30 md:w-2/3 lg:w-1/2">
+
+        <!-- SEARCH BAR -->
+        <div class="flex justify-center">
+            <div class="relative z-20 flex items-center w-full max-w-lg">
+                <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none z-10">
+                    <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+                    </svg>
+                </div>
+                <input type="search" id="default-search"
+                    class="block w-full pl-10 p-4 text-sm text-gray-900 border border-gray-300 rounded-lg bg-white focus:ring-[#FDF4CB] focus:border-[#FDF4CB] dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-[#FDF4CB] dark:focus:border-[#FDF4CB] drop-shadow-md"
+                    placeholder="Search for an event" required />
+                <div class="absolute inset-y-0 end-0 flex items-center ps-3 z-10 mr-2">
+                    <button
+                        class="text-black absolute end-0 bottom-2.5 bg-[#FFD700] hover:bg-[#E6C200] font-bold rounded-lg text-sm px-4 py-2">Search
+                    </button>
+                </div>
+
             </div>
-            <input type="search" id="default-search"
-                class="block w-full pl-10 p-4 text-sm text-gray-900 border border-gray-300 rounded-lg bg-white focus:ring-[#FDF4CB] focus:border-[#FDF4CB] dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-[#FDF4CB] dark:focus:border-[#FDF4CB] drop-shadow-md"
-                placeholder="Search for an event" required />
-            <button
-                class="text-black absolute end-2.5 bottom-2.5 bg-[#FFD700] hover:bg-[#E6C200] font-bold rounded-lg text-sm px-4 py-2">Search
-            </button>
         </div>
     </div>
 
-    <!-- Sort by -->
-    <div class="sort-by">
+    <!--sort by sm block-->
+
+    <!--Sort by md block-->
+    <div class="sort-bymd md:block lg:hidden">
+        <div class="sort-by-text me-3"
+            style="font-weight: bold;color:#7B61FF;margin-bottom: 8px;text-align: center;margin-top: 8px;">Sort by:
+        </div>
+
+        <div class="flex justify-center">
+            <div class="dropdown-wrapper">
+                <!-- Pet Type Dropdown -->
+                <button @click="togglePetTypeDropdown" :class="[
+                    'w-36 border border-[#7B61FF] border-2 font-bold rounded-lg text-sm px-4 py-2.5 text-center inline-flex justify-center items-center me-3',
+                    isPetTypeFilled ? 'bg-[#7B61FF] text-white' : 'text-[#7B61FF] hover:bg-[#7B61FF] hover:text-white'
+                ]" type="button">
+                    Pet Type
+                    <svg class="w-4 h-4 ml-2" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+
+                <!-- Pet Type Dropdown Menu -->
+                <div v-if="isPetTypeDropdownOpen" class="custom-dropdown z-10 w-56 p-3 rounded-lg shadow-lg">
+                    <h6 class="mb-3 text-sm font-medium text-gray-800">
+                        Category
+                    </h6>
+                    <ul class="space-y-2 text-sm">
+                        <li class="flex items-center">
+                            <input id="cats" type="checkbox" v-model="selectedCats"
+                                class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500" />
+                            <label for="cats" class="ml-2 text-sm font-medium text-gray-900">
+                                Cats
+                            </label>
+                        </li>
+
+                        <li class="flex items-center">
+                            <input id="dogs" type="checkbox" v-model="selectedDogs"
+                                class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500" />
+                            <label for="dogs" class="ml-2 text-sm font-medium text-gray-900">
+                                Dogs
+                            </label>
+                        </li>
+                    </ul>
+
+                    <!-- Apply Button -->
+                    <button @click="applyPetTypeFilters"
+                        class="mt-3 w-full bg-[#7B61FF] text-white font-bold py-2 px-4 rounded-lg hover:bg-[#5e48e6]">
+                        Apply
+                    </button>
+                </div>
+            </div>
+            <div class="dropdown-wrapper">
+                <!-- Event Size Dropdown -->
+                <button @click="toggleEventSizeDropdown" :class="[
+                    'w-36 border border-[#7B61FF] border-2 font-bold rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center justify-center',
+                    isEventSizeFilled ? 'bg-[#7B61FF] text-white' : 'text-[#7B61FF] hover:bg-[#7B61FF] hover:text-white'
+                ]" type="button">
+                    Event Size
+                    <svg class="w-4 h-4 ml-2" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+
+                <!-- Event Size Dropdown Menu -->
+                <div v-if="isEventSizeDropdownOpen" class="custom-dropdown z-10 w-56 p-3 rounded-lg shadow-lg">
+                    <h6 class="mb-3 text-sm font-medium text-gray-800">
+                        Event Size
+                    </h6>
+                    <ul class="space-y-2 text-sm">
+                        <li class="flex items-center">
+                            <input id="lessThan10" type="radio" value="lessThan10" v-model="selectedEventSize"
+                                class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500" />
+                            <label for="lessThan10" class="ml-2 text-sm font-medium text-gray-900">
+                                &lt;10
+                            </label>
+                        </li>
+
+                        <li class="flex items-center">
+                            <input id="tenToFifty" type="radio" value="tenToFifty" v-model="selectedEventSize"
+                                class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500" />
+                            <label for="tenToFifty" class="ml-2 text-sm font-medium text-gray-900">
+                                10-50
+                            </label>
+                        </li>
+
+                        <li class="flex items-center">
+                            <input id="fiftyToHundred" type="radio" value="fiftyToHundred" v-model="selectedEventSize"
+                                class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500" />
+                            <label for="fiftyToHundred" class="ml-2 text-sm font-medium text-gray-900">
+                                50-100
+                            </label>
+                        </li>
+
+                        <li class="flex items-center">
+                            <input id="moreThanHundred" type="radio" value="moreThanHundred" v-model="selectedEventSize"
+                                class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500" />
+                            <label for="moreThanHundred" class="ml-2 text-sm font-medium text-gray-900">
+                                &gt;100
+                            </label>
+                        </li>
+                    </ul>
+
+                    <!-- Apply Button -->
+                    <button @click="applyEventSizeFilters"
+                        class="mt-3 w-full bg-[#7B61FF] text-white font-bold py-2 px-4 rounded-lg hover:bg-[#5e48e6]">
+                        Apply
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="flex justify-center mt-3">
+            <!-- Date Range Dropdown -->
+            <div class="dropdown-wrapper flex-2">
+                <button @click="toggleDateRangeDropdown" :class="[
+                    'w-36 border border-[#7B61FF] border-2 font-bold rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center justify-center me-3',
+                    isDateRangeFilled ? 'bg-[#7B61FF] text-white' : 'text-[#7B61FF] hover:bg-[#7B61FF] hover:text-white'
+                ]" type="button">
+                    Date Range
+                    <svg class="w-4 h-4 ml-2" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+
+                <!-- Date Range Dropdown Menu -->
+                <div v-if="isDateRangeDropdownOpen" class="custom-dropdown z-10 w-56 p-3 rounded-lg shadow-lg">
+                    <h6 class="mb-3 text-sm font-medium text-gray-800">Date Range</h6>
+                    <div class="mb-4">
+                        <label for="start-date" class="block text-sm font-medium text-gray-700">From:</label>
+                        <div class="relative">
+                            <input id="start-date" v-model="startDate" type="date" :min="today"
+                                placeholder="Select start date"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="end-date" class="block text-sm font-medium text-gray-700">To:</label>
+                        <div class="relative">
+                            <input id="end-date" v-model="endDate" type="date" :min="today"
+                                placeholder="Select end date"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                            <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Apply Button -->
+                    <button @click="applyDateRangeFilters"
+                        class="mt-3 w-full bg-[#7B61FF] text-white font-bold py-2 px-4 rounded-lg hover:bg-[#5e48e6]">
+                        Apply
+                    </button>
+                </div>
+            </div>
+
+            <!-- Location Dropdown -->
+            <div class="dropdown-wrapper">
+                <button @click="toggleLocationDropdown" :class="[
+                    'w-36 border border-[#7B61FF] border-2 font-bold rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center justify-center',
+                    isLocationFilled ? 'bg-[#7B61FF] text-white' : 'text-[#7B61FF] hover:bg-[#7B61FF] hover:text-white'
+                ]" type="button">
+                    Location
+                    <svg class="w-4 h-4 ml-2 z-10" aria-hidden="true" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                    </svg>
+                </button>
+                <!-- Location Dropdown Menu -->
+                <div v-if="isLocationDropdownOpen" class="custom-dropdown z-10 w-56 p-3 rounded-lg shadow-lg">
+                    <h6 class="mb-3 text-sm font-medium text-gray-800">Location</h6>
+                    <div class="mb-4">
+                        <div class="relative">
+                            <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none z-10">
+                                <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
+                                    xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                        stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+                                </svg>
+                            </div>
+                            <input v-model="searchedLoc" @input="fetchLocationSuggestions" type="text"
+                                placeholder="Search for Location"
+                                class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 pl-9">
+                        </div>
+                    </div>
+
+                    <!-- Suggestions -->
+                    <ul v-if="locationSuggestions.length" class="bg-white border border-gray-300 rounded-lg shadow-lg">
+                        <li v-for="suggestion in locationSuggestions" :key="suggestion.id"
+                            @click="selectLocation(suggestion)" class="px-2 py-1 cursor-pointer hover:bg-gray-200">
+                            {{ suggestion.name }}
+                        </li>
+                    </ul>
+                    <!-- Apply Button -->
+                    <button @click="applyLocationFilters"
+                        class="mt-2 w-full bg-[#7B61FF] text-white font-bold py-2 px-4 rounded-lg hover:bg-[#5e48e6]">
+                        Apply
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Reset Filters Button -->
+        <div class="flex justify-center mt-3">
+            <button @click="resetFilters"
+                class="rounded-lg text-sm py-2.5 text-center items-center me-3 text-black  bg-[#FFD700] hover:bg-[#E6C200] font-bold text-sm"
+                style="width: 19.5rem;">
+                Reset Filters
+            </button>
+        </div>
+
+
+    </div>
+
+    <!-- Sort by large block-->
+    <div class="sort-by hidden sm:hidden md:hidden lg:block">
         <span class="sort-by-text me-3" style="font-weight: bold;color:#7B61FF;">Sort by:</span>
 
         <div class="dropdown-wrapper me-3 d-inline-block">
@@ -454,11 +678,22 @@ button {
 
 /* SORT BY */
 .sort-by {
-    display: flex;
     /* Flexbox for sort by section */
     align-items: center;
     /* Center align items */
     margin-top: 15px;
     /* Margin on top */
+}
+
+/* SORT BY */
+@media (min-width: 1024px) {
+    .sort-by {
+        display: flex;
+        /* Flexbox for sort by section */
+        align-items: center;
+        /* Center align items */
+        margin-top: 15px;
+        /* Margin on top */
+    }
 }
 </style>
