@@ -36,17 +36,42 @@
 import { ref } from 'vue';
 import { getAuth, createUserWithEmailAndPassword } from 'firebase/auth';
 import { useRouter } from 'vue-router';
+import { getFirestore, collection, getDocs, addDoc } from 'firebase/firestore'; // Import Firestore
 
 const email = ref('');
 const password = ref('');
 const errorMessage = ref(''); // Reactive variable for error message
 const auth = getAuth();
 const router = useRouter();
+const db = getFirestore(); // Initialize Firestore
+
+// Function to generate user-friendly ID like user001, user002
+const generateUserID = async () => {
+  const usersCollection = collection(db, 'users');
+  const usersSnapshot = await getDocs(usersCollection);
+  const userCount = usersSnapshot.size;
+
+  // Create user-friendly ID based on the number of users
+  const newUserID = `user${String(userCount + 1).padStart(3, '0')}`; // user001, user002, etc.
+  return newUserID;
+};
 
 const handleRegister = () => {
   errorMessage.value = ''; // Reset the error message before attempting to register
   createUserWithEmailAndPassword(auth, email.value, password.value)
-    .then(() => {
+    .then(async (userCredential) => {
+      const user = userCredential.user;
+      
+      // Generate user-friendly ID like user001, user002
+      const userID = await generateUserID();
+      
+      // Store user data in Firestore with the generated ID
+      await addDoc(collection(db, 'users'), {
+        uid: user.uid,  // Firebase Auth User ID
+        email: user.email,
+        userID: userID  // Generated user-friendly ID
+      });
+
       router.push('/'); // Redirect to home after successful registration
     })
     .catch(error => {
