@@ -9,7 +9,6 @@
         </span>
         <button class="icon share-icon"><img src="../../assets/images/send.png" width="30px" alt="send"></button>
         <span class="slots-left">{{ event.slots }} slots left</span>
-        <button class="directions-button">Directions</button>
         <button class="rsvp-button">RSVP</button>
     </div>
 </template>
@@ -112,22 +111,16 @@ export default {
 
 .slots-left {
     flex-grow: 1;
-    padding-left: 550px;
     font-weight: bold;
     font-size: large;
+    text-align: center;
 }
 
-.directions-button,
 .rsvp-button {
     padding: 10px 15px;
     border: none;
     border-radius: 5px;
     cursor: pointer;
-}
-
-
-.directions-button,
-.rsvp-button {
     background-color: #FBD157;
     color: black;
     font-family: poppins, sans-serif;
