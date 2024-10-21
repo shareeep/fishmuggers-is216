@@ -18,7 +18,7 @@
           class="friend-item"
           @click="selectFriend(friend)"
         >
-          <img :src="friend.avatar" alt="Avatar" class="avatar" />
+          <img src="../../../assets/images/logo.png" alt="Avatar" class="avatar" />
           <div class="friend-info">
             <h3>{{ friend.name }}</h3>
             <p>{{ friend.lastMessage }}</p>
@@ -34,29 +34,63 @@
   
   // Search query for filtering friends
   const searchQuery = ref('');
+  const selectedFriend = ref(null);
+  const newMessage = ref('');
   
-  // Dummy friends list data
+  // Dummy friends list data with fake chat logs
   const friends = ref([
-    { name: 'Jessica Drew', lastMessage: 'Ok, see you later', lastSeen: '18:30', avatar: '/path-to-avatar1.jpg' },
-    { name: 'David Moore', lastMessage: "You: I don't remember anything", lastSeen: '18:16', avatar: '/path-to-avatar2.jpg' },
-    { name: 'Greg James', lastMessage: 'I got a job at SpaceX 🎉🚀', lastSeen: '18:02', avatar: '/path-to-avatar3.jpg' },
-    { name: 'Emily Dorson', lastMessage: 'Table for four, 5PM. Be there.', lastSeen: '17:42', avatar: '/path-to-avatar4.jpg' },
-    { name: 'Office Chat', lastMessage: 'Lewis: All done mate 😎', lastSeen: '17:08', avatar: '/path-to-avatar5.jpg' },
-    { name: 'Announcements', lastMessage: 'Channel created', lastSeen: '16:15', avatar: '/path-to-avatar6.jpg' },
-    { name: 'Little Sister', lastMessage: 'Tell mom I will be home for tea 💜', lastSeen: 'Wed', avatar: '/path-to-avatar7.jpg' },
-    { name: 'Art Class', lastMessage: 'Emily: 🎨 Editorial', lastSeen: 'Tue', avatar: '/path-to-avatar8.jpg' },
+    {
+      name: 'Jessica Drew',
+      lastMessage: 'Ok, see you later',
+      lastSeen: '18:30',
+      avatar: '/path-to-avatar1.jpg',
+      messages: [
+        { text: 'Hey Jessica, how are you?', sentByYou: true },
+        { text: 'I’m good! Just heading out now.', sentByYou: false },
+        { text: 'Cool, catch you later!', sentByYou: true }
+      ]
+    },
+    {
+      name: 'David Moore',
+      lastMessage: "You: I don't remember anything",
+      lastSeen: '18:16',
+      avatar: '/path-to-avatar2.jpg',
+      messages: [
+        { text: 'Did you check the meeting notes?', sentByYou: false },
+        { text: 'I don’t remember anything from that meeting 😅', sentByYou: true }
+      ]
+    },
+    {
+      name: 'Greg James',
+      lastMessage: 'I got a job at SpaceX 🎉🚀',
+      lastSeen: '18:02',
+      avatar: '/path-to-avatar3.jpg',
+      messages: [
+        { text: 'Guess what? I got a job at SpaceX 🎉🚀', sentByYou: false },
+        { text: 'No way! That’s amazing, congrats!', sentByYou: true }
+      ]
+    },
+    // Add more friends...
   ]);
   
   // Computed property to filter friends based on search query
   const filteredFriends = computed(() =>
-    friends.value.filter((friend) =>
+    friends.value.filter(friend =>
       friend.name.toLowerCase().includes(searchQuery.value.toLowerCase())
     )
   );
   
-  // Method to handle friend selection (for later integration)
+  // Method to handle friend selection
   const selectFriend = (friend) => {
-    console.log(`Selected friend: ${friend.name}`);
+    selectedFriend.value = friend;
+  };
+  
+  // Method to send a message (adds the message to the current chat log)
+  const sendMessage = () => {
+    if (newMessage.value.trim() !== '') {
+      selectedFriend.value.messages.push({ text: newMessage.value, sentByYou: true });
+      newMessage.value = ''; // Clear input after sending
+    }
   };
   </script>
   
