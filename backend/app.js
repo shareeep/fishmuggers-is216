@@ -28,13 +28,15 @@ app.get("/", (req, res) => {
 // Import Routes
 const eventsRoutes = require("./routes/events");
 const postsRoutes = require("./routes/posts");
-const usersRoutes = require("./routes/users"); // Import users routes
+const usersRoutes = require("./routes/users");
+const petsRoutes = require("./routes/pets")
 
 
 // Use Routes
 app.use("/api/events", eventsRoutes);
 app.use("/api/posts", postsRoutes);
-app.use("/api/users", usersRoutes); // Mount users routes
+app.use("/api/users", usersRoutes); 
+app.use("/api/pets", petsRoutes); 
 
 // Start the server
 app.listen(PORT, () => {
