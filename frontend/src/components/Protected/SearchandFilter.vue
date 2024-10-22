@@ -492,16 +492,28 @@ export default {
     },
     methods: {
         togglePetTypeDropdown() {
-            this.isPetTypeDropdownOpen = !this.isPetTypeDropdownOpen;
+            if (!this.isPetTypeDropdownOpen) {
+                this.closeAllDropdowns(); // Close all other dropdowns
+            }
+            this.isPetTypeDropdownOpen = !this.isPetTypeDropdownOpen; // Toggle the Pet Type dropdown
         },
         toggleEventSizeDropdown() {
-            this.isEventSizeDropdownOpen = !this.isEventSizeDropdownOpen;
+            if (!this.isEventSizeDropdownOpen) {
+                this.closeAllDropdowns(); // Close all other dropdowns
+            }
+            this.isEventSizeDropdownOpen = !this.isEventSizeDropdownOpen; // Toggle the Event Size dropdown
         },
         toggleDateRangeDropdown() {
-            this.isDateRangeDropdownOpen = !this.isDateRangeDropdownOpen;
+            if (!this.isDateRangeDropdownOpen) {
+                this.closeAllDropdowns(); // Close all other dropdowns
+            }
+            this.isDateRangeDropdownOpen = !this.isDateRangeDropdownOpen; // Toggle the Date Range dropdown
         },
         toggleLocationDropdown() {
-            this.isLocationDropdownOpen = !this.isLocationDropdownOpen;
+            if (!this.isLocationDropdownOpen) {
+                this.closeAllDropdowns(); // Close all other dropdowns
+            }
+            this.isLocationDropdownOpen = !this.isLocationDropdownOpen; // Toggle the Location dropdown
         },
         applyPetTypeFilters() {
             this.isPetTypeFilled = this.selectedCats || this.selectedDogs;
@@ -515,9 +527,9 @@ export default {
             const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
 
             // Set default values for startDate and endDate if they're empty
-            if (!this.startDate) {
-                this.startDate = today; // Set startDate to today if empty
-            }
+            // if (!this.startDate) {
+            //     this.startDate = today; // Set startDate to today if empty
+            // }
 
             // If endDate is empty, leave it as null (the user may not want to specify an end date)
             if (this.endDate) {
@@ -571,16 +583,25 @@ export default {
                 });
         },
         selectLocation(suggestion) {
-            this.selectedLocation = suggestion.location; // Store selected location
+            this.selectedLocation = suggestion.name; // Store selected location
             this.searchedLoc = suggestion.name; // Set input value to selected name
             this.locationSuggestions = []; // Clear suggestions
         },
 
         applyLocationFilters() {
-            this.isLocationFilled = true; // Set filled status to true
+            if (this.selectedLocation) {
+                // Only set the location as filled if a suggestion was selected
+                this.isLocationFilled = true;
+            } else {
+                // Clear the location input and prevent it from being stored
+                this.isLocationFilled = false;
+                this.searchedLoc = ''; // Clear the search input
+                this.selectedLocation = null; // Clear selected location
+            }
             this.isLocationDropdownOpen = false; // Close dropdown after applying
         },
         resetFilters() {
+            this.closeAllDropdowns(); // Close dropdowns after resetting
             this.selectedCats = false;
             this.selectedDogs = false;
             this.selectedEventSize = null;
@@ -595,7 +616,14 @@ export default {
             this.locationSuggestions = []; // Clear suggestions if necessary
             this.$emit('filters-reset');
         },
+        closeAllDropdowns() {
+            this.isPetTypeDropdownOpen = false;
+            this.isEventSizeDropdownOpen = false;
+            this.isDateRangeDropdownOpen = false;
+            this.isLocationDropdownOpen = false;
+        },
         applyFilters() {
+            this.closeAllDropdowns(); // Close dropdowns after applying
             // Collect the applied filters
             const filters = {
                 petType: {

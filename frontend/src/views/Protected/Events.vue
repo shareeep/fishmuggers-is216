@@ -27,7 +27,16 @@ const appliedFilters = ref({}); // This will hold the filter values
 
 // This function is called when filters are applied
 function handleFiltersApplied(filters) {
-  filtersApplied.value = true; // Set the filters as applied
+  // Check if any filters are actually applied (not empty)
+  const hasFilters =
+    filters.petType.cats ||
+    filters.petType.dogs ||
+    filters.eventSize ||
+    filters.dateRange.startDate ||
+    filters.dateRange.endDate ||
+    filters.location;
+
+  filtersApplied.value = hasFilters; // Set the filters as applied only if filters are not empty
   appliedFilters.value = filters; // Store the applied filters
 }
 
@@ -52,7 +61,8 @@ function handleFiltersReset() {
   position: fixed;
   top: 0;
   z-index: 1000;
-  width: 100%; /* Adjust based on Navbar width */
+  width: 100%;
+  /* Adjust based on Navbar width */
   background-color: #FCEFB4;
   padding: 10px 30px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -60,12 +70,16 @@ function handleFiltersReset() {
 
 /* Content wrapper to push content below the fixed search filter */
 .content-wrapper {
-  padding-top: 120px; /* Ensure space below the fixed filter */
+  padding-top: 120px;
+  /* Ensure space below the fixed filter */
   width: 100%;
   display: flex;
-  justify-content: center; /* Horizontally center content */
-  align-items: center; /* Vertically center content */
-  flex-direction: column; /* Stack elements vertically */
+  justify-content: center;
+  /* Horizontally center content */
+  align-items: center;
+  /* Vertically center content */
+  flex-direction: column;
+  /* Stack elements vertically */
 }
 
 /* Main content layout */
@@ -81,7 +95,8 @@ main {
   width: 100%;
   background-color: #FCEFB4;
   overflow-y: auto;
-  align-items: center; /* Center main content horizontally */
+  align-items: center;
+  /* Center main content horizontally */
 }
 
 /* Responsive adjustments for smaller screens */
@@ -96,7 +111,8 @@ main {
 
   .content-wrapper {
     padding-top: 120px;
-    justify-content: center; /* Ensure vertical centering on smaller screens */
+    justify-content: center;
+    /* Ensure vertical centering on smaller screens */
   }
 }
 
@@ -142,4 +158,3 @@ main {
   }
 }
 </style>
-
