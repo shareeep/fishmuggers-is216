@@ -578,16 +578,10 @@ export default {
                 return;
             }
 
-            // Use the OneMap API for planning areas instead of elastic search
-            const oneMapURL = "https://www.onemap.gov.sg/api/public/popapi/getPlanningareaNames";
-            const url = `${oneMapURL}?year=2024`; // Use the latest year or pass a specific year if needed
+            const oneMapURL = "https://www.onemap.gov.sg/api/common/elastic/search?searchVal=";
+            const url = `${oneMapURL}${encodeURIComponent(this.searchedLoc)}&returnGeom=Y&getAddrDetails=Y&pageNum=1`;
 
-            fetch(url, {
-                method: 'GET',
-                headers: {
-                    'Authorization': `Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJjMGVlMDUxMWUxYzk0NjZhNDM4ZmZlZTdlYmYxYTRiYiIsImlzcyI6Imh0dHA6Ly9pbnRlcm5hbC1hbGItb20tcHJkZXppdC1pdC1uZXctMTYzMzc5OTU0Mi5hcC1zb3V0aGVhc3QtMS5lbGIuYW1hem9uYXdzLmNvbS9hcGkvdjIvdXNlci9wYXNzd29yZCIsImlhdCI6MTcyOTU4MDA4OCwiZXhwIjoxNzI5ODM5Mjg4LCJuYmYiOjE3Mjk1ODAwODgsImp0aSI6Ik5tRHRCSUtWUVdlMDRrekQiLCJ1c2VyX2lkIjo0OTY2LCJmb3JldmVyIjpmYWxzZX0.1SHNoOnA0mAF1AtqFQwFaHyb_D1aLJwHstMatQmTrl4`, // Replace with your actual token
-                }
-            })
+            fetch(url)
                 .then(response => {
                     if (!response.ok) {
                         throw new Error('Network response was not ok ' + response.statusText);
@@ -595,25 +589,17 @@ export default {
                     return response.json();
                 })
                 .then(data => {
-                    if (data && data.length > 0) {
-                        // Filter results based on the search input to match the start of the location names
-                        const searchValLowerCase = this.searchedLoc.toLowerCase();
-                        const filteredResults = data.filter(item =>
-                            item.pln_area_n.toLowerCase().startsWith(searchValLowerCase) && // Match start of the name
-                            item.pln_area_n.toLowerCase() !== 'total' // Exclude "Total"
-                        );
-
-                        // Use a Set to keep track of unique location names (if needed)
+                    if (data.results && data.results.length > 0) {
+                        // Use a Set to keep track of unique location names
                         const uniqueResults = new Map();
-                        filteredResults.forEach(item => {
-                            // Use the planning area name as the key to avoid duplicates
-                            uniqueResults.set(item.pln_area_n, {
-                                id: item.pln_area_n,
-                                name: item.pln_area_n,
-                                location: item.pln_area_c // This might be a planning area code or other relevant info
+                        data.results.forEach(item => {
+                            // Use the SEARCHVAL as the key to avoid duplicates
+                            uniqueResults.set(item.SEARCHVAL, {
+                                id: item.SEARCHVAL,
+                                name: item.SEARCHVAL,
+                                location: item.LAYER // Adjust based on actual structure of response
                             });
                         });
-
                         // Convert the Map back to an array
                         this.locationSuggestions = Array.from(uniqueResults.values());
                     } else {
@@ -621,10 +607,9 @@ export default {
                     }
                 })
                 .catch(error => {
-                    console.error('Error fetching planning area suggestions:', error);
+                    console.error('Error fetching location suggestions:', error);
                 });
         },
-
 
         selectLocation(suggestion) {
             this.selectedLocation = suggestion.name; // Store selected location
