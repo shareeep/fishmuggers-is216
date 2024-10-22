@@ -3,8 +3,7 @@
     <Navbar />
     <main>
       <div class="search-filter-container">
-        <search_filter @filters-applied="handleFiltersApplied" @filters-reset="handleFiltersReset"
-          @search-cleared="handleSearchCleared" />
+        <search_filter @filters-applied="handleFiltersApplied" @filters-reset="handleFiltersReset" />
       </div>
       <div class="content-container">
         <carousel v-if="!filtersApplied" />
@@ -47,10 +46,10 @@ function handleFiltersReset() {
   filtersApplied.value = false; // Reset the filtersApplied to false to show the carousel
   appliedFilters.value = {}; // Clear the applied filters
 }
-function handleSearchCleared() {
-  filtersApplied.value = false; // No filters applied, so reset
-  appliedFilters.value = {}; // Clear filters
-}
+// function handleSearchCleared() {
+//   filtersApplied.value = false; // No filters applied, so reset
+//   appliedFilters.value = {}; // Clear filters
+// }
 </script>
 
 <style scoped>

@@ -151,7 +151,7 @@ export default {
                 // If no end date is selected, allow events after the start date without upper limit
 
                 // If no location is selected, allow all locations
-                const locationMatch = location ? event.address.includes(location) : true;
+                const locationMatch = location ? event.address.toLowerCase().includes(location.toLowerCase()) : true;
 
                 return searchMatch && petTypeMatch && eventSizeMatch && startDateMatch && endDateMatch && locationMatch;
             });

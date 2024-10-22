@@ -618,13 +618,13 @@ export default {
         },
 
         applyLocationFilters() {
-            if (this.selectedLocation) {
+            if (this.searchedLoc) {
                 // Only set the location as filled if a suggestion was selected
                 this.isLocationFilled = true;
+                this.selectedLocation = this.searchedLoc; 
             } else {
                 // Clear the location input and prevent it from being stored
                 this.isLocationFilled = false;
-                this.searchedLoc = ''; // Clear the search input
                 this.selectedLocation = null; // Clear selected location
             }
             this.isLocationDropdownOpen = false; // Close dropdown after applying
