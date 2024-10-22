@@ -7,7 +7,7 @@
         <!-- SEARCH BAR -->
         <div class="flex justify-center">
             <div class="relative z-20 flex items-center w-full max-w-lg">
-                <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none z-10">
+                <div class="absolute inset-y-0 start-0 flex items-center pl-3 pointer-events-none z-10">
                     <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
                         xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -15,16 +15,18 @@
                     </svg>
                 </div>
                 <input type="search" id="default-search"
-                    class="block w-full pl-10 p-4 text-sm text-gray-900 border border-gray-300 rounded-lg bg-white focus:ring-[#FDF4CB] focus:border-[#FDF4CB] dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-[#FDF4CB] dark:focus:border-[#FDF4CB] drop-shadow-md"
-                    placeholder="Search for an event" required />
-                <div class="absolute inset-y-0 end-0 flex items-center ps-3 z-10 mr-2">
-                    <button
-                        class="text-black absolute end-0 bottom-2.5 bg-[#FFD700] hover:bg-[#E6C200] font-bold rounded-lg text-sm px-4 py-2">Search
+                    class="block w-full pl-10 pr-16 lg:pr-32 p-4 text-sm text-gray-900 border border-gray-300 rounded-lg bg-white focus:ring-[#FDF4CB] focus:border-[#FDF4CB] dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-[#FDF4CB] dark:focus:border-[#FDF4CB] drop-shadow-md"
+                    placeholder="Search for an event" required>
+                <div class="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-12 mr-2">
+                    <button class="text-black bg-[#FFD700] hover:bg-[#E6C200] font-bold rounded-lg text-sm px-4 py-2">
+                        Search
                     </button>
                 </div>
+                </input>
 
             </div>
         </div>
+
     </div>
 
     <!--sort by sm block-->
@@ -317,7 +319,7 @@
                 </h6>
                 <ul class="space-y-2 text-sm">
                     <li class="flex items-center">
-                        <input id="lessThan10" type="radio" value="lessThan10" v-model="selectedEventSize"
+                        <input id="<10" type="radio" value="<10" v-model="selectedEventSize"
                             class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500" />
                         <label for="lessThan10" class="ml-2 text-sm font-medium text-gray-900">
                             &lt;10
@@ -325,7 +327,7 @@
                     </li>
 
                     <li class="flex items-center">
-                        <input id="tenToFifty" type="radio" value="tenToFifty" v-model="selectedEventSize"
+                        <input id="10-50" type="radio" value="10-50" v-model="selectedEventSize"
                             class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500" />
                         <label for="tenToFifty" class="ml-2 text-sm font-medium text-gray-900">
                             10-50
@@ -333,7 +335,7 @@
                     </li>
 
                     <li class="flex items-center">
-                        <input id="fiftyToHundred" type="radio" value="fiftyToHundred" v-model="selectedEventSize"
+                        <input id="50-100" type="radio" value="50-100" v-model="selectedEventSize"
                             class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500" />
                         <label for="fiftyToHundred" class="ml-2 text-sm font-medium text-gray-900">
                             50-100
@@ -341,7 +343,7 @@
                     </li>
 
                     <li class="flex items-center">
-                        <input id="moreThanHundred" type="radio" value="moreThanHundred" v-model="selectedEventSize"
+                        <input id=">100" type="radio" value=">100" v-model="selectedEventSize"
                             class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500" />
                         <label for="moreThanHundred" class="ml-2 text-sm font-medium text-gray-900">
                             &gt;100
@@ -518,13 +520,13 @@ export default {
             }
 
             // If endDate is empty, leave it as null (the user may not want to specify an end date)
-
-            // Check if the user has selected a start date
             if (this.endDate) {
                 this.isDateRangeFilled = true;
                 // Handle filtering logic based on startDate and endDate
-            } else {
+            } else if (this.startDate && !this.endDate) {
                 // Optionally handle empty input case
+                this.isDateRangeFilled = true;
+            } else {
                 this.isDateRangeFilled = false;
             }
 
@@ -591,6 +593,26 @@ export default {
             this.isDateRangeFilled = false;
             this.isLocationFilled = false; // Reset location filled status
             this.locationSuggestions = []; // Clear suggestions if necessary
+            this.$emit('filters-reset');
+        },
+        applyFilters() {
+            // Collect the applied filters
+            const filters = {
+                petType: {
+                    cats: this.selectedCats,
+                    dogs: this.selectedDogs,
+                },
+                eventSize: this.selectedEventSize,
+                dateRange: {
+                    startDate: this.startDate,
+                    endDate: this.endDate,
+                },
+                location: this.selectedLocation
+            };
+
+            // Emit the filters to the parent component
+            this.$emit('filters-applied', filters);
+            // Optionally, you can close the dropdowns or reset any temporary states
         },
     }
 };

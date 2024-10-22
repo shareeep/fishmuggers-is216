@@ -4,20 +4,20 @@
 
         <!-- Vertical Cards for Small Screens (1 Column) -->
         <div class="flex flex-col md:hidden">
-            <div v-for="(event, index) in events" :key="index" class="mb-4 mx-auto">
-                <router-link :to="`/eventdetail/${event.id}`">
+            <div v-for="(event, index) in nearyouevents" :key="index" class="mb-4 mx-auto">
+                <router-link :to="{ name: 'eventDetail', params: { id: event.id } }">
                     <div class="card" style="width:300px;">
                         <img :src="event.image" alt="Event Image" />
                         <div class="card-body">
                             <div class="card-left">
-                                <div class="date">{{ event.date }}</div>
+                                <div class="date">{{ event.month }}</div>
                                 <div class="date-month">{{ event.year }}</div>
                             </div>
                             <div class="card-right">
                                 <div class="event-title">{{ event.title }}</div>
                                 <div class="event-subtitle">{{ event.time }}</div>
                                 <div class="event-subtitle">
-                                    <i class="fas fa-star star-icon"></i> {{ event.interested }} Interested
+                                    <i class="fas fa-star star-icon"></i> {{ event.numinterested }} Interested
                                 </div>
                             </div>
                         </div>
@@ -29,21 +29,21 @@
         <!-- Carousel for Medium Screens (1 Item) -->
         <div class="hidden md:block lg:hidden">
             <Carousel :itemsToShow="1" :wrapAround="true" :transition="500" class="mx-auto" style="width:600px;">
-                <Slide v-for="(event, index) in events" :key="index">
-                    <router-link :to="`/eventdetail/${event.id}`">
+                <Slide v-for="(event, index) in nearyouevents" :key="index">
+                    <router-link :to="{ name: 'eventDetail', params: { id: event.id } }">
                         <div class="carousel__item mx-1 lg:mx-2">
                             <div class="card">
                                 <img :src="event.image" alt="Event Image" />
                                 <div class="card-body">
                                     <div class="card-left">
-                                        <div class="date">{{ event.date }}</div>
+                                        <div class="date">{{ event.month }}</div>
                                         <div class="date-month">{{ event.year }}</div>
                                     </div>
                                     <div class="card-right">
                                         <div class="event-title">{{ event.title }}</div>
                                         <div class="event-subtitle">{{ event.time }}</div>
                                         <div class="event-subtitle">
-                                            <i class="fas fa-star star-icon"></i> {{ event.interested }} Interested
+                                            <i class="fas fa-star star-icon"></i> {{ event.numinterested }} Interested
                                         </div>
                                     </div>
                                 </div>
@@ -60,21 +60,21 @@
 
         <div class="hidden lg:block">
             <Carousel :itemsToShow="3" :wrapAround="true" :transition="500" :partialVisible="false">
-                <Slide v-for="(event, index) in events" :key="index">
-                    <router-link :to="`/eventdetail/${event.id}`">
+                <Slide v-for="(event, index) in nearyouevents" :key="index">
+                    <router-link :to="{ name: 'eventDetail', params: { id: event.id } }">
                         <div class="carousel__item">
                             <div class="card">
                                 <img :src="event.image" alt="Event Image">
                                 <div class="card-body">
                                     <div class="card-left">
-                                        <div class="date">{{ event.date }}</div>
+                                        <div class="date">{{ event.month }}</div>
                                         <div class="date-month">{{ event.year }}</div>
                                     </div>
                                     <div class="card-right">
                                         <div class="event-title">{{ event.title }}</div>
                                         <div class="event-subtitle">{{ event.time }}</div>
                                         <div class="event-subtitle">
-                                            <i class="fas fa-star star-icon"></i> {{ event.interested }} Interested
+                                            <i class="fas fa-star star-icon"></i> {{ event.numinterested }} Interested
                                         </div>
                                     </div>
                                 </div>
@@ -92,20 +92,20 @@
         <h1 class="title">Trending</h1>
         <!-- Vertical Cards for Small Screens (1 Column) -->
         <div class="flex flex-col md:hidden">
-            <div v-for="(event, index) in events" :key="index" class="mb-4 mx-auto">
-                <router-link :to="`/eventdetail/${event.id}`">
+            <div v-for="(event, index) in trending" :key="index" class="mb-4 mx-auto">
+                <router-link :to="{ name: 'eventDetail', params: { id: event.id } }">
                     <div class="card" style="width:300px;">
                         <img :src="event.image" alt="Event Image" />
                         <div class="card-body">
                             <div class="card-left">
-                                <div class="date">{{ event.date }}</div>
+                                <div class="date">{{ event.month }}</div>
                                 <div class="date-month">{{ event.year }}</div>
                             </div>
                             <div class="card-right">
                                 <div class="event-title">{{ event.title }}</div>
                                 <div class="event-subtitle">{{ event.time }}</div>
                                 <div class="event-subtitle">
-                                    <i class="fas fa-star star-icon"></i> {{ event.interested }} Interested
+                                    <i class="fas fa-star star-icon"></i> {{ event.numinterested }} Interested
                                 </div>
                             </div>
                         </div>
@@ -117,21 +117,21 @@
         <!-- Carousel for Medium Screens (1 Item) -->
         <div class="hidden md:block lg:hidden">
             <Carousel :itemsToShow="1" :wrapAround="true" :transition="500" class="mx-auto" style="width:600px;">
-                <Slide v-for="(event, index) in events" :key="index">
-                    <router-link :to="`/eventdetail/${event.id}`">
+                <Slide v-for="(event, index) in trending" :key="index">
+                    <router-link :to="{ name: 'eventDetail', params: { id: event.id } }">
                         <div class="carousel__item mx-1 lg:mx-2">
                             <div class="card">
                                 <img :src="event.image" alt="Event Image" />
                                 <div class="card-body">
                                     <div class="card-left">
-                                        <div class="date">{{ event.date }}</div>
+                                        <div class="date">{{ event.month }}</div>
                                         <div class="date-month">{{ event.year }}</div>
                                     </div>
                                     <div class="card-right">
                                         <div class="event-title">{{ event.title }}</div>
                                         <div class="event-subtitle">{{ event.time }}</div>
                                         <div class="event-subtitle">
-                                            <i class="fas fa-star star-icon"></i> {{ event.interested }} Interested
+                                            <i class="fas fa-star star-icon"></i> {{ event.numinterested }} Interested
                                         </div>
                                     </div>
                                 </div>
@@ -148,21 +148,21 @@
 
         <div class="hidden lg:block">
             <Carousel :itemsToShow="3" :wrapAround="true" :transition="500" :partialVisible="false">
-                <Slide v-for="(event, index) in events" :key="index">
-                    <router-link :to="`/eventdetail/${event.id}`">
+                <Slide v-for="(event, index) in trending" :key="index">
+                    <router-link :to="{ name: 'eventDetail', params: { id: event.id } }">
                         <div class="carousel__item">
                             <div class="card">
                                 <img :src="event.image" alt="Event Image">
                                 <div class="card-body">
                                     <div class="card-left">
-                                        <div class="date">{{ event.date }}</div>
+                                        <div class="date">{{ event.month }}</div>
                                         <div class="date-month">{{ event.year }}</div>
                                     </div>
                                     <div class="card-right">
                                         <div class="event-title">{{ event.title }}</div>
                                         <div class="event-subtitle">{{ event.time }}</div>
                                         <div class="event-subtitle">
-                                            <i class="fas fa-star star-icon"></i> {{ event.interested }} Interested
+                                            <i class="fas fa-star star-icon"></i> {{ event.numinterested }} Interested
                                         </div>
                                     </div>
                                 </div>
@@ -194,17 +194,193 @@ export default defineComponent({
     },
     data() {
         return {
-            events: [
-                { id: 1, image: "https://via.placeholder.com/300x150", date: "DEC", year: "2022", title: "Event Title 1", time: "1:00pm - 3:00pm", interested: 5 },
-                { id: 2, image: "https://via.placeholder.com/300x150", date: "DEC", year: "2022", title: "Event Title 2", time: "1:00pm - 3:00pm", interested: 5 },
-                { id: 3, image: "https://via.placeholder.com/300x150", date: "DEC", year: "2022", title: "Event Title 3", time: "1:00pm - 3:00pm", interested: 5 },
-                { id: 4, image: "https://via.placeholder.com/300x150", date: "DEC", year: "2022", title: "Event Title 4", time: "1:00pm - 3:00pm", interested: 5 }
+            nearyouevents: [
+                {
+                    id: 1,
+                    title: "Near You Event 1",
+                    image: "https://via.placeholder.com/300x150",
+                    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+                    host: {
+                        profilePic: "https://via.placeholder.com/50",
+                        username: "@Username",
+                    },
+                    pettype: [
+                        'Dog',
+                        'Cat'
+                    ],
+                    eventsize: '50-100',
+                    day: "Monday",
+                    date: "2024-10-24",
+                    year: '2024',
+                    month: 'OCT',
+                    time: "1:00pm - 3:00pm",
+                    address: "123 Sample St, Sample City, ST 12345",
+                    slots: 3,
+                    numinterested: 5,
+                },
+                {
+                    id: 2,
+                    title: "Near You Event 2",
+                    image: "https://via.placeholder.com/300x150",
+                    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+                    host: {
+                        profilePic: "https://via.placeholder.com/50",
+                        username: "@Username",
+                    },
+                    pettype: [
+                        'Dog',
+                        'Cat'
+                    ],
+                    eventsize: '50-100',
+                    day: "Monday",
+                    date: "2024-10-24",
+                    year: '2024',
+                    month: 'OCT',
+                    time: "1:00pm - 3:00pm",
+                    address: "123 Sample St, Sample City, ST 12345",
+                    slots: 3,
+                    numinterested: 5,
+                },
+                {
+                    id: 3,
+                    title: "Near You Event 3",
+                    image: "https://via.placeholder.com/300x150",
+                    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+                    host: {
+                        profilePic: "https://via.placeholder.com/50",
+                        username: "@Username",
+                    },
+                    pettype: [
+                        'Dog',
+                        'Cat'
+                    ],
+                    eventsize: '50-100',
+                    day: "Monday",
+                    date: "2024-10-24",
+                    year: '2024',
+                    month: 'OCT',
+                    time: "1:00pm - 3:00pm",
+                    address: "123 Sample St, Sample City, ST 12345",
+                    slots: 3,
+                    numinterested: 5,
+                },
+                {
+                    id: 4,
+                    title: "Near You Event 4",
+                    image: "https://via.placeholder.com/300x150",
+                    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+                    host: {
+                        profilePic: "https://via.placeholder.com/50",
+                        username: "@Username",
+                    },
+                    pettype: [
+                        'Dog',
+                        'Cat'
+                    ],
+                    eventsize: '50-100',
+                    day: "Monday",
+                    date: "2024-10-24",
+                    year: '2024',
+                    month: 'OCT',
+                    time: "1:00pm - 3:00pm",
+                    address: "123 Sample St, Sample City, ST 12345",
+                    slots: 3,
+                    numinterested: 5,
+                }
             ],
             trending: [
-                { id: 1, image: "https://via.placeholder.com/300x150", date: "JAN", year: "2023", title: "Trending Event 1", time: "10:00am - 12:00pm", interested: 10 },
-                { id: 2, image: "https://via.placeholder.com/300x150", date: "JAN", year: "2023", title: "Trending Event 2", time: "10:00am - 12:00pm", interested: 10 },
-                { id: 3, image: "https://via.placeholder.com/300x150", date: "JAN", year: "2023", title: "Trending Event 3", time: "10:00am - 12:00pm", interested: 10 },
-                { id: 4, image: "https://via.placeholder.com/300x150", date: "JAN", year: "2023", title: "Trending Event 4", time: "10:00am - 12:00pm", interested: 10 },
+                {
+                    id: 5,
+                    title: "Trending Event 5",
+                    image: "https://via.placeholder.com/300x150",
+                    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+                    host: {
+                        profilePic: "https://via.placeholder.com/50",
+                        username: "@Username",
+                    },
+                    pettype: [
+                        'Dog',
+                        'Cat'
+                    ],
+                    eventsize: '50-100',
+                    day: "Monday",
+                    date: "2024-10-24",
+                    year: '2024',
+                    month: 'OCT',
+                    time: "1:00pm - 3:00pm",
+                    address: "123 Sample St, Sample City, ST 12345",
+                    slots: 3,
+                    numinterested: 5,
+                },
+                {
+                    id: 6,
+                    title: "Trending Event 6",
+                    image: "https://via.placeholder.com/300x150",
+                    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+                    host: {
+                        profilePic: "https://via.placeholder.com/50",
+                        username: "@Username",
+                    },
+                    pettype: [
+                        'Dog',
+                        'Cat'
+                    ],
+                    eventsize: '50-100',
+                    day: "Monday",
+                    date: "2024-10-24",
+                    year: '2024',
+                    month: 'OCT',
+                    time: "1:00pm - 3:00pm",
+                    address: "123 Sample St, Sample City, ST 12345",
+                    slots: 3,
+                    numinterested: 5,
+                },
+                {
+                    id: 7,
+                    title: "Trending Event 7",
+                    image: "https://via.placeholder.com/300x150",
+                    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+                    host: {
+                        profilePic: "https://via.placeholder.com/50",
+                        username: "@Username",
+                    },
+                    pettype: [
+                        'Dog',
+                        'Cat'
+                    ],
+                    eventsize: '50-100',
+                    day: "Monday",
+                    date: "2024-10-24",
+                    year: '2024',
+                    month: 'OCT',
+                    time: "1:00pm - 3:00pm",
+                    address: "123 Sample St, Sample City, ST 12345",
+                    slots: 3,
+                    numinterested: 5,
+                },
+                {
+                    id: 8,
+                    title: "Trending Event 8",
+                    image: "https://via.placeholder.com/300x150",
+                    description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+                    host: {
+                        profilePic: "https://via.placeholder.com/50",
+                        username: "@Username",
+                    },
+                    pettype: [
+                        'Dog',
+                        'Cat'
+                    ],
+                    eventsize: '50-100',
+                    day: "Monday",
+                    date: "2024-10-24",
+                    year: '2024',
+                    month: 'OCT',
+                    time: "1:00pm - 3:00pm",
+                    address: "123 Sample St, Sample City, ST 12345",
+                    slots: 3,
+                    numinterested: 5,
+                },
             ]
         };
     },
