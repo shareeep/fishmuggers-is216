@@ -230,6 +230,14 @@
                 </div>
             </div>
         </div>
+        <!-- Apply Filters Button -->
+        <div class="flex justify-center mt-3">
+            <button @click="applyFilters"
+                class="rounded-lg text-sm py-2.5 text-center items-center me-3 text-black  bg-[#FFD700] hover:bg-[#E6C200] font-bold text-sm"
+                style="width: 19.5rem;">
+                Apply Filters
+            </button>
+        </div>
         <!-- Reset Filters Button -->
         <div class="flex justify-center mt-3">
             <button @click="resetFilters"
@@ -437,6 +445,11 @@
                 </button>
             </div>
         </div>
+        <!-- Apply Filters Button -->
+        <button @click="applyFilters"
+            class="rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center me-3 text-black  bg-[#FFD700] hover:bg-[#E6C200] font-bold text-sm">
+            Apply Filters
+        </button>
         <!-- Reset Filters Button -->
         <button @click="resetFilters"
             class="rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center me-3 text-black  bg-[#FFD700] hover:bg-[#E6C200] font-bold text-sm">
