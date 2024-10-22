@@ -1,7 +1,11 @@
+// app.js
 const express = require("express");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const { db } = require("./services/firebase"); // Import Firestore instance
+const dotenv = require("dotenv");
+
+dotenv.config(); // Load environment variables from .env
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -24,14 +28,14 @@ app.get("/", (req, res) => {
 // Import Routes
 const eventsRoutes = require("./routes/events");
 const postsRoutes = require("./routes/posts");
-// Import other routes as needed
+const usersRoutes = require("./routes/users"); // Import users routes
+
 
 // Use Routes
 app.use("/api/events", eventsRoutes);
 app.use("/api/posts", postsRoutes);
-// Use other routes similarly
+app.use("/api/users", usersRoutes); // Mount users routes
 
-// Remove the duplicate app.listen call
 // Start the server
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
@@ -40,7 +44,7 @@ app.listen(PORT, () => {
 // Test Firestore connection
 const testFirestore = async () => {
   try {
-    const testDocRef = db.collection("TestCollection3").doc("testDocument");
+    const testDocRef = db.collection("TestCollection4").doc("testDocument");
     await testDocRef.set({
       testField: "This is a test document",
     });

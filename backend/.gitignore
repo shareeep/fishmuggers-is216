@@ -3,3 +3,6 @@ node_modules/
 
 # Ignore service account credentials
 firebase/serviceAccountKey.json
+
+# Ignore other sensitive info
+.env

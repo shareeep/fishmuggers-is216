@@ -2,7 +2,7 @@
   <div class="home-container"> <!-- Use a wrapper for flex layout -->
     <Navbar />
     <main> <!-- Wrap content in a main tag -->
-      <h1>PROFILEPAGE</h1>
+      <profile-update></profile-update>
     </main>
   </div>
 </template>
@@ -10,6 +10,7 @@
 <script setup>
 // Any Home page-specific logic
 import Navbar from '@/components/Protected/Navbar.vue';
+import ProfileUpdate  from '@/components/Protected/Profile/ProfileUpdate.vue';
 </script>
 
 <style scoped>

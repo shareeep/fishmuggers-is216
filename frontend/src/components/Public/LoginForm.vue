@@ -20,7 +20,7 @@
         type="submit" 
         class="bg-[#FBD157] text-white font-bold py-2 px-4 rounded w-full hover:bg-[#956F00] transition"
       >
-        Login now
+        Login
       </button>
       <!-- Error message display -->
       <p v-if="errorMessage" class="mt-4 text-sm text-red-500 text-center">{{ errorMessage }}</p>
