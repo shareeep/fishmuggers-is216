@@ -36,7 +36,7 @@ main {
   display: flex;
   flex-direction: column; /* Stack children vertically */
   gap: 20px; /* Add spacing between the components */
-  background-color: goldenrod;
+  background-color:  #FCEFB4;
   overflow: hidden; /* Prevent scrolling */
 }
 

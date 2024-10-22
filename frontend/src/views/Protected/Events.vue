@@ -17,9 +17,9 @@
 <script setup>
 import { ref } from 'vue';
 import Navbar from '@/components/Protected/Navbar.vue';
-import search_filter from '@/components/Protected/SearchandFilter.vue';
-import carousel from '@/components/Protected/Carousel.vue';
-import FilteredEvents from '@/components/Protected/FilteredEvents.vue';
+import search_filter from '@/components/Protected/Events/SearchandFilter.vue';
+import carousel from '@/components/Protected/Events/Carousel.vue';
+import FilteredEvents from '@/components/Protected/Events/FilteredEvents.vue';
 
 // State to track if filters are applied and the applied filter data
 const filtersApplied = ref(false);

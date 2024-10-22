@@ -13,8 +13,8 @@
 
 <script setup>
 // Any Home page-specific logic 
-import Details from '@/components/Protected/Details.vue';
-import RSVPbar from '@/components/Protected/RSVPbar.vue';
+import Details from '@/components/Protected/Events/Details.vue';
+import RSVPbar from '@/components/Protected/Events/RSVPbar.vue';
 
 </script>
 
