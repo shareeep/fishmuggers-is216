@@ -29,12 +29,15 @@ app.get("/", (req, res) => {
 const eventsRoutes = require("./routes/events");
 const postsRoutes = require("./routes/posts");
 const usersRoutes = require("./routes/users"); // Import users routes
+const messagesRoutes = require("./routes/messages"); // Import messages routes
+ 
 
 
 // Use Routes
 app.use("/api/events", eventsRoutes);
 app.use("/api/posts", postsRoutes);
 app.use("/api/users", usersRoutes); // Mount users routes
+app.use("/api/messages", messagesRoutes); // Mount messages routes
 
 // Start the server
 app.listen(PORT, () => {

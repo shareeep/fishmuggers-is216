@@ -1,98 +1,60 @@
 <template>
-    <div class="friends-list">
-      <!-- Search bar -->
-      <div class="search-bar">
-        <input
-          type="text"
-          v-model="searchQuery"
-          placeholder="Search"
-          class="search-input"
-        />
-      </div>
-  
-      <!-- List of friends/chats -->
-      <div class="friends" ref="friendsList">
-        <div
-          v-for="(friend, index) in filteredFriends"
-          :key="index"
-          class="friend-item"
-          @click="selectFriend(friend)"
-        >
-          <img src="../../../assets/images/logo.png" alt="Avatar" class="avatar" />
-          <div class="friend-info">
-            <h3>{{ friend.name }}</h3>
-            <p>{{ friend.lastMessage }}</p>
-          </div>
-          <span class="time">{{ friend.lastSeen }}</span>
+  <div class="friends-list">
+    <!-- Search bar -->
+    <div class="search-bar">
+      <input
+        type="text"
+        v-model="searchQuery"
+        placeholder="Search"
+        class="search-input"
+      />
+    </div>
+
+    <!-- List of friends/chats -->
+    <div class="friends">
+      <div
+        v-for="(friend, index) in filteredFriends"
+        :key="index"
+        class="friend-item"
+        @click="selectFriend(friend)"
+      >
+        <img :src="friend.avatar" alt="Avatar" class="avatar" />
+        <div class="friend-info">
+          <h3>{{ friend.name }}</h3>
+          <p>{{ friend.lastMessage }}</p>
         </div>
+        <span class="time">{{ friend.latest }}</span>
       </div>
     </div>
-  </template>
-  
-  <script setup>
-  import { ref, computed } from 'vue';
-  
-  // Search query for filtering friends
-  const searchQuery = ref('');
-  const selectedFriend = ref(null);
-  const newMessage = ref('');
-  
-  // Dummy friends list data with fake chat logs
-  const friends = ref([
-    {
-      name: 'Jessica Drew',
-      lastMessage: 'Ok, see you later',
-      lastSeen: '18:30',
-      avatar: '/path-to-avatar1.jpg',
-      messages: [
-        { text: 'Hey Jessica, how are you?', sentByYou: true },
-        { text: 'I’m good! Just heading out now.', sentByYou: false },
-        { text: 'Cool, catch you later!', sentByYou: true }
-      ]
-    },
-    {
-      name: 'David Moore',
-      lastMessage: "You: I don't remember anything",
-      lastSeen: '18:16',
-      avatar: '/path-to-avatar2.jpg',
-      messages: [
-        { text: 'Did you check the meeting notes?', sentByYou: false },
-        { text: 'I don’t remember anything from that meeting 😅', sentByYou: true }
-      ]
-    },
-    {
-      name: 'Greg James',
-      lastMessage: 'I got a job at SpaceX 🎉🚀',
-      lastSeen: '18:02',
-      avatar: '/path-to-avatar3.jpg',
-      messages: [
-        { text: 'Guess what? I got a job at SpaceX 🎉🚀', sentByYou: false },
-        { text: 'No way! That’s amazing, congrats!', sentByYou: true }
-      ]
-    },
-    // Add more friends...
-  ]);
-  
-  // Computed property to filter friends based on search query
-  const filteredFriends = computed(() =>
-    friends.value.filter(friend =>
-      friend.name.toLowerCase().includes(searchQuery.value.toLowerCase())
-    )
-  );
-  
-  // Method to handle friend selection
-  const selectFriend = (friend) => {
-    selectedFriend.value = friend;
-  };
-  
-  // Method to send a message (adds the message to the current chat log)
-  const sendMessage = () => {
-    if (newMessage.value.trim() !== '') {
-      selectedFriend.value.messages.push({ text: newMessage.value, sentByYou: true });
-      newMessage.value = ''; // Clear input after sending
-    }
-  };
-  </script>
+  </div>
+</template>
+
+<script setup>
+import { ref, computed } from 'vue';
+
+// Props to receive from the parent component
+const props = defineProps({
+  friends: {
+    type: Array,
+    required: true
+  }
+});
+
+const searchQuery = ref('');
+
+// Computed property to filter friends based on the search query
+const filteredFriends = computed(() =>
+  props.friends.filter(friend =>
+    friend.name.toLowerCase().includes(searchQuery.value.toLowerCase())
+  )
+);
+
+// Emit the selected friend back to the parent component
+const emit = defineEmits(['friendSelected']);
+const selectFriend = (friend) => {
+  emit('friendSelected', friend); // Emit selected friend to parent
+};
+</script>
   
   <style scoped>
   .friends-list {
