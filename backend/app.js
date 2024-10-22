@@ -30,6 +30,7 @@ const eventsRoutes = require("./routes/events");
 const postsRoutes = require("./routes/posts");
 const usersRoutes = require("./routes/users"); // Import users routes
 
+
 // Use Routes
 app.use("/api/events", eventsRoutes);
 app.use("/api/posts", postsRoutes);

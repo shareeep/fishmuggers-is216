@@ -7,13 +7,13 @@
       <h3 class="text-lg font-semibold mb-2">Current Profile Information</h3>
       <div class="flex items-center mb-2">
         <img 
-          :src="userData.profileImage || 'default-profile.png'" 
+          :src="userData.profileImage || 'https://via.placeholder.com/300?text=Profile+Image'" 
           alt="Current Profile Image" 
           class="w-16 h-16 rounded-full mr-4"
         />
         <div>
           <p><strong>Email:</strong> {{ userData.email }}</p>
-          <p><strong>User ID:</strong> {{ userData.userID }}</p>
+          <p><strong>Username:</strong> {{ userData.username }}</p>
           <p><strong>Points:</strong> {{ userData.points }}</p>
           <p><strong>Joined Events:</strong> 
             <span v-if="userData.joinedEvents.length">
@@ -40,15 +40,17 @@
         />
       </div>
 
-      <!-- User ID Field -->
+      <!-- Username Field -->
       <div class="mb-4">
-        <label class="block text-gray-700">User ID:</label>
+        <label class="block text-gray-700">Username:</label>
         <input 
-          v-model="userID" 
+          v-model="username" 
           type="text" 
           required 
           class="border border-gray-300 rounded-md py-2 px-4 w-full"
+          @blur="checkUsername"
         />
+        <p v-if="usernameError" class="text-red-500 text-sm mb-4">{{ usernameError }}</p>
       </div>
 
       <!-- Profile Image Field -->
@@ -61,7 +63,7 @@
           class="border border-gray-300 rounded-md py-2 px-4 w-full"
         />
         <!-- New Image Preview -->
-        <div v-if="newProfileImage" class="mt-4">
+        <div v-if="newProfileImageUrl" class="mt-4">
           <p class="text-gray-700 mb-2">New Profile Image Preview:</p>
           <img :src="newProfileImageUrl" alt="New Profile Image" class="w-16 h-16 rounded-full">
         </div>
@@ -115,8 +117,9 @@
       <button 
         type="submit" 
         class="bg-blue-500 text-white font-bold py-2 px-4 rounded w-full hover:bg-blue-700 transition"
+        :disabled="isSubmitting" 
       >
-        Update Profile
+        {{ isSubmitting ? 'Updating...' : 'Update Profile' }}
       </button>
 
       <!-- Success and Error Messages -->
@@ -127,39 +130,90 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import axios from 'axios'; // Ensure axios is installed: npm install axios
 import { getAuth } from 'firebase/auth';
 import { useRouter } from 'vue-router';
 
+// Initialize Firebase Auth
 const auth = getAuth();
 const router = useRouter();
 
-// State Variables
+// Reactive variables
+const userData = ref({
+  email: '',
+  username: '',
+  profileImage: '',
+  points: 0,
+  pets: [],
+  joinedEvents: []
+});
 const email = ref('');
-const userID = ref('');
+const username = ref('');
 const profileImage = ref(null);
-const newProfileImage = ref(null);
 const newProfileImageUrl = ref('');
 const points = ref(0);
 const joinedEvents = ref([]);
 const newEvent = ref('');
 const errorMessage = ref('');
 const successMessage = ref('');
-const userData = ref({
-  email: '',
-  userID: '',
-  profileImage: '',
-  points: 0,
-  joinedEvents: []
-});
+const usernameError = ref('');
+const isSubmitting = ref(false);
 
-// Function to handle file upload
+// Regular expression for username validation
+const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/;
+
+// Function to check if the username is already taken
+const isUsernameTaken = async (desiredUsername) => {
+  try {
+    const response = await axios.get(`http://localhost:3000/api/users/checkUsername`, {
+      params: { username: desiredUsername },
+      headers: {
+        'Authorization': `Bearer ${await auth.currentUser.getIdToken()}`
+      }
+    });
+    return response.data.isTaken;
+  } catch (error) {
+    console.error('Error checking username:', error);
+    throw error;
+  }
+};
+
+// Function to validate the username format
+const validateUsername = (desiredUsername) => {
+  if (!usernameRegex.test(desiredUsername)) {
+    usernameError.value = 'Username must be 3-20 characters long and can include letters, numbers, and underscores.';
+    return false;
+  }
+  usernameError.value = '';
+  return true;
+};
+
+// Function to check username uniqueness on blur (optional)
+const checkUsername = async () => {
+  const desiredUsername = username.value.trim();
+  if (!validateUsername(desiredUsername)) {
+    return;
+  }
+  
+  try {
+    const taken = await isUsernameTaken(desiredUsername);
+    if (taken && desiredUsername !== userData.value.username) { // Allow if username is unchanged
+      usernameError.value = 'Username is already taken. Please choose another one.';
+    } else {
+      usernameError.value = '';
+    }
+  } catch (error) {
+    console.error('Error checking username:', error);
+    usernameError.value = 'Unable to verify username at this time.';
+  }
+};
+
+// Function to handle file upload and preview
 const handleFileUpload = (event) => {
   profileImage.value = event.target.files[0];
   if (profileImage.value) {
-    newProfileImage.value = URL.createObjectURL(profileImage.value);
-    newProfileImageUrl.value = newProfileImage.value;
+    newProfileImageUrl.value = URL.createObjectURL(profileImage.value);
   } else {
     newProfileImageUrl.value = '';
   }
@@ -183,35 +237,57 @@ const removeEvent = (index) => {
 const handleProfileUpdate = async () => {
   errorMessage.value = '';
   successMessage.value = '';
-
+  
   const currentUser = auth.currentUser;
   if (!currentUser) {
     errorMessage.value = 'User not authenticated.';
     return;
   }
-
-  const formData = new FormData();
-  formData.append('email', email.value);
-  formData.append('userID', userID.value);
-  formData.append('points', points.value);
-  formData.append('joinedEvents', JSON.stringify(joinedEvents.value)); // Send as JSON string
-  if (profileImage.value) {
-    formData.append('profileImage', profileImage.value);
+  
+  const desiredUsername = username.value.trim();
+  
+  // Validate username format
+  if (!validateUsername(desiredUsername)) {
+    return;
   }
-
+  
+  // Check if username is taken (if changed)
   try {
-    // Get ID Token
-    const idToken = await currentUser.getIdToken(/* forceRefresh */ true);
+    isSubmitting.value = true;
+    const taken = await isUsernameTaken(desiredUsername);
+    if (taken && desiredUsername !== userData.value.username) { // Allow if username is unchanged
+      usernameError.value = 'Username is already taken. Please choose another one.';
+      isSubmitting.value = false;
+      return;
+    }
+  } catch (error) {
+    console.error('Error checking username:', error);
+    errorMessage.value = 'Unable to verify username. Please try again later.';
+    isSubmitting.value = false;
+    return;
+  }
+  
+  try {
+    // Prepare form data
+    const formData = new FormData();
+    formData.append('email', email.value);
+    formData.append('username', desiredUsername);
+    formData.append('points', points.value);
+    formData.append('joinedEvents', JSON.stringify(joinedEvents.value));
+    if (profileImage.value) {
+      formData.append('profileImage', profileImage.value);
+    }
 
+    // Send PUT request to Express.js backend to update profile
     const response = await axios.put(`http://localhost:3000/api/users/${currentUser.uid}`, formData, {
       headers: {
-        'Authorization': `Bearer ${idToken}`,
+        'Authorization': `Bearer ${await currentUser.getIdToken()}`,
         'Content-Type': 'multipart/form-data'
       }
     });
 
-    successMessage.value = response.data.message;
-
+    successMessage.value = 'Profile updated successfully!';
+    
     // Optionally, refresh the user data
     fetchUserData();
   } catch (error) {
@@ -221,6 +297,8 @@ const handleProfileUpdate = async () => {
     } else {
       errorMessage.value = 'Failed to update profile. Please try again.';
     }
+  } finally {
+    isSubmitting.value = false;
   }
 };
 
@@ -232,25 +310,18 @@ const fetchUserData = async () => {
   }
 
   try {
-    // Get ID Token
-    const idToken = await currentUser.getIdToken(/* forceRefresh */ true);
-
-    const response = await axios.get(`http://localhost:3000/api/users/byUserID/${currentUser.uid}`, {
+    const response = await axios.get(`http://localhost:3000/api/users/${currentUser.uid}`, {
       headers: {
-        'Authorization': `Bearer ${idToken}`
+        'Authorization': `Bearer ${await currentUser.getIdToken()}`
       }
     });
 
     userData.value = response.data;
-
-    // Prefill form fields
-    email.value = userData.value.email;
-    userID.value = userData.value.userID;
-    points.value = userData.value.points;
-    joinedEvents.value = userData.value.joinedEvents;
-
-    // Optionally, set the profile image URL
-    newProfileImageUrl.value = userData.value.profileImage || '';
+    email.value = response.data.email || '';
+    username.value = response.data.username || '';
+    points.value = response.data.points || 0;
+    joinedEvents.value = response.data.joinedEvents || [];
+    newProfileImageUrl.value = response.data.profileImage || '';
   } catch (error) {
     console.error('Error fetching user data:', error);
     errorMessage.value = 'Failed to fetch user data.';
@@ -258,8 +329,6 @@ const fetchUserData = async () => {
 };
 
 // Fetch user data on component mount
-import { onMounted } from 'vue';
-
 onMounted(() => {
   fetchUserData();
 });
@@ -281,5 +350,47 @@ onMounted(() => {
 
 .current-info p {
   margin: 0.25rem 0;
+}
+
+.current-info {
+  display: flex;
+  align-items: center;
+}
+
+.flex-wrap {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.bg-blue-100 {
+  background-color: #ebf8ff;
+}
+
+.text-blue-700 {
+  color: #2b6cb0;
+}
+
+.bg-green-500 {
+  background-color: #48bb78;
+}
+
+.hover\:bg-green-600:hover {
+  background-color: #38a169;
+}
+
+.bg-blue-500 {
+  background-color: #4299e1;
+}
+
+.hover\:bg-blue-700:hover {
+  background-color: #2b6cb0;
+}
+
+.text-red-500 {
+  color: #f56565;
+}
+
+.hover\:text-red-700:hover {
+  color: #c53030;
 }
 </style>

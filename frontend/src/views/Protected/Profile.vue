@@ -2,7 +2,6 @@
   <div class="home-container"> <!-- Use a wrapper for flex layout -->
     <Navbar />
     <main> <!-- Wrap content in a main tag -->
-      <h1>PROFILEPAGE</h1>
       <profile-update></profile-update>
     </main>
   </div>
