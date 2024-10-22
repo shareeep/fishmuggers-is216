@@ -9,7 +9,7 @@ import Notifications from '@/views/Protected/Notifications.vue';
 import Calendar from '@/views/Protected/Calendar.vue';
 import Friends from '@/views/Protected/Friends.vue';
 import Profile from '../views/Protected/Profile.vue';
-
+import Chats from '@/views/Protected/Chats.vue';
 
 import PublicLayout from '../layouts/PublicLayout.vue';
 import ProtectedLayout from '../layouts/ProtectedLayout.vue'; 
@@ -34,9 +34,10 @@ const router = createRouter({
           component: Events,
         }, 
         {
-          path: 'eventdetail/:title',
+          path: 'eventdetail/:id',
           name: 'eventDetail',
           component: EventDetail,
+          props:true
         },
         {
           path: 'notifications',
@@ -57,6 +58,11 @@ const router = createRouter({
           path: 'profile',
           name: 'Profile',
           component: Profile,
+        },
+        {
+          path: 'chats',
+          name: 'chats',
+          component: Chats,
         },
         {
           path: '/:pathMatch(.*)*', // Catch-all route for undefined paths in protected routes

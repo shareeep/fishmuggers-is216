@@ -7,24 +7,27 @@
         <!-- SEARCH BAR -->
         <div class="flex justify-center">
             <div class="relative z-20 flex items-center w-full max-w-lg">
-                <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none z-10">
+                <div class="absolute inset-y-0 start-0 flex items-center pl-3 pointer-events-none z-10">
                     <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true"
                         xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                             d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
                     </svg>
                 </div>
-                <input type="search" id="default-search"
-                    class="block w-full pl-10 p-4 text-sm text-gray-900 border border-gray-300 rounded-lg bg-white focus:ring-[#FDF4CB] focus:border-[#FDF4CB] dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-[#FDF4CB] dark:focus:border-[#FDF4CB] drop-shadow-md"
-                    placeholder="Search for an event" required />
-                <div class="absolute inset-y-0 end-0 flex items-center ps-3 z-10 mr-2">
-                    <button
-                        class="text-black absolute end-0 bottom-2.5 bg-[#FFD700] hover:bg-[#E6C200] font-bold rounded-lg text-sm px-4 py-2">Search
+                <input type="search" id="default-search" v-model="searchQuery" @keyup.enter="applySearch" @input="handleSearchInput"
+                    class="block w-full pl-10 pr-16 lg:pr-32 p-4 text-sm text-gray-900 border border-gray-300 rounded-lg bg-white focus:ring-[#FDF4CB] focus:border-[#FDF4CB] dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-[#FDF4CB] dark:focus:border-[#FDF4CB] drop-shadow-md"
+                    placeholder="Search for an event" required>
+                <div class="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-12 mr-2">
+                    <button @click="applySearch"
+                        class="text-black bg-[#FFD700] hover:bg-[#E6C200] font-bold rounded-lg text-sm px-4 py-2">
+                        Search
                     </button>
                 </div>
+                </input>
 
             </div>
         </div>
+
     </div>
 
     <!--sort by sm block-->
@@ -230,6 +233,14 @@
                 </div>
             </div>
         </div>
+        <!-- Apply Filters Button -->
+        <div class="flex justify-center mt-3">
+            <button @click="applyFilters"
+                class="rounded-lg text-sm py-2.5 text-center items-center me-3 text-black  bg-[#FFD700] hover:bg-[#E6C200] font-bold text-sm"
+                style="width: 19.5rem;">
+                Apply Filters
+            </button>
+        </div>
         <!-- Reset Filters Button -->
         <div class="flex justify-center mt-3">
             <button @click="resetFilters"
@@ -309,7 +320,7 @@
                 </h6>
                 <ul class="space-y-2 text-sm">
                     <li class="flex items-center">
-                        <input id="lessThan10" type="radio" value="lessThan10" v-model="selectedEventSize"
+                        <input id="<10" type="radio" value="<10" v-model="selectedEventSize"
                             class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500" />
                         <label for="lessThan10" class="ml-2 text-sm font-medium text-gray-900">
                             &lt;10
@@ -317,7 +328,7 @@
                     </li>
 
                     <li class="flex items-center">
-                        <input id="tenToFifty" type="radio" value="tenToFifty" v-model="selectedEventSize"
+                        <input id="10-50" type="radio" value="10-50" v-model="selectedEventSize"
                             class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500" />
                         <label for="tenToFifty" class="ml-2 text-sm font-medium text-gray-900">
                             10-50
@@ -325,7 +336,7 @@
                     </li>
 
                     <li class="flex items-center">
-                        <input id="fiftyToHundred" type="radio" value="fiftyToHundred" v-model="selectedEventSize"
+                        <input id="50-100" type="radio" value="50-100" v-model="selectedEventSize"
                             class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500" />
                         <label for="fiftyToHundred" class="ml-2 text-sm font-medium text-gray-900">
                             50-100
@@ -333,7 +344,7 @@
                     </li>
 
                     <li class="flex items-center">
-                        <input id="moreThanHundred" type="radio" value="moreThanHundred" v-model="selectedEventSize"
+                        <input id=">100" type="radio" value=">100" v-model="selectedEventSize"
                             class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500" />
                         <label for="moreThanHundred" class="ml-2 text-sm font-medium text-gray-900">
                             &gt;100
@@ -437,6 +448,11 @@
                 </button>
             </div>
         </div>
+        <!-- Apply Filters Button -->
+        <button @click="applyFilters"
+            class="rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center me-3 text-black  bg-[#FFD700] hover:bg-[#E6C200] font-bold text-sm">
+            Apply Filters
+        </button>
         <!-- Reset Filters Button -->
         <button @click="resetFilters"
             class="rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center me-3 text-black  bg-[#FFD700] hover:bg-[#E6C200] font-bold text-sm">
@@ -449,6 +465,7 @@
 export default {
     data() {
         return {
+            searchQuery: '', // Holds the search query
             today: new Date().toISOString().split('T')[0], // Calculate today's date
             // PET SIZE FILTER
             isPetTypeDropdownOpen: false,
@@ -476,17 +493,55 @@ export default {
         };
     },
     methods: {
+        applySearch() {
+            if (this.searchQuery) {
+                const filters = {
+                    searchQuery: this.searchQuery, // Add search query to filters
+                    petType: {
+                        cats: this.selectedCats,
+                        dogs: this.selectedDogs,
+                    },
+                    eventSize: this.selectedEventSize,
+                    dateRange: {
+                        startDate: this.startDate,
+                        endDate: this.endDate,
+                    },
+                    location: this.selectedLocation
+                };
+
+                // Emit the filters and search query to the parent component
+                this.$emit('filters-applied', filters);
+            }
+        },
+        handleSearchInput() {
+            // If search query is cleared, emit a reset event
+            if (!this.searchQuery) {
+                this.$emit('search-cleared');
+            }
+        },
         togglePetTypeDropdown() {
-            this.isPetTypeDropdownOpen = !this.isPetTypeDropdownOpen;
+            if (!this.isPetTypeDropdownOpen) {
+                this.closeAllDropdowns(); // Close all other dropdowns
+            }
+            this.isPetTypeDropdownOpen = !this.isPetTypeDropdownOpen; // Toggle the Pet Type dropdown
         },
         toggleEventSizeDropdown() {
-            this.isEventSizeDropdownOpen = !this.isEventSizeDropdownOpen;
+            if (!this.isEventSizeDropdownOpen) {
+                this.closeAllDropdowns(); // Close all other dropdowns
+            }
+            this.isEventSizeDropdownOpen = !this.isEventSizeDropdownOpen; // Toggle the Event Size dropdown
         },
         toggleDateRangeDropdown() {
-            this.isDateRangeDropdownOpen = !this.isDateRangeDropdownOpen;
+            if (!this.isDateRangeDropdownOpen) {
+                this.closeAllDropdowns(); // Close all other dropdowns
+            }
+            this.isDateRangeDropdownOpen = !this.isDateRangeDropdownOpen; // Toggle the Date Range dropdown
         },
         toggleLocationDropdown() {
-            this.isLocationDropdownOpen = !this.isLocationDropdownOpen;
+            if (!this.isLocationDropdownOpen) {
+                this.closeAllDropdowns(); // Close all other dropdowns
+            }
+            this.isLocationDropdownOpen = !this.isLocationDropdownOpen; // Toggle the Location dropdown
         },
         applyPetTypeFilters() {
             this.isPetTypeFilled = this.selectedCats || this.selectedDogs;
@@ -500,18 +555,18 @@ export default {
             const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
 
             // Set default values for startDate and endDate if they're empty
-            if (!this.startDate) {
-                this.startDate = today; // Set startDate to today if empty
-            }
+            // if (!this.startDate) {
+            //     this.startDate = today; // Set startDate to today if empty
+            // }
 
             // If endDate is empty, leave it as null (the user may not want to specify an end date)
-
-            // Check if the user has selected a start date
             if (this.endDate) {
                 this.isDateRangeFilled = true;
                 // Handle filtering logic based on startDate and endDate
-            } else {
+            } else if (this.startDate && !this.endDate) {
                 // Optionally handle empty input case
+                this.isDateRangeFilled = true;
+            } else {
                 this.isDateRangeFilled = false;
             }
 
@@ -555,17 +610,27 @@ export default {
                     console.error('Error fetching location suggestions:', error);
                 });
         },
+
         selectLocation(suggestion) {
-            this.selectedLocation = suggestion.location; // Store selected location
+            this.selectedLocation = suggestion.name; // Store selected location
             this.searchedLoc = suggestion.name; // Set input value to selected name
             this.locationSuggestions = []; // Clear suggestions
         },
 
         applyLocationFilters() {
-            this.isLocationFilled = true; // Set filled status to true
+            if (this.searchedLoc) {
+                // Only set the location as filled if a suggestion was selected
+                this.isLocationFilled = true;
+                this.selectedLocation = this.searchedLoc; 
+            } else {
+                // Clear the location input and prevent it from being stored
+                this.isLocationFilled = false;
+                this.selectedLocation = null; // Clear selected location
+            }
             this.isLocationDropdownOpen = false; // Close dropdown after applying
         },
         resetFilters() {
+            this.closeAllDropdowns(); // Close dropdowns after resetting
             this.selectedCats = false;
             this.selectedDogs = false;
             this.selectedEventSize = null;
@@ -578,6 +643,33 @@ export default {
             this.isDateRangeFilled = false;
             this.isLocationFilled = false; // Reset location filled status
             this.locationSuggestions = []; // Clear suggestions if necessary
+            this.$emit('filters-reset');
+        },
+        closeAllDropdowns() {
+            this.isPetTypeDropdownOpen = false;
+            this.isEventSizeDropdownOpen = false;
+            this.isDateRangeDropdownOpen = false;
+            this.isLocationDropdownOpen = false;
+        },
+        applyFilters() {
+            this.closeAllDropdowns(); // Close dropdowns after applying
+            // Collect the applied filters
+            const filters = {
+                petType: {
+                    cats: this.selectedCats,
+                    dogs: this.selectedDogs,
+                },
+                eventSize: this.selectedEventSize,
+                dateRange: {
+                    startDate: this.startDate,
+                    endDate: this.endDate,
+                },
+                location: this.selectedLocation
+            };
+
+            // Emit the filters to the parent component
+            this.$emit('filters-applied', filters);
+            // Optionally, you can close the dropdowns or reset any temporary states
         },
     }
 };
