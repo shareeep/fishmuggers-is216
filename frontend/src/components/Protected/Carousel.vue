@@ -390,28 +390,22 @@ export default defineComponent({
 /* ARROW STYLES */
 .carousel__prev,
 .carousel__next {
-    box-sizing: content-box;
-    background: transparent;
-    /* Make the default background transparent */
-    border-radius: var(--vc-nav-border-radius);
-    width: var(--vc-nav-width);
-    height: var(--vc-nav-height);
-    text-align: center;
-    font-size: var(--vc-nav-height);
-    padding: 0;
-    color: var(--vc-nav-color);
+    width: 60px;
+    height: 60px;
+    top: 50%;
+    transform: translateY(-50%);
+    position: absolute;
     display: flex;
     justify-content: center;
     align-items: center;
-    position: absolute;
-    border: 0;
+    background-color: #FFF3B3;
+    border-radius: 50%;
+    border: none;
     cursor: pointer;
-    margin: 0 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    transition: color 0.3s ease
+    padding: 0;
+    margin: 0;
+    z-index: 1; /* Ensure arrows are always on top */
 }
-
 .carousel__prev:hover,
 .carousel__next:hover {
     color: white;
@@ -435,11 +429,12 @@ export default defineComponent({
 }
 
 .carousel__prev {
-    left: 0;
+    left: 20px; /* Consistent distance from left edge */
 }
 
 .carousel__next {
-    right: 0;
+    right: 20px; /* Consistent distance from right edge */
+    padding-right:10px;
 }
 
 .carousel--rtl .carousel__prev {
@@ -592,6 +587,7 @@ export default defineComponent({
     width: 1200px;
     color: #2c3e50;
     overflow: hidden;
+    position:relative;
 }
 
 .carousel__item {
