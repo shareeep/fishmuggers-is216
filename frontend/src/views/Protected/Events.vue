@@ -13,8 +13,8 @@
 <script setup>
 // Any Home page-specific logic 
 import Navbar from '@/components/Protected/Navbar.vue';
-import search_filter from '@/components/Protected/SearchandFilter.vue';
-import carousel from '@/components/Protected/Carousel.vue';
+import search_filter from '@/components/Protected/Events/SearchandFilter.vue';
+import carousel from '@/components/Protected/Events/Carousel.vue';
 
 </script>
 

@@ -1,6 +1,6 @@
 <template>
     <div class="max-w-md mx-auto relative">
-        <img src="../../assets/images/search_image.png"
+        <img src="../../../assets/images/search_image.png"
             style="width:300px; margin-bottom: -10px;margin-left: 48px;position:relative;"
             class="block mx-auto z-30 md:w-2/3 lg:w-1/2">
 

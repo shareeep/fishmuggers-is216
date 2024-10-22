@@ -1,7 +1,7 @@
 <template>
     <div class="event-detail" v-if="event">
         <!--back button-->
-        <router-link to="/events" class="back-button"><img src="../../assets/images/back_arrow.png" alt="back"
+        <router-link to="/events" class="back-button"><img src="../../../assets/images/back_arrow.png" alt="back"
                 width="40px"></router-link>
         <!--image-->
         <img class="event-image" :src="event.image" alt="Event Image" />
@@ -48,12 +48,12 @@
                 <h3>Date & Time</h3>
                 <div class="date-time">
                     <div class="date">
-                        <span class="icon calendar-icon"><img src="../../assets/images/calendar_icon.png"
+                        <span class="icon calendar-icon"><img src="../../../assets/images/calendar_icon.png"
                                 alt="calendaricon" style="width:30px;height:30px;"></span>
                         <span> {{ event.day }}, {{ event.date }}</span>
                     </div>
                     <div class="time">
-                        <span class="icon clock-icon"><img src="../../assets/images/time_icon.png" alt="timeicon"
+                        <span class="icon clock-icon"><img src="../../../assets/images/time_icon.png" alt="timeicon"
                                 style="width:30px;height:30px;"></span>
                         <span> {{ event.time }}</span>
                     </div>
@@ -64,7 +64,7 @@
                 <!--location-->
                 <h3>Location</h3>
                 <div class="location">
-                    <span class="icon location-icon"><img src="../../assets/images/location_icon.png" alt="locationicon"
+                    <span class="icon location-icon"><img src="../../../assets/images/location_icon.png" alt="locationicon"
                             style="width:30px;height:30px;"></span>
                     <span>{{ event.address }}</span>
                 </div>
@@ -83,7 +83,7 @@ import { onMounted } from 'vue';
 import { useRoute } from 'vue-router';
 import 'leaflet/dist/leaflet.css';
 import * as L from 'leaflet';
-import customMarkerIcon from '../../assets/images/paw_marker.png';
+import customMarkerIcon from '../../../assets/images/paw_marker.png';
 export default {
     name: "EventDetail",
     data() {

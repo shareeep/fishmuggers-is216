@@ -7,7 +7,7 @@
                     d="M12 .587l3.668 7.568 8.332 1.203-6.002 5.854 1.417 8.338L12 18.896l-7.415 3.885 1.417-8.338-6.002-5.854 8.332-1.203L12 .587z" />
             </svg>
         </span>
-        <button class="icon share-icon"><img src="../../assets/images/send.png" width="30px" alt="send"></button>
+        <button class="icon share-icon"><img src="../../../assets/images/send.png" width="30px" alt="send"></button>
         <span class="slots-left">{{ event.slots }} slots left</span>
         <button class="directions-button">Directions</button>
         <button class="rsvp-button">RSVP</button>
