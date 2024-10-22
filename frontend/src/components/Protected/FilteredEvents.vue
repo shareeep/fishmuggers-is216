@@ -128,7 +128,12 @@ export default {
     computed: {
         filteredEvents() {
             return this.events.filter(event => {
-                const { petType, eventSize, dateRange, location } = this.filters;
+                const { searchQuery, petType, eventSize, dateRange, location } = this.filters;
+
+                // Search query filter
+                const searchMatch = searchQuery
+                    ? event.title.toLowerCase().includes(searchQuery.toLowerCase()) || event.description.toLowerCase().includes(searchQuery.toLowerCase())
+                    : true;
 
                 // If no petType is selected, allow all pet types
                 const petTypeMatch = (petType.cats || petType.dogs)
@@ -148,7 +153,7 @@ export default {
                 // If no location is selected, allow all locations
                 const locationMatch = location ? event.address.includes(location) : true;
 
-                return petTypeMatch && eventSizeMatch && startDateMatch && endDateMatch && locationMatch;
+                return searchMatch && petTypeMatch && eventSizeMatch && startDateMatch && endDateMatch && locationMatch;
             });
         }
     }
@@ -179,7 +184,8 @@ export default {
 }
 
 .title,
-.numEvents, .noevents {
+.numEvents,
+.noevents {
     text-align: center;
     font-family: 'Montserrat', sans-serif;
     font-size: 30px;

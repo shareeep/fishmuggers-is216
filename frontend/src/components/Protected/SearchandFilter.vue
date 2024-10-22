@@ -14,11 +14,12 @@
                             d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
                     </svg>
                 </div>
-                <input type="search" id="default-search"
+                <input type="search" id="default-search" v-model="searchQuery" @keyup.enter="applySearch" @input="handleSearchInput"
                     class="block w-full pl-10 pr-16 lg:pr-32 p-4 text-sm text-gray-900 border border-gray-300 rounded-lg bg-white focus:ring-[#FDF4CB] focus:border-[#FDF4CB] dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-[#FDF4CB] dark:focus:border-[#FDF4CB] drop-shadow-md"
                     placeholder="Search for an event" required>
                 <div class="absolute inset-y-0 right-0 flex items-center pr-2 lg:pr-12 mr-2">
-                    <button class="text-black bg-[#FFD700] hover:bg-[#E6C200] font-bold rounded-lg text-sm px-4 py-2">
+                    <button @click="applySearch"
+                        class="text-black bg-[#FFD700] hover:bg-[#E6C200] font-bold rounded-lg text-sm px-4 py-2">
                         Search
                     </button>
                 </div>
@@ -464,6 +465,7 @@
 export default {
     data() {
         return {
+            searchQuery: '', // Holds the search query
             today: new Date().toISOString().split('T')[0], // Calculate today's date
             // PET SIZE FILTER
             isPetTypeDropdownOpen: false,
@@ -491,6 +493,32 @@ export default {
         };
     },
     methods: {
+        applySearch() {
+            if (this.searchQuery) {
+                const filters = {
+                    searchQuery: this.searchQuery, // Add search query to filters
+                    petType: {
+                        cats: this.selectedCats,
+                        dogs: this.selectedDogs,
+                    },
+                    eventSize: this.selectedEventSize,
+                    dateRange: {
+                        startDate: this.startDate,
+                        endDate: this.endDate,
+                    },
+                    location: this.selectedLocation
+                };
+
+                // Emit the filters and search query to the parent component
+                this.$emit('filters-applied', filters);
+            }
+        },
+        handleSearchInput() {
+            // If search query is cleared, emit a reset event
+            if (!this.searchQuery) {
+                this.$emit('search-cleared');
+            }
+        },
         togglePetTypeDropdown() {
             if (!this.isPetTypeDropdownOpen) {
                 this.closeAllDropdowns(); // Close all other dropdowns

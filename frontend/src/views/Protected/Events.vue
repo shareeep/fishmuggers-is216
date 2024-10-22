@@ -3,7 +3,8 @@
     <Navbar />
     <main>
       <div class="search-filter-container">
-        <search_filter @filters-applied="handleFiltersApplied" @filters-reset="handleFiltersReset" />
+        <search_filter @filters-applied="handleFiltersApplied" @filters-reset="handleFiltersReset"
+          @search-cleared="handleSearchCleared" />
       </div>
       <div class="content-container">
         <carousel v-if="!filtersApplied" />
@@ -29,6 +30,7 @@ const appliedFilters = ref({}); // This will hold the filter values
 function handleFiltersApplied(filters) {
   // Check if any filters are actually applied (not empty)
   const hasFilters =
+    filters.searchQuery ||
     filters.petType.cats ||
     filters.petType.dogs ||
     filters.eventSize ||
@@ -44,6 +46,10 @@ function handleFiltersApplied(filters) {
 function handleFiltersReset() {
   filtersApplied.value = false; // Reset the filtersApplied to false to show the carousel
   appliedFilters.value = {}; // Clear the applied filters
+}
+function handleSearchCleared() {
+  filtersApplied.value = false; // No filters applied, so reset
+  appliedFilters.value = {}; // Clear filters
 }
 </script>
 
