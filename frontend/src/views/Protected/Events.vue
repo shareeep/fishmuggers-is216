@@ -1,163 +1,165 @@
 <template>
-  <div class="home-container"> <!-- Use a wrapper for flex layout -->
+  <div class="home-container">
     <Navbar />
     <main>
-      <!-- <h1>EVENTS</h1> -->
-      <search_filter />
-      <carousel />
+      <div class="search-filter-container">
+        <search_filter @filters-applied="handleFiltersApplied" @filters-reset="handleFiltersReset" />
+      </div>
+      <div class="content-container">
+        <carousel v-if="!filtersApplied" />
+        <FilteredEvents v-if="filtersApplied" :filters="appliedFilters" />
+      </div>
     </main>
-
   </div>
 </template>
 
-<script setup>
-// Any Home page-specific logic 
-import Navbar from '@/components/Protected/Navbar.vue';
-import search_filter from '@/components/Protected/SearchandFilter.vue';
-import carousel from '@/components/Protected/Carousel.vue';
 
+<script setup>
+import { ref } from 'vue';
+import Navbar from '@/components/Protected/Navbar.vue';
+import search_filter from '@/components/Protected/Events/SearchandFilter.vue';
+import carousel from '@/components/Protected/Events/Carousel.vue';
+import FilteredEvents from '@/components/Protected/Events/FilteredEvents.vue';
+
+// State to track if filters are applied and the applied filter data
+const filtersApplied = ref(false);
+const appliedFilters = ref({}); // This will hold the filter values
+
+// This function is called when filters are applied
+function handleFiltersApplied(filters) {
+  // Check if any filters are actually applied (not empty)
+  const hasFilters =
+    filters.searchQuery ||
+    filters.petType.cats ||
+    filters.petType.dogs ||
+    filters.eventSize ||
+    filters.dateRange.startDate ||
+    filters.dateRange.endDate ||
+    filters.location;
+
+  filtersApplied.value = hasFilters; // Set the filters as applied only if filters are not empty
+  appliedFilters.value = filters; // Store the applied filters
+}
+
+// This function is called when filters are reset
+function handleFiltersReset() {
+  filtersApplied.value = false; // Reset the filtersApplied to false to show the carousel
+  appliedFilters.value = {}; // Clear the applied filters
+}
+// function handleSearchCleared() {
+//   filtersApplied.value = false; // No filters applied, so reset
+//   appliedFilters.value = {}; // Clear filters
+// }
 </script>
 
 <style scoped>
+/* Styling for the Navbar */
 .navbar {
   width: 250px;
-  /* Width of the navbar */
   height: 100vh;
-  /* Full height of the viewport */
   position: sticky;
   top: 0;
 }
 
-.search_filter {
+/* Fixed search filter at the top */
+.fixed-search-filter {
+  position: fixed;
+  top: 0;
+  z-index: 1000;
+  width: 100%;
+  /* Adjust based on Navbar width */
   background-color: #FCEFB4;
-  padding-left: 30px;
+  padding: 10px 30px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
+/* Content wrapper to push content below the fixed search filter */
+.content-wrapper {
+  padding-top: 120px;
+  /* Ensure space below the fixed filter */
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  /* Horizontally center content */
+  align-items: center;
+  /* Vertically center content */
+  flex-direction: column;
+  /* Stack elements vertically */
+}
 
+/* Main content layout */
 .home-container {
   display: flex;
-  /* Set flexbox layout for the container */
+  width: 100%;
 }
 
-/* can change */
 main {
-  display: flex;
   flex-grow: 1;
-  /* Allow main to take the remaining width */
-  padding: 20px;
-  /* Add padding for spacing */
-  /* Optional styling */
+  display: flex;
+  flex-direction: column;
+  width: 100%;
   background-color: #FCEFB4;
-  /* Example background color */
   overflow-y: auto;
-  /* Allow scrolling if content overflows */
-  flex-direction: column; /* Ensure content stacks vertically */
-  justify-content: center; /* Center horizontally */
-  align-items: center; /* Center vertically */
-   /* Make the main take full viewport height */
+  align-items: center;
+  /* Center main content horizontally */
 }
 
-
+/* Responsive adjustments for smaller screens */
 @media (max-width: 640px) {
   .navbar {
-    width: 200px; /* Change navbar width for small screens, if needed */
+    width: 200px;
   }
 
-  
-  main {
-    display: flex; /* Use flexbox for main */
-    flex-direction: column; /* Stack children vertically */
-    align-items: center; /* Center children horizontally */
-    padding: 0; /* Adjust padding for smaller screens */
-    width: 100%; /* Ensure main takes full width */
+  .fixed-search-filter {
+    width: calc(100% - 200px);
   }
 
-  .search_filter {
-    width: 100%; /* Ensure the search filter takes full width */
-    max-width: 600px; /* Set a max width for better appearance */
-    margin: 0 auto; /* Center search_filter */
-  }
-
-  .carousel {
-    width:100%;
-    margin: 0 auto; /* Center carousel */
+  .content-wrapper {
+    padding-top: 120px;
+    justify-content: center;
+    /* Ensure vertical centering on smaller screens */
   }
 }
-
-
 
 @media (max-width: 768px) {
   .navbar {
-    width: 200px; /* Change navbar width for small screens, if needed */
+    width: 200px;
   }
 
-  main {
-    display: flex; /* Use flexbox for main */
-    flex-direction: column; /* Stack children vertically */
-    align-items: center; /* Center children horizontally */
-    padding: 0; /* Adjust padding for smaller screens */
-    width: 100%; /* Ensure main takes full width */
+  .fixed-search-filter {
+    width: calc(100% - 200px);
   }
 
-  .search_filter {
-    width: 100%; /* Ensure the search filter takes full width */
-    max-width: 600px; /* Set a max width for better appearance */
-    margin: 0 auto; /* Center search_filter */
-  }
-
-  .carousel {
-    width:100%;
-    margin: 0 auto; /* Center carousel */
+  .content-wrapper {
+    padding-top: 120px;
   }
 }
 
 @media (max-width: 1024px) {
   .navbar {
-    width: 200px; /* Change navbar width for small screens, if needed */
-  }
-  
-  main {
-    display: flex; /* Use flexbox for main */
-    flex-direction: column; /* Stack children vertically */
-    align-items: center; /* Center children horizontally */
-    padding: 0; /* Adjust padding for smaller screens */
-    width: 100%; /* Ensure main takes full width */
+    width: 200px;
   }
 
-  .search_filter {
-    width: 100%; /* Ensure the search filter takes full width */
-    max-width: 600px; /* Set a max width for better appearance */
-    margin: 0 auto; /* Center search_filter */
+  .fixed-search-filter {
+    width: calc(100% - 200px);
   }
 
-  .carousel {
-    width:100%;
-    margin: 0 auto; /* Center carousel */
+  .content-wrapper {
+    padding-top: 120px;
   }
 }
 
 @media (max-width: 1289px) {
   .navbar {
-    width: 250px; /* Change navbar width for small screens, if needed */
-  }
-  
-  main {
-    display: flex; /* Use flexbox for main */
-    flex-direction: column; /* Stack children vertically */
-    align-items: center; /* Center children horizontally */
-    padding: 0; /* Adjust padding for smaller screens */
-    width: 100%; /* Ensure main takes full width */
+    width: 250px;
   }
 
-  .search_filter {
-    width: 100%; /* Ensure the search filter takes full width */
-    max-width: 600px; /* Set a max width for better appearance */
-    margin: 0 auto; /* Center search_filter */
+  .fixed-search-filter {
+    width: calc(100% - 250px);
   }
 
-  .carousel {
-    width:100%;
-    margin: 0 auto; /* Center carousel */
+  .content-wrapper {
+    padding-top: 120px;
   }
 }
 </style>

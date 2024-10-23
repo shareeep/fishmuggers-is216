@@ -112,7 +112,7 @@
 </template>
 
 <script>
-import EventPopup from './EventPopup.vue';
+import EventPopup from './Events/EventPopup.vue';
 
 export default {
   data() {
