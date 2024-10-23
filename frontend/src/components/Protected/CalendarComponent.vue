@@ -333,13 +333,19 @@ select {
   background-position: center bottom;
   border-bottom: 4px solid #c8c7c7;
 }
-.calendar-header h1 {
-  font-size: 48px;
-  font-weight: bolder;
-  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
-  color: black;
-  text-shadow: 6px 6px 6px white;
+@font-face {
+  font-family: pawfont;
+  src: url(../../assets/fonts/PawWowBlock-VGMDl.otf);
 }
+.calendar-header h1 {
+  font-size: 7vw; /* Font size is now relative to the container size */
+  font-weight: bolder;
+  font-family: pawfont;
+  color: black;
+  text-shadow: 4px 3px white;
+  text-transform: uppercase;
+}
+
 .calendar-header button {
   background-color: #48434B;
   color: white;
@@ -398,7 +404,7 @@ td {
 .clickable-date:hover {
   cursor: pointer;
   /* background-color: rgb(126, 165, 255); */
-  background-color: #b97200e7;
+  background-color: #6b4200e7;
   color: white;
   /* border: 2px solid #7b61ff; */
 }
