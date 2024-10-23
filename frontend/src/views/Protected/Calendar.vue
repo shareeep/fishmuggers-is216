@@ -26,11 +26,12 @@
   .navbar {
     width: 250px; /* Width of the navbar */
     height: 100vh; /* Full height of the viewport */
+    position: sticky;
+    top: 0;
   }
   .home-container {
     display: flex; /* Set flexbox layout for the container */
   }
-  
   
   /* can change */
   main {
