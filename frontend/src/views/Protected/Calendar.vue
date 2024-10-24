@@ -2,12 +2,7 @@
     <div class="home-container"> <!-- Use a wrapper for flex layout -->
       <Navbar />
       <main> <!-- Wrap content in a main tag -->
-        <h1>CALENDAR</h1>
-
-
         <CalendarComponent />
-
-
       </main>
     </div>
   </template>
@@ -15,10 +10,7 @@
   <script setup>
   // Any Home page-specific logic
   import Navbar from '@/components/Protected/Navbar.vue';
-
-
-  import CalendarComponent from '@/components/Protected/CalendarComponent.vue';
-
+  import CalendarComponent from '@/components/Protected/Calendar/CalendarComponent.vue';
 
   </script>
   

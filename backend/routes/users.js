@@ -5,8 +5,124 @@ const router = express.Router();
 const { db, auth, bucket } = require("../services/firebase");
 const authenticate = require("../middleware/auth");
 const upload = require("../middleware/upload");
+const { body, validationResult } = require("express-validator");
+
+// --------------------
+// Helper Functions
+// --------------------
+
+// Function to validate user data using express-validator
+const validateUserData = [
+  body("email")
+    .optional()
+    .isEmail()
+    .withMessage("Please provide a valid email address."),
+  
+  body("username")
+    .optional()
+    .isLength({ min: 3 })
+    .withMessage("Username must be at least 3 characters long."),
+  
+  body("points")
+    .optional()
+    .isInt({ min: 0 })
+    .withMessage("Points must be a non-negative integer."),
+  
+  body("joinedEvents")
+    .optional()
+    .customSanitizer(async (value) => {
+      if (typeof value === "string") {
+        try {
+          return JSON.parse(value);
+        } catch (e) {
+          throw new Error("joinedEvents must be a valid JSON array.");
+        }
+      }
+      return value;
+    })
+    .isArray()
+    .withMessage("joinedEvents must be an array of event IDs.")
+    .custom(async (joinedEvents) => {
+      // Check if each eventId exists in the events collection
+      for (const eventId of joinedEvents) {
+        if (typeof eventId !== "string" || eventId.trim() === "") {
+          throw new Error(`Invalid event ID: ${eventId}`);
+        }
+        const eventDoc = await db.collection("events").doc(eventId).get();
+        if (!eventDoc.exists) {
+          throw new Error(`Event ID does not exist: ${eventId}`);
+        }
+      }
+      return true;
+    }),
+  
+  body("hostingEvents")
+    .optional()
+    .customSanitizer((value) => {
+      if (typeof value === "string") {
+        try {
+          return JSON.parse(value);
+        } catch (e) {
+          return value;
+        }
+      }
+      return value;
+    })
+    .isArray()
+    .withMessage("hostingEvents must be an array of event IDs."),
+  
+  body("pets")
+    .optional()
+    .customSanitizer((value) => {
+      if (typeof value === "string") {
+        try {
+          return JSON.parse(value);
+        } catch (e) {
+          return value;
+        }
+      }
+      return value;
+    })
+    .isArray()
+    .withMessage("pets must be an array of pet IDs."),
+  
+  body("friends")
+    .optional()
+    .customSanitizer((value) => {
+      if (typeof value === "string") {
+        try {
+          return JSON.parse(value);
+        } catch (e) {
+          return value;
+        }
+      }
+      return value;
+    })
+    .isArray()
+    .withMessage("friends must be an array of user UIDs."),
+  
+  body("pendingFriends")
+    .optional()
+    .customSanitizer((value) => {
+      if (typeof value === "string") {
+        try {
+          return JSON.parse(value);
+        } catch (e) {
+          return value;
+        }
+      }
+      return value;
+    })
+    .isArray()
+    .withMessage("pendingFriends must be an array of user UIDs."),
+];
+
+// --------------------
+// Routes
+// --------------------
 
 // 1. Static Routes - Define these first
+
 // GET /api/users/checkUsername - Check username availability
 router.get("/checkUsername", authenticate, async (req, res) => {
   const { username } = req.query;
@@ -39,6 +155,7 @@ router.get("/checkUsername", authenticate, async (req, res) => {
 });
 
 // 2. Dynamic Routes - Define these after static routes
+
 // GET /api/users/:uid - Fetch user data
 router.get("/:uid", authenticate, async (req, res) => {
   const { uid } = req.params;
@@ -66,6 +183,7 @@ router.put(
   "/:uid",
   authenticate,
   upload.single("profileImage"),
+  validateUserData,
   async (req, res) => {
     const { uid } = req.params;
 
@@ -74,44 +192,72 @@ router.put(
       return res.status(403).json({ message: "Forbidden. Access denied." });
     }
 
-    const { email, username, password, points, joinedEvents, pets } = req.body;
-
-    // Basic validation
-    if (!email || !username) {
-      return res
-        .status(400)
-        .json({ message: "Email and username are required." });
+    // Validate incoming data
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
     }
+
+    const {
+      email,
+      username,
+      password,
+      points,
+      joinedEvents,
+      hostingEvents,
+      pets,
+      friends,
+      pendingFriends,
+    } = req.body;
 
     try {
       // Check if the desired username is already taken by another user
-      const usernameQuery = await db
-        .collection("users")
-        .where("username", "==", username)
-        .get();
-      if (!usernameQuery.empty) {
-        const existingUser = usernameQuery.docs[0].data();
-        if (existingUser.uid !== uid) {
-          return res
-            .status(400)
-            .json({ message: "Username is already taken." });
+      if (username) {
+        const usernameQuery = await db
+          .collection("users")
+          .where("username", "==", username)
+          .limit(1)
+          .get();
+
+        if (!usernameQuery.empty) {
+          const existingUser = usernameQuery.docs[0].data();
+          if (existingUser.uid !== uid) {
+            return res
+              .status(400)
+              .json({ message: "Username is already taken." });
+          }
         }
       }
 
       // Prepare updated data
-      const updatedData = {
-        email,
-        username,
-        points: points ? parseInt(points) : 0,
-        joinedEvents: joinedEvents ? JSON.parse(joinedEvents) : [],
-        pets: pets ? JSON.parse(pets) : [],
-      };
+      const updatedData = {};
+
+      if (email) updatedData.email = email;
+      if (username) updatedData.username = username;
+      if (points !== undefined)
+        updatedData.points = parseInt(points, 10) || 0;
+      if (joinedEvents)
+        updatedData.joinedEvents = Array.isArray(joinedEvents)
+          ? joinedEvents
+          : JSON.parse(joinedEvents);
+      if (hostingEvents)
+        updatedData.hostingEvents = Array.isArray(hostingEvents)
+          ? hostingEvents
+          : JSON.parse(hostingEvents);
+      if (pets)
+        updatedData.pets = Array.isArray(pets) ? pets : JSON.parse(pets);
+      if (friends)
+        updatedData.friends = Array.isArray(friends)
+          ? friends
+          : JSON.parse(friends);
+      if (pendingFriends)
+        updatedData.pendingFriends = Array.isArray(pendingFriends)
+          ? pendingFriends
+          : JSON.parse(pendingFriends);
 
       // Handle profile image upload if provided
       if (req.file) {
-        const fileName = `profileImages/${uid}_${Date.now()}_${
-          req.file.originalname
-        }`;
+        const fileName = `profileImages/${uid}_${Date.now()}_${req.file.originalname}`;
         const file = bucket.file(fileName);
 
         await file.save(req.file.buffer, {
@@ -130,7 +276,7 @@ router.put(
       }
 
       // Update Firebase Auth email and password if changed
-      if (email !== req.user.email) {
+      if (email && email !== req.user.email) {
         await auth.updateUser(uid, { email });
       }
 

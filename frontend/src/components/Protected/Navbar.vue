@@ -50,6 +50,12 @@
             Chats
           </router-link>
         </li>
+        <li>
+          <router-link to="/eventsadmin">
+            <i class="fas fa-eventsadmin"></i>
+            Add Events Temporary
+          </router-link>
+        </li>
       </ul>
       <div class="more-options">
         <button @click="handleSignOut">
