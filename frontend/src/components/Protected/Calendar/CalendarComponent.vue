@@ -2,7 +2,7 @@
   <div class="calendar-container">
     <div class="side-panel">
       <div class="calendar-img">
-        <img src="../../assets/images/sus_cat_calendar.png" alt="">
+        <img src="../../../assets/images/sus_cat_calendar.png" alt="">
       </div>
       <div class="current-day">
         <h2>{{ currentDay }}</h2>
@@ -112,7 +112,7 @@
 </template>
 
 <script>
-import EventPopup from './Events/EventPopup.vue';
+import EventPopup from './EventPopup.vue';
 
 export default {
   data() {
@@ -333,7 +333,7 @@ input[type="checkbox"]:focus {
   border-bottom: 0px; */
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   height: 30%;
-  background-image: url(../../assets/images/pet_calendar.avif);
+  background-image: url(../../../assets/images/pet_calendar.avif);
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center bottom;
