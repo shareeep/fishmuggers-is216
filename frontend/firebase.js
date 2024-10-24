@@ -1,5 +1,8 @@
+// firebase.js (at root of the project)
 import { initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
+import { getAuth } from 'firebase/auth'; // Import getAuth
+import { getFirestore } from 'firebase/firestore'; // Firestore import
+import { getStorage } from 'firebase/storage'; // Storage import (optional)
 
 // Initialize Firebase with environment variables from .env
 const firebaseConfig = {
@@ -10,12 +13,17 @@ const firebaseConfig = {
     messagingSenderId: import.meta.env.VITE_APP_FIREBASE_MESSAGING_SENDER_ID,
     appId: import.meta.env.VITE_APP_FIREBASE_APP_ID,
 };
-  
 
 // Initialize Firebase App
 const app = initializeApp(firebaseConfig);
 
-// Initialize Firebase Auth and export it
-const auth = getAuth(app);
+// Initialize Firebase Auth
+const auth = getAuth(app); // Use getAuth(app)
 
-export { auth };
+// Initialize Firestore
+const db = getFirestore(app);
+
+// Initialize Firebase Storage (optional)
+const storage = getStorage(app);
+
+export { auth, db, storage };
