@@ -3,6 +3,7 @@ import Login from '../views/Public/Login.vue';
 import Register from '../views/Public/Register.vue';
 
 import Home from '../views/Protected/Home.vue';
+import PetPostAdd from '../views/Protected/PetPostAdd.vue';
 import Events from '@/views/Protected/Events.vue';
 import EventDetail from '@/views/Protected/EventDetail.vue'; 
 import Notifications from '@/views/Protected/Notifications.vue';
@@ -31,8 +32,13 @@ const router = createRouter({
           component: Home,
         },
         {
-          path: "events",
-          name: "Events",
+          path: 'addpost',
+          name: 'petPostAdd',
+          component: PetPostAdd,
+        },
+        {
+          path: 'events',
+          name: 'Events',
           component: Events,
         },
         {
