@@ -20,6 +20,8 @@
         <p class="likes">{{ post.likes }} likes</p>
       </div>
     </div>
+
+    <!--Go to Add Post Page-->
     <router-link to="/addpost">
       <button class="floating-btn">🐾</button>
     </router-link>
@@ -35,6 +37,7 @@ export default {
         {
           postId: 1,
           userId: {
+            id: '1', //should be used for addPost URL to verify user is adding the post to THEIR account
             name: 'User 1',
             avatar: 'https://via.placeholder.com/50',
           },
@@ -63,6 +66,7 @@ export default {
     editPost(post) {
       // Logic for editing the post
       console.log('Editing post:', post);
+      this.$router.push('/editpost');
     },
     deletePost(postId) {
       // Logic for deleting the post
