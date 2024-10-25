@@ -10,7 +10,7 @@
 <script setup>
 // Any Home page-specific logic
 import Navbar from '@/components/Protected/Navbar.vue';
-import PetpostAdd from '@/components/Protected/PetPostAdd.vue';
+import PetpostAdd from '@/components/Protected/PetPosts/PetPostAdd.vue';
 </script>
 
 <style scoped>

@@ -1,18 +1,25 @@
 <template>
   <router-link to="/" class="back-button">
-    <img src="../../assets/images/back_arrow.png" alt="back" width="40px" />
+    <img src="../../../assets/images/back_arrow.png" alt="back" width="40px" />
   </router-link>
   <div class="add-post-container">
     <h2>Add a New Pet Post</h2>
     <form @submit.prevent="submitPost">
+      
+      <!-- Placeholder for testing user data (can be removed later) -->
       <div class="form-group">
         <label for="name">Name:</label>
-        <input type="text" v-model="newPost.name" placeholder="Enter your name" required />
+        <input type="text" v-model="newPost.name" placeholder="User Details (for test)" required /> 
       </div>
 
       <div class="form-group">
         <label for="image">Upload Image:</label>
         <input type="file" @change="handleFileUpload" accept="image/*" required />
+      </div>
+
+      <!-- Display the image preview if available -->
+      <div v-if="newPost.image" class="image-preview">
+        <img :src="newPost.image" alt="Image Preview" />
       </div>
 
       <div class="form-group">
@@ -34,7 +41,7 @@ export default {
         image: '',
         caption: '',
       },
-      imageFile: null, // Hold the selected image file
+      imageFile: null, // Holds the selected image file
     };
   },
   methods: {
@@ -42,18 +49,13 @@ export default {
       const file = event.target.files[0];
       if (file) {
         this.imageFile = file;
-        // You can use a service like Firebase, AWS S3, or your own backend to handle image uploading
-        // For example, you can upload the file here and get the URL to store in this.newPost.image
         this.uploadImage(file);
       }
     },
     uploadImage(file) {
-      // Example logic for image upload (e.g., using Firebase, AWS S3, or a custom API)
-      // Once the image is uploaded, set the image URL in newPost.image
-      // For now, assume a placeholder URL after uploading
       const reader = new FileReader();
       reader.onload = (e) => {
-        this.newPost.image = e.target.result; // For now, using base64 data URL
+        this.newPost.image = e.target.result; // Set image URL for preview
       };
       reader.readAsDataURL(file);
     },
@@ -62,8 +64,11 @@ export default {
         alert('Please upload an image.');
         return;
       }
-      // Your submit logic to handle the new post (e.g., send to API)
+      // Submit the new post (e.g., send to an API or save to store)
       console.log('Post submitted:', this.newPost);
+
+      // Redirect user to homepage after submission
+      this.$router.push('/');
     },
   },
 };
@@ -105,6 +110,18 @@ input[type="file"] {
   border: 1px solid #dbdbdb;
   border-radius: 5px;
   box-sizing: border-box;
+}
+
+.image-preview {
+  margin-top: 15px;
+  text-align: center;
+}
+
+.image-preview img {
+  max-width: 100%;
+  max-height: 200px;
+  border-radius: 5px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .submit-btn {
