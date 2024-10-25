@@ -1,7 +1,7 @@
 <template>
+  <!-- <div class="carousel-wrapper"> -->
   <div class="carousel">
-    <h1 class="title">All Events</h1>
-
+    <h1 class="title">Events</h1>
     <!-- Loading Indicator -->
     <div v-if="loading" class="loading-indicator">
       Loading events...
@@ -18,21 +18,26 @@
       <div class="flex flex-col md:hidden">
         <div v-for="(event, index) in events" :key="index" class="mb-4 mx-auto">
           <router-link :to="{ name: 'eventDetail', params: { id: event.eventId } }">
-            <div class="card" style="width:300px;">
-              <img :src="event.eventImage || 'https://via.placeholder.com/300x150'" alt="Event Image" />
-              <div class="card-body">
-                <div class="card-left">
-                  <div class="event-date">
-                    <div>{{ formatEventDay(event.date) }}</div>
-                    <div>{{ formatEventTime(event.date) }}</div>
-                    <div>{{ formatFullDate(event.date) }}</div>
+            <div class="carousel__item">
+              <div class="card">
+                <img :src="event.eventImage || 'https://via.placeholder.com/300x150'" alt="Event Image">
+                <div class="card-body">
+                  <div class="card-left">
+                    <div class="event-date">
+                      <div class="month">{{ formatEventMonth(event.date) }}</div>
+                      <div class="year">{{ formatEventYear(event.date) }}</div>
+                    </div>
                   </div>
-                </div>
-                <div class="card-right">
-                  <div class="event-title">{{ event.title }}</div>
-                  <div class="event-subtitle">{{ event.description }}</div>
-                  <div class="event-subtitle">
-                    <i class="fas fa-star star-icon"></i> {{ event.interestedUsers ? event.interestedUsers.length : 0 }} Interested
+                  <div class="card-right">
+                    <div class="event-title">{{ event.title }}</div>
+                    <div class="event-details">
+                      {{ formatEventOrdinalDay(event.date) }} {{ formatEventMonthFull(event.date) }} at
+                      {{ formatEventTime(event.date) }}
+                    </div>
+                    <div class="event-subtitle">
+                      <i class="fas fa-star star-icon"></i>
+                      {{ event.interestedUsers ? event.interestedUsers.length : 0 }} Interested
+                    </div>
                   </div>
                 </div>
               </div>
@@ -46,22 +51,25 @@
         <Carousel :itemsToShow="1" :wrapAround="true" :transition="500" class="mx-auto" style="width:600px;">
           <Slide v-for="(event, index) in events" :key="index">
             <router-link :to="{ name: 'eventDetail', params: { id: event.eventId } }">
-              <div class="carousel__item mx-1 lg:mx-2">
+              <div class="carousel__item">
                 <div class="card">
-                  <img :src="event.eventImage || 'https://via.placeholder.com/300x150'" alt="Event Image" />
+                  <img :src="event.eventImage || 'https://via.placeholder.com/300x150'" alt="Event Image">
                   <div class="card-body">
                     <div class="card-left">
                       <div class="event-date">
-                        <div>{{ formatEventDay(event.date) }}</div>
-                        <div>{{ formatEventTime(event.date) }}</div>
-                        <div>{{ formatFullDate(event.date) }}</div>
+                        <div class="month">{{ formatEventMonth(event.date) }}</div>
+                        <div class="year">{{ formatEventYear(event.date) }}</div>
                       </div>
                     </div>
                     <div class="card-right">
                       <div class="event-title">{{ event.title }}</div>
-                      <div class="event-subtitle">{{ event.description }}</div>
+                      <div class="event-details">
+                        {{ formatEventOrdinalDay(event.date) }} {{ formatEventMonthFull(event.date) }} at
+                        {{ formatEventTime(event.date) }}
+                      </div>
                       <div class="event-subtitle">
-                        <i class="fas fa-star star-icon"></i> {{ event.interestedUsers ? event.interestedUsers.length : 0 }} Interested
+                        <i class="fas fa-star star-icon"></i>
+                        {{ event.interestedUsers ? event.interestedUsers.length : 0 }} Interested
                       </div>
                     </div>
                   </div>
@@ -70,7 +78,17 @@
             </router-link>
           </Slide>
           <template #addons>
-            <Navigation />
+            <navigation>
+              <template #next>
+                <span id="right"> <img src="../../../assets/images/right_arrow.png" alt="right_arrow"> </span>
+              </template>
+              <template #prev>
+                <span id="left">
+                  <img src="../../../assets/images/left_arrow.png" alt="left_arrow" width="100px" height="40px">
+                </span>
+              </template>
+            </navigation>
+            <!-- <Navigation /> -->
             <Pagination />
           </template>
         </Carousel>
@@ -79,24 +97,27 @@
       <!-- Carousel for Large Screens (3 Items) -->
       <div class="hidden lg:block">
         <Carousel :itemsToShow="3" :wrapAround="true" :transition="500" :partialVisible="false">
-          <Slide v-for="(event, index) in events" :key="index">
+          <Slide v-for="(event, index) in events" :key="index" :class="{ active: index === currentIndex }">
             <router-link :to="{ name: 'eventDetail', params: { id: event.eventId } }">
               <div class="carousel__item">
                 <div class="card">
                   <img :src="event.eventImage || 'https://via.placeholder.com/300x150'" alt="Event Image">
                   <div class="card-body">
                     <div class="card-left">
-                    <div class="card-left">
-                        <div class="date">{{ formatEventDay(event.date) }}</div>
-                        <div class="time">{{ formatEventTime(event.date) }}</div>
-                        <div class="date-month">{{ formatFullDate(event.date) }}</div>
-                    </div>
+                      <div class="event-date">
+                        <div class="month">{{ formatEventMonth(event.date) }}</div>
+                        <div class="year">{{ formatEventYear(event.date) }}</div>
+                      </div>
                     </div>
                     <div class="card-right">
                       <div class="event-title">{{ event.title }}</div>
-                      <div class="event-subtitle">{{ event.description }}</div>
+                      <div class="event-details">
+                        {{ formatEventOrdinalDay(event.date) }} {{ formatEventMonthFull(event.date) }} at
+                        {{ formatEventTime(event.date) }}
+                      </div>
                       <div class="event-subtitle">
-                        <i class="fas fa-star star-icon"></i> {{ event.interestedUsers ? event.interestedUsers.length : 0 }} Interested
+                        <i class="fas fa-star star-icon"></i>
+                        {{ event.interestedUsers ? event.interestedUsers.length : 0 }} Interested
                       </div>
                     </div>
                   </div>
@@ -105,17 +126,29 @@
             </router-link>
           </Slide>
           <template #addons>
-            <Navigation />
+            <navigation>
+              <template #next>
+                <span id="right"> <img src="../../../assets/images/right_arrow.png" alt="right_arrow"> </span>
+              </template>
+              <template #prev>
+                <span id="left">
+                  <img src="../../../assets/images/left_arrow.png" alt="left_arrow" width="100px" height="40px">
+                </span>
+              </template>
+            </navigation>
+            <!-- <Navigation /> -->
             <Pagination />
           </template>
         </Carousel>
       </div>
     </div>
   </div>
+  <!-- </div> -->
 </template>
 
+
 <script>
-import { defineComponent } from 'vue';
+import { defineComponent, ref } from 'vue';
 import axios from 'axios';
 import { Carousel, Navigation, Pagination, Slide } from 'vue3-carousel';
 import 'vue3-carousel/dist/carousel.css';
@@ -133,6 +166,18 @@ export default defineComponent({
       events: [],
       loading: true,
       errorMessage: '',
+    };
+  },
+  setup() {
+    const currentIndex = ref(0);
+
+    const updateActiveSlide = (index) => {
+      currentIndex.value = index;
+    };
+
+    return {
+      currentIndex,
+      updateActiveSlide,
     };
   },
   mounted() {
@@ -172,6 +217,26 @@ export default defineComponent({
 
       return `${day} ${month} ${year}`;
     },
+    formatEventMonth(dateInput) {
+      const dateObj = this.convertToDate(dateInput);
+      return dateObj.toLocaleString('en-US', { month: 'short' }).toUpperCase();
+    },
+    formatEventMonthFull(dateInput) {
+      const dateObj = this.convertToDate(dateInput);
+      return dateObj.toLocaleString('en-US', { month: 'long' });
+    },
+    formatEventOrdinalDay(dateInput) {
+      const dateObj = this.convertToDate(dateInput);
+      const day = dateObj.getDate();
+      const suffix = day % 10 === 1 && day !== 11 ? "st" :
+        day % 10 === 2 && day !== 12 ? "nd" :
+          day % 10 === 3 && day !== 13 ? "rd" : "th";
+      return `${day}${suffix}`;
+    },
+    formatEventYear(dateInput) {
+      const dateObj = this.convertToDate(dateInput);
+      return dateObj.getFullYear();
+    },
     convertToDate(dateInput) {
       if (dateInput && dateInput._seconds) {
         // If date is a Firestore Timestamp object
@@ -188,342 +253,235 @@ export default defineComponent({
 </script>
 
 <style scoped>
+::v-deep #right img {
+  position: relative;
+  max-width: 70px;
+  /* Override with specific size */
+  max-height: 50px;
+  margin-left: 20px;
+  transform: scale(1);
+  margin-bottom: 10px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
 
+::v-deep #left img {
+  position: relative;
+  max-width: 60px;
+  /* Override with specific size */
+  max-height: 45px;
+  margin-right: 22px;
+  transform: scale(1);
+  margin-bottom: 10px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+::v-deep #right img:hover,
+::v-deep #left img:hover {
+  filter: drop-shadow(0px 4px 8px #FFD700);
+  /* Color shadow on hover */
+}
+
+/* General Styles */
+.title {
+  color: rgb(46, 46, 46);
+  text-align: center;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 30px;
+  font-weight: bold;
+  margin-top: 40px;
+}
+
+/* Loading Indicator and Error Message Styles */
+.loading-indicator,
+.error-message {
+  text-align: center;
+  font-size: 18px;
+  margin-top: 20px;
+}
+
+.error-message {
+  color: red;
+}
+
+/* Carousel Container */
+.carousel {
+  padding: 0;
+  width: 1200px;
+  color: #2c3e50;
+  overflow: visible;
+  position: relative;
+  --vc-pgn-margin: 5px;
+  --vc-pgn-width: 15px;
+  --vc-pgn-height: 15px;
+  --vc-pgn-border-radius: 50%;
+  --vc-pgn-background-color: white;
+  --vc-pgn-active-color: gold;
+  max-width: 100%;
+  /* Responsive scaling */
+}
+
+/* Carousel Item Styles */
+.carousel__item {
+  margin: 0 12px;
+  flex: 0 0 280px;
+  max-width: 400px;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  opacity: 1;
+}
+
+.carousel__item.active {
+  opacity: 1;
+  transform: scale(1.05);
+  border: 2px solid #333;
+}
+
+/* Carousel Slide Styles */
+.carousel__slide {
+  padding: 10px 5px;
+  opacity: 0.9;
+  transform: scale(0.83);
+}
+
+
+.carousel__slide--prev,
+.carousel__slide--next {
+  opacity: 0.8;
+  transform: scale(0.95);
+}
+
+.carousel__slide--active {
+  opacity: 1;
+  transform: scale(1.2);
+}
+
+.carousel__slide--sliding {
+  transition: transform 0.5s ease, opacity 0.5s ease;
+}
+
+
+/* Pagination Styles */
+.carousel__pagination {
+  display: flex;
+  justify-content: center;
+  list-style: none;
+  margin: 10px 0 0;
+  padding: 0;
+}
+
+.carousel__pagination-button {
+  display: block;
+  border: 0;
+  cursor: pointer;
+  padding: var(--vc-pgn-margin);
+  background: transparent;
+}
+
+.carousel__pagination-button::after {
+  content: '';
+  width: var(--vc-pgn-width);
+  height: var(--vc-pgn-height);
+  border-radius: var(--vc-pgn-border-radius);
+  background-color: var(--vc-pgn-background-color);
+}
+
+.carousel__pagination-button--active::after {
+  background-color: gold;
+}
+
+@media(hover: hover) {
+  .carousel__pagination-button:hover::after {
+    background-color: gold;
+  }
+}
+
+/* Card Styles */
+.card {
+  transform: scale(0.83);
+  border-radius: 15px;
+  overflow: hidden;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.8s ease, box-shadow 0.8s ease;
+  height: 100%;
+}
+
+.card:hover {
+  transform: scale(0.86);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+.card img {
+  width: 100%;
+  height: auto;
+}
+
+/* Card Body Styles */
 .card-body {
   display: flex;
   padding: 20px;
   background-color: white;
 }
 
+/* Card Left Section */
 .card-left {
   flex: 1;
-  text-align: left;
   display: flex;
   flex-direction: column;
+  align-items: center;
   justify-content: center;
+  text-align: center;
 }
 
-.card-left {
-  flex: 1;
-  text-align: left;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+.month {
+  font-size: 20px;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-bottom: 0px;
 }
 
-.date, .time, .date-month {
-  margin-bottom: 5px;
+.year {
+  font-size: 17px;
+  color: #777;
 }
+
+/* Card Right Section */
 .card-right {
   flex: 2;
   padding-left: 20px;
 }
 
-.event-date div {
+.date,
+.date-month {
   font-size: 16px;
-  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.event-details {
+  font-size: 14px;
+  color: #555;
+  margin-top: 5px;
 }
 
 .event-title {
-  font-size: 20px;
+  font-size: 16px;
   font-weight: bold;
+  display: -webkit-box;
+  /* Required for multi-line truncation */
+  -webkit-line-clamp: 1;
+  /* Limit to 2 lines */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: normal;
+  /* Allows wrapping of text */
 }
 
 .event-subtitle {
   font-size: 14px;
   color: #777;
-  margin-top: 10px;
 }
 
 .star-icon {
   color: gold;
   margin-right: 5px;
-}
-
-/* Loading Indicator Style */
-.loading-indicator {
-  text-align: center;
-  font-size: 18px;
-  margin-top: 20px;
-}
-
-/* Error Message Style */
-.error-message {
-  text-align: center;
-  color: red;
-  font-size: 18px;
-  margin-top: 20px;
-}
-
-
-/* Loading Indicator Style */
-.loading-indicator {
-  text-align: center;
-  font-size: 18px;
-  margin-top: 20px;
-}
-
-/* Error Message Style */
-.error-message {
-  text-align: center;
-  color: red;
-  font-size: 18px;
-  margin-top: 20px;
-}
-
-/* ARROW STYLES */
-.carousel__prev,
-.carousel__next {
-    width: 60px;
-    height: 60px;
-    top: 50%;
-    transform: translateY(-50%);
-    position: absolute;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: #FFF3B3;
-    border-radius: 50%;
-    border: none;
-    cursor: pointer;
-    padding: 0;
-    margin: 0;
-    z-index: 1; /* Ensure arrows are always on top */
-}
-.carousel__prev:hover,
-.carousel__next:hover {
-    color: white;
-    /* Change arrow color on hover */
-    background-color: #FFF3B3;
-    /* Circle color when hovering */
-    border-radius: 50%;
-    /* Make it a circle */
-    width: 60px;
-    /* Slightly increase the width to accommodate the circle */
-    height: 60px;
-    /* Slightly increase the height to accommodate the circle */
-    padding: 0;
-    /* Reset padding to fit the new size */
-}
-
-.carousel__next--disabled,
-.carousel__prev--disabled {
-    cursor: not-allowed;
-    opacity: 0.5;
-}
-
-.carousel__prev {
-    left: 20px; /* Consistent distance from left edge */
-}
-
-.carousel__next {
-    right: 20px; /* Consistent distance from right edge */
-    padding-right:10px;
-}
-
-.carousel--rtl .carousel__prev {
-    left: auto;
-    right: 0;
-}
-
-.carousel--rtl .carousel__next {
-    right: auto;
-    left: 0;
-}
-
-
-
-/* PAGINATION STYLES */
-.carousel {
-    --vc-pgn-margin: 5px;
-    /* Adjust margin as needed */
-    --vc-pgn-width: 15px;
-    /* Width of the pagination dots */
-    --vc-pgn-height: 15px;
-    /* Height of the pagination dots */
-    --vc-pgn-border-radius: 50%;
-    /* Rounded pagination dots */
-    --vc-pgn-background-color: white;
-    /* Default background color */
-    --vc-pgn-active-color: gold;
-    /* Active pagination dot color */
-}
-
-.carousel__pagination {
-    display: flex;
-    justify-content: center;
-    list-style: none;
-    line-height: 0;
-    margin: 10px 0 0;
-    padding: 0;
-}
-
-.carousel__pagination-button {
-    display: block;
-    border: 0;
-    margin: 0;
-    cursor: pointer;
-    padding: var(--vc-pgn-margin);
-    background: transparent;
-}
-
-.carousel__pagination-button::after {
-    display: block;
-    content: '';
-    width: var(--vc-pgn-width);
-    height: var(--vc-pgn-height);
-    border-radius: var(--vc-pgn-border-radius);
-    background-color: var(--vc-pgn-background-color);
-    /* Use your custom color */
-}
-
-.carousel__pagination-button--active::after {
-    background-color: gold;
-    /* Use your custom active color */
-}
-
-@media(hover: hover) {
-    .carousel__pagination-button:hover::after {
-        background-color: gold;
-        /* Hover effect */
-    }
-}
-
-/* * {
-    box-sizing: border-box;
-} */
-
-.title {
-    text-align: center;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 30px;
-    font-weight: bold;
-    margin-top: 40px;
-    color: black;
-}
-
-/*  Card Styles */
-.card {
-    border-radius: 15px;
-    overflow: hidden;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    transition: transform 0.8s ease, box-shadow 0.8s ease;
-}
-
-.card img {
-    width: 100%;
-    height: auto;
-}
-
-.card-body {
-    display: flex;
-    padding: 20px;
-    background-color: white;
-}
-
-.card-left {
-    flex: 1;
-    text-align: left;
-}
-
-.card-right {
-    flex: 2;
-    padding-left: 20px;
-}
-
-.date {
-    font-size: 16px;
-    font-weight: bold;
-}
-
-.date-month {
-    font-size: 14px;
-}
-
-.event-title {
-    font-size: 20px;
-    font-weight: bold;
-}
-
-.event-subtitle {
-    font-size: 14px;
-    color: #777;
-}
-
-.star-icon {
-    color: gold;
-    margin-right: 5px;
-}
-
-.card:hover {
-    transform: scale(1.03);
-    /* Scale up on hover */
-    overflow: hidden;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-    /* Increase shadow on hover */
-
-}
-
-/* CAROUSEL */
-
-.carousel {
-    padding: 0;
-    width: 1200px;
-    color: #2c3e50;
-    overflow: hidden;
-    position:relative;
-}
-
-.carousel__item {
-    margin: 0 5px;
-    /* Consistent horizontal spacing */
-    flex: 0 0 280px;
-    /* Make sure items take equal width */
-    max-width: 400px;
-    /* Ensure items do not exceed this width */
-}
-
-.carousel__slide {
-    padding: 25px 5px;
-}
-
-.carousel__viewport {
-    perspective: 2000px;
-}
-
-.carousel__track {
-    transform-style: preserve-3d;
-}
-
-.carousel__slide--sliding {
-    transition: transform 0.5s ease, opacity 1.0s ease;
-}
-
-.carousel__slide {
-    opacity: 0.9;
-    transform: scale(0.9);
-}
-
-.carousel__slide--active~.carousel__slide {
-    transform: scale(0.9);
-
-}
-
-.carousel__slide--prev {
-    opacity: 1;
-    transform: scale(0.95);
-
-}
-
-.carousel__slide--next {
-    opacity: 1;
-    transform: scale(0.95);
-
-}
-
-.carousel__slide--active {
-    opacity: 1;
-    transform: scale(1.1);
-
 }
 </style>
