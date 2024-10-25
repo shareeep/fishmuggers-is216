@@ -2,7 +2,7 @@
     <div class="home-container"> <!-- Use a wrapper for flex layout -->
       <Navbar />
       <main> <!-- Wrap content in a main tag -->
-        <h1>CALENDAR</h1>
+        <CalendarComponent />
       </main>
     </div>
   </template>
@@ -10,6 +10,8 @@
   <script setup>
   // Any Home page-specific logic
   import Navbar from '@/components/Protected/Navbar.vue';
+  import CalendarComponent from '@/components/Protected/Calendar/CalendarComponent.vue';
+
   </script>
   
   <style scoped>
@@ -27,12 +29,16 @@
     flex-grow: 1; /* Allow main to take the remaining width */
     padding: 20px; /* Add padding for spacing */
     /* Optional styling */
-    background-color: goldenrod; /* Example background color */
+    background-color: #FCEFB4; /* Example background color */
     overflow-y: auto; /* Allow scrolling if content overflows */
   }
   
   h1 {
     text-align: center; /* Center text in the main area */
   }
+  .calendar-container{
+    margin-top: 5vh;
+  }
+  
   </style>
   

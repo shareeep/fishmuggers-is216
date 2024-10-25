@@ -3,28 +3,38 @@ import Login from '../views/Public/Login.vue';
 import Register from '../views/Public/Register.vue';
 
 import Home from '../views/Protected/Home.vue';
+import PetPostAdd from '../views/Protected/PetPostAdd.vue';
 import Events from '@/views/Protected/Events.vue';
+import EventDetail from '@/views/Protected/EventDetail.vue'; 
 import Notifications from '@/views/Protected/Notifications.vue';
 import Calendar from '@/views/Protected/Calendar.vue';
 import Friends from '@/views/Protected/Friends.vue';
 import Profile from '../views/Protected/Profile.vue';
+import Chats from '@/views/Protected/Chats.vue';
+import EventsShar from '@/views/Protected/EventsAdmin.vue'
 
 import PublicLayout from '../layouts/PublicLayout.vue';
 import ProtectedLayout from '../layouts/ProtectedLayout.vue'; 
 import { getAuth } from 'firebase/auth';
+import EventsAdmin from '@/views/Protected/EventsAdmin.vue';
 
 const router = createRouter({
   history: createWebHistory(),
   routes: [
     {
-      path: '/',
+      path: "/",
       component: ProtectedLayout,
       meta: { requiresAuth: true }, // Requires authentication
       children: [
         {
-          path: '',
-          name: 'Home',
+          path: "",
+          name: "Home",
           component: Home,
+        },
+        {
+          path: 'addpost',
+          name: 'petPostAdd',
+          component: PetPostAdd,
         },
         {
           path: 'events',
@@ -32,58 +42,74 @@ const router = createRouter({
           component: Events,
         },
         {
-          path: 'notifications',
-          name: 'Notifications',
+          path: "eventdetail/:id",
+          name: "eventDetail",
+          component: EventDetail,
+          props: true,
+        },
+        {
+          path: "notifications",
+          name: "Notifications",
           component: Notifications,
         },
         {
-          path: 'Calendar',
-          name: 'Calendar',
+          path: "Calendar",
+          name: "Calendar",
           component: Calendar,
         },
         {
-          path: 'friends',
-          name: 'friends',
+          path: "friends",
+          name: "friends",
           component: Friends,
         },
         {
-          path: 'profile',
-          name: 'Profile',
+          path: "profile",
+          name: "Profile",
           component: Profile,
         },
         {
-          path: '/:pathMatch(.*)*', // Catch-all route for undefined paths in protected routes
-          redirect: { name: 'Home' }, // Always redirect to home if authenticated
+          path: "chats",
+          name: "chats",
+          component: Chats,
+        },
+        {
+          path: "eventsadmin",
+          name: "eventsAdmin",
+          component: EventsAdmin,
+        },
+        {
+          path: "/:pathMatch(.*)*", // Catch-all route for undefined paths in protected routes
+          redirect: { name: "Home" }, // Always redirect to home if authenticated
         },
       ],
     },
     {
-      path: '/login',
-      component: PublicLayout, 
-      meta: { requiresAuth: false }, 
+      path: "/login",
+      component: PublicLayout,
+      meta: { requiresAuth: false },
       children: [
         {
-          path: '',
-          name: 'Login',
+          path: "",
+          name: "Login",
           component: Login,
         },
       ],
     },
     {
-      path: '/register',
+      path: "/register",
       component: PublicLayout,
-      meta: { requiresAuth: false }, 
+      meta: { requiresAuth: false },
       children: [
         {
-          path: '',
-          name: 'Register',
+          path: "",
+          name: "Register",
           component: Register,
         },
       ],
     },
     {
-      path: '/:pathMatch(.*)*', // Catch-all route for undefined paths in public routes
-      redirect: { name: 'Login' }, // Redirect to login if not authenticated
+      path: "/:pathMatch(.*)*", // Catch-all route for undefined paths in public routes
+      redirect: { name: "Login" }, // Redirect to login if not authenticated
     },
   ],
 });
