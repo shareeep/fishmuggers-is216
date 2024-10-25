@@ -4,6 +4,7 @@ import Register from '../views/Public/Register.vue';
 
 import Home from '../views/Protected/Home.vue';
 import PetPostAdd from '../views/Protected/PetPostAdd.vue';
+import PetPostEdit from '../views/Protected/PetPostEdit.vue';
 import Events from '@/views/Protected/Events.vue';
 import EventDetail from '@/views/Protected/EventDetail.vue'; 
 import Notifications from '@/views/Protected/Notifications.vue';
@@ -35,6 +36,11 @@ const router = createRouter({
           path: 'addpost',
           name: 'petPostAdd',
           component: PetPostAdd,
+        },
+        {
+          path: 'editpost',
+          name: 'petPostEdit',
+          component: PetPostEdit,
         },
         {
           path: 'events',
