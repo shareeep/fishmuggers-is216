@@ -1,80 +1,76 @@
 <template>
-    <nav class="navbar">
-      <div class="logo">
-        <h1>
-          <img src="../../assets/images/logo.png" alt="Profile" class="profile-pic" />  
-          PetConnect
-        </h1>
-      </div>
-      <ul>
-        <li>
-          <router-link to="/">
-            <i class="fas fa-home"></i>
-            Home
-          </router-link>
-        </li>
-        <li>
-          <router-link to="/events">
-            <i class="fas fa-search"></i>
-            Events
-          </router-link>
-        </li>
-        <li>
-          <router-link to="/calendar">
-            <i class="fas fa-calendar-alt"></i>
-            Calendar
-          </router-link>
-        </li>
-        <li>
-          <router-link to="/notifications">
-            <i class="fas fa-bell"></i>
-            Notifications
-          </router-link>
-        </li>
-        <li>
-          <router-link to="/friends">
-            <i class="fas fa-users"></i>
-            Friends
-          </router-link>
-        </li>
-        <li>
-          <router-link to="/profile">
-        
-            <i class="fas fa-user"></i>
-            Profile
-          </router-link>
-        </li>
-        <li>
-          <router-link to="/chats">
-            <i class="fas fa-message"></i>
-            Chats
-          </router-link>
-        </li>
-      </ul>
-      <div class="more-options">
-        <button @click="handleSignOut">
-          <i class="fas fa-sign-out-alt"></i>
-          Sign Out
-        </button>
-      </div>
-    </nav>
-  </template>
-  
-  <script setup>
-  import { getAuth, signOut } from "firebase/auth";
-  import { useRouter } from "vue-router";
-  
-  const auth = getAuth();
-  const router = useRouter();
-  
-  const handleSignOut = () => {
-    signOut(auth).then(() => {
-      router.push("/login");
-    });
-  };
-  </script>
-  
+  <nav class="navbar">
+    <div class="logo">
+      <h1>
+        <img src="../../assets/images/logo.png" alt="Profile" class="profile-pic" />  
+        PetConnect
+      </h1>
+    </div>
+    <ul class="nav-links">
+      <li>
+        <router-link to="/" exact-active-class="active">
+          <i class="fas fa-home"></i>
+          Home
+        </router-link>
+      </li>
+      <li>
+        <router-link to="/events" exact-active-class="active">
+          <i class="fas fa-search"></i>
+          Events
+        </router-link>
+      </li>
+      <li>
+        <router-link to="/calendar" exact-active-class="active">
+          <i class="fas fa-calendar-alt"></i>
+          Calendar
+        </router-link>
+      </li>
+      <li>
+        <router-link to="/notifications" exact-active-class="active">
+          <i class="fas fa-bell"></i>
+          Notifications
+        </router-link>
+      </li>
+      <li>
+        <router-link to="/friends" exact-active-class="active">
+          <i class="fas fa-users"></i>
+          Friends
+        </router-link>
+      </li>
+      <li>
+        <router-link to="/profile" exact-active-class="active">
+          <i class="fas fa-user"></i>
+          Profile
+        </router-link>
+      </li>
+      <li>
+        <router-link to="/chats" exact-active-class="active">
+          <i class="fas fa-message"></i>
+          Chats
+        </router-link>
+      </li>
+      <li>
+        <router-link to="/eventsadmin" exact-active-class="active">
+          <i class="fas fa-eventsadmin"></i>
+          Add Events Temporary
+        </router-link>
+      </li>
+    </ul>
+    <div class="more-options">
+      <button @click="handleSignOut">
+        <i class="fas fa-sign-out-alt"></i>
+        Sign Out
+      </button>
+    </div>
+  </nav>
+</template>
+
   <style>
+  /* Add the active class styling here */
+  .active {
+    color: #756000;
+    font-weight: bold;
+  }
   .navbar {
     width: 250px;
     height: 100vh;
