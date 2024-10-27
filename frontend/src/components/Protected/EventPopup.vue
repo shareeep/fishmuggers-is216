@@ -20,72 +20,86 @@
   
   <style scoped>
   .popup {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.popup-content {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+  border: 3px solid #4b4b4b;
+  width: 400px;
+  max-width: 90%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  font-family: 'Arial Rounded MT', sans-serif;
+}
+@font-face {
+    font-family: pawfont;
+    src: url(../../assets/fonts/PawWowBlock-VGMDl.otf);
   }
-  
-  .popup-content {
-    background: white;
-    /* padding: 20px; */
-    border-radius: 10px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-    border: 3px solid black;
-    width: 400px; /* Set a width for better layout */
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-  }
-  
-  .popup-title {
-    /* background-color: #4dcdc3; Change this to any color you like */
-    background-color: #ffd700;
-    font-family: 'Arial Rounded MT';
-    border-bottom: black solid 3px;
-    padding: 10px;
-    /* border-radius:; */
-    text-align: center;
-    font-weight: bold;
-    font-size: 24px;
-    margin: 0; /* Remove default margin */
-  }
-  
-  .popup-description {
-    width: 87%;
-    height: 100px; /* Adjust height as needed */
-    padding: 10px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    margin:auto;
-    margin-top: 20px; /* Add margin for separation */
-    margin-bottom: 10px;
-    resize: none; /* Prevent resizing */
-    background-color: #f9f9f9; /* Light background for visibility */
-    font-family: Arial, sans-serif; /* Change font if needed */
-  }
-  p{
-    margin-left: 25px;
-  }
-  button {
-    background-color: #fff;
-    color: #000;
-    border: 1px solid black;
-    border-radius: 8px;
-    padding: 8px 12px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    margin-top: 10px;
-    width: 100%; /* Full width button */
-  }
-  
-  button:hover {
-    background-color: #f0f0f0;
-  }
+.popup-title {
+  background-color: #ffd700;
+  color: #4b4b4b;
+  font-family: pawfont;
+  border-bottom: 3px solid #4b4b4b;
+  text-align: center;
+  font-weight: bold;
+  font-size: 3.5rem;
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.popup-description {
+  width: 87%;
+  height: 100px;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  margin: auto;
+  margin-top: 16px;
+  margin-bottom: 16px;
+  resize: none;
+  background-color: #f9f9f9;
+  font-family: Arial, sans-serif;
+  color: #4b4b4b;
+}
+
+p {
+  margin-left: 25px;
+  color: #4b4b4b;
+  font-size: 1rem;
+  font-family: 'Arial Rounded MT', sans-serif;
+}
+
+button {
+  background-color: #ffd700;
+  color: #4b4b4b;
+  font-weight: bold;
+  border: 2px solid #4b4b4b;
+  border-radius: 8px;
+  padding: 10px 0;
+  cursor: pointer;
+  transition: background-color 0.3s, color 0.3s;
+  font-size: 1rem;
+  width: 90%;
+  margin: 16px auto;
+}
+
+button:hover {
+  background-color: #f0e68c;
+  color: #333;
+}
+
   </style>
   
