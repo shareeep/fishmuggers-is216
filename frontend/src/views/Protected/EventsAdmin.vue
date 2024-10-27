@@ -1,27 +1,27 @@
 <template>
-  <div class="events-container">
-    <!-- Event Creation Form -->
-    <EventCreationForm @event-created="fetchEvents" />
-
-    <!-- Events List -->
-    <EventsList
-      :events="events"
-      @edit-event="openEditEventModal"
-      @delete-event="deleteEvent"
-    />
-
-    <!-- Edit Event Modal -->
-    <EditEventModal
-      v-if="showEditModal"
-      :eventData="editEventData"
-      @close="closeEditModal"
-      @event-updated="handleEventUpdated"
-    />
+  <div class="home-container"> <!-- Use a wrapper for flex layout -->
+    <Navbar />
+    <main>
+      <router-link to="/events" class="back-button">
+        <img src="../../assets/images/back_arrow.png" alt="back" width="40px" />
+      </router-link>
+      <div class="events-container">
+        <!-- Event Creation Form -->
+        <EventCreationForm @event-created="fetchEvents" />
+        <!-- Events List -->
+        <EventsList :events="events" @edit-event="openEditEventModal" @delete-event="deleteEvent" />
+        <!-- Edit Event Modal -->
+        <EditEventModal v-if="showEditModal" :eventData="editEventData" @close="closeEditModal"
+          @event-updated="handleEventUpdated" />
+      </div>
+    </main>
   </div>
 </template>
 
+
 <script setup>
 import { ref, onMounted } from "vue";
+import Navbar from '@/components/Protected/Navbar.vue';
 import EventCreationForm from "@/components/Protected/EventsAdmin/EventCreationForm.vue";
 import EventsList from "@/components/Protected/EventsAdmin/EventsList.vue";
 import EditEventModal from "@/components/Protected/EventsAdmin/EditEventModal.vue";
@@ -103,11 +103,40 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.navbar {
+  width: 250px;
+  /* Width of the navbar */
+  height: 100vh;
+  /* Full height of the viewport */
+  position: sticky;
+  /* Make the navbar sticky */
+  top: 0;
+  /* Stick to the top of the page */
+}
+
+.home-container {
+  display: flex;
+  /* Set flexbox layout for the container */
+}
+
+/* can change */
+main {
+  flex-grow: 1;
+  /* Allow main to take the remaining width */
+  padding: 20px;
+  /* Add padding for spacing */
+  /* Optional styling */
+  background-color: #FCEFB4;
+  /* Example background color */
+  overflow-y: auto;
+  /* Allow scrolling if content overflows */
+}
+
 .events-container {
   max-width: 800px;
   margin: 0 auto;
   padding: 2rem;
-  background-color: #f3f4f6;
+
   min-height: 100vh;
 }
 

@@ -1,6 +1,7 @@
 <template>
-  <div class="create-event-form mb-8 p-6 bg-white rounded shadow-md">
-    <h2 class="text-xl font-semibold mb-4">Create a New Event</h2>
+  
+  <div class="create-event-form">
+    <h2>Create a New Event</h2>
     <form @submit.prevent="handleCreateEvent" enctype="multipart/form-data">
       <!-- Title -->
       <div class="mb-4">
@@ -8,7 +9,7 @@
         <input
           v-model="event.title"
           type="text"
-          required
+          required 
           class="w-full border border-gray-300 p-2 rounded"
         />
       </div>
@@ -72,7 +73,7 @@
         <button
           type="button"
           @click="getCurrentLocation"
-          class="mt-2 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+          class="rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center me-3 text-black  bg-[#FFD700] hover:bg-[#E6C200] font-bold text-sm my-3"
         >
           Use Current Location
         </button>
@@ -139,7 +140,7 @@
       <!-- Submit Button -->
       <button
         type="submit"
-        class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+        class="rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center me-3 text-black  bg-[#FFD700] hover:bg-[#E6C200] font-bold text-sm my-3"
         :disabled="isSubmitting"
       >
         {{ isSubmitting ? "Creating..." : "Create Event" }}
@@ -333,4 +334,42 @@ const handleCreateEvent = async () => {
 
 <style scoped>
 /* Add any component-specific styles here */
+h2 {
+  font-size: 20px;
+  font-weight: bold;
+  color: rgb(46, 46, 46);
+  text-align: center;
+}
+
+label {
+  color:black;
+  display: block;
+  margin-bottom: 5px;
+}
+
+input[type="text"],
+input[type="url"],
+input[type="file"] 
+input[type="select"]{
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #dbdbdb;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+.create-event-form{
+  display: flex;
+  flex-direction: column;
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  margin-bottom:10px;
+  margin-top:-33px;
+}
+
+
 </style>
