@@ -68,7 +68,7 @@ export default {
       console.log('Editing post:', post);
       this.$router.push('/editpost');
     },
-    deletePost(postId) {
+    deletePost(postId) { 
       // Logic for deleting the post
       console.log('Deleting post:', postId);
       this.posts = this.posts.filter(post => post.postId !== postId); //placeholder filter away instead of actually deleting
@@ -76,7 +76,7 @@ export default {
   },
 };
 </script>
-
+ 
 <style scoped>
 .feed-container {
   display: flex;

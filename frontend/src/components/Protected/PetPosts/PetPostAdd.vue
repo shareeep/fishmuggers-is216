@@ -1,5 +1,5 @@
 <template>
-  <router-link to="/" class="back-button">
+  <router-link to="/" class="back-button"> 
     <img src="../../../assets/images/back_arrow.png" alt="back" width="40px" />
   </router-link>
   <div class="add-post-container">

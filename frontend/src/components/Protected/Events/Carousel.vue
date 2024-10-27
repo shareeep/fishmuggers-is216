@@ -11,7 +11,7 @@
     <div v-if="errorMessage" class="error-message">
       {{ errorMessage }}
     </div>
-
+ 
     <!-- Events Display -->
     <div v-else>
       <!-- Vertical Cards for Small Screens (1 Column) -->
@@ -141,6 +141,8 @@
           </template>
         </Carousel>
       </div>
+
+      
     </div>
   </div>
   <!-- </div> -->
@@ -255,10 +257,10 @@ export default defineComponent({
 <style scoped>
 ::v-deep #right img {
   position: relative;
-  max-width: 70px;
+  max-width: 60px;
   /* Override with specific size */
-  max-height: 50px;
-  margin-left: 20px;
+  max-height: 40px;
+  margin-left: -2px;
   transform: scale(1);
   margin-bottom: 10px;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -266,10 +268,10 @@ export default defineComponent({
 
 ::v-deep #left img {
   position: relative;
-  max-width: 60px;
+  max-width: 50px;
   /* Override with specific size */
-  max-height: 45px;
-  margin-right: 22px;
+  max-height: 35px;
+  margin-right: 0px;
   transform: scale(1);
   margin-bottom: 10px;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -316,7 +318,7 @@ export default defineComponent({
   --vc-pgn-border-radius: 50%;
   --vc-pgn-background-color: white;
   --vc-pgn-active-color: gold;
-  max-width: 100%;
+  width: 100%;
   /* Responsive scaling */
 }
 
@@ -396,7 +398,7 @@ export default defineComponent({
 
 /* Card Styles */
 .card {
-  transform: scale(0.83);
+  transform: scale(0.80);
   border-radius: 15px;
   overflow: hidden;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
@@ -484,4 +486,5 @@ export default defineComponent({
   color: gold;
   margin-right: 5px;
 }
+
 </style>

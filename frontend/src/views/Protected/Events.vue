@@ -9,6 +9,10 @@
         <carousel v-if="!filtersApplied" />
         <FilteredEvents v-if="filtersApplied" :filters="appliedFilters" />
       </div>
+      <!--Go to Add Events Page-->
+      <router-link to="/eventsadmin">
+        <button class="floating-btn">🐾</button>
+      </router-link>
     </main>
   </div>
 </template>
@@ -40,7 +44,7 @@ function handleFiltersApplied(filters) {
   filtersApplied.value = hasFilters; // Set the filters as applied only if filters are not empty
   appliedFilters.value = filters; // Store the applied filters
 }
-
+ 
 // This function is called when filters are reset
 function handleFiltersReset() {
   filtersApplied.value = false; // Reset the filtersApplied to false to show the carousel
@@ -56,110 +60,52 @@ function handleFiltersReset() {
 /* Styling for the Navbar */
 .navbar {
   width: 250px;
+  /* Width of the navbar */
   height: 100vh;
+  /* Full height of the viewport */
   position: sticky;
+  /* Make the navbar sticky */
   top: 0;
+  /* Stick to the top of the page */
 }
 
-/* Fixed search filter at the top */
-.fixed-search-filter {
-  position: fixed;
-  top: 0;
-  z-index: 1000;
-  width: 100%;
-  /* Adjust based on Navbar width */
-  background-color: #FCEFB4;
-  padding: 10px 30px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-/* Content wrapper to push content below the fixed search filter */
-.content-wrapper {
-  padding-top: 120px;
-  /* Ensure space below the fixed filter */
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  /* Horizontally center content */
-  align-items: center;
-  /* Vertically center content */
-  flex-direction: column;
-  /* Stack elements vertically */
-}
-
-/* Main content layout */
 .home-container {
   display: flex;
-  width: 100%;
+  /* Set flexbox layout for the container */
 }
 
+/* can change */
 main {
   flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  width: 100%;
+  /* Allow main to take the remaining width */
+  padding: 20px;
+  /* Add padding for spacing */
+  /* Optional styling */
   background-color: #FCEFB4;
+  /* Example background color */
   overflow-y: auto;
-  align-items: center;
-  /* Center main content horizontally */
+  /* Allow scrolling if content overflows */
 }
 
-/* Responsive adjustments for smaller screens */
-@media (max-width: 640px) {
-  .navbar {
-    width: 200px;
-  }
-
-  .fixed-search-filter {
-    width: calc(100% - 200px);
-  }
-
-  .content-wrapper {
-    padding-top: 120px;
-    justify-content: center;
-    /* Ensure vertical centering on smaller screens */
-  }
+/* Floating Button */
+.floating-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: gold;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  font-size: 30px;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
 }
 
-@media (max-width: 768px) {
-  .navbar {
-    width: 200px;
-  }
-
-  .fixed-search-filter {
-    width: calc(100% - 200px);
-  }
-
-  .content-wrapper {
-    padding-top: 120px;
-  }
+.floating-btn:hover {
+  background-color: rgb(238, 207, 30);
 }
 
-@media (max-width: 1024px) {
-  .navbar {
-    width: 200px;
-  }
-
-  .fixed-search-filter {
-    width: calc(100% - 200px);
-  }
-
-  .content-wrapper {
-    padding-top: 120px;
-  }
-}
-
-@media (max-width: 1289px) {
-  .navbar {
-    width: 250px;
-  }
-
-  .fixed-search-filter {
-    width: calc(100% - 250px);
-  }
-
-  .content-wrapper {
-    padding-top: 120px;
-  }
-}
 </style>
