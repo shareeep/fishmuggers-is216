@@ -295,4 +295,25 @@ router.put(
   }
 );
 
+// GET /api/users/:userId/view/:friendId - View a friend's details
+router.get("/:userId/view/:friendId", authenticate, async (req, res) => {
+  const { friendId } = req.params;
+
+  // Ensure the user has access to view friend's data
+  // You might want to add additional checks for friendship status
+  try {
+    const friendDoc = await db.collection("users").doc(friendId).get();
+
+    if (!friendDoc.exists) {
+      return res.status(404).json({ error: "Friend not found." });
+    }
+
+    res.status(200).json(friendDoc.data());
+  } catch (error) {
+    console.error(`Error fetching friend details for friendId ${friendId}:`, error);
+    res.status(500).json({ error: "Failed to fetch friend details" });
+  }
+});
+
+
 module.exports = router;
