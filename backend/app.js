@@ -30,13 +30,15 @@ const eventsRoutes = require("./routes/events");
 const postsRoutes = require("./routes/posts");
 const usersRoutes = require("./routes/users");
 const petsRoutes = require("./routes/pets")
+const friendsRoutes = require("./routes/friends")
 
 
 // Use Routes
 app.use("/api/events", eventsRoutes);
 app.use("/api/posts", postsRoutes);
 app.use("/api/users", usersRoutes); 
-app.use("/api/pets", petsRoutes); 
+app.use("/api/pets", petsRoutes);
+app.use("/api/friends", friendsRoutes); 
 
 // Start the server
 app.listen(PORT, () => {

@@ -16,6 +16,7 @@ router.post("/request", async (req, res) => {
   }
 
   try {
+    // Check if a friend request already exists
     const existingRequest = await db.collection("friendRequests")
       .where("senderId", "==", senderId)
       .where("receiverId", "==", receiverId)
@@ -26,6 +27,12 @@ router.post("/request", async (req, res) => {
       return res.status(400).json({ error: "Friend request already sent" });
     }
 
+    // Add senderId to receiver's pendingFriends array
+    await db.collection("users").doc(receiverId).update({
+      pendingFriends: admin.firestore.FieldValue.arrayUnion(senderId)
+    });
+
+    // Create a new friend request document
     const requestRef = db.collection("friendRequests").doc();
     const newRequest = {
       requestId: requestRef.id,
@@ -55,6 +62,18 @@ router.put("/request/accept/:requestId", async (req, res) => {
       return res.status(404).json({ error: "Pending friend request not found" });
     }
 
+    const { senderId, receiverId } = requestDoc.data();
+
+    // Update friend lists
+    await db.collection("users").doc(receiverId).update({
+      friends: admin.firestore.FieldValue.arrayUnion(senderId),
+      pendingFriends: admin.firestore.FieldValue.arrayRemove(senderId)
+    });
+    await db.collection("users").doc(senderId).update({
+      friends: admin.firestore.FieldValue.arrayUnion(receiverId)
+    });
+
+    // Update friend request status
     await requestRef.update({ status: "accepted" });
     res.status(200).json({ message: "Friend request accepted" });
   } catch (error) {
@@ -75,6 +94,14 @@ router.put("/request/reject/:requestId", async (req, res) => {
       return res.status(404).json({ error: "Pending friend request not found" });
     }
 
+    const { senderId, receiverId } = requestDoc.data();
+
+    // Remove senderId from receiver's pendingFriends array
+    await db.collection("users").doc(receiverId).update({
+      pendingFriends: admin.firestore.FieldValue.arrayRemove(senderId)
+    });
+
+    // Update friend request status
     await requestRef.update({ status: "rejected" });
     res.status(200).json({ message: "Friend request rejected" });
   } catch (error) {
@@ -110,18 +137,13 @@ router.get("/:userId", async (req, res) => {
   const userId = req.params.userId;
 
   try {
-    const friendsSnapshot = await db.collection("friendRequests")
-      .where("status", "==", "accepted")
-      .where("senderId", "==", userId)
-      .get();
+    const userDoc = await db.collection("users").doc(userId).get();
 
-    const friends = [];
-    friendsSnapshot.forEach((doc) => {
-      const friendData = doc.data();
-      const friendId = friendData.receiverId;
-      friends.push(friendId);
-    });
+    if (!userDoc.exists) {
+      return res.status(404).json({ error: "User not found" });
+    }
 
+    const friends = userDoc.data().friends || [];
     res.status(200).json(friends);
   } catch (error) {
     console.error(`Error fetching friends for userId ${userId}:`, error);
@@ -134,15 +156,20 @@ router.delete("/:userId/remove/:friendId", async (req, res) => {
   const { userId, friendId } = req.params;
 
   try {
+    // Remove each other from friends array
+    await db.collection("users").doc(userId).update({
+      friends: admin.firestore.FieldValue.arrayRemove(friendId)
+    });
+    await db.collection("users").doc(friendId).update({
+      friends: admin.firestore.FieldValue.arrayRemove(userId)
+    });
+
+    // Remove any existing friend request record
     const requestsSnapshot = await db.collection("friendRequests")
       .where("status", "==", "accepted")
       .where("senderId", "in", [userId, friendId])
       .where("receiverId", "in", [userId, friendId])
       .get();
-
-    if (requestsSnapshot.empty) {
-      return res.status(404).json({ error: "Friendship not found" });
-    }
 
     const batch = db.batch();
     requestsSnapshot.forEach((doc) => {
