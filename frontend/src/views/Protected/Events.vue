@@ -44,7 +44,7 @@ function handleFiltersApplied(filters) {
   filtersApplied.value = hasFilters; // Set the filters as applied only if filters are not empty
   appliedFilters.value = filters; // Store the applied filters
 }
-
+ 
 // This function is called when filters are reset
 function handleFiltersReset() {
   filtersApplied.value = false; // Reset the filtersApplied to false to show the carousel
@@ -107,4 +107,5 @@ main {
 .floating-btn:hover {
   background-color: rgb(238, 207, 30);
 }
+
 </style>

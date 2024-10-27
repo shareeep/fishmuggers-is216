@@ -3,7 +3,7 @@
     <Navbar />
     <main> <!-- Wrap content in a main tag -->
       <PetpostAdd />
-    </main>
+    </main>  
   </div>
 </template>
 
@@ -23,7 +23,6 @@ import PetpostAdd from '@/components/Protected/PetPosts/PetPostAdd.vue';
 .home-container {
   display: flex; /* Set flexbox layout for the container */
 }
-
 
 /* can change */
 main {
