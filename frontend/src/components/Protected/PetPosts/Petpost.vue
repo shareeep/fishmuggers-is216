@@ -60,15 +60,22 @@ export default {
       this.posts = this.posts.filter(post => post.postId !== postId);
     },
     async likePost(post) {
+      const userId = auth.currentUser.uid;
+      const hasLiked = post.likes && post.likes.includes(userId);
+
       // Optimistically update the like count on the frontend
-      post.likes = post.likes ? [...post.likes, auth.currentUser.uid] : [auth.currentUser.uid];
+      if (hasLiked) {
+        post.likes = post.likes.filter(id => id !== userId);
+      } else {
+        post.likes = post.likes ? [...post.likes, userId] : [userId];
+      }
 
       try {
-        // Send the POST request to update likes in the backend
+        // Send the request to update likes in the backend
         const token = await auth.currentUser.getIdToken();
         await axios.post(
           `http://localhost:3000/api/posts/${post.postId}/like`,
-          { userId: auth.currentUser.uid },
+          { userId },
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -76,8 +83,15 @@ export default {
           }
         );
       } catch (error) {
-        console.error("Error liking the post:", error);
-        alert("Failed to like the post. Please try again.");
+        console.error("Error toggling like:", error);
+        alert("Failed to toggle like. Please try again.");
+        
+        // Rollback the optimistic update in case of an error
+        if (hasLiked) {
+          post.likes.push(userId);
+        } else {
+          post.likes = post.likes.filter(id => id !== userId);
+        }
       }
     },
   },
@@ -86,6 +100,7 @@ export default {
   },
 };
 </script>
+
 
  
 <style scoped>
