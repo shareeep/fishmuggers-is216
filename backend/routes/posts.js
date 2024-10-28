@@ -1,144 +1,144 @@
+// routes/posts.js
 const express = require("express");
 const router = express.Router();
-const { db } = require("../services/firebase"); // Import Firestore instance
-const admin = require("firebase-admin"); // Import Firebase Admin SDK
+const { db, bucket, admin } = require("../services/firebase");
+const upload = require("../middleware/upload"); // Ensure your multer middleware is here
+const authenticate = require("../middleware/auth"); // Ensure your authentication middleware is here
 
-// --------------------
-// Routes
-// --------------------
+// Route to upload a new post
+router.post("/upload", authenticate, upload.single("image"), async (req, res) => {
+  const { caption } = req.body;
 
-// @route   GET /api/posts
-// @desc    Get all posts
-// @access  Public
-router.get("/", async (req, res) => {
+  if (!req.file || !caption) {
+    return res.status(400).json({ error: "Missing required fields: image and caption" });
+  }
+
   try {
-    const postsSnapshot = await db.collection("posts").get();
-    const posts = [];
-    postsSnapshot.forEach((doc) => {
-      posts.push({ postId: doc.id, ...doc.data() });
+    // Set up a reference to Firebase Storage
+    const fileName = `${Date.now()}_${req.file.originalname}`;
+    const file = bucket.file(`eventImages/${fileName}`);
+
+    // Upload the image file to Firebase Storage
+    const stream = file.createWriteStream({
+      metadata: {
+        contentType: req.file.mimetype,
+      },
     });
-    res.status(200).json(posts);
+
+    stream.on("finish", async () => {
+      // Make the file publicly accessible
+      await file.makePublic();
+
+      // Get the public URL for the image
+      const imageUrl = file.publicUrl();
+
+      // Save post details in Firestore
+      const newPost = {
+        caption,
+        image: imageUrl,
+        userId: req.user.uid, // From the authenticated user
+        userName: req.user.name || "", // Optional, you can fetch the username if available
+        createdAt: new Date(),
+        likes: 0,
+      };
+
+      const postRef = await db.collection("posts").add(newPost);
+
+      res.status(200).json({
+        message: "Post uploaded successfully!",
+        postId: postRef.id,
+        imageUrl,
+      });
+    });
+
+    stream.end(req.file.buffer);
   } catch (error) {
-    console.error("Error fetching posts:", error);
-    res.status(500).json({ error: "Failed to fetch posts" });
+    res.status(500).json({ error: "Failed to upload post" });
   }
 });
 
-// @route   GET /api/posts/user/:userId
-// @desc    Get all posts by a specific userId
-// @access  Public
-router.get("/user/:userId", async (req, res) => {
-  const userId = req.params.userId;
+// Route to fetch all posts
+router.get("/feed", async (req, res) => {
+  console.log("Feed endpoint called");
 
   try {
-    const postsSnapshot = await db.collection("posts").where("userId", "==", userId).get();
-    
+    // Fetch all posts from the 'posts' collection, ordered by createdAt descending
+    console.log("Fetching posts from Firestore...");
+    const postsSnapshot = await db.collection("posts")
+      .orderBy("createdAt", "desc") // Add orderBy clause here
+      .get();
+
+    // Check if there are any posts
     if (postsSnapshot.empty) {
-      return res.status(404).json({ message: "No posts found for this user." });
+      console.log("No posts found");
+      return res.status(200).json([]);
     }
 
     const posts = [];
-    postsSnapshot.forEach((doc) => {
-      posts.push({ postId: doc.id, ...doc.data() });
-    });
+    for (const doc of postsSnapshot.docs) {
+      const postData = doc.data();
+      console.log(`Processing post with ID: ${doc.id}`);
 
+      // Fetch user details for each post's userId
+      const userSnapshot = await db.collection("users").doc(postData.userId).get();
+      
+      if (!userSnapshot.exists) {
+        console.log(`User with ID ${postData.userId} not found`);
+        continue; // Skip this post if user not found
+      }
+
+      const userData = userSnapshot.data();
+      const post = {
+        postId: doc.id,
+        ...postData,
+        user: {
+          uid: postData.userId,
+          name: userData.username || "Unknown User",
+          avatar: userData.profileImage || "https://via.placeholder.com/50",
+        },
+      };
+      posts.push(post);
+    }
+
+    console.log(`Successfully retrieved ${posts.length} posts`);
     res.status(200).json(posts);
   } catch (error) {
-    console.error(`Error fetching posts for userId ${userId}:`, error);
-    res.status(500).json({ error: "Failed to fetch posts" });
+    console.error("Error retrieving posts:", error);
+    res.status(500).json({ error: "Failed to retrieve posts" });
   }
 });
 
-// @route   POST /api/posts
-// @desc    Create a new post with updated structure
-// @access  Public
-router.post("/", async (req, res) => {
-  const { userId, userName, userAvatar, image, caption, likes } = req.body;
 
-  // Validate required fields
-  if (!userId || !userName || !userAvatar || !image || !caption || likes === undefined) {
-    return res.status(400).json({ error: "Missing required fields" });
-  }
 
-  try {
-    const postRef = db.collection("posts").doc(); // Auto-generate a unique document ID
-    const postId = postRef.id; // Get the auto-generated ID
 
-    // Construct the post data without nested userId object
-    const newPost = {
-      postId: postId,
-      userId, // Simple string for user ID
-      userName,
-      userAvatar,
-      image,
-      caption,
-      likes,
-      createdAt: admin.firestore.FieldValue.serverTimestamp(),
-      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-    };
+router.post("/:postId/like", authenticate, async (req, res) => {
+  const { postId } = req.params;
+  const { userId } = req.body;
 
-    await postRef.set(newPost);
+  console.log("Received request to like post:", postId);
+  console.log("User ID:", userId);
 
-    console.log(`New post added with ID: ${postId}`);
-    res.status(201).json({ message: "Post created successfully", post: newPost });
-  } catch (error) {
-    console.error("Error creating post:", error);
-    res.status(500).json({ error: "Failed to create post" });
-  }
-});
-
-// @route   PUT /api/posts/:id
-// @desc    Update an existing post by ID
-// @access  Public
-router.put("/:id", async (req, res) => {
-  const postId = req.params.id;
-  const { caption, likes } = req.body;
-
-  if (!caption || likes === undefined) {
-    return res.status(400).json({ error: "Missing caption or likes field" });
+  if (!userId) {
+    console.warn("User ID not provided");
+    return res.status(400).json({ error: "User ID is required to like a post." });
   }
 
   try {
     const postRef = db.collection("posts").doc(postId);
-    const postDoc = await postRef.get();
+    console.log("Updating likes array in Firestore for post:", postId);
 
-    if (!postDoc.exists) {
-      return res.status(404).json({ error: "Post not found" });
-    }
-
+    // Use arrayUnion to add userId to likes if not already present
     await postRef.update({
-      caption,
-      likes,
-      updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+      likes: admin.firestore.FieldValue.arrayUnion(userId),
     });
 
-    res.status(200).json({ message: "Post updated successfully" });
+    console.log("Post liked successfully!");
+    res.status(200).json({ message: "Post liked successfully!" });
   } catch (error) {
-    console.error(`Error updating post with ID ${postId}:`, error);
-    res.status(500).json({ error: "Failed to update post" });
+    console.error("Error updating likes array in Firestore:", error);
+    res.status(500).json({ error: "Failed to like post" });
   }
 });
 
-// @route   DELETE /api/posts/:id
-// @desc    Delete a post by ID
-// @access  Public
-router.delete("/:id", async (req, res) => {
-  const postId = req.params.id;
-
-  try {
-    const postRef = db.collection("posts").doc(postId);
-    const postDoc = await postRef.get();
-
-    if (!postDoc.exists) {
-      return res.status(404).json({ error: "Post not found" });
-    }
-
-    await postRef.delete();
-    res.status(200).json({ message: "Post deleted successfully" });
-  } catch (error) {
-    console.error(`Error deleting post with ID ${postId}:`, error);
-    res.status(500).json({ error: "Failed to delete post" });
-  }
-});
 
 module.exports = router;
