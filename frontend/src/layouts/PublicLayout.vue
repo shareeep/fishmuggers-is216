@@ -1,67 +1,98 @@
 <template>
-  <div class="public-layout bg-[#FFF3B3] min-h-screen flex flex-col">
-    <div class="div1"> <!-- Adjusted styling -->
+  <div class="public-layout bg-[#FFF3B3]">
+    <div class="header">
       <img src="../assets/images/logo.png" class="logo" />
-      <div class="text-container ml-4"> <!-- Add margin left for spacing -->
+      <div class="text-container">
         <h2>PetConnect</h2>
         <p>Building a Community for Paws and People</p>
       </div>
     </div>
     
-    <main class="flex-grow items-end"> 
-      <router-view class="w-full max-w-md flex-grow flex items-center justify-center" /> <!-- Adjusted for right alignment -->
+    <main class="main-content">
+      <router-view class="view-content" />
     </main>
   </div>
 </template>
 
 <style scoped>
+/* Typography and Spacing */
 h2 {
-  font-size: 5rem; /* Set the font size */
-  font-weight: 700; /* Make it bold */
-  color: #333; /* Darker color for better contrast */
-  margin: 0; /* Remove default margin */
-  text-align: left; /* Align text to the left */
-  width: auto;
-  font-family: 'Poppins', sans-serif; /* For Poppins */
+  font-size: clamp(2.5rem, 5vw, 5rem); /* Responsive font size */
+  font-weight: 700;
+  color: #333;
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
 }
 
 p {
-  font-size: 2rem; /* Set the font size */
-  font-weight: 400; /* Normal weight for the paragraph */
-  color: #666; /* Lighter gray for the text */
-  margin-top: 0.5rem; /* Add some space above the paragraph */
-  text-align: left; /* Align text to the left */
-  line-height: 1.5; /* Increase line height for readability */
-  font-family: 'Open Sans', sans-serif; /* For Open Sans */
+  font-size: clamp(1.5rem, 2.5vw, 2rem); /* Responsive font size */
+  font-weight: 400;
+  color: #666;
+  margin-top: 0.5rem;
+  line-height: 1.5;
+  font-family: 'Open Sans', sans-serif;
 }
 
+/* Layout Styles */
 .public-layout {
-  background-image: url('../assets/images/public_background.png'); /* Background image */
-  background-size: contain; /* Adjust image size to contain */
-  background-repeat: no-repeat; /* Prevent repeating the background image */
-  background-position: bottom left; /* Align background image to bottom left */
-  min-height: 100vh; /* Ensure it takes full height of the viewport */
+  background-image: url('../assets/images/public_background.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: bottom left;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
   position: relative;
 }
 
-.div1 {
-  display: flex; /* Use flex to layout items */
-  align-items: center; /* Center items vertically */
-  position: absolute; /* Keep it positioned absolutely */
-  top: 5px; /* Maintain top position */
-  left: 8px; /* Add some left margin */
-  width: auto; /* Allow width to adjust automatically */
-  max-width: calc(100% - 16px); /* Set maximum width with some padding */
-  min-width: 0; /* Allow it to shrink to fit content */
-  flex-wrap: nowrap; /* Prevent wrapping */
-  overflow: hidden; /* Hide overflow */
+.header {
+  display: flex;
+  align-items: center;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 10; /* Keep it on top */
 }
 
-main {
-  display: flex; /* Make sure the main section is a flex container */
+.logo {
+  width: clamp(80px, 120px, 150px); /* Responsive size for logo */
+  height: auto;
+  transition: width 0.3s ease; /* Smooth resizing transition */
+}
+
+.text-container {
+  margin-left: 10px; /* Space between logo and text */
+}
+
+/* Main Content Area */
+.main-content {
+  flex-grow: 1;
+  display: flex;
+  justify-content: flex-end; /* Align content to the right */
+  align-items: center;
+  padding: 0 10px;
   position: absolute;
-  right: 10px; /* Align to the right */
-  top: 50%; /* Move it down 50% from the top */
-  transform: translateY(-50%); /* Shift it up by 50% of its own height */
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  max-width: 100%;
+}
+
+.view-content {
+  width: 400px;
+  max-width: 400px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+/* Center main-content on screens 640px or smaller */
+@media (max-width: 640px) {
+  .main-content {
+    justify-content: center; /* Center horizontally */
+    left: 50%; /* Move to the center horizontally */
+    right: auto; /* Remove right alignment */
+    transform: translate(-50%, -50%); /* Center both vertically and horizontally */
+  }
 }
 </style>
+
