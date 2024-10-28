@@ -7,7 +7,7 @@
           <h3 class="user-name">{{ post.user.name }}</h3>
         </div>
         <div class="menu-container">
-          <button @click="toggleMenu(post.postId)" class="menu-btn">•••</button>
+          <button @click="toggleMenu(post.postId)" class="menu-btn" hidden>•••</button>
           <div v-if="post.postId === activeMenu" class="menu">
             <button @click="editPost(post)">Edit</button>
             <button @click="deletePost(post.postId)">Delete</button>
