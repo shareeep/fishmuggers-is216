@@ -1,9 +1,8 @@
 <template>
-  <div class="home-container">
+  <div class="home-container"> <!-- Use a wrapper for flex layout -->
     <Navbar />
-    <main>
-      <profile-update></profile-update>
-      <pets-profile></pets-profile>
+    <main> <!-- Wrap content in a main tag -->
+      <PetpostEdit />
     </main>
   </div>
 </template>
@@ -11,14 +10,15 @@
 <script setup>
 // Any Home page-specific logic
 import Navbar from '@/components/Protected/Navbar.vue';
-import ProfileUpdate  from '@/components/Protected/Profile/ProfileUpdate.vue';
-import PetsProfile from '@/components/Protected/Profile/PetsProfile.vue';
+import PetpostEdit from '@/components/Protected/PetPosts/PetPostEdit.vue';
 </script>
 
 <style scoped>
 .navbar {
   width: 250px; /* Width of the navbar */
   height: 100vh; /* Full height of the viewport */
+  position: sticky; /* Make the navbar sticky */
+  top: 0; /* Stick to the top of the page */
 }
 .home-container {
   display: flex; /* Set flexbox layout for the container */
@@ -30,11 +30,7 @@ main {
   flex-grow: 1; /* Allow main to take the remaining width */
   padding: 20px; /* Add padding for spacing */
   /* Optional styling */
-  background-color:  #FCEFB4; /* Example background color */
+  background-color: #FCEFB4; /* Example background color */
   overflow-y: auto; /* Allow scrolling if content overflows */
-}
-
-h1 {
-  text-align: center; /* Center text in the main area */
 }
 </style>

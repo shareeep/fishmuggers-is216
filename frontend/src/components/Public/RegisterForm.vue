@@ -150,6 +150,9 @@ const handleRegister = async () => {
       points: 0,
       pets: [],
       joinedEvents: [],
+      hostingEvents: [],
+      friends: [],
+      pendingFriends: [],
       createdAt: new Date() // Timestamp of account creation
     };
     
