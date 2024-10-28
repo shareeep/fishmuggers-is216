@@ -4,9 +4,12 @@
     <main>
       <h1 class="heading">Connect with Friends</h1>
       <SearchBar />
-      <FriendRequests />
-      <FriendsList />
-      <RequestsSent />
+      <div style="align-items: center;">
+        <FriendRequests />
+        <FriendsList />
+        <RequestsSent />
+      </div>
+
     </main>
   </div>
 </template>
@@ -21,34 +24,48 @@ import RequestsSent from '@/components/Protected/Friends/RequestsSent.vue';
 
 <style scoped>
 .navbar {
-  width: 250px; /* Width of the navbar */
-  height: 100vh; /* Full height of the viewport */
+  width: 250px;
+  /* Width of the navbar */
+  height: 100vh;
+  /* Full height of the viewport */
 }
 
 .home-container {
-  display: flex; /* Set flexbox layout for the container */
-  height: 100vh; /* Full height of the viewport */
-  overflow: hidden; /* Prevent overflow */
+  display: flex;
+  /* Set flexbox layout for the container */
+  height: 100vh;
+  /* Full height of the viewport */
+  overflow: hidden;
+  /* Prevent overflow */
 }
 
 main {
+  align-items: center;
+  /* Center components horizontally */
   flex-grow: 1;
   padding: 5%;
   display: flex;
-  flex-direction: column; /* Stack children vertically */
-  gap: 5px; /* Add spacing between the components */
-  background-color:  #FCEFB4;
-  overflow: scroll; /* Prevent scrolling */
+  flex-direction: column;
+  /* Stack children vertically */
+  gap: 5px;
+  /* Add spacing between the components */
+  background-color: #FCEFB4;
+  overflow: scroll;
+  /* Prevent scrolling */
 }
 
-main > * {
-  flex: 0 1 auto; /* Ensure components don't grow disproportionately */
+main>* {
+  flex: 0 1 auto;
+  /* Ensure components don't grow disproportionately */
   display: flex;
-  flex-direction: column; /* Stack headers and content vertically */
-  align-items: center; /* Align content to the left */
-  box-sizing: border-box; /* Ensure padding and borders are included in the width/height calculations */
-  width: 100%; /* Take full width of the container */
-  gap: 10px; /* Add spacing between header and content */
+  flex-direction: column;
+  /* Stack headers and content vertically */
+  box-sizing: border-box;
+  /* Ensure padding and borders are included in the width/height calculations */
+  width: 100%;
+  /* Take full width of the container */
+  gap: 10px;
+  /* Add spacing between header and content */
 }
 
 h3 {
@@ -63,5 +80,4 @@ h3 {
   margin-bottom: 10px;
   align-items: center;
 }
-
 </style>

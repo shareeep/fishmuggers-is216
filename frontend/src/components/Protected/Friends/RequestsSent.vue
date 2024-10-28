@@ -52,6 +52,7 @@ export default {
 h3 {
   font-weight: bold;
   color: #333;
+  margin-bottom: 10px;
 }
 
 .request-list {
