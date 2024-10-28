@@ -195,7 +195,6 @@ export default {
 </script>
 
 <style scoped>
-/* Existing styles remain unchanged */
 /* Loading Indicator Style */
 .loading-indicator {
   text-align: center;
@@ -203,156 +202,197 @@ export default {
   margin-top: 20px;
 }
 
-/* Additional or adjusted styles if needed */
-</style>
-
-
-<style scoped>
-.pet-type-container {
-    display: flex;
-    /* Align items inline */
-    gap: 10px;
-    /* Space between each pet type */
-}
-
-.pet-type {
-    border: 2px solid #7B61FF;
-    /* Gold border */
-    border-radius: 15px;
-    /* Rounded corners */
-    padding: 5px 15px;
-    /* Padding for spacing */
-    background-color: transparent;
-    /* No fill */
-    color: #7B61FF;
-    /* Text color */
-    font-weight: bold;
-    /*Optional: make the text bold */
-}
-
-
-#map {
-    /* display: flex;
-    flex-grow: 1; */
-    margin-top: 15px;
-    width: 600px;
-    height: 400px;
-}
-
-h3 {
-    font-weight: bold;
-    padding-bottom: 7px;
-    padding-top: 3px;
-}
-
+/* Event Detail Container */
 .event-detail {
-    padding: 20px;
+  padding: 20px;
+  max-width: 100%;
 }
 
+/* Back Button */
 .back-button {
-    text-decoration: none;
-    color: #007bff;
-    font-size: 16px;
+  text-decoration: none;
+  color: #007bff;
+  font-size: 16px;
 }
 
+/* Event Image */
 .event-image {
-    width: 800px;
-    border-radius: 10px;
-    margin: auto;
+  width: 100%;
+  max-width: 800px;
+  border-radius: 10px;
+  margin: auto;
+  display: block;
 }
 
+/* Event Title */
 .event-title {
-    font-family: 'Poppins', sans-serif;
-    font-size: 32px;
-    font-weight: bold;
-    margin: 20px 0;
-    text-align: center;
+  font-family: 'Poppins', sans-serif;
+  font-size: 2em;
+  font-weight: bold;
+  margin: 20px 0;
+  text-align: center;
 }
 
+/* Event Info Wrapper */
 .event-info {
-    display: flex;
-    gap: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
 }
 
+@media (min-width: 768px) {
+  .event-info {
+    flex-direction: row;
+  }
+}
+
+/* Left and Right Block */
 .left-block,
 .right-block {
-    flex: 1;
-    background-color: #fff;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    height: 100%;
-    overflow: hidden;
+  flex: 1;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  overflow: hidden;
 }
 
+.right-block {
+  max-width: 100%;
+}
+
+@media (min-width: 768px) {
+  .right-block {
+    width: 400px;
+  }
+}
+
+/* Host Information */
 .host-info {
-    display: flex;
-    align-items: center;
-    margin-top: 7px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    width: 290px;
-    height: 90px;
+  display: flex;
+  align-items: center;
+  margin-top: 7px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  height: 90px;
 }
 
 .profile-pic {
-    margin-left: 10px;
-    border-radius: 50%;
-    margin-right: 10px;
-    height: 70px;
-    width: 70px;
+  margin-left: 10px;
+  border-radius: 50%;
+  margin-right: 10px;
+  height: 50px;
+  width: 50px;
 }
 
 .host-details {
-    flex-grow: 1;
+  flex-grow: 1;
 }
 
 .host-buttons {
-    display: flex;
-    gap: 10px;
-    padding-top: 8px;
-    padding-bottom: 10px;
+  display: flex;
+  gap: 10px;
+  padding-top: 8px;
+  padding-bottom: 10px;
 }
 
 .contact-button,
 .follow-button {
-    padding: 5px 10px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
 }
 
 .contact-button {
-    background-color: white;
-    color: #C99F25;
-    border: 1px solid #C99F25;
+  background-color: white;
+  color: #C99F25;
+  border: 1px solid #C99F25;
 }
 
 .follow-button {
-    background-color: #FBD157;
-    color: black;
+  background-color: #FBD157;
+  color: black;
 }
 
+/* Date and Time */
 .date,
 .time {
-    display: flex;
-    align-items: center;
-    margin-bottom: 5px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
 }
 
-
+/* Add to Calendar Button */
 .add-to-calendar {
-    margin-left: 25px;
-    color: #7B61FF;
-    cursor: pointer;
-    margin-bottom: 10px;
+  color: #7B61FF;
+  cursor: pointer;
+  margin-bottom: 10px;
 }
 
+/* Location Section */
 .location {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
 }
 
 .icon {
-    padding-right: 10px;
+  padding-right: 10px;
+}
+
+/* Pet Type Container */
+.pet-type-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.pet-type {
+  border: 2px solid #7B61FF;
+  border-radius: 15px;
+  padding: 5px 15px;
+  background-color: transparent;
+  color: #7B61FF;
+  font-weight: bold;
+}
+
+/* Map Container */
+#map {
+  margin-top: 15px;
+  width: 100%;
+  height: 300px;
+}
+
+@media (min-width: 768px) {
+  #map {
+    width: 100%;
+    height: 400px;
+  }
+}
+
+/* Responsive Font Sizes */
+h3 {
+  font-weight: bold;
+  padding-bottom: 7px;
+  padding-top: 3px;
+  font-size: 1.2em;
+}
+
+.event-title {
+  font-size: 2em;
+}
+
+/* Additional responsive styles for smaller screens */
+@media (max-width: 767px) {
+  .event-title {
+    font-size: 1.5em;
+  }
+
+  .contact-button,
+  .follow-button {
+    font-size: 12px;
+    padding: 4px 8px;
+  }
 }
 </style>
