@@ -90,108 +90,53 @@
   </div>
 </template>
 
-<script>
-import { nextTick } from 'vue';
-import { useRoute } from 'vue-router';
-import 'leaflet/dist/leaflet.css';
-import * as L from 'leaflet';
-import customMarkerIcon from '@/assets/images/paw_marker.png';
-import axios from 'axios';
+<script setup>
+import { ref, onMounted, nextTick } from "vue";
+import { defineProps } from "vue";
+import * as L from "leaflet";
+import "leaflet/dist/leaflet.css";
+import customMarkerIcon from "@/assets/images/paw_marker.png";
 
-export default {
-  name: 'EventDetail',
-  data() {
-    return {
-      event: null, // Initialize event as null
-      isInterested: false,
-      map: null,
-      marker: null,
-    };
+const props = defineProps({
+  event: {
+    type: Object,
+    required: true,
   },
-  methods: {
-    async fetchEvent() {
-      try {
-        const eventId = this.$route.params.id;
-        const response = await axios.get(`http://localhost:3000/api/events/${eventId}`);
-        this.event = response.data;
+});
 
-        // Wait for the DOM to update
-        await nextTick();
+const map = ref(null);
 
-        // Initialize the map after the DOM has updated
-        this.initMap();
-      } catch (error) {
-        console.error('Failed to fetch event:', error);
-      }
-    },
-    initMap() {
-      if (!this.event || !this.event.locationData || this.event.locationData.length !== 2) {
-        console.error('Invalid event location data');
-        return;
-      }
+const initMap = () => {
+  if (!props.event || !props.event.locationData || props.event.locationData.length !== 2) {
+    console.error("Invalid event location data");
+    return;
+  }
 
-      const [latitude, longitude] = this.event.locationData;
+  const [latitude, longitude] = props.event.locationData;
 
-      // Initialize the map centered on the event location
-      this.map = L.map('map').setView([latitude, longitude], 15);
+  // Initialize the map centered on the event location
+  map.value = L.map("map").setView([latitude, longitude], 15);
+  L.tileLayer('https://www.onemap.gov.sg/maps/tiles/Default/{z}/{x}/{y}.png', {
+    detectRetina: true,
+    maxZoom: 19,
+    minZoom: 5,
+  }).addTo(map.value);
 
-      // OneMap tile layer
-      L.tileLayer('https://www.onemap.gov.sg/maps/tiles/Default/{z}/{x}/{y}.png', {
-        detectRetina: true,
-        maxZoom: 19,
-        minZoom: 5,
-        attribution:
-          '<img src="https://www.onemap.gov.sg/web-assets/images/logo/om_logo.png" style="height:20px;width:20px;display: inline-block;"/>&nbsp;<a href="https://www.onemap.gov.sg/" target="_blank" rel="noopener noreferrer">OneMap</a>&nbsp;&copy;&nbsp;contributors&nbsp;&#124;&nbsp;<a href="https://www.sla.gov.sg/" target="_blank" rel="noopener noreferrer">Singapore Land Authority</a>',
-      }).addTo(this.map);
+  const pawIcon = L.icon({
+    iconUrl: customMarkerIcon,
+    iconSize: [60, 60],
+    iconAnchor: [30, 60],
+    popupAnchor: [0, -60],
+  });
 
-      // Define the custom marker icon
-      const pawIcon = L.icon({
-        iconUrl: customMarkerIcon, // Ensure this path is correct
-        iconSize: [60, 60], // Size of the icon
-        iconAnchor: [30, 60], // Point of the icon which will correspond to marker's location
-        popupAnchor: [0, -60], // Point from which the popup should open relative to the iconAnchor
-      });
-
-      // Add a marker to the map
-      this.marker = L.marker([latitude, longitude], { icon: pawIcon }).addTo(this.map);
-
-      // Bind the popup to the marker
-      this.marker.bindPopup(`<b>${this.event.location}</b>`);
-
-      // Center the map on the marker when the marker is clicked
-      this.marker.on('click', (e) => {
-        this.map.setView(e.latlng);
-      });
-    },
-    formatEventDate(dateInput) {
-      const dateObj = this.convertToDate(dateInput);
-      return dateObj.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
-    },
-    formatEventTime(dateInput) {
-      const dateObj = this.convertToDate(dateInput);
-      const hours = dateObj.getHours();
-      const minutes = dateObj.getMinutes().toString().padStart(2, '0');
-      const ampm = hours >= 12 ? 'PM' : 'AM';
-      const formattedHours = hours % 12 || 12; // Convert to 12-hour format
-
-      return `${formattedHours}:${minutes} ${ampm}`;
-    },
-    convertToDate(dateInput) {
-      if (dateInput && dateInput._seconds) {
-        // If date is a Firestore Timestamp object
-        return new Date(dateInput._seconds * 1000);
-      } else if (typeof dateInput === 'string' || typeof dateInput === 'number') {
-        // If date is a string or number
-        return new Date(dateInput);
-      } else {
-        return new Date();
-      }
-    },
-  },
-  mounted() {
-    this.fetchEvent();
-  },
+  const marker = L.marker([latitude, longitude], { icon: pawIcon }).addTo(map.value);
+  marker.bindPopup(`<b>${props.event.location}</b>`);
 };
+
+onMounted(async () => {
+  await nextTick();
+  initMap();
+});
 </script>
 
 <style scoped>

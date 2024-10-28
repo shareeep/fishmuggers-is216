@@ -108,13 +108,13 @@
         <select
           v-model="event.eventSize"
           required
-          class="w-full border border-gray-300 p-2 rounded"
-        >
-          <option disabled value="">Select size</option>
-          <option value="1-5">1-5</option>
-          <option value="6-10">6-10</option>
-          <option value="11-20">11-20</option>
-          <option value="21+">20+</option>
+          class="w-full border border-gray-300 p-2 rounded">
+          <option disabled value="">Select maximum attendees</option>
+          <option :value="5">5</option>
+          <option :value="10">10</option>
+          <option :value="20">20</option>
+          <option :value="50">50</option>
+          <option :value="100">100</option>
         </select>
       </div>
 

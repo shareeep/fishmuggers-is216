@@ -75,9 +75,9 @@ const validateEventData = [
   body("eventSize")
     .notEmpty()
     .withMessage("Event Size is required.")
-    .isString()
-    .withMessage("Event Size must be a string."),
-
+    .isInt({ min: 1 })
+    .withMessage("Event Size must be a number greater than 0."),
+  
   // Optional: Validate image URL if provided as a string
   body("eventImage")
     .optional()
@@ -250,6 +250,9 @@ router.post(
       eventSize,
     } = req.body;
 
+    // Parse eventSize to integer
+    eventSize = parseInt(eventSize, 10);
+
     // Parse locationData
     locationData = JSON.parse(locationData);
 
@@ -288,15 +291,15 @@ router.post(
         host: req.user.uid, // Set host as the authenticated user's UID
         title,
         description,
-        date: admin.firestore.Timestamp.fromDate(new Date(date)), // Ensure date is stored as a Firestore Timestamp
+        date: admin.firestore.Timestamp.fromDate(new Date(date)), // Firestore Timestamp for date
         location,
-        locationData,
-        petType,
-        eventSize,
+        locationData: JSON.parse(locationData),
+        petType: Array.isArray(petType) ? petType : [petType],
+        eventSize, // Store event size as an integer
         eventImage: imageUrl,
         interestedUsers: [], // Initialize as empty array
-        createdAt: admin.firestore.FieldValue.serverTimestamp(), // Add a creation timestamp
-        updatedAt: admin.firestore.FieldValue.serverTimestamp(), // Add an updated timestamp
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
       };
 
       // Use a Firestore transaction to ensure atomicity
@@ -370,6 +373,9 @@ router.put(
       petType,
       eventSize,
     } = req.body;
+
+    // Parse eventSize to integer
+    eventSize = parseInt(eventSize, 10);
 
     // Parse locationData
     locationData = JSON.parse(locationData);
