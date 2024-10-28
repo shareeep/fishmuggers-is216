@@ -3,11 +3,11 @@
     <div v-for="post in posts" :key="post.postId" class="post">
       <div class="post-header">
         <div class="user-info">
-          <img :src="post.userId.avatar" alt="User Avatar" class="avatar" />
-          <h3 class="[user-name]">{{ post.userId.name }}</h3>
+          <img :src="post.user.avatar" alt="User Avatar" class="avatar" />
+          <h3 class="user-name">{{ post.user.name }}</h3>
         </div>
         <div class="menu-container">
-          <button @click="toggleMenu(post.postId)" class="menu-btn">•••</button> <!-- Horizontal three dots -->
+          <button @click="toggleMenu(post.postId)" class="menu-btn">•••</button>
           <div v-if="post.postId === activeMenu" class="menu">
             <button @click="editPost(post)">Edit</button>
             <button @click="deletePost(post.postId)">Delete</button>
@@ -17,7 +17,8 @@
       <img :src="post.image" alt="Post Image" class="post-image" />
       <div class="post-footer">
         <p>{{ post.caption }}</p>
-        <p class="likes">{{ post.likes }} likes</p>
+        <p class="likes">{{ post.likes ? post.likes.length : 0 }} likes</p>
+        <button @click="likePost(post)"><i class="fas fa-thumbs-up"></i>Like</button>
       </div>
     </div>
 
@@ -29,53 +30,63 @@
 </template>
 
 <script>
+import axios from "axios";
+import { auth } from "../../../../firebase"; // Firebase auth for user ID
+
 export default {
   data() {
     return {
-      activeMenu: null, // Track which post has the menu open
-      posts: [
-        {
-          postId: 1,
-          userId: {
-            id: '1', //should be used for addPost URL to verify user is adding the post to THEIR account
-            name: 'User 1',
-            avatar: 'https://via.placeholder.com/50',
-          },
-          image: 'https://via.placeholder.com/600',
-          caption: 'Loving my pet!',
-          likes: 150,
-        },
-        {
-          postId: 2,
-          userId: {
-            name: 'User 2',
-            avatar: 'https://via.placeholder.com/50',
-          },
-          image: 'https://via.placeholder.com/600',
-          caption: 'Such a cute moment!',
-          likes: 200,
-        },
-        // Add more posts here
-      ],
+      activeMenu: null,
+      posts: [],
     };
   },
   methods: {
+    async fetchPosts() {
+      try {
+        const response = await axios.get("http://localhost:3000/api/posts/feed");
+        this.posts = response.data;
+      } catch (error) {
+        console.error("Failed to load posts:", error);
+        alert("Failed to load posts.");
+      }
+    },
     toggleMenu(postId) {
       this.activeMenu = this.activeMenu === postId ? null : postId;
     },
     editPost(post) {
-      // Logic for editing the post
-      console.log('Editing post:', post);
-      this.$router.push('/editpost');
+      this.$router.push("/editpost");
     },
-    deletePost(postId) { 
-      // Logic for deleting the post
-      console.log('Deleting post:', postId);
-      this.posts = this.posts.filter(post => post.postId !== postId); //placeholder filter away instead of actually deleting
+    deletePost(postId) {
+      this.posts = this.posts.filter(post => post.postId !== postId);
     },
+    async likePost(post) {
+      // Optimistically update the like count on the frontend
+      post.likes = post.likes ? [...post.likes, auth.currentUser.uid] : [auth.currentUser.uid];
+
+      try {
+        // Send the POST request to update likes in the backend
+        const token = await auth.currentUser.getIdToken();
+        await axios.post(
+          `http://localhost:3000/api/posts/${post.postId}/like`,
+          { userId: auth.currentUser.uid },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+      } catch (error) {
+        console.error("Error liking the post:", error);
+        alert("Failed to like the post. Please try again.");
+      }
+    },
+  },
+  mounted() {
+    this.fetchPosts();
   },
 };
 </script>
+
  
 <style scoped>
 .feed-container {

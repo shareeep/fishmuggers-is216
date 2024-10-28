@@ -5,19 +5,11 @@
   <div class="add-post-container">
     <h2>Add a New Pet Post</h2>
     <form @submit.prevent="submitPost">
-      
-      <!-- Placeholder for testing user data (can be removed later) -->
-      <div class="form-group">
-        <label for="name">Name:</label>
-        <input type="text" v-model="newPost.name" placeholder="User Details (for test)" required /> 
-      </div>
-
       <div class="form-group">
         <label for="image">Upload Image:</label>
         <input type="file" @change="handleFileUpload" accept="image/*" required />
       </div>
 
-      <!-- Display the image preview if available -->
       <div v-if="newPost.image" class="image-preview">
         <img :src="newPost.image" alt="Image Preview" />
       </div>
@@ -33,15 +25,17 @@
 </template>
 
 <script>
+import axios from "axios";
+import { auth } from "../../../../firebase"; // Import Firebase auth
+
 export default {
   data() {
     return {
       newPost: {
-        name: '',
-        image: '',
-        caption: '',
+        image: "",
+        caption: "",
       },
-      imageFile: null, // Holds the selected image file
+      imageFile: null,
     };
   },
   methods: {
@@ -49,26 +43,48 @@ export default {
       const file = event.target.files[0];
       if (file) {
         this.imageFile = file;
-        this.uploadImage(file);
+        this.previewImage(file);
       }
     },
-    uploadImage(file) {
+    previewImage(file) {
       const reader = new FileReader();
       reader.onload = (e) => {
-        this.newPost.image = e.target.result; // Set image URL for preview
+        this.newPost.image = e.target.result;
       };
       reader.readAsDataURL(file);
     },
-    submitPost() {
-      if (!this.imageFile) {
-        alert('Please upload an image.');
+    async submitPost() {
+      if (!this.imageFile || !this.newPost.caption) {
+        alert("Please provide a caption and upload an image.");
         return;
       }
-      // Submit the new post (e.g., send to an API or save to store)
-      console.log('Post submitted:', this.newPost);
 
-      // Redirect user to homepage after submission
-      this.$router.push('/');
+      // Create FormData object
+      const formData = new FormData();
+      formData.append("caption", this.newPost.caption);
+      formData.append("image", this.imageFile);
+
+      try {
+        // Get the ID token of the authenticated user
+        const currentUser = auth.currentUser;
+        if (!currentUser) {
+          alert("User is not authenticated");
+          return;
+        }
+
+        const token = await currentUser.getIdToken();
+
+        // Send request to backend
+        await axios.post("http://localhost:3000/api/posts/upload", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        this.$router.push("/"); // Redirect after submission
+      } catch {
+        alert("Failed to upload post.");
+      }
     },
   },
 };

@@ -3,7 +3,6 @@ const admin = require("firebase-admin");
 const path = require("path");
 require("dotenv").config();
 
-// Path to your service account key
 const serviceAccountPath = path.resolve(
   __dirname,
   "../firebase/serviceAccountKey.json"
@@ -12,7 +11,7 @@ const serviceAccountPath = path.resolve(
 // Initialize Firebase Admin SDK
 admin.initializeApp({
   credential: admin.credential.cert(require(serviceAccountPath)),
-  storageBucket: `${process.env.FIREBASE_PROJECT_ID}.appspot.com`, // Add storage bucket
+  storageBucket: `${process.env.FIREBASE_PROJECT_ID}.appspot.com`, // This should be correctly configured
 });
 
 const db = admin.firestore();
