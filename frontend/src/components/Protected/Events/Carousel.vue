@@ -11,7 +11,7 @@
     <div v-if="errorMessage" class="error-message">
       {{ errorMessage }}
     </div>
- 
+
     <!-- Events Display -->
     <div v-else>
       <!-- Vertical Cards for Small Screens (1 Column) -->
@@ -142,7 +142,7 @@
         </Carousel>
       </div>
 
-      
+
     </div>
   </div>
   <!-- </div> -->
@@ -198,6 +198,10 @@ export default defineComponent({
         this.errorMessage = 'Failed to load events.';
       } finally {
         this.loading = false;
+        // Delay and trigger a resize event
+        setTimeout(() => {
+          window.dispatchEvent(new Event('resize'));
+        }, 50); // Adjust delay as needed
       }
     },
     formatEventDay(dateInput) {
@@ -494,5 +498,4 @@ export default defineComponent({
   color: gold;
   margin-right: 5px;
 }
-
 </style>
