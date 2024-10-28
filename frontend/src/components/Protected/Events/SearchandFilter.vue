@@ -4,7 +4,7 @@
             style="width:300px; margin-bottom: -10px;position:relative;"
             class="block mx-auto z-30 md:w-2/3 lg:w-1/2">
 
-        <!-- SEARCH BAR -->
+        <!-- SEARCH BAR --> 
         <div class="flex justify-center items-center mx-auto mr-0">
             <div class=" mx-auto relative z-20 flex items-center max-w-lg">
                 <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none z-10">

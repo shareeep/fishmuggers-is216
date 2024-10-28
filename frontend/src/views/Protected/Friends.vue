@@ -2,6 +2,7 @@
   <div class="home-container">
     <Navbar />
     <main>
+      <h1 class="heading">Connect with Friends</h1>
       <SearchBar />
       <FriendRequests />
       <FriendsList />
@@ -37,7 +38,7 @@ main {
   flex-direction: column; /* Stack children vertically */
   gap: 20px; /* Add spacing between the components */
   background-color:  #FCEFB4;
-  overflow: hidden; /* Prevent scrolling */
+  overflow: scroll; /* Prevent scrolling */
 }
 
 main > * {
@@ -55,4 +56,13 @@ h3 {
   padding-bottom: 5px; /* Add padding to separate header from content */
   font-weight: bold;
 }
+
+.heading {
+  font-size: 2rem;
+  color: #333;
+  font-weight: bold;
+  margin-bottom: 10px;
+  align-items: center;
+}
+
 </style>
