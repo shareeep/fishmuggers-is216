@@ -2,13 +2,13 @@
   <div class="calendar-container">
     <div class="side-panel">
       <div class="calendar-img">
-        <img src="../../../assets/images/sus_cat_calendar.png" alt="">
+        <img src="../../../assets/images/sus_cat_calendar.png" alt="" />
       </div>
       <div class="current-day">
         <h2>{{ currentDay }}</h2>
         <h3>{{ currentDate }}</h3>
       </div>
-      <hr>
+      <hr />
       <div class="filters">
         <h3>Filter Events</h3>
 
@@ -43,12 +43,13 @@
         <div class="date-range">
           <h4>Date Range</h4>
           <label for="start-date">From:</label>
-          <input id="start-date" type="date" v-model="startDate">
+          <input id="start-date" type="date" v-model="startDate" />
 
           <label for="end-date">To:</label>
-          <input id="end-date" type="date" v-model="endDate">
+          <input id="end-date" type="date" v-model="endDate" />
         </div>
       </div>
+      <button class="add-event-button" @click="showAddEventPopup = true">Add Custom Event</button>
     </div>
 
     <div class="calendar">
@@ -73,7 +74,7 @@
                 'current-date': isCurrentDate(date.date, date.isCurrentMonth),
                 'clickable-date': true,
                 'current-month': date.isCurrentMonth,
-                'other-month': !date.isCurrentMonth,
+                'other-month': !date.isCurrentMonth
               }"
               @click="showEventDetails(date.date, date.isCurrentMonth)"
             >
@@ -90,15 +91,12 @@
 
 <script>
 import EventPopup from './EventPopup.vue';
+import { db, auth } from '../../../../firebase';
 
 export default {
   data() {
     return {
-      events: [
-        { EventId: "1", UserId: "123", Title: "Dog Walking", Description: "Walk the dog in the park", EventDate: "2024-10-13", Location: "Central Park", PetType: "Dog", EventSize: "<10" },
-        { EventId: "2", UserId: "124", Title: "Pet Adoption Fair", Description: "Adoption event for pets", EventDate: "2024-10-20", Location: "City Hall", PetType: "Cat", EventSize: "50-100" },
-        // Add more events as needed
-      ],
+      events: [],
       selectedEvent: null,
       showPopup: false,
       currentYear: new Date().getFullYear(),
@@ -112,99 +110,125 @@ export default {
       selectedLocation: '',
       startDate: '',
       endDate: '',
+      showAddEventPopup: false,
+      customEvent: { title: '', description: '', date: '', location: '' }
     };
   },
-  computed: {
-    currentMonth() {
-      return new Date(this.currentYear, this.currentMonthIndex).toLocaleString('default', { month: 'long', year: 'numeric' });
-    },
-    currentDay() {
-      return new Date().toLocaleDateString('default', { weekday: 'long' });
-    },
-    currentDate() {
-      return new Date().toLocaleDateString('default', { day: 'numeric', month: 'long', year: 'numeric' });
-    },
-    calendar() {
-      const startDate = new Date(this.currentYear, this.currentMonthIndex, 1);
-      const endDate = new Date(this.currentYear, this.currentMonthIndex + 1, 0);
-      const daysInMonth = endDate.getDate();
 
-      const calendar = [];
-      let week = [];
-      let currentDate = new Date(startDate);
+  async mounted() {
+    try {
+      const user = auth.currentUser;
+      if (user) {
+        const uid = user.uid;
+        const response = await fetch(`http://localhost:3000/api/calendar/joined-events/${uid}`);
+        const events = await response.json();
+        
+        // Map timestamp to Date object
+        this.events = events.map(event => ({
+          ...event,
+          EventDate: new Date(event.date._seconds * 1000)
+        }));
 
-      for (let i = 0; i < startDate.getDay(); i++) {
-        const prevMonthDate = new Date(startDate);
-        prevMonthDate.setDate(startDate.getDate() - (startDate.getDay() - i));
-        week.push({ date: prevMonthDate.getDate(), isCurrentMonth: false });
+        console.log("Fetched events:", this.events); // Console log for debugging
+      } else {
+        console.error("User is not authenticated");
       }
-
-      for (let day = 1; day <= daysInMonth; day++) {
-        week.push({ date: day, isCurrentMonth: true });
-
-        if (week.length === 7) {
-          calendar.push(week);
-          week = [];
-        }
-      }
-
-      let dayCounter = 1;
-      while (week.length < 7) {
-        week.push({ date: dayCounter++, isCurrentMonth: false });
-      }
-      if (week.length > 0) {
-        calendar.push(week);
-      }
-
-      if (calendar[calendar.length - 1].every(day => !day.isCurrentMonth)) {
-        calendar.pop();
-      }
-
-      return calendar;
-    },
-    uniquePetTypes() {
-      return [...new Set(this.events.map(event => event.PetType))];
-    },
-    uniqueEventSizes() {
-      return [...new Set(this.events.map(event => event.EventSize))];
-    },
-    uniqueLocations() {
-      return [...new Set(this.events.map(event => event.Location))];
-    },
-    filteredEvents() {
-      return this.events.filter(event => {
-        const eventDate = new Date(event.EventDate);
-        const start = this.startDate ? new Date(this.startDate) : null;
-        const end = this.endDate ? new Date(this.endDate) : null;
-
-        return (!this.selectedPetType || event.PetType === this.selectedPetType) &&
-               (!this.selectedEventSize || event.EventSize === this.selectedEventSize) &&
-               (!this.selectedLocation || event.Location === this.selectedLocation) &&
-               (!start || eventDate >= start) &&
-               (!end || eventDate <= end);
-      });
-    },
-    eventDates() {
-      return this.filteredEvents.map(event => event.EventDate);
-    },
+    } catch (error) {
+      console.error("Error fetching joined events:", error);
+    }
   },
+
+  computed: {
+  currentMonth() {
+    return new Date(this.currentYear, this.currentMonthIndex).toLocaleString('default', { month: 'long', year: 'numeric' });
+  },
+  currentDay() {
+    return new Date().toLocaleDateString('default', { weekday: 'long' });
+  },
+  currentDate() {
+    return new Date().toLocaleDateString('default', { day: 'numeric', month: 'long', year: 'numeric' });
+  },
+  calendar() {
+    const startDate = new Date(this.currentYear, this.currentMonthIndex, 1);
+    const endDate = new Date(this.currentYear, this.currentMonthIndex + 1, 0);
+    const daysInMonth = endDate.getDate();
+
+    const calendar = [];
+    let week = [];
+    const prevMonthDays = startDate.getDay();
+
+    // Fill in days from the previous month
+    for (let i = prevMonthDays; i > 0; i--) {
+      const prevMonthDate = new Date(startDate);
+      prevMonthDate.setDate(startDate.getDate() - i);
+      week.push({ date: prevMonthDate.getDate(), isCurrentMonth: false });
+    }
+
+    // Fill in days of the current month
+    for (let day = 1; day <= daysInMonth; day++) {
+      week.push({ date: day, isCurrentMonth: true });
+      if (week.length === 7) {
+        calendar.push(week);
+        week = [];
+      }
+    }
+
+    // Fill in days from the next month to complete the last week
+    let nextMonthDay = 1;
+    while (week.length < 7) {
+      week.push({ date: nextMonthDay++, isCurrentMonth: false });
+    }
+
+    // Only push the last week if it contains at least one date from the current month
+    if (week.some(day => day.isCurrentMonth)) {
+      calendar.push(week);
+    }
+
+    return calendar;
+  },
+  uniquePetTypes() {
+    return [...new Set(this.events.flatMap(event => event.petType))];
+  },
+  uniqueEventSizes() {
+    return [...new Set(this.events.map(event => event.eventSize))];
+  },
+  uniqueLocations() {
+    return [...new Set(this.events.map(event => event.location))];
+  },
+  filteredEvents() {
+    return this.events.filter(event => {
+      const start = this.startDate ? new Date(this.startDate) : null;
+      const end = this.endDate ? new Date(this.endDate) : null;
+
+      return (
+        (!this.selectedPetType || event.petType.includes(this.selectedPetType)) &&
+        (!this.selectedEventSize || event.eventSize === this.selectedEventSize) &&
+        (!this.selectedLocation || event.location === this.selectedLocation) &&
+        (!start || event.EventDate >= start) &&
+        (!end || event.EventDate <= end)
+      );
+    });
+  },
+  eventDates() {
+    return this.filteredEvents.map(event => event.EventDate.toDateString());
+  }
+}
+,
+
   methods: {
     isEventDate(date, isCurrentMonth) {
-      if (!isCurrentMonth) return false;
-      const formattedDate = `${this.currentYear}-${String(this.currentMonthIndex + 1).padStart(2, '0')}-${String(date).padStart(2, '0')}`;
+      if (!isCurrentMonth || !date) return false;
+      const formattedDate = new Date(this.currentYear, this.currentMonthIndex, date).toDateString();
       return this.eventDates.includes(formattedDate);
     },
     isCurrentDate(date, isCurrentMonth) {
       return isCurrentMonth && this.currentYear === this.todayYear && this.currentMonthIndex === this.todayMonth && date === this.today;
     },
     showEventDetails(date, isCurrentMonth) {
-      if (!isCurrentMonth) return;
-      const formattedDate = `${this.currentYear}-${String(this.currentMonthIndex + 1).padStart(2, '0')}-${String(date).padStart(2, '0')}`;
-      const event = this.filteredEvents.find(event => event.EventDate === formattedDate);
-      if (event) {
-        this.selectedEvent = event;
-        this.showPopup = true;
-      }
+      if (!isCurrentMonth || !date) return;
+      const selectedDate = new Date(this.currentYear, this.currentMonthIndex, date).toDateString();
+      this.selectedEvent = this.filteredEvents.find(event => event.EventDate.toDateString() === selectedDate);
+      if (this.selectedEvent) this.showPopup = true;
     },
     prevMonth() {
       if (this.currentMonthIndex === 0) {
@@ -222,12 +246,17 @@ export default {
         this.currentMonthIndex++;
       }
     },
+    addCustomEvent() {
+      alert(`Event added: ${this.customEvent.title}`);
+      this.showAddEventPopup = false;
+      this.customEvent = { title: '', description: '', date: '', location: '' };
+    }
   },
-  components: {
-    EventPopup,
-  },
+
+  components: { EventPopup }
 };
 </script>
+
 
 
 <style scoped>
@@ -507,4 +536,94 @@ th {
     color: #bdbdbd;
   }
 
+
+/* ADD CUSTOM EVENTS CSSS */
+.add-event-button {
+  background-color: #ffd700; /* Date header color */
+  border: 1px solid black;
+  color: black;
+  font-size: 1.2vw;
+  font-family: "Arial Rounded MT";
+  padding: 12px 0px;
+  border-radius: 8px;
+  cursor: pointer;
+  margin: 10px auto;
+  display: block;
+  width: 90%;
+  text-align: center;
+  transition: background-color 0.3s;
+}
+
+.add-event-button:hover {
+  background-color: #e6c200; /* Slightly darker shade */
+}
+
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.popup-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 12px;
+  width: 80%;
+  max-width: 400px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.popup-content h3 {
+  text-align: center;
+  font-family: "Arial Rounded MT";
+  font-size: 1.5vw;
+  margin-bottom: 20px;
+}
+
+.popup-content label {
+  display: block;
+  font-family: "Arial Rounded MT";
+  font-size: 1.1vw;
+  margin-top: 10px;
+}
+
+.popup-content input, .popup-content textarea {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  font-family: "Arial Rounded MT";
+  font-size: 1vw;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.popup-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.popup-buttons button {
+  background-color: #ffd700; /* Same color scheme */
+  border: 1px solid black;
+  color: black;
+  font-family: "Arial Rounded MT";
+  font-size: 1vw;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.popup-buttons button:hover {
+  background-color: #e6c200;
+}
+/* END ADD CUSTOM EVENTS CSS */
 </style>  

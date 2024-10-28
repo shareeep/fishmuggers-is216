@@ -30,17 +30,19 @@ const eventsRoutes = require("./routes/events");
 const postsRoutes = require("./routes/posts");
 const usersRoutes = require("./routes/users");
 const messagesRoutes = require("./routes/messages"); // Import messages routes
-const petsRoutes = require("./routes/pets")
-const friendsRoutes = require("./routes/friends") 
-
+const petsRoutes = require("./routes/pets");
+const friendsRoutes = require("./routes/friends");
+const calendarRoutes = require("./routes/calendar"); // Import calendar routes
 
 // Use Routes
 app.use("/api/events", eventsRoutes);
 app.use("/api/posts", postsRoutes);
 app.use("/api/users", usersRoutes); // Mount users routes
-app.use("/api/messages", messagesRoutes); // Mount messages routes 
+app.use("/api/messages", messagesRoutes); // Mount messages routes
 app.use("/api/pets", petsRoutes);
-app.use("/api/friends", friendsRoutes); 
+app.use("/api/friends", friendsRoutes);
+app.use("/api/calendar", calendarRoutes); // Mount calendar routes
+
 
 // Start the server
 app.listen(PORT, () => {
