@@ -91,11 +91,10 @@
 </template>
 
 <script setup>
-import { ref, onMounted, nextTick } from "vue";
-import { defineProps } from "vue";
-import * as L from "leaflet";
-import "leaflet/dist/leaflet.css";
-import customMarkerIcon from "@/assets/images/paw_marker.png";
+import { ref, onMounted, nextTick, defineProps, defineEmits } from 'vue';
+import * as L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+import customMarkerIcon from '@/assets/images/paw_marker.png';
 
 const props = defineProps({
   event: {
@@ -103,6 +102,9 @@ const props = defineProps({
     required: true,
   },
 });
+
+// Declare custom events (filtersApplied, filtersReset) if needed
+const emit = defineEmits(['filtersApplied', 'filtersReset']);
 
 const map = ref(null);
 
@@ -131,6 +133,31 @@ const initMap = () => {
 
   const marker = L.marker([latitude, longitude], { icon: pawIcon }).addTo(map.value);
   marker.bindPopup(`<b>${props.event.location}</b>`);
+};
+
+const formatEventDate = (dateInput) => {
+  const dateObj = convertToDate(dateInput);
+  return dateObj.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+};
+
+const formatEventTime = (dateInput) => {
+  const dateObj = convertToDate(dateInput);
+  const hours = dateObj.getHours();
+  const minutes = dateObj.getMinutes().toString().padStart(2, '0');
+  const ampm = hours >= 12 ? 'PM' : 'AM';
+  const formattedHours = hours % 12 || 12;
+
+  return `${formattedHours}:${minutes} ${ampm}`;
+};
+
+const convertToDate = (dateInput) => {
+  if (dateInput && dateInput._seconds) {
+    return new Date(dateInput._seconds * 1000);
+  } else if (typeof dateInput === 'string' || typeof dateInput === 'number') {
+    return new Date(dateInput);
+  } else {
+    return new Date();
+  }
 };
 
 onMounted(async () => {

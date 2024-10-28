@@ -7,12 +7,12 @@
     </span>
     <button class="icon share-icon"><img src="../../../assets/images/send.png" width="30px" alt="send"></button>
     <span class="slots-left">{{ remainingSlots }} slots left</span>
-    <button class="rsvp-button">RSVP</button>
+    <button class="rsvp-button">{{ isInterested ? "Un-RSVP" : "RSVP" }}</button>
   </div>
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import { defineProps } from "vue";
 import axios from "axios";
 
@@ -23,11 +23,22 @@ const props = defineProps({
   },
 });
 
+// Track the local interest state and slots
 const isInterested = ref(false);
+const localInterestedUsers = ref([...props.event.interestedUsers || []]);
+
+// Watch changes to props.event to ensure updates when the event prop changes
+watch(
+  () => props.event,
+  (newEvent) => {
+    localInterestedUsers.value = [...newEvent.interestedUsers || []];
+    isInterested.value = localInterestedUsers.value.some((user) => user.userId === "your-user-id");
+  },
+  { immediate: true }
+);
 
 const remainingSlots = computed(() => {
-  if (!props.event) return "N/A";
-  return props.event.eventSize - (props.event.interestedUsers?.length || 0);
+  return props.event.eventSize - localInterestedUsers.value.length;
 });
 
 const toggleInterested = async () => {
@@ -39,21 +50,19 @@ const toggleInterested = async () => {
   try {
     isInterested.value = !isInterested.value;
     const endpoint = `http://localhost:3000/api/events/${eventId}/interested`;
+
     if (isInterested.value) {
       await axios.post(endpoint);
+      localInterestedUsers.value.push({ userId: "your-user-id" });
     } else {
       await axios.delete(endpoint);
+      localInterestedUsers.value = localInterestedUsers.value.filter((user) => user.userId !== "your-user-id");
     }
-    // Update event's interestedUsers count to reflect the latest data
-    props.event.interestedUsers = isInterested.value
-      ? [...(props.event.interestedUsers || []), { userId: "your-user-id" }]
-      : (props.event.interestedUsers || []).filter((user) => user.userId !== "your-user-id");
   } catch (error) {
     console.error("Error updating interest:", error);
   }
 };
 </script>
-
 
 <style scoped>
 .share-icon {
