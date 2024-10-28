@@ -63,6 +63,8 @@ export default {
 }
 
 .popup-content {
+    display:flex;
+    flex-direction: column;
     background-color: #fff;
     width: 400px;
     height: 400px;
