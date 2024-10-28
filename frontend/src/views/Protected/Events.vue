@@ -87,6 +87,11 @@ main {
   /* Allow scrolling if content overflows */
 }
 
+.search-filter-container{
+  position:relative;
+  z-index: 1000;
+}
+
 /* Floating Button */
 .floating-btn {
   position: fixed;

@@ -895,12 +895,13 @@ export default {
 <style scoped>
 .wrapper{
     width:100%;
+    position:relative;
 }
 /* DROPDOWN CONTAINER */
 .custom-dropdown {
+    position:fixed;
     padding: 1rem;
     /* Ensure uniform dropdown padding */
-
     background-color: #FDF8E1;
     /* Cornsilk */
     border: 1px solid #FAE588;
@@ -911,7 +912,7 @@ export default {
     /* Position the menu below the button */
     left: 0;
     /* Align it to the left of the button */
-    z-index: 10;
+    z-index: 100000000000;
     /* Ensure it appears above other elements */
 
 }
