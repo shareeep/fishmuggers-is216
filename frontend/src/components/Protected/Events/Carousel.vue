@@ -95,7 +95,7 @@
       </div>
 
       <!-- Carousel for Large Screens (3 Items) -->
-      <div class="hidden lg:block">
+      <div v-if="showLargeCarousel" class="hidden lg:block">
         <Carousel :itemsToShow="3" :wrapAround="true" :transition="500" :partialVisible="false">
           <Slide v-for="(event, index) in events" :key="index" :class="{ active: index === currentIndex }">
             <router-link :to="{ name: 'eventDetail', params: { id: event.eventId } }">
@@ -168,6 +168,7 @@ export default defineComponent({
       events: [],
       loading: true,
       errorMessage: '',
+      showLargeCarousel: false,
     };
   },
   setup() {
@@ -184,6 +185,7 @@ export default defineComponent({
   },
   mounted() {
     this.fetchEvents();
+    this.setInitialCarouselView();
   },
   methods: {
     async fetchEvents() {
@@ -249,6 +251,12 @@ export default defineComponent({
       } else {
         return new Date();
       }
+    },
+    setInitialCarouselView() {
+      const screenWidth = window.innerWidth;
+      this.showLargeCarousel = screenWidth >= 1024;
+      // this.showMediumCarousel = screenWidth >= 768 && screenWidth < 1024;
+      // this.showSmallCarousel = screenWidth < 768;
     },
   },
 });
@@ -326,7 +334,7 @@ export default defineComponent({
 .carousel__item {
   margin: 0 12px;
   flex: 0 0 280px;
-  max-width: 400px;
+  max-width: 100%;
   transition: transform 0.3s ease, opacity 0.3s ease;
   opacity: 1;
 }
