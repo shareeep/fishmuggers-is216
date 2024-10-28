@@ -94,6 +94,10 @@ h3 {
   color: #333;
   font-size: 1rem;
   margin-top: 10px;
+  white-space: nowrap; /* Prevents text from wrapping */
+  overflow: hidden; /* Hides overflowing text */
+  text-overflow: ellipsis; /* Adds ellipsis (...) for overflow */
+  max-width: 100px; /* Adjust width as needed */
 }
 
 .friend-username {

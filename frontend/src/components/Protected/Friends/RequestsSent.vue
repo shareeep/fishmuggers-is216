@@ -2,7 +2,8 @@
   <div class="requests-sent">
     <h3>Requests Sent ({{ sentRequests.length }})</h3>
     <div class="request-list">
-      <div v-for="request in sentRequests" :key="request.id" class="request-item">
+      <div v-for="(request,index) in sentRequests" :key="request.id" class="request-item"
+        :style="{ animationDelay: `${index * 0.2}s` }">
         <img :src="request.avatar" alt="User Avatar" />
         <div class="info-container">
           <div class="details">
@@ -36,6 +37,13 @@ export default {
 </script>
 
 <style scoped>
+@keyframes popFadeIn {
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 .requests-sent {
   padding: 20px;
   color: #333;
@@ -60,8 +68,19 @@ h3 {
   border-radius: 15px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   min-width: 300px;
-  width: 325px; /* Set a desired fixed width */
+  width: 325px;
+  opacity: 0; /* Start hidden */
+  transform: scale(0.9); /* Start slightly smaller */
+  animation: popFadeIn 0.4s forwards; /* Pop-in animation */
 }
+
+@keyframes popFadeIn {
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 
 .request-item img {
   width: 85px;
@@ -77,7 +96,7 @@ h3 {
   flex-grow: 1;
 }
 
-.details{
+.details {
   flex-grow: 1;
 }
 

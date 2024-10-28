@@ -103,7 +103,7 @@ h3 {
 }
 
 .details p {
-  color: #555;
+  color: #666;
   margin: 0;
 }
 
