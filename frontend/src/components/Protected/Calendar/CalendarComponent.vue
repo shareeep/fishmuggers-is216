@@ -418,7 +418,7 @@ th {
     border-bottom: 0px; */
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     height: 30%;
-    background-image: url(../../assets/images/pet_calendar.avif);
+    background-image: url(../../../assets/images/pet_calendar.avif);
     background-repeat: no-repeat;
     background-size: cover;
     background-position: center bottom;
@@ -426,7 +426,7 @@ th {
   }
   @font-face {
     font-family: pawfont;
-    src: url(../../assets/fonts/PawWowBlock-VGMDl.otf);
+    src: url(../../../assets/fonts/PawWowBlock-VGMDl.otf);
   }
   .calendar-header h1 {
     font-size: 7vw; /* Font size is now relative to the container size */
