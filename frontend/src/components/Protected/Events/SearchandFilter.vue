@@ -506,6 +506,14 @@
                             Dogs
                         </label>
                     </li>
+
+                    <li class="flex items-center">
+                        <input id="birds" type="checkbox" v-model="selectedBirds"
+                            class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500" />
+                        <label for="birds" class="ml-2 text-sm font-medium text-gray-900">
+                            Birds
+                        </label>
+                    </li>
                 </ul>
 
                 <!-- Apply Button -->
@@ -515,57 +523,56 @@
                 </button>
             </div>
         </div>
-        <div class="dropdown-wrapper me-3 d-inline-block">
-            <!-- Event Size Dropdown -->
-            <button @click="toggleEventSizeDropdown" :class="[
-                'lg:w-36 border border-[#7B61FF] border-2 font-bold rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center me-3',
-                isEventSizeFilled ? 'bg-[#7B61FF] text-white' : 'text-[#7B61FF] hover:bg-[#7B61FF] hover:text-white'
-            ]" type="button">
-                Event Size
-                <svg class="w-4 h-4 ml-2" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                </svg>
-            </button>
+    <!-- Event Size Dropdown -->
+    <div class="dropdown-wrapper">
+      <!-- Event Size Dropdown -->
+      <button @click="toggleEventSizeDropdown" :class="[
+          'w-36 border border-[#7B61FF] border-2 font-bold rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center justify-center',
+          isEventSizeFilled ? 'bg-[#7B61FF] text-white' : 'text-[#7B61FF] hover:bg-[#7B61FF] hover:text-white'
+        ]" type="button">
+        Event Size
+        <svg class="w-4 h-4 ml-2" aria-hidden="true" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+            xmlns="http://www.w3.org/2000/svg">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+        </svg>
+      </button>
 
-            <!-- Event Size Dropdown Menu -->
-            <div v-if="isEventSizeDropdownOpen" class="custom-dropdown z-10 w-56 p-3 rounded-lg shadow-lg">
-                <h6 class="mb-3 text-sm font-medium text-gray-800">
-                    Event Size
-                </h6>
-                <ul class="space-y-2 text-sm">
-                    <li class="flex items-center">
-                        <input id="<10" type="radio" value="<10" v-model="selectedEventSize"
-                            class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500" />
-                        <label for="lessThan10" class="ml-2 text-sm font-medium text-gray-900">
-                            &lt;10
-                        </label>
-                    </li>
+      <!-- Event Size Dropdown Menu -->
+      <div v-if="isEventSizeDropdownOpen" class="custom-dropdown z-10 w-56 p-3 rounded-lg shadow-lg">
+        <h6 class="mb-3 text-sm font-medium text-gray-800">Event Size</h6>
+        <ul class="space-y-2 text-sm">
+          <li class="flex items-center">
+            <input id="lessThan10" type="radio" value="<10" v-model="selectedEventSize"
+                class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500" />
+            <label for="lessThan10" class="ml-2 text-sm font-medium text-gray-900">
+              &lt;10
+            </label>
+          </li>
 
-                    <li class="flex items-center">
-                        <input id="10-50" type="radio" value="10-50" v-model="selectedEventSize"
-                            class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500" />
-                        <label for="tenToFifty" class="ml-2 text-sm font-medium text-gray-900">
-                            10-50
-                        </label>
-                    </li>
+          <li class="flex items-center">
+            <input id="tenToFifty" type="radio" value="10-50" v-model="selectedEventSize"
+                class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500" />
+            <label for="tenToFifty" class="ml-2 text-sm font-medium text-gray-900">
+              10-50
+            </label>
+          </li>
 
-                    <li class="flex items-center">
-                        <input id="50-100" type="radio" value="50-100" v-model="selectedEventSize"
-                            class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500" />
-                        <label for="fiftyToHundred" class="ml-2 text-sm font-medium text-gray-900">
-                            50-100
-                        </label>
-                    </li>
+          <li class="flex items-center">
+            <input id="fiftyToHundred" type="radio" value="50-100" v-model="selectedEventSize"
+                class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500" />
+            <label for="fiftyToHundred" class="ml-2 text-sm font-medium text-gray-900">
+              50-100
+            </label>
+          </li>
 
-                    <li class="flex items-center">
-                        <input id=">100" type="radio" value=">100" v-model="selectedEventSize"
-                            class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500" />
-                        <label for="moreThanHundred" class="ml-2 text-sm font-medium text-gray-900">
-                            &gt;100
-                        </label>
-                    </li>
-                </ul>
+          <li class="flex items-center">
+            <input id="moreThanHundred" type="radio" value=">100" v-model="selectedEventSize"
+                class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500" />
+            <label for="moreThanHundred" class="ml-2 text-sm font-medium text-gray-900">
+              &gt;100
+            </label>
+          </li>
+        </ul>
 
                 <!-- Apply Button -->
                 <button @click="applyEventSizeFilters"
@@ -684,7 +691,8 @@ export default {
         return {
             searchQuery: '', // Holds the search query
             today: new Date().toISOString().split('T')[0], // Calculate today's date
-            // PET SIZE FILTER
+
+            // PET TYPE FILTER
             isPetTypeDropdownOpen: false,
             selectedCats: false,
             selectedDogs: false,
@@ -692,7 +700,7 @@ export default {
 
             // EVENT SIZE FILTER
             isEventSizeDropdownOpen: false,
-            selectedEventSize: null, // Default to null
+            selectedEventSize: null, // Holds string value like "10-50", "<10", ">100"
             isEventSizeFilled: false,
 
             // DATE RANGE FILTER
@@ -706,82 +714,173 @@ export default {
             searchedLoc: '',
             isLocationFilled: false,
             locationSuggestions: [],
-            selectedLocation: null, // Add this to hold selected location
+            selectedLocation: null, // Holds selected location
+            sizeError: '', // Holds error message for event size validation
         };
     },
     methods: {
-        applySearch() {
-            if (this.searchQuery) {
-                const filters = {
-                    searchQuery: this.searchQuery, // Add search query to filters
-                    petType: {
-                        cats: this.selectedCats,
-                        dogs: this.selectedDogs,
-                    },
-                    eventSize: this.selectedEventSize,
-                    dateRange: {
-                        startDate: this.startDate,
-                        endDate: this.endDate,
-                    },
-                    location: this.selectedLocation
-                };
+        /**
+         * Applies all selected filters by parsing event size and emitting the filters-applied event.
+         */
+        applyFilters() {
+            this.closeAllDropdowns(); // Close all dropdowns after applying
 
-                // Emit the filters and search query to the parent component
-                this.$emit('filters-applied', filters);
+            // Initialize min and max values
+            let eventSizeMin = null;
+            let eventSizeMax = null;
+
+            if (this.selectedEventSize) {
+                if (this.selectedEventSize.startsWith('<')) {
+                    // Example: "<10" => max = 9
+                    const max = parseInt(this.selectedEventSize.slice(1), 10);
+                    if (!isNaN(max)) {
+                        eventSizeMax = max - 1;
+                    }
+                } else if (this.selectedEventSize.startsWith('>')) {
+                    // Example: ">100" => min = 101
+                    const min = parseInt(this.selectedEventSize.slice(1), 10);
+                    if (!isNaN(min)) {
+                        eventSizeMin = min + 1;
+                    }
+                } else {
+                    // Example: "10-50" => min = 10, max = 50
+                    const range = this.selectedEventSize.split('-');
+                    if (range.length === 2) {
+                        const min = parseInt(range[0], 10);
+                        const max = parseInt(range[1], 10);
+                        if (!isNaN(min) && !isNaN(max)) {
+                            eventSizeMin = min;
+                            eventSizeMax = max;
+                        }
+                    }
+                }
             }
-        },
-        handleSearchInput() {
-            // If search query is cleared, emit a reset event
-            if (!this.searchQuery) {
-                this.$emit('search-cleared');
+
+            // Validate the parsed event size range
+            if (
+                eventSizeMin !== null &&
+                eventSizeMax !== null &&
+                eventSizeMin > eventSizeMax
+            ) {
+                this.sizeError = "Minimum size cannot be greater than maximum size.";
+                return; // Prevent emitting invalid filters
+            } else {
+                this.sizeError = ''; // Clear any existing errors
             }
+
+            // Collect the applied filters with parsed event size range
+            const filters = {
+                searchQuery: this.searchQuery,
+                petType: {
+                    cats: this.selectedCats,
+                    dogs: this.selectedDogs,
+                },
+                eventSizeMin: eventSizeMin,
+                eventSizeMax: eventSizeMax,
+                dateRange: {
+                    startDate: this.startDate,
+                    endDate: this.endDate,
+                },
+                location: this.selectedLocation,
+            };
+
+            // Emit the filters to the parent component
+            this.$emit('filters-applied', filters);
         },
+
+        /**
+         * Applies Event Size filters by setting the filled flag and closing the dropdown.
+         */
+        applyEventSizeFilters() {
+            this.isEventSizeFilled = this.selectedEventSize !== null;
+            this.isEventSizeDropdownOpen = false;
+        },
+
+        /**
+         * Resets all filters to their default states and emits the filters-reset event.
+         */
+        resetFilters() {
+            this.closeAllDropdowns(); // Close all dropdowns after resetting
+            this.selectedCats = false;
+            this.selectedDogs = false;
+            this.selectedEventSize = null;
+            this.startDate = '';
+            this.endDate = '';
+            this.selectedLocation = null; // Reset selected location
+            this.searchedLoc = ''; // Reset search input for location
+            this.isPetTypeFilled = false;
+            this.isEventSizeFilled = false;
+            this.isDateRangeFilled = false;
+            this.isLocationFilled = false; // Reset location filled status
+            this.sizeError = ''; // Clear size error
+            this.locationSuggestions = []; // Clear suggestions if necessary
+            this.$emit('filters-reset');
+        },
+
+        /**
+         * Closes all dropdown menus.
+         */
+        closeAllDropdowns() {
+            this.isPetTypeDropdownOpen = false;
+            this.isEventSizeDropdownOpen = false;
+            this.isDateRangeDropdownOpen = false;
+            this.isLocationDropdownOpen = false;
+        },
+
+        /**
+         * Toggles the Pet Type dropdown menu.
+         */
         togglePetTypeDropdown() {
             if (!this.isPetTypeDropdownOpen) {
                 this.closeAllDropdowns(); // Close all other dropdowns
             }
             this.isPetTypeDropdownOpen = !this.isPetTypeDropdownOpen; // Toggle the Pet Type dropdown
         },
+
+        /**
+         * Toggles the Event Size dropdown menu.
+         */
         toggleEventSizeDropdown() {
             if (!this.isEventSizeDropdownOpen) {
                 this.closeAllDropdowns(); // Close all other dropdowns
             }
             this.isEventSizeDropdownOpen = !this.isEventSizeDropdownOpen; // Toggle the Event Size dropdown
         },
+
+        /**
+         * Toggles the Date Range dropdown menu.
+         */
         toggleDateRangeDropdown() {
             if (!this.isDateRangeDropdownOpen) {
                 this.closeAllDropdowns(); // Close all other dropdowns
             }
             this.isDateRangeDropdownOpen = !this.isDateRangeDropdownOpen; // Toggle the Date Range dropdown
         },
+
+        /**
+         * Toggles the Location dropdown menu.
+         */
         toggleLocationDropdown() {
             if (!this.isLocationDropdownOpen) {
                 this.closeAllDropdowns(); // Close all other dropdowns
             }
             this.isLocationDropdownOpen = !this.isLocationDropdownOpen; // Toggle the Location dropdown
         },
+
+        /**
+         * Applies Pet Type filters by setting the filled flag and closing the dropdown.
+         */
         applyPetTypeFilters() {
             this.isPetTypeFilled = this.selectedCats || this.selectedDogs;
             this.isPetTypeDropdownOpen = false;
         },
-        applyEventSizeFilters() {
-            this.isEventSizeFilled = this.selectedEventSize !== null;
-            this.isEventSizeDropdownOpen = false;
-        },
+
+        /**
+         * Applies Date Range filters by setting the filled flag based on input and closing the dropdown.
+         */
         applyDateRangeFilters() {
-            const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
-
-            // Set default values for startDate and endDate if they're empty
-            // if (!this.startDate) {
-            //     this.startDate = today; // Set startDate to today if empty
-            // }
-
-            // If endDate is empty, leave it as null (the user may not want to specify an end date)
-            if (this.endDate) {
-                this.isDateRangeFilled = true;
-                // Handle filtering logic based on startDate and endDate
-            } else if (this.startDate && !this.endDate) {
-                // Optionally handle empty input case
+            // If either startDate or endDate is provided, consider date range as filled
+            if (this.startDate || this.endDate) {
                 this.isDateRangeFilled = true;
             } else {
                 this.isDateRangeFilled = false;
@@ -789,6 +888,10 @@ export default {
 
             this.isDateRangeDropdownOpen = false; // Close dropdown after applying
         },
+
+        /**
+         * Fetches location suggestions based on user input.
+         */
         fetchLocationSuggestions() {
             if (this.searchedLoc.trim() === '') {
                 this.locationSuggestions = []; // Clear suggestions if input is empty
@@ -807,7 +910,7 @@ export default {
                 })
                 .then(data => {
                     if (data.results && data.results.length > 0) {
-                        // Use a Set to keep track of unique location names
+                        // Use a Map to keep track of unique location names
                         const uniqueResults = new Map();
                         data.results.forEach(item => {
                             // Use the SEARCHVAL as the key to avoid duplicates
@@ -828,12 +931,19 @@ export default {
                 });
         },
 
+        /**
+         * Handles the selection of a location suggestion.
+         * @param {Object} suggestion - The selected location suggestion.
+         */
         selectLocation(suggestion) {
             this.selectedLocation = suggestion.name; // Store selected location
             this.searchedLoc = suggestion.name; // Set input value to selected name
             this.locationSuggestions = []; // Clear suggestions
         },
 
+        /**
+         * Applies Location filters by setting the filled flag based on input and closing the dropdown.
+         */
         applyLocationFilters() {
             if (this.searchedLoc) {
                 // Only set the location as filled if a suggestion was selected
@@ -846,51 +956,10 @@ export default {
             }
             this.isLocationDropdownOpen = false; // Close dropdown after applying
         },
-        resetFilters() {
-            this.closeAllDropdowns(); // Close dropdowns after resetting
-            this.selectedCats = false;
-            this.selectedDogs = false;
-            this.selectedEventSize = null;
-            this.startDate = '';
-            this.endDate = '';
-            this.selectedLocation = null; // Reset selected location
-            this.searchedLoc = ''; // Reset search input for location
-            this.isPetTypeFilled = false;
-            this.isEventSizeFilled = false;
-            this.isDateRangeFilled = false;
-            this.isLocationFilled = false; // Reset location filled status
-            this.locationSuggestions = []; // Clear suggestions if necessary
-            this.$emit('filters-reset');
-        },
-        closeAllDropdowns() {
-            this.isPetTypeDropdownOpen = false;
-            this.isEventSizeDropdownOpen = false;
-            this.isDateRangeDropdownOpen = false;
-            this.isLocationDropdownOpen = false;
-        },
-        applyFilters() {
-            this.closeAllDropdowns(); // Close dropdowns after applying
-            // Collect the applied filters
-            const filters = {
-                petType: {
-                    cats: this.selectedCats,
-                    dogs: this.selectedDogs,
-                },
-                eventSize: this.selectedEventSize,
-                dateRange: {
-                    startDate: this.startDate,
-                    endDate: this.endDate,
-                },
-                location: this.selectedLocation
-            };
-
-            // Emit the filters to the parent component
-            this.$emit('filters-applied', filters);
-            // Optionally, you can close the dropdowns or reset any temporary states
-        },
     }
 };
 </script>
+
 
 <style scoped>
 .wrapper {

@@ -7,6 +7,10 @@ const admin = require("firebase-admin");
 const { body, validationResult } = require("express-validator");
 const authenticate = require("../middleware/auth.js");
 const upload = require("../middleware/upload.js");
+const cors = require('cors');
+
+router.use(cors({ origin: 'http://localhost:5173' }));
+
 
 // --------------------
 // Helper Functions
@@ -115,16 +119,55 @@ const fetchUsersDetails = async (uids) => {
 // --------------------
 // Routes
 // --------------------
-
 // @route   GET /api/events
-// @desc    Get all events with host details
+// @desc    Get all events with host details and filter by query parameters
 // @access  Public
 router.get("/", async (req, res) => {
   try {
-    const eventsSnapshot = await db
-      .collection("events")
-      .orderBy("createdAt", "desc")
-      .get();
+    const {
+      petType,
+      eventSizeMin,
+      eventSizeMax,
+      startDate,
+      endDate,
+      location,
+      searchQuery,
+    } = req.query;
+
+    let query = db.collection("events").orderBy("createdAt", "desc");
+
+    // Apply Filters
+    if (petType) {
+      // Firestore allows only one 'array-contains' per query
+      query = query.where("petType", "array-contains", petType);
+    }
+
+    if (eventSizeMin && eventSizeMax) {
+      query = query
+        .where("eventSize", ">=", parseInt(eventSizeMin, 10))
+        .where("eventSize", "<=", parseInt(eventSizeMax, 10));
+    } else if (eventSizeMin) {
+      query = query.where("eventSize", ">=", parseInt(eventSizeMin, 10));
+    } else if (eventSizeMax) {
+      query = query.where("eventSize", "<=", parseInt(eventSizeMax, 10));
+    }
+
+    if (startDate) {
+      query = query.where("date", ">=", new Date(startDate));
+    }
+
+    if (endDate) {
+      query = query.where("date", "<=", new Date(endDate));
+    }
+
+    if (location) {
+      query = query.where("location", "==", location);
+    }
+
+    // Note: Firestore requires that all where clauses on different fields are indexed appropriately.
+    // Ensure you have the necessary composite indexes set up in Firestore.
+
+    const eventsSnapshot = await query.get();
     const events = [];
     const hostUids = new Set();
 
@@ -165,7 +208,18 @@ router.get("/", async (req, res) => {
       };
     });
 
-    res.status(200).json(eventsWithHostDetails);
+    // Apply search query filtering on the backend if provided
+    let finalEvents = eventsWithHostDetails;
+    if (searchQuery) {
+      const lowerSearch = searchQuery.toLowerCase();
+      finalEvents = finalEvents.filter(
+        (event) =>
+          event.title.toLowerCase().includes(lowerSearch) ||
+          event.description.toLowerCase().includes(lowerSearch)
+      );
+    }
+
+    res.status(200).json(finalEvents);
   } catch (error) {
     console.error("Error fetching events:", error);
     res.status(500).json({ error: "Failed to fetch events" });
