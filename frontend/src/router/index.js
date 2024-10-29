@@ -11,6 +11,8 @@ import Notifications from '@/views/Protected/Notifications.vue';
 import Calendar from '@/views/Protected/Calendar.vue';
 import Friends from '@/views/Protected/Friends.vue';
 import Profile from '../views/Protected/Profile.vue';
+import ProfileUpdate from '@/views/Protected/ProfileUpdate.vue';
+import PetsProfile from '@/views/Protected/PetsProfile.vue';
 import Chats from '@/views/Protected/Chats.vue';
 import EventsShar from '@/views/Protected/EventsAdmin.vue'
 
@@ -72,6 +74,16 @@ const router = createRouter({
           path: "profile",
           name: "Profile",
           component: Profile,
+        },
+        {
+          path: "editprofile",
+          name: "ProfileUpdate",
+          component: ProfileUpdate,
+        },
+        {
+          path: "addpets",
+          name: "PetsProfile",
+          component: PetsProfile,
         },
         {
           path: "chats",

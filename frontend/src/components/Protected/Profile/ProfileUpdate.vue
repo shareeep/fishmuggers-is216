@@ -1,4 +1,7 @@
 <template>
+  <router-link to="/profile" class="back-button"> 
+    <img src="../../../assets/images/back_arrow.png" alt="back" width="40px" />
+  </router-link>
   <div class="profile-update">
     <h2 class="text-2xl font-bold mb-6 text-center">Update Profile</h2>
     
@@ -21,7 +24,7 @@
                 {{ event }}<span v-if="index < userData.joinedEvents.length - 1">, </span>
               </span>
             </span>
-            <span v-else>No events joined.</span>
+            <span v-else> No events joined.</span>
           </p>
         </div>
       </div>

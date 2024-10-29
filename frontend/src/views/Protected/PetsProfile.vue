@@ -11,7 +11,7 @@
 <script setup>
 // Any Home page-specific logic
 import Navbar from '@/components/Protected/Navbar.vue';
-import ProfileMain from '@/components/Protected/Profile/ProfileMain.vue';
+import PetsProfile from '@/components/Protected/Profile/PetsProfile.vue';
 </script>
 
 <style scoped>

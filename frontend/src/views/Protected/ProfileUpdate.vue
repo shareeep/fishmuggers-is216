@@ -2,8 +2,7 @@
   <div class="home-container">
     <Navbar />
     <main>
-      <ProfileMain />
-      <PetsProfile />
+      <ProfileUpdate />
     </main>
   </div>
 </template>
@@ -11,7 +10,7 @@
 <script setup>
 // Any Home page-specific logic
 import Navbar from '@/components/Protected/Navbar.vue';
-import ProfileMain from '@/components/Protected/Profile/ProfileMain.vue';
+import ProfileUpdate  from '@/components/Protected/Profile/ProfileUpdate.vue';
 </script>
 
 <style scoped>

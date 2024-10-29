@@ -1,4 +1,7 @@
 <template>
+  <router-link to="/profile" class="back-button"> 
+    <img src="../../../assets/images/back_arrow.png" alt="back" width="40px" />
+  </router-link>
   <div class="pets-profile-container">
     <h2 class="text-2xl font-bold mb-6 text-center">Manage Your Pets</h2>
 
