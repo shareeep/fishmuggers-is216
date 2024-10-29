@@ -76,7 +76,8 @@
           v-model.number="points" 
           type="number" 
           min="0"
-          class="border border-gray-300 rounded-md py-2 px-4 w-full"
+          class="border border-gray-300 rounded-md py-2 px-4 w-full" 
+          readonly
         />
       </div>
 
