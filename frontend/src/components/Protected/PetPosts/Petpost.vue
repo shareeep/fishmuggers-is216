@@ -21,17 +21,14 @@
         <button @click="likePost(post)"><i class="fas fa-thumbs-up"></i>Like</button>
       </div>
     </div>
-
-    <!--Go to Add Post Page-->
-    <router-link to="/addpost">
-      <button class="floating-btn">🐾</button>
-    </router-link>
   </div>
+
 </template>
 
 <script>
 import axios from "axios";
 import { auth } from "../../../../firebase"; // Firebase auth for user ID
+
 
 export default {
   data() {
@@ -85,7 +82,7 @@ export default {
       } catch (error) {
         console.error("Error toggling like:", error);
         alert("Failed to toggle like. Please try again.");
-        
+
         // Rollback the optimistic update in case of an error
         if (hasLiked) {
           post.likes.push(userId);
@@ -97,12 +94,13 @@ export default {
   },
   mounted() {
     this.fetchPosts();
+
   },
 };
 </script>
 
 
- 
+
 <style scoped>
 .feed-container {
   display: flex;
@@ -120,6 +118,8 @@ export default {
   margin-bottom: 20px;
   background-color: #fff;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  scroll-snap-align:center;
+  scroll-behavior: smooth;
 }
 
 .post-header {
@@ -203,24 +203,5 @@ export default {
   background-color: #f4f4f4;
 }
 
-/* Floating Button */
-.floating-btn {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background-color: gold;
-  color: white;
-  border: none;
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  font-size: 30px;
-  text-align: center;
-  cursor: pointer;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-}
 
-.floating-btn:hover {
-  background-color: rgb(238, 207, 30);
-}
 </style>
