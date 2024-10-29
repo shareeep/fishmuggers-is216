@@ -21,6 +21,7 @@
     "owl.carousel": "^2.3.4",
     "popper.js": "^1.16.1",
     "react-leaflet": "^4.2.1",
+    "smooth-scrollbar": "^8.8.4",
     "tailwind-datepicker-react": "^1.4.3",
     "vue": "^3.4.29",
     "vue-router": "^4.4.3",

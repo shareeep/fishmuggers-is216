@@ -3,16 +3,19 @@
     <div class="header">
       <h3>My Friends</h3>
       <!-- Button to open the popup -->
-      <button @click="showPopup = true" class="see-all">See All</button>
+      <button @click="showPopup = true" class="see-all">View All</button>
     </div>
 
     <AllFriendsPopup v-if="showPopup" :friends="friends" @close="showPopup = false" />
     <div class="friends-scroll">
       <!-- Display only the first 9 friends -->
       <div v-for="friend in limitedFriends" :key="friend.id" class="friend-item">
-        <img :src="friend.avatar" alt="Friend Avatar" />
-        <p class="friend-name">{{ friend.name }}</p>
-        <p class="friend-username">{{ friend.username }}</p>
+        <router-link :to="{ name: 'friendProfile', params: { id: friend.id } }">
+          <img :src="friend.avatar" alt="Friend Avatar" />
+          <p class="friend-name">{{ friend.name }}</p>
+          <p class="friend-username">{{ friend.username }}</p>
+        </router-link>
+
       </div>
     </div>
 
@@ -45,7 +48,7 @@ export default {
   },
   computed: {
     limitedFriends() {
-      // Show only the first 9 friends
+      // Show only the first 8 friends
       return this.friends.slice(0, 8);
     },
   },
@@ -72,7 +75,7 @@ h3 {
   display: flex;
   gap: 30px;
   overflow-x: auto;
-  padding: 10px 0;
+  padding: 10px 10px;
 }
 
 .friend-item {
@@ -80,6 +83,12 @@ h3 {
   flex-direction: column;
   align-items: center;
   text-align: center;
+  transition: transform 0.3s ease;
+}
+
+.friend-item:hover {
+  transform: scale(1.1);
+  /* Scale up to 1.1 times its original size */
 }
 
 .friend-item img {
@@ -94,10 +103,14 @@ h3 {
   color: #333;
   font-size: 1rem;
   margin-top: 10px;
-  white-space: nowrap; /* Prevents text from wrapping */
-  overflow: hidden; /* Hides overflowing text */
-  text-overflow: ellipsis; /* Adds ellipsis (...) for overflow */
-  max-width: 100px; /* Adjust width as needed */
+  white-space: nowrap;
+  /* Prevents text from wrapping */
+  overflow: hidden;
+  /* Hides overflowing text */
+  text-overflow: ellipsis;
+  /* Adds ellipsis (...) for overflow */
+  max-width: 100px;
+  /* Adjust width as needed */
 }
 
 .friend-username {
@@ -117,15 +130,19 @@ h3 {
 }
 
 .see-all {
-  color:#7B61FF;
-  cursor: pointer; /* Adds a pointer cursor for better UX */
-  font-weight:350;
+  color: #7B61FF;
+  cursor: pointer;
+  /* Adds a pointer cursor for better UX */
+  font-weight: 350;
 }
 
 .see-all:hover {
-  color: #5A45D6; /* A slightly darker shade for the hover effect */
-  font-weight: 500; /* Slightly increase the weight on hover, if desired */
-  text-decoration: underline; /* Optional: Add underline on hover */
+  color: #5A45D6;
+  /* A slightly darker shade for the hover effect */
+  font-weight: 500;
+  /* Slightly increase the weight on hover, if desired */
+  text-decoration: underline;
+  /* Optional: Add underline on hover */
 }
 
 .see-more-button:hover {

@@ -12,7 +12,8 @@ import Calendar from '@/views/Protected/Calendar.vue';
 import Friends from '@/views/Protected/Friends.vue';
 import Profile from '../views/Protected/Profile.vue';
 import Chats from '@/views/Protected/Chats.vue';
-import EventsShar from '@/views/Protected/EventsAdmin.vue'
+import EventsShar from '@/views/Protected/EventsAdmin.vue';
+import FriendProfile from '@/views/Protected/FriendProfile.vue';
 
 import PublicLayout from '../layouts/PublicLayout.vue';
 import ProtectedLayout from '../layouts/ProtectedLayout.vue'; 
@@ -82,6 +83,11 @@ const router = createRouter({
           path: "eventsadmin",
           name: "eventsAdmin",
           component: EventsAdmin,
+        },
+        {
+          path: "friendprofile",
+          name: "friendProfile",
+          component: FriendProfile,
         },
         {
           path: "/:pathMatch(.*)*", // Catch-all route for undefined paths in protected routes

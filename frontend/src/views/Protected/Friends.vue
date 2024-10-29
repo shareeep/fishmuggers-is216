@@ -1,7 +1,7 @@
 <template>
   <div class="home-container">
     <Navbar />
-    <main>
+    <main id="scrollable-element">
       <h1 class="heading">Connect with Friends</h1>
       <SearchBar />
       <div style="align-items: center;">
@@ -9,7 +9,6 @@
         <FriendsList />
         <RequestsSent />
       </div>
-
     </main>
   </div>
 </template>
@@ -20,52 +19,74 @@ import SearchBar from '@/components/Protected/Friends/Searchbar.vue';
 import FriendRequests from '@/components/Protected/Friends/FriendRequests.vue';
 import FriendsList from '@/components/Protected/Friends/FriendsList.vue';
 import RequestsSent from '@/components/Protected/Friends/RequestsSent.vue';
+
+import { onMounted } from 'vue';
+import Scrollbar from 'smooth-scrollbar';
+import OverscrollPlugin from 'smooth-scrollbar/plugins/overscroll';
+
+Scrollbar.use(OverscrollPlugin);
+
+onMounted(() => {
+  Scrollbar.init(document.querySelector('#scrollable-element'), {
+    damping: 0.05,
+    renderByPixels: true,
+    alwaysShowTracks: false,
+    continuousScrolling: true,
+    plugins: {
+      overscroll: {
+        effect: 'bounce', // or 'glow' for Android-style glow effect
+        damping: 0.2, // Adjust damping for smoother bounce
+        maxOverscroll: 150, // Maximum overscroll distance
+      },
+    },
+  });
+});
 </script>
 
 <style scoped>
-.navbar {
-  width: 250px;
-  /* Width of the navbar */
-  height: 100vh;
-  /* Full height of the viewport */
-}
-
 .home-container {
   display: flex;
-  /* Set flexbox layout for the container */
+  height: 100vh;
+  /* Full viewport height */
+  overflow: hidden;
+  /* Prevent scrolling in the container */
+}
+
+.navbar {
+  width: 250px;
+  /* Fixed width for the navbar */
   height: 100vh;
   /* Full height of the viewport */
-  overflow: hidden;
-  /* Prevent overflow */
+  position: fixed;
+  /* Keeps navbar fixed on the left */
+  top: 0;
+  left: 0;
+  background-color: #ffffff;
+  /* Background for navbar */
+  z-index: 1;
+  /* Ensures navbar stays above other content */
 }
 
 main {
-  align-items: center;
-  /* Center components horizontally */
+  margin-left: 250px;
+  /* Offset to the right of the navbar */
   flex-grow: 1;
   padding: 5%;
   display: flex;
   flex-direction: column;
-  /* Stack children vertically */
   gap: 5px;
-  /* Add spacing between the components */
   background-color: #FCEFB4;
-  overflow: scroll;
-  /* Prevent scrolling */
+  height: 100vh;
+  /* Full viewport height */
+  overflow: hidden;
+  /* Hide native scrollbars */
 }
 
-main>* {
-  flex: 0 1 auto;
-  /* Ensure components don't grow disproportionately */
-  display: flex;
-  flex-direction: column;
-  /* Stack headers and content vertically */
-  box-sizing: border-box;
-  /* Ensure padding and borders are included in the width/height calculations */
+#scrollable-element {
   width: 100%;
-  /* Take full width of the container */
-  gap: 10px;
-  /* Add spacing between header and content */
+  height: 100%;
+  overflow-y: auto;
+  /* Enable scrolling on y-axis */
 }
 
 h3 {
@@ -74,10 +95,11 @@ h3 {
 }
 
 .heading {
+
   font-size: 2rem;
   color: #333;
   font-weight: bold;
   margin-bottom: 10px;
-  align-items: center;
+  text-align: center;
 }
 </style>

@@ -33,4 +33,5 @@ main {
   background-color: #FCEFB4; /* Example background color */
   overflow-y: auto; /* Allow scrolling if content overflows */
 }
+
 </style>
