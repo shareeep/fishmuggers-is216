@@ -29,6 +29,7 @@ const fetchEvent = async () => {
 
 onMounted(() => {
   fetchEvent(); // Fetch the event data on mount
+
 });
 </script>
 
@@ -57,4 +58,8 @@ h1 {
     text-align: center; */
     /* Center text in the main area */
 /* } */
+
+html,body {
+  background-color: white !important; /* Set the background color to white */
+}
 </style>
