@@ -1,30 +1,63 @@
 <template>
   <div class="home-container">
+    <!-- Navbar component -->
     <Navbar />
+
+    <!-- Main content area with components -->
     <main id="scrollable-element">
       <h1 class="heading">Connect with Friends</h1>
       <SearchBar />
       <div style="align-items: center;">
         <FriendRequests />
-        <FriendsList />
+
+        <!-- FriendsList component with popup toggle function passed down -->
+        <FriendsList @popup-toggle="togglePopup" :friends="friends" />
+
         <RequestsSent />
       </div>
     </main>
+
+    <!-- AllFriendsPopup component, visible only when showPopup is true -->
+    <AllFriendsPopup v-if="showPopup" :friends="friends" @close="togglePopup(false)" />
   </div>
 </template>
 
 <script setup>
+import { ref, onMounted } from 'vue';
 import Navbar from '@/components/Protected/Navbar.vue';
 import SearchBar from '@/components/Protected/Friends/Searchbar.vue';
 import FriendRequests from '@/components/Protected/Friends/FriendRequests.vue';
 import FriendsList from '@/components/Protected/Friends/FriendsList.vue';
 import RequestsSent from '@/components/Protected/Friends/RequestsSent.vue';
+import AllFriendsPopup from '@/components/Protected/Friends/AllFriendsPopup.vue';
 
-import { onMounted } from 'vue';
 import Scrollbar from 'smooth-scrollbar';
 import OverscrollPlugin from 'smooth-scrollbar/plugins/overscroll';
 
+// Initialize Smooth Scrollbar for main content
 Scrollbar.use(OverscrollPlugin);
+
+const showPopup = ref(false);
+const friends = ref([
+  { id: 1, name: "Jerome", username: "jerome-with-a-j", avatar: "https://randomuser.me/api/portraits/men/10.jpg" },
+  { id: 2, name: "Becky Gianani", username: "becky-gee", avatar: "https://randomuser.me/api/portraits/women/12.jpg" },
+  { id: 3, name: "Lauren Moore", username: "lauren-moore", avatar: "https://randomuser.me/api/portraits/women/18.jpg" },
+  { id: 4, name: "Brad Garner", username: "bradgarner", avatar: "https://randomuser.me/api/portraits/men/17.jpg" },
+  { id: 5, name: "Zafira Bee", username: "zafira-bee", avatar: "https://randomuser.me/api/portraits/men/14.jpg" },
+  { id: 6, name: "Tim Double-U", username: "tim-double-u", avatar: "https://randomuser.me/api/portraits/men/19.jpg" },
+  { id: 7, name: "Georgia Plué", username: "gee-plue", avatar: "https://randomuser.me/api/portraits/women/20.jpg" },
+  { id: 8, name: "Alex Johnson", username: "alex-j", avatar: "https://randomuser.me/api/portraits/men/23.jpg" },
+  { id: 9, name: "Samantha Rose", username: "sam-rose", avatar: "https://randomuser.me/api/portraits/women/25.jpg" },
+  { id: 10, name: "Chris Lee", username: "chris-lee", avatar: "https://randomuser.me/api/portraits/men/29.jpg" },
+  { id: 11, name: "Emily Nguyen", username: "em-nguyen", avatar: "https://randomuser.me/api/portraits/women/33.jpg" },
+  { id: 12, name: "Michael Tan", username: "mike-tan", avatar: "https://randomuser.me/api/portraits/men/35.jpg" },
+  // ... Add other friends here
+]);
+
+// Function to toggle popup visibility
+function togglePopup(value) {
+  showPopup.value = value;
+}
 
 onMounted(() => {
   Scrollbar.init(document.querySelector('#scrollable-element'), {
@@ -34,9 +67,9 @@ onMounted(() => {
     continuousScrolling: true,
     plugins: {
       overscroll: {
-        effect: 'bounce', // or 'glow' for Android-style glow effect
-        damping: 0.2, // Adjust damping for smoother bounce
-        maxOverscroll: 150, // Maximum overscroll distance
+        effect: 'bounce',
+        damping: 0.2,
+        maxOverscroll: 70,
       },
     },
   });
@@ -47,29 +80,22 @@ onMounted(() => {
 .home-container {
   display: flex;
   height: 100vh;
-  /* Full viewport height */
   overflow: hidden;
-  /* Prevent scrolling in the container */
 }
 
 .navbar {
   width: 250px;
-  /* Fixed width for the navbar */
   height: 100vh;
-  /* Full height of the viewport */
   position: fixed;
-  /* Keeps navbar fixed on the left */
   top: 0;
   left: 0;
   background-color: #ffffff;
-  /* Background for navbar */
   z-index: 1;
-  /* Ensures navbar stays above other content */
 }
 
 main {
+  align-items: center; /* Center horizontally */
   margin-left: 250px;
-  /* Offset to the right of the navbar */
   flex-grow: 1;
   padding: 5%;
   display: flex;
@@ -77,29 +103,22 @@ main {
   gap: 5px;
   background-color: #FCEFB4;
   height: 100vh;
-  /* Full viewport height */
   overflow: hidden;
-  /* Hide native scrollbars */
 }
 
 #scrollable-element {
   width: 100%;
   height: 100%;
   overflow-y: auto;
-  /* Enable scrolling on y-axis */
-}
 
-h3 {
-  margin: 0;
-  font-weight: bold;
 }
 
 .heading {
-
   font-size: 2rem;
   color: #333;
   font-weight: bold;
   margin-bottom: 10px;
   text-align: center;
 }
+
 </style>

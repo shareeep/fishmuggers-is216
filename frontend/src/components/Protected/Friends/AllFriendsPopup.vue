@@ -5,10 +5,9 @@
             <h2>Friends</h2>
 
             <div class="search-bar">
-                <input v-model="searchQuery" placeholder="Search" type="search"/>
+                <input v-model="searchQuery" placeholder="Search" type="search" />
             </div>
 
-            <!-- Scrollable friends list -->
             <div class="friends-list">
                 <div v-for="friend in filteredFriends" :key="friend.id" class="friend-item">
                     <img :src="friend.avatar" alt="Friend Avatar" class="avatar" />
@@ -16,6 +15,8 @@
                         <p class="friend-name">{{ friend.name }}</p>
                         <p class="friend-username">{{ friend.username }}</p>
                     </div>
+                    <!-- "See Profile" button -->
+                    <button class="see-profile-button" @click="viewProfile(friend.id)">See Profile</button>
                 </div>
             </div>
         </div>
@@ -44,7 +45,12 @@ export default {
                 friend.username.toLowerCase().startsWith(query)
             );
         }
-    }
+    },
+    methods: {
+    viewProfile(friendId) {
+      this.$router.push({ name: "friendProfile", params: { id: friendId } });
+    },
+  },
 };
 </script>
 
@@ -63,18 +69,17 @@ export default {
 }
 
 .popup-content {
-    display:flex;
+    display: flex;
     flex-direction: column;
     background-color: #fff;
     width: 400px;
-    height: 400px;
-    /* Fixed height */
+    width: 500px;
+    height: 500px;
     padding: 20px;
     border-radius: 15px;
-    /* Border radius */
     position: relative;
     text-align: center;
-    overflow: hidden;
+    overflow-y: auto;
 }
 
 .close-button {
@@ -94,7 +99,6 @@ h2 {
 }
 
 .search-bar {
-    position: relative;
     margin-bottom: 15px;
 }
 
@@ -103,10 +107,10 @@ input[type="search"] {
     padding: 10px;
     border: 2px solid #FFD700;
     border-radius: 25px;
-    padding-left: 15px;
     transition: border-color 0.3s, box-shadow 0.3s;
 
 }
+
 
 input[type="search"]:focus {
     border-color: #FAE588;
@@ -116,20 +120,12 @@ input[type="search"]:focus {
     color: black;
 }
 
-.search-bar input::placeholder {
-    color: #bbb;
-}
-
 .friends-list {
     display: flex;
     flex-direction: column;
     gap: 10px;
     overflow-y: auto;
-    /* Enable vertical scrolling */
-    max-height: 350px;
-    /* Adjust to fit within popup */
-    padding-right: 5px;
-    /* Extra padding for scrollbar */
+    max-height: 60vh;
 }
 
 .friend-item {
@@ -160,5 +156,27 @@ input[type="search"]:focus {
     color: #888;
     font-size: 0.9rem;
     margin: 0;
+}
+
+/* See Profile button styling */
+.see-profile-button {
+  padding: 5px 15px;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #5A45D6; /* Deep purple color */
+  background-color: #f5f0ff; /* Light purple background */
+  border: 2px solid #7B61FF; /* Slightly darker purple border */
+  border-radius: 30px; /* Rounded corners */
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.see-profile-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(75, 0, 130, 0.2);
+}
+
+.see-profile-button:active {
+  transform: scale(0.98);
 }
 </style>

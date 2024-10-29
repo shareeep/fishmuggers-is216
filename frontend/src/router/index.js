@@ -85,7 +85,7 @@ const router = createRouter({
           component: EventsAdmin,
         },
         {
-          path: "friendprofile",
+          path: "friendprofile/:id",
           name: "friendProfile",
           component: FriendProfile,
         },

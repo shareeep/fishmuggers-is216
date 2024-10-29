@@ -57,4 +57,23 @@ button {
     border-radius: 12px;
     /* Ensure the button also has rounded corners */
 }
+
+@media (min-width: 1024px) {
+  input[type="search"] {
+    width: 400px !important; /* Adjust width as needed */
+  }
+}
+
+@media (min-width: 640px) {
+  input[type="search"] {
+    width: 270px; /* Adjust width as needed */
+  }
+}
+
+@media (min-width: 480px) {
+  input[type="search"] {
+    width: 270px; /* Adjust width as needed */
+  }
+}
+
 </style>

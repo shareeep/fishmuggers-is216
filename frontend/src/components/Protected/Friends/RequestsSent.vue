@@ -53,12 +53,15 @@ h3 {
   font-weight: bold;
   color: #333;
   margin-bottom: 10px;
+
 }
 
 .request-list {
   display: flex;
   gap: 20px;
   flex-wrap: wrap;
+  justify-content: center;
+
 }
 
 .request-item {
@@ -126,9 +129,21 @@ h3 {
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
 }
 
 .cancel-button:hover {
   background-color: #bbb;
 }
+
+.cancel-button:hover{
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(75, 0, 130, 0.2);
+}
+
+.cancel-button:active {
+  transform: scale(0.98);
+}
+
 </style>
