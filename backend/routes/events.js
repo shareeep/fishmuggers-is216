@@ -75,9 +75,9 @@ const validateEventData = [
   body("eventSize")
     .notEmpty()
     .withMessage("Event Size is required.")
-    .isString()
-    .withMessage("Event Size must be a string."),
-
+    .isInt({ min: 1 })
+    .withMessage("Event Size must be a number greater than 0."),
+  
   // Optional: Validate image URL if provided as a string
   body("eventImage")
     .optional()
@@ -173,10 +173,11 @@ router.get("/", async (req, res) => {
 });
 
 // @route   GET /api/events/:id
-// @desc    Get a single event by ID with host details
-// @access  Public
-router.get("/:id", async (req, res) => {
+// @desc    Get a single event by ID with host details and user interest status
+// @access  Private (Requires Authentication)
+router.get("/:id", authenticate, async (req, res) => {
   const eventId = req.params.id;
+  const userId = req.user.uid; // Use the authenticated user's UID
 
   try {
     const eventDoc = await db.collection("events").doc(eventId).get();
@@ -206,16 +207,19 @@ router.get("/:id", async (req, res) => {
       }
     }
 
-    // Embed host details
+    // Check if the authenticated user is in the interestedUsers array
+    const isUserInterested = eventData.interestedUsers.includes(userId);
+
+    // Embed host details and user interest status
     const eventWithHostDetails = {
       eventId: eventDoc.id,
       ...eventData,
       host: {
         uid: eventData.host,
         username: hostDetails.username || "Unknown",
-        profilePic:
-          hostDetails.profileImage || "https://via.placeholder.com/50",
+        profilePic: hostDetails.profileImage || "https://via.placeholder.com/50",
       },
+      isUserInterested, // Include this flag for the frontend
     };
 
     res.status(200).json(eventWithHostDetails);
@@ -249,6 +253,9 @@ router.post(
       petType,
       eventSize,
     } = req.body;
+
+    // Parse eventSize to integer
+    eventSize = parseInt(eventSize, 10);
 
     // Parse locationData
     locationData = JSON.parse(locationData);
@@ -288,15 +295,15 @@ router.post(
         host: req.user.uid, // Set host as the authenticated user's UID
         title,
         description,
-        date: admin.firestore.Timestamp.fromDate(new Date(date)), // Ensure date is stored as a Firestore Timestamp
+        date: admin.firestore.Timestamp.fromDate(new Date(date)), // Firestore Timestamp for date
         location,
-        locationData,
-        petType,
-        eventSize,
+        locationData: JSON.parse(locationData),
+        petType: Array.isArray(petType) ? petType : [petType],
+        eventSize, // Store event size as an integer
         eventImage: imageUrl,
         interestedUsers: [], // Initialize as empty array
-        createdAt: admin.firestore.FieldValue.serverTimestamp(), // Add a creation timestamp
-        updatedAt: admin.firestore.FieldValue.serverTimestamp(), // Add an updated timestamp
+        createdAt: admin.firestore.FieldValue.serverTimestamp(),
+        updatedAt: admin.firestore.FieldValue.serverTimestamp(),
       };
 
       // Use a Firestore transaction to ensure atomicity
@@ -370,6 +377,9 @@ router.put(
       petType,
       eventSize,
     } = req.body;
+
+    // Parse eventSize to integer
+    eventSize = parseInt(eventSize, 10);
 
     // Parse locationData
     locationData = JSON.parse(locationData);
@@ -527,7 +537,6 @@ router.delete("/:id", authenticate, async (req, res) => {
     res.status(500).json({ error: "Failed to delete event" });
   }
 });
-
 // @route   POST /api/events/:id/interested
 // @desc    Add a user to interestedUsers array and add eventId to user's joinedEvents
 // @access  Private
@@ -546,30 +555,15 @@ router.post("/:id/interested", authenticate, async (req, res) => {
     const eventData = eventDoc.data();
 
     // Check if the user is already interested
-    const isAlreadyInterested = eventData.interestedUsers.some(
-      (user) => user.userId === userId
-    );
-    if (isAlreadyInterested) {
+    if (eventData.interestedUsers.includes(userId)) {
       return res.status(400).json({
         error: "You have already indicated interest in this event.",
       });
     }
 
-    // Fetch user's displayName and profileImage from users collection
-    const userDoc = await db.collection("users").doc(userId).get();
-    if (!userDoc.exists) {
-      return res.status(404).json({ error: "User not found." });
-    }
-
-    const userData = userDoc.data();
-
     // Add the user to interestedUsers array
     await eventRef.update({
-      interestedUsers: admin.firestore.FieldValue.arrayUnion({
-        userId,
-        displayName: userData.username || "Anonymous",
-        profileImage: userData.profileImage || "https://via.placeholder.com/50",
-      }),
+      interestedUsers: admin.firestore.FieldValue.arrayUnion(userId),
       updatedAt: admin.firestore.FieldValue.serverTimestamp(),
     });
 
@@ -606,10 +600,7 @@ router.delete("/:id/interested", authenticate, async (req, res) => {
     const eventData = eventDoc.data();
 
     // Check if the user is interested
-    const userEntry = eventData.interestedUsers.find(
-      (user) => user.userId === userId
-    );
-    if (!userEntry) {
+    if (!eventData.interestedUsers.includes(userId)) {
       return res.status(400).json({
         error: "You have not indicated interest in this event.",
       });
@@ -617,7 +608,7 @@ router.delete("/:id/interested", authenticate, async (req, res) => {
 
     // Remove the user from interestedUsers array
     await eventRef.update({
-      interestedUsers: admin.firestore.FieldValue.arrayRemove(userEntry),
+      interestedUsers: admin.firestore.FieldValue.arrayRemove(userId),
       updatedAt: admin.firestore.FieldValue.serverTimestamp(),
     });
 
