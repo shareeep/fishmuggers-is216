@@ -12,7 +12,7 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from "vue";
+import { ref, computed } from "vue";
 import { defineProps } from "vue";
 import axios from "axios";
 
@@ -23,19 +23,9 @@ const props = defineProps({
   },
 });
 
-// Track the local interest state and slots
-const isInterested = ref(false);
+// Set initial state directly from backend-provided isUserInterested flag
+const isInterested = ref(props.event.isUserInterested || false);
 const localInterestedUsers = ref([...props.event.interestedUsers || []]);
-
-// Watch changes to props.event to ensure updates when the event prop changes
-watch(
-  () => props.event,
-  (newEvent) => {
-    localInterestedUsers.value = [...newEvent.interestedUsers || []];
-    isInterested.value = localInterestedUsers.value.some((user) => user.userId === "your-user-id");
-  },
-  { immediate: true }
-);
 
 const remainingSlots = computed(() => {
   return props.event.eventSize - localInterestedUsers.value.length;
@@ -53,10 +43,10 @@ const toggleInterested = async () => {
 
     if (isInterested.value) {
       await axios.post(endpoint);
-      localInterestedUsers.value.push({ userId: "your-user-id" });
+      localInterestedUsers.value.push("your-user-id"); // Placeholder; backend manages actual user
     } else {
       await axios.delete(endpoint);
-      localInterestedUsers.value = localInterestedUsers.value.filter((user) => user.userId !== "your-user-id");
+      localInterestedUsers.value = localInterestedUsers.value.filter((id) => id !== "your-user-id");
     }
   } catch (error) {
     console.error("Error updating interest:", error);
@@ -74,18 +64,15 @@ const toggleInterested = async () => {
     padding-left: 15px;
     cursor: pointer;
     transition: fill 0.3s;
-    /* Smooth transition for fill */
 }
 
 .star-icon {
     color: white;
-    /* Default star color */
     stroke: black;
 }
 
 .star-icon.filled {
     color: #FFD700;
-    /* Gold color when filled */
 }
 
 .bottom-bar {
