@@ -1,70 +1,56 @@
 <template>
-    <!-- Fixed Bottom Bar -->
-    <div class="bottom-bar">
-        <span @click="toggleInterested" class="icon star-icon" :class="{ 'filled': isInterested }">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" width="30" height="30">
-                <path
-                    d="M12 .587l3.668 7.568 8.332 1.203-6.002 5.854 1.417 8.338L12 18.896l-7.415 3.885 1.417-8.338-6.002-5.854 8.332-1.203L12 .587z" />
-            </svg>
-        </span>
-        <button class="icon share-icon"><img src="../../../assets/images/send.png" width="30px" alt="send"></button>
-        <span class="slots-left">{{ event.slots }} slots left</span>
-        <button class="rsvp-button">RSVP</button>
-    </div>
+  <div class="bottom-bar">
+    <span @click="toggleInterested" class="icon star-icon" :class="{ 'filled': isInterested }">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" width="30" height="30">
+        <path d="M12 .587l3.668 7.568 8.332 1.203-6.002 5.854 1.417 8.338L12 18.896l-7.415 3.885 1.417-8.338-6.002-5.854 8.332-1.203L12 .587z" />
+      </svg>
+    </span>
+    <button class="icon share-icon"><img src="../../../assets/images/send.png" width="30px" alt="send"></button>
+    <span class="slots-left">{{ remainingSlots }} slots left</span>
+    <button class="rsvp-button">{{ isInterested ? "Un-RSVP" : "RSVP" }}</button>
+  </div>
 </template>
 
-<script>
-export default {
-    name: "EventDetail",
-    data() {
-        return {
-            event: null,  // Initialize event as null
-            isInterested: false,
-        };
-    },
-    mounted() {
-        const eventId = this.$route.params.id;
-        fetch(`/api/events/${eventId}`)
-            .then(response => response.json())
-            .then(data => {
-                this.event = data;  // Set the event data from the API
+<script setup>
+import { ref, computed } from "vue";
+import { defineProps } from "vue";
+import axios from "axios";
 
-            })
-            .catch(error => {
-                console.error('Failed to fetch event:', error);
-            });
-    },
-    methods: {
-        toggleInterested() {
-            this.isInterested = !this.isInterested; // Toggle interest state
-        },
+const props = defineProps({
+  event: {
+    type: Object,
+    required: true,
+  },
+});
 
-    },
-    data() {
-        return {
-            // Example event data
-            event: {
-                title: "Sample Event",
-                image: "https://via.placeholder.com/800x400",
-                description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
-                host: {
-                    profilePic: "https://via.placeholder.com/50",
-                    username: "@Username",
-                },
-                day: "Monday",
-                date: "October 16",
-                time: "5:00 PM",
-                address: "123 Sample St, Sample City, ST 12345",
-                slots: 3,
-            },
-            isInterested: false,
-        };
-    },
-    methods: {
-        toggleInterested() {
-            this.isInterested = !this.isInterested; // Toggle interest state
-        }
-    },
+// Set initial state directly from backend-provided isUserInterested flag
+const isInterested = ref(props.event.isUserInterested || false);
+const localInterestedUsers = ref([...props.event.interestedUsers || []]);
+
+const remainingSlots = computed(() => {
+  return props.event.eventSize - localInterestedUsers.value.length;
+});
+
+const toggleInterested = async () => {
+  const eventId = props.event.eventId;
+  if (!eventId) {
+    console.error("Event ID is undefined in RSVPBar.vue");
+    return;
+  }
+  try {
+    isInterested.value = !isInterested.value;
+    const endpoint = `http://localhost:3000/api/events/${eventId}/interested`;
+
+    if (isInterested.value) {
+      await axios.post(endpoint);
+      localInterestedUsers.value.push("your-user-id"); // Placeholder; backend manages actual user
+    } else {
+      await axios.delete(endpoint);
+      localInterestedUsers.value = localInterestedUsers.value.filter((id) => id !== "your-user-id");
+    }
+  } catch (error) {
+    console.error("Error updating interest:", error);
+  }
 };
 </script>
 
@@ -78,25 +64,19 @@ export default {
     padding-left: 15px;
     cursor: pointer;
     transition: fill 0.3s;
-    /* Smooth transition for fill */
-
 }
 
 .star-icon {
     color: white;
-    /* Default star color */
     stroke: black;
 }
 
 .star-icon.filled {
     color: #FFD700;
-    /* Gold color when filled */
 }
 
 .bottom-bar {
-
     z-index: 1000000;
-
     position: fixed;
     bottom: 0;
     left: 0;
