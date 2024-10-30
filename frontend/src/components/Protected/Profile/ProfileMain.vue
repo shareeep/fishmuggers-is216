@@ -99,22 +99,29 @@
         </div>
       </div>
 
-
-
-      <div v-if="activeTab === 'eventsJoined'">
-        <p>No events joined.</p>
-      </div>
+      <!-- PETS -->
       <div v-if="activeTab === 'pets'">
         <router-link to="/addpets">
           <button class="edit-btn">Add Pets</button>
         </router-link>
-        <div v-for="(pet, index) in pets" :key="index" class="pet-card">
-          <img :src="pet.image" alt="Pet Image" class="pet-image" />
-          <div class="pet-info">
-            <h3>{{ pet.name }}</h3>
-            <p>Type: {{ pet.type }}</p>
-            <p>Breed: {{ pet.breed }}</p>
-            <p>Age: {{ pet.age }} years</p>
+        <div class="pets-wrapper">
+          <div class="pets-grid">
+            <div v-for="(pet, index) in pets" :key="index" class="pet-card"
+              :style="{ animationDelay: `${index * 0.2}s` }">
+              <img :src="pet.image" alt="Pet Image" class="pet-avatar" />
+              <div class="info-container">
+                <div class="details">
+                  <h4>{{ pet.name }}</h4>
+                  <p>Type: {{ pet.type }}</p>
+                  <p>Breed: {{ pet.breed }}</p>
+                  <p>Age: {{ pet.age }} years</p>
+                </div>
+                <div class="actions">
+                  <button class="edit-button">Edit</button>
+                  <button class="remove-button">Remove</button>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -210,7 +217,9 @@ onMounted(fetchUserData);
   display: flex;
   gap: 20px;
   align-items: center;
+  justify-content: center;
   margin-bottom: 20px;
+  text-align: center;
 }
 
 .profile-picture img {
@@ -294,52 +303,125 @@ onMounted(fetchUserData);
   font-size: 16px;
 }
 
+.pets-wrapper {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
 /* Pets grid layout */
 .pets-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  /* Adjusts to fit available space */
+  grid-template-columns: repeat(2, 1fr);
   gap: 16px;
+  margin-top: 20px;
 }
 
 /* Pet card styling */
 .pet-card {
-  margin-top: 15px;
-  background: #fff;
-  border: 1px solid #ddd;
+  display: flex;
+  align-items: center;
+  padding: 15px;
   border-radius: 15px;
-  padding: 20px;
-  text-align: center;
+  background-color: #ffffff;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease;
+  min-width: 300px;
+  width: 325px;
+  opacity: 0;
+  transform: scale(0.9);
+  animation: popFadeIn 0.4s forwards;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  margin-top: 15px;
 }
+
+@keyframes popFadeIn {
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.pet-avatar {
+  width: 85px;
+  height: 85px;
+  border-radius: 50%;
+  margin-right: 15px;
+  object-fit: cover;
+}
+
+.info-container {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.details {
+  flex-grow: 1;
+}
+
 
 .pet-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+  transform: scale(1.05);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
-
-.pet-image {
-  width: 100%;
-  height: 300px;
-  align-items: center;
-  border-radius: 10px;
-  margin-bottom: 15px;
-}
-
-.pet-info h3 {
-  font-size: 1.2rem;
+.details h4 {
   font-weight: bold;
-  margin: 10px 0 5px;
+  color: #333;
+  margin: 0;
+}
+
+.details p {
+  color: #666;
+  margin: 0;
+}
+
+/* Actions */
+.actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 5px;
+}
+
+/* Button Styles */
+.edit-button,
+.remove-button {
+  padding: 5px 15px;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.edit-button {
+  background-color: #FFD700;
   color: #333;
 }
 
-.pet-info p {
-  margin: 5px 0;
-  font-size: 0.9rem;
-  color: #666;
+.remove-button {
+  background-color: #ddd;
+  color: #333;
 }
 
+.edit-button:hover,
+.remove-button:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(75, 0, 130, 0.2);
+}
+
+.edit-button:hover {
+  background-color: #E6C200;
+}
+
+.remove-button:hover {
+  background-color: #bbb;
+}
+
+.edit-button:active,
+.remove-button:active {
+  transform: scale(0.98);
+}
 
 .no-posts {
   text-align: center;

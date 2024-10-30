@@ -16,18 +16,24 @@ import ProfileMain from '@/components/Protected/Profile/ProfileMain.vue';
 
 <style scoped>
 .navbar {
-  width: 250px; /* Width of the navbar */
-  height: 100vh; /* Full height of the viewport */
-  position: sticky; /* Make the navbar sticky */
-  top: 0; /* Stick to the top of the page */
+  width: 250px;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: #ffffff;
+  z-index: 1;
 }
+
 .home-container {
   display: flex; /* Set flexbox layout for the container */
 }
 
-
 /* can change */
 main {
+  align-items: center;
+  margin-left: 250px;
+
   flex-grow: 1; /* Allow main to take the remaining width */
   padding: 20px; /* Add padding for spacing */
   /* Optional styling */
