@@ -16,10 +16,13 @@
   
   <style scoped>
   .navbar {
-    width: 250px; /* Width of the navbar */
-    height: 100vh; /* Full height of the viewport */
-    position: sticky;
+    width: 250px;
+    height: 100vh;
+    position: fixed;
     top: 0;
+    left: 0;
+    background-color: #ffffff;
+    z-index: 1;
   }
   .home-container {
     display: flex; /* Set flexbox layout for the container */
@@ -27,6 +30,9 @@
   
   /* can change */
   main {
+    align-items: center;
+    margin-left: 250px;
+
     flex-grow: 1; /* Allow main to take the remaining width */
     padding: 20px; /* Add padding for spacing */
     /* Optional styling */
@@ -34,9 +40,6 @@
     overflow-y: auto; /* Allow scrolling if content overflows */
   }
   
-  h1 {
-    text-align: center; /* Center text in the main area */
-  }
   .calendar-container{
     margin-top: 5vh;
   }
