@@ -9,7 +9,7 @@
       <button class="floating-btn">🐾</button>
     </router-link>
   </div>
-</template>
+</template> 
 
 <script setup>
 // Any Home page-specific logic
