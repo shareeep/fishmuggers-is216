@@ -16,6 +16,7 @@ import PetsProfile from '@/views/Protected/PetsProfile.vue';
 import Chats from '@/views/Protected/Chats.vue';
 import EventsShar from '@/views/Protected/EventsAdmin.vue';
 import FriendProfile from '@/views/Protected/FriendProfile.vue';
+import sample from '@/views/Protected/Sample.vue'
 
 import PublicLayout from '../layouts/PublicLayout.vue';
 import ProtectedLayout from '../layouts/ProtectedLayout.vue'; 
@@ -100,6 +101,11 @@ const router = createRouter({
           path: "friendprofile/:id",
           name: "friendProfile",
           component: FriendProfile,
+        },
+        {
+          path: "sample",
+          name: "sample",
+          component: sample,
         },
         {
           path: "/:pathMatch(.*)*", // Catch-all route for undefined paths in protected routes
