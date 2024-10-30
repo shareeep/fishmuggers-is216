@@ -60,13 +60,12 @@ function handleFiltersReset() {
 /* Styling for the Navbar */
 .navbar {
   width: 250px;
-  /* Width of the navbar */
   height: 100vh;
-  /* Full height of the viewport */
-  position: sticky;
-  /* Make the navbar sticky */
+  position: fixed;
   top: 0;
-  /* Stick to the top of the page */
+  left: 0;
+  background-color: #ffffff;
+  z-index: 1;
 }
 
 .home-container {
@@ -76,15 +75,23 @@ function handleFiltersReset() {
 
 /* can change */
 main {
+  margin-left: 250px; /* Offset for the navbar width */
+  align-items: center;
   flex-grow: 1;
-  /* Allow main to take the remaining width */
   padding: 20px;
-  /* Add padding for spacing */
-  /* Optional styling */
   background-color: #FCEFB4;
-  /* Example background color */
   overflow-y: auto;
-  /* Allow scrolling if content overflows */
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Center content horizontally */
+}
+
+/* Center the content-container */
+.content-container {
+  max-width: 800px; /* Set a maximum width for the centered content */
+  width: 100%; /* Take full width up to the max-width */
+  margin: 0 auto; /* Center content-container */
+  padding-top: 20px; /* Optional: Add padding if needed */
 }
 
 .search-filter-container{
