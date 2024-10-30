@@ -4,7 +4,7 @@
     <router-link to="/profile" class="back-button">
       <img src="../../assets/images/back_arrow.png" alt="back" width="40px" />
     </router-link>
-    <main id="scrollable-element">
+    <main id="scrollable-element"> 
       <ProfileUpdate />
     </main>
   </div>
