@@ -12,6 +12,17 @@
       <div class="filters">
         <h3>Filter Events</h3>
 
+        <!-- Show Custom Events Filter -->
+        <div class="show-custom-events">
+            <h4>Show Custom Events?</h4>
+            <label>
+              <input type="radio" value="yes" v-model="showCustomEvents" /> Yes
+            </label>
+            <label>
+              <input type="radio" value="no" v-model="showCustomEvents" /> No
+            </label>
+        </div>
+
         <!-- Pet Type Filter -->
         <div class="pet-type">
           <h4>Pet Type</h4>
@@ -67,25 +78,50 @@
         <tbody>
           <tr v-for="(week, index) in calendar" :key="index">
             <td
-              v-for="date in week"
-              :key="date.date"
-              :class="{
-                'event-date': isEventDate(date.date, date.isCurrentMonth),
-                'current-date': isCurrentDate(date.date, date.isCurrentMonth),
-                'clickable-date': true,
-                'current-month': date.isCurrentMonth,
-                'other-month': !date.isCurrentMonth
-              }"
-              @click="showEventDetails(date.date, date.isCurrentMonth)"
-            >
-              {{ date.date }}
-            </td>
+    v-for="date in week"
+    :key="date.date"
+    :class="[
+        isEventDate(date.date, date.isCurrentMonth),
+        {
+            'current-date': isCurrentDate(date.date, date.isCurrentMonth),
+            'clickable-date': true,
+            'current-month': date.isCurrentMonth,
+            'other-month': !date.isCurrentMonth
+        }
+    ]"
+    @click="showEventDetails(date.date, date.isCurrentMonth)"
+>
+    {{ date.date }}
+</td>
           </tr>
         </tbody>
       </table>
 
       <EventPopup v-if="showPopup" :event="selectedEvent" @close="showPopup = false" />
     </div>
+    <!-- CUSTOMEVENTFORM -->
+    <div v-if="showAddEventPopup" class="popup-overlay">
+      <div class="popup-content">
+        <h3>Create Custom Event</h3>
+        <label for="title">Title:</label>
+        <input type="text" v-model="newCustomEvent.title" id="title" required />
+
+        <label for="description">Description:</label>
+        <textarea v-model="newCustomEvent.description" id="description" required></textarea>
+
+        <label for="date">Date:</label>
+        <input type="date" v-model="newCustomEvent.date" id="date" required />
+
+        <label for="location">Location:</label>
+        <input type="text" v-model="newCustomEvent.location" id="location" required />
+
+        <div class="popup-buttons">
+          <button @click="createCustomEvent">Create Event</button>
+          <button @click="closeAddEventPopup">Cancel</button>
+        </div>
+      </div>
+    </div>
+    <!-- END CUSTOM EVENT FORM -->
   </div>
 </template>
 
@@ -96,47 +132,68 @@ import { db, auth } from '../../../../firebase';
 export default {
   data() {
     return {
-      events: [],
-      selectedEvent: null,
-      showPopup: false,
-      currentYear: new Date().getFullYear(),
-      currentMonthIndex: new Date().getMonth(),
-      days: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-      today: new Date().getDate(),
-      todayMonth: new Date().getMonth(),
-      todayYear: new Date().getFullYear(),
-      selectedPetType: '',
-      selectedEventSize: '',
-      selectedLocation: '',
-      startDate: '',
-      endDate: '',
+        events: [],
+        customEvents: [],
+        selectedEvent: null,
+        showPopup: false,
+        currentYear: new Date().getFullYear(),
+        currentMonthIndex: new Date().getMonth(),
+        days: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+        today: new Date().getDate(),
+        todayMonth: new Date().getMonth(),
+        todayYear: new Date().getFullYear(),
+        selectedPetType: '',
+        selectedEventSize: '',
+        selectedLocation: '',
+        startDate: '',
+        endDate: '',
+        showAddEventPopup: false,
+        customEvent: { title: '', description: '', date: '', location: '' },
+        showCustomEvents: 'yes', // New filter property for showing/hiding custom events
+        //NEW CUSTOM EVENT FORM
+        newCustomEvent: {
+        title: '',
+        description: '',
+        date: '',
+        location: ''
+      },
       showAddEventPopup: false,
-      customEvent: { title: '', description: '', date: '', location: '' }
+      //NEW CUSTOM EVENT FORM
     };
-  },
+},
 
-  async mounted() {
+async mounted() {
     try {
-      const user = auth.currentUser;
-      if (user) {
-        const uid = user.uid;
-        const response = await fetch(`http://localhost:3000/api/calendar/joined-events/${uid}`);
-        const events = await response.json();
-        
-        // Map timestamp to Date object
-        this.events = events.map(event => ({
-          ...event,
-          EventDate: new Date(event.date._seconds * 1000)
-        }));
+        const user = auth.currentUser;
+        if (user) {
+            const uid = user.uid;
 
-        console.log("Fetched events:", this.events); // Console log for debugging
-      } else {
-        console.error("User is not authenticated");
-      }
+            // Fetch joined events
+            const eventsResponse = await fetch(`http://localhost:3000/api/calendar/joined-events/${uid}`);
+            const events = await eventsResponse.json();
+            this.events = events.map(event => ({
+                ...event,
+                EventDate: new Date(event.date._seconds * 1000)
+            }));
+
+            // Fetch custom events
+            const customEventsResponse = await fetch(`http://localhost:3000/api/calendar/custom-events/${uid}`);
+            const customEvents = await customEventsResponse.json();
+            this.customEvents = customEvents.map(event => ({
+                ...event,
+                EventDate: new Date(event.date._seconds * 1000)
+            }));
+
+            console.log("Fetched events:", this.events);
+            console.log("Fetched custom events:", this.customEvents);
+        } else {
+            console.error("User is not authenticated");
+        }
     } catch (error) {
-      console.error("Error fetching joined events:", error);
+        console.error("Error fetching joined or custom events:", error);
     }
-  },
+},
+
 
   computed: {
   currentMonth() {
@@ -211,24 +268,40 @@ export default {
   },
   eventDates() {
     return this.filteredEvents.map(event => event.EventDate.toDateString());
-  }
+  },
+  //ADD CUSTOM EVENT DATES
+  customEventDates() {
+        return this.customEvents.map(event => event.EventDate.toDateString());
+    }
+    //ADD CUSTOM EVENT DATES
 }
 ,
 
   methods: {
     isEventDate(date, isCurrentMonth) {
-      if (!isCurrentMonth || !date) return false;
-      const formattedDate = new Date(this.currentYear, this.currentMonthIndex, date).toDateString();
-      return this.eventDates.includes(formattedDate);
+        if (!isCurrentMonth || !date) return false;
+        const formattedDate = new Date(this.currentYear, this.currentMonthIndex, date).toDateString();
+
+        // Show or hide custom events based on the filter
+        if (this.showCustomEvents === 'yes' && this.customEventDates.includes(formattedDate)) {
+            return 'custom-event-date'; // Blue highlight for custom events
+        }
+        if (this.eventDates.includes(formattedDate)) {
+            return 'joined-event-date'; // Orange highlight for joined events
+        }
+
+        return false;
     },
+
     isCurrentDate(date, isCurrentMonth) {
-      return isCurrentMonth && this.currentYear === this.todayYear && this.currentMonthIndex === this.todayMonth && date === this.today;
+        return isCurrentMonth && this.currentYear === this.todayYear && this.currentMonthIndex === this.todayMonth && date === this.today;
     },
     showEventDetails(date, isCurrentMonth) {
-      if (!isCurrentMonth || !date) return;
-      const selectedDate = new Date(this.currentYear, this.currentMonthIndex, date).toDateString();
-      this.selectedEvent = this.filteredEvents.find(event => event.EventDate.toDateString() === selectedDate);
-      if (this.selectedEvent) this.showPopup = true;
+        if (!isCurrentMonth || !date) return;
+        const selectedDate = new Date(this.currentYear, this.currentMonthIndex, date).toDateString();
+        this.selectedEvent = this.filteredEvents.find(event => event.EventDate.toDateString() === selectedDate) ||
+                             (this.showCustomEvents === 'yes' && this.customEvents.find(event => event.EventDate.toDateString() === selectedDate)); // Support both event types, respecting the filter
+        if (this.selectedEvent) this.showPopup = true;
     },
     prevMonth() {
       if (this.currentMonthIndex === 0) {
@@ -250,7 +323,53 @@ export default {
       alert(`Event added: ${this.customEvent.title}`);
       this.showAddEventPopup = false;
       this.customEvent = { title: '', description: '', date: '', location: '' };
+    },
+    //ADD CUSTOM EVENT FORM FUNCTION
+    closeAddEventPopup() {
+      this.showAddEventPopup = false;
+      this.newCustomEvent = { title: '', description: '', date: '', location: '' };
+    },
+    async createCustomEvent() {
+      try {
+        const user = auth.currentUser;
+        if (user) {
+            const uid = user.uid;
+            const response = await fetch(`http://localhost:3000/api/calendar/custom-events`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    ...this.newCustomEvent,
+                    uid: uid
+                })
+            });
+
+            const result = await response.json();
+            if (response.ok) {
+                // Add the new event to customEvents and update the calendar
+                this.customEvents.push({
+                    ...this.newCustomEvent,
+                    EventDate: new Date(this.newCustomEvent.date),
+                    customEventId: result.customEventId
+                });
+
+                // Close the popup
+                this.showAddEventPopup = false;
+                
+                // Clear the form fields
+                this.newCustomEvent = { title: '', description: '', date: '', location: '' };
+            } else {
+                console.error("Failed to create custom event:", result.error);
+            }
+        } else {
+            console.error("User is not authenticated");
+        }
+    } catch (error) {
+        console.error("Error creating custom event:", error);
     }
+    },
+    //ADD CUSTOM EVENT FORM FUNCTION
   },
 
   components: { EventPopup }
@@ -370,62 +489,7 @@ export default {
   }
   
 
-.calendar-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background-color: lightgray;
-  color: #000;
-  padding: 10px 20px;
-  /* border-radius: 0px 12px 0 0;
-  border: 3px solid #c8c7c7;
-  border-bottom: 0px; */
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  height: 30%;
-  background-image: url(../../../assets/images/pet_calendar.avif);
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center bottom;
-  border-bottom: 4px solid #c8c7c7;
-}
-.calendar-header h1 {
-  font-size: 48px;
-  font-weight: bolder;
-  font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
-  color: black;
-  text-shadow: 6px 6px 6px white;
-}
-.calendar-header button {
-  background-color: #48434B;
-  color: white;
-  border: none;
-  padding: 8px 20px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-.calendar-header button:hover {
-  background-color: #89848c;
-}
-table {
-  width: 100%;
-  background-color: white;
-  height: 70%;
-  border-collapse: separate;
-  border-spacing: 4px;
-}
-th {
-  background-color: #ffd700;
-  border: 1.5px solid black;
-  border-radius: 12px;
-  padding: 6px;
-  padding-bottom: 3px;
-  font-size: x-large;
-  /* text-decoration: underline; */
-  font-family: "Arial Rounded MT";
-  min-width: 50px;
-  max-width: 50px;
-  text-align: center;
-}
+
 
   /* calendar */
   .calendar {
@@ -512,7 +576,7 @@ th {
     text-align: center;
   }
 
-  .event-date {
+  .joined-event-date {
     /* background-color: rgba(21, 86, 239, 0.2); */
     background-color: rgba(234, 148, 0, 0.559);
     color: #000;
@@ -626,4 +690,107 @@ th {
   background-color: #e6c200;
 }
 /* END ADD CUSTOM EVENTS CSS */
+
+/* CUSTOM EVENT DATE */
+.custom-event-date {
+    background-color: rgba(0, 0, 255, 0.2); /* Light blue for custom events */
+    color: #000;
+    cursor: pointer;
+}
+/* CUSTOM EVENT DATE */
+
+
+/* CUSTOM EVENTS FILTER */
+.show-custom-events {
+
+    margin-top: 8px;
+}
+
+.show-custom-events h4 {
+    font-family: 'Arial Rounded MT';
+    font-size: 1.2vw;
+    text-decoration: underline;
+}
+
+.show-custom-events label {
+    font-family: 'Arial Rounded MT';
+    font-size: 1vw;
+    margin-right: 1vw;
+    display: inline-block;
+}
+.show-custom-events input {
+  margin-left: 10px;
+  outline: none;
+  box-shadow: none;
+}
+
+/* CUSTOM EVENTS FORM CSS */
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.popup-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 12px;
+  width: 80%;
+  max-width: 400px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.popup-content h3 {
+  text-align: center;
+  font-family: "Arial Rounded MT";
+  font-size: 1.5vw;
+  margin-bottom: 20px;
+}
+
+.popup-content label {
+  display: block;
+  font-family: "Arial Rounded MT";
+  font-size: 1.1vw;
+  margin-top: 10px;
+}
+
+.popup-content input, .popup-content textarea {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  font-family: "Arial Rounded MT";
+  font-size: 1vw;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.popup-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.popup-buttons button {
+  background-color: #ffd700;
+  border: 1px solid black;
+  color: black;
+  font-family: "Arial Rounded MT";
+  font-size: 1vw;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.popup-buttons button:hover {
+  background-color: #e6c200;
+}
+/* CUSTOM EVENTS FORM CSS */
 </style>  
