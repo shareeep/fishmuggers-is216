@@ -16,7 +16,7 @@
                         <p class="friend-username">{{ friend.username }}</p>
                     </div>
                     <!-- "See Profile" button -->
-                    <button class="see-profile-button" @click="viewProfile(friend.id)">See Profile</button>
+                    <button class="see-profile-button" @click="viewProfile(friend)">See Profile</button>
                 </div>
             </div>
         </div>
@@ -47,8 +47,8 @@ export default {
         }
     },
     methods: {
-    viewProfile(friendId) {
-      this.$router.push({ name: "friendProfile", params: { id: friendId } });
+    viewProfile(friend) {
+      this.$router.push({ name: "friendProfile", params: { id: friend.id }, query: { username: friend.username, avatar: friend.avatar } });
     },
   },
 };

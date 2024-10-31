@@ -61,7 +61,7 @@ h3 {
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
-  overflow-x: hidden;
+  overflow-x:visible;
   padding: 10px 0;
 }
 

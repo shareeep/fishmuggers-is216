@@ -36,11 +36,7 @@
       <div v-if="activeTab === 'posts'">
         <div v-if="posts === 0" class="no-posts">
           <i class="no-posts-pic"><img src="../../../assets/images/camera.png" alt=""></i>
-          <h3>Share Photos</h3>
-          <p>When you share photos, they will appear on your profile.</p>
-          <router-link to="/addpost">
-            <p class="share-first-photo">Share your first photo</p>
-          </router-link>
+          <h3>No posts yet</h3>
         </div>
         <div v-else class="posts-grid">
           <div v-for="(post, index) in userData.posts" :key="post.id" class="post-item" @click="openModal(index)">
@@ -104,7 +100,7 @@
       <!-- PETS -->
       <div v-if="activeTab === 'pets'">
         <div class="pets-wrapper">
-          <div class="pets-grid">
+          <div v-if="pets.length > 0" class="pets-grid">
             <div v-for="(pet, index) in pets" :key="index" class="pet-card"
               :style="{ animationDelay: `${index * 0.2}s` }">
               <img :src="pet.image" alt="Pet Image" class="pet-avatar" />
@@ -118,8 +114,13 @@
               </div>
             </div>
           </div>
+          <div v-else class="no-pets">
+            <i class="no-pets-pic"><img src="../../../assets/images/no-events.png" alt=""></i>
+            <h3>No pets yet</h3>
+          </div>
         </div>
       </div>
+
     </div>
   </div>
 </template>
@@ -165,8 +166,8 @@ const isModalOpen = ref(false);
 
 // Placeholder for the pets 
 const pets = ref([
-  { name: 'Woofie', type: 'Dog', breed: 'Golden Retriever', age: 3, image: 'https://via.placeholder.com/150?text=Dog' },
-  { name: 'Meowers', type: 'Cat', breed: 'Siamese', age: 2, image: 'https://via.placeholder.com/150?text=Cat' }
+  // { name: 'Woofie', type: 'Dog', breed: 'Golden Retriever', age: 3, image: 'https://via.placeholder.com/150?text=Dog' },
+  // { name: 'Meowers', type: 'Cat', breed: 'Siamese', age: 2, image: 'https://via.placeholder.com/150?text=Cat' }
 ]);
 
 const fetchUserData = async () => {
@@ -442,7 +443,8 @@ onMounted(fetchUserData);
   transform: scale(0.98);
 }
 
-.no-posts {
+.no-posts,
+.no-pets {
   text-align: center;
   color: #555;
   padding: 40px 20px;
@@ -455,12 +457,21 @@ onMounted(fetchUserData);
   margin-bottom: 15px;
 }
 
+.no-pets-pic{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top:0;
+}
+
+.no-pets-pic img,
 .no-posts-pic img {
   width: 150px;
   height: auto;
   /* Maintain aspect ratio */
 }
 
+.no-pets h3,
 .no-posts h3 {
   font-weight: bold;
   font-size: 24px;
