@@ -1,22 +1,20 @@
 <template>
-  <div class="home-container"> <!-- Use a wrapper for flex layout -->
+  <div class="home-container">
     <Navbar />
-    <main id="scrollable-element"> <!-- Wrap content in a main tag -->
-      <Petpost />
-    </main>
-    <!--Go to Add Post Page-->
-    <router-link to="/addpost">
-      <button class="floating-btn">🐾</button>
+    <router-link to="/profile" class="back-button">
+      <img src="../../assets/images/back_arrow.png" alt="back" width="40px" />
     </router-link>
+    <main id="scrollable-element">
+      <PetsProfile />
+    </main>
   </div>
-</template> 
+</template>
 
 <script setup>
 // Any Home page-specific logic
 import { ref, onMounted } from 'vue';
-
 import Navbar from '@/components/Protected/Navbar.vue';
-import Petpost from '@/components/Protected/PetPosts/Petpost.vue';
+import PetsProfile from '@/components/Protected/Profile/PetsProfile.vue';
 import Scrollbar from 'smooth-scrollbar';
 import OverscrollPlugin from 'smooth-scrollbar/plugins/overscroll';
 Scrollbar.use(OverscrollPlugin);
@@ -36,21 +34,12 @@ onMounted(() => {
     },
   });
 })
-
 </script>
 
 <style scoped>
 #scrollable-element {
   width: 100%;
   height: 100%;
-  overflow-y: auto;
-
-}
-
-.home-container {
-  display: flex;
-  height: 100vh;
-  overflow: hidden;
 }
 
 .navbar {
@@ -63,37 +52,36 @@ onMounted(() => {
   z-index: 1;
 }
 
+.home-container {
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
+}
+
 main {
   align-items: center;
   /* Center horizontally */
   margin-left: 250px;
   flex-grow: 1;
   display: flex;
+  padding: 3%;
   flex-direction: column;
   gap: 5px;
   background-color: #FCEFB4;
   height: 100vh;
-  overflow: hidden;
-}
-/* Floating Button */
-.floating-btn {
-  position: fixed !important;
-  bottom: 20px;
-  right: 20px;
-  background-color: gold;
-  color: white;
-  border: none;
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  font-size: 30px;
-  text-align: center;
-  cursor: pointer;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-  z-index: 1000;
 }
 
-.floating-btn:hover {
-  background-color: rgb(238, 207, 30);
+.back-button {
+  position: absolute;
+  top: 20px;
+  left: 280px;
+  /* Adjust to appear beside the Navbar */
+  z-index: 10;
+  padding: 5px;
+  transition: transform 0.2s ease;
+}
+
+.back-button:hover {
+  transform: scale(1.1);
 }
 </style>

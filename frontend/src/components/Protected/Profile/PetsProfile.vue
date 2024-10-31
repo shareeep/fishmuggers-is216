@@ -1,10 +1,11 @@
 <template>
+  
   <div class="pets-profile-container">
-    <h2 class="text-2xl font-bold mb-6 text-center">Manage Your Pets</h2>
+    <h2 class="text-2xl font-bold mb-6 text-center" style="color:black;">Manage Your Pets</h2>
 
     <!-- Add New Pet Form -->
     <form @submit.prevent="addPet" enctype="multipart/form-data" class="mb-8">
-      <h3 class="text-xl font-semibold mb-4">Add New Pet</h3>
+      <h3 class="text-xl font-semibold mb-4" style="color:black;">Add New Pet</h3>
       
       <!-- Name -->
       <div class="mb-4">
@@ -71,7 +72,7 @@
       <!-- Submit Button -->
       <button 
         type="submit" 
-        class="bg-green-500 text-white font-bold py-2 px-4 rounded w-full hover:bg-green-600 transition"
+        class="add-pet-btn w-full"
         :disabled="isAdding"
       >
         {{ isAdding ? 'Adding...' : 'Add Pet' }}
@@ -451,6 +452,7 @@ onMounted(() => {
 });
 </script>
 
+
 <style scoped>
 .pets-profile-container {
   max-width: 800px;
@@ -481,6 +483,35 @@ onMounted(() => {
   transition: background-color 0.3s;
 }
 
+.add-pet-btn {
+  padding: 5px 15px;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  background-color: #FFD700;
+  color: #333;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.add-pet-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(75, 0, 130, 0.2);
+}
+
+.add-pet-btn:active {
+  transform: scale(0.98);
+}
+
+.add-pet-btn:disabled {
+  background-color: #e6c200;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
 /* Modal Styles */
 .modal-overlay {
   position: fixed;
@@ -491,7 +522,7 @@ onMounted(() => {
   background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: center; 
   z-index: 1000;
 }
 
@@ -505,10 +536,11 @@ onMounted(() => {
 }
 
 .modal-content h3 {
-  color: #2b6cb0;
+  color: black;
 }
 
 .modal-content button {
   transition: background-color 0.3s;
 }
 </style>
+

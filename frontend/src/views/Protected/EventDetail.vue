@@ -1,22 +1,38 @@
 <template>
-    <div class="home-container"> <!-- Use a wrapper for flex layout -->
-        <!-- <Navbar /> -->
-        <main>
-            <!-- <h1>EVENTS</h1> -->
-            <RSVPbar />
-            <Details />
-
-        </main>
-
-    </div>
+  <div class="home-container">
+    <main>
+      <RSVPBar v-if="event" :event="event" />
+      <Details v-if="event" :event="event" />
+    </main>
+  </div>
 </template>
 
 <script setup>
-// Any Home page-specific logic 
-import Details from '@/components/Protected/Events/Details.vue';
-import RSVPbar from '@/components/Protected/Events/RSVPbar.vue';
+import { ref, onMounted } from "vue";
+import { useRoute } from "vue-router";
+import axios from "axios";
+import Details from "@/components/Protected/Events/Details.vue";
+import RSVPBar from "@/components/Protected/Events/RSVPbar.vue";
 
+const route = useRoute();
+const eventId = route.params.id; // Capture eventId from the route
+const event = ref(null); // Initialize the event data as null
+
+const fetchEvent = async () => {
+  try {
+    const response = await axios.get(`http://localhost:3000/api/events/${eventId}`);
+    event.value = response.data; // Store the event data once fetched
+  } catch (error) {
+    console.error("Failed to fetch event:", error);
+  }
+};
+
+onMounted(() => {
+  fetchEvent(); // Fetch the event data on mount
+
+});
 </script>
+
 
 <style scoped>
 .home-container {
@@ -42,4 +58,8 @@ h1 {
     text-align: center; */
     /* Center text in the main area */
 /* } */
+
+html,body {
+  background-color: white !important; /* Set the background color to white */
+}
 </style>
