@@ -1,7 +1,5 @@
 <template>
-  <router-link to="/" class="back-button"> 
-    <img src="../../../assets/images/back_arrow.png" alt="back" width="40px" />
-  </router-link>
+  
   <div class="add-post-container">
     <h2>Add a New Pet Post</h2>
     <form @submit.prevent="submitPost">

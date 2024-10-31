@@ -314,7 +314,7 @@ onMounted(fetchUserData);
 /* Pets grid layout */
 .pets-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 16px;
   margin-top: 20px;
 }

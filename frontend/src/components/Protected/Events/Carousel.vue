@@ -454,12 +454,15 @@ export default defineComponent({
   font-size: 20px;
   font-weight: bold;
   text-transform: uppercase;
-  margin-bottom: 0px;
+  margin-bottom: -5px;
+  color:black;
 }
 
 .year {
   font-size: 17px;
   color: #777;
+  color:black;
+  font-weight: none;
 }
 
 /* Card Right Section */
@@ -472,15 +475,18 @@ export default defineComponent({
 .date-month {
   font-size: 16px;
   font-weight: bold;
+
 }
 
 .event-details {
   font-size: 14px;
   color: #555;
   margin-top: 5px;
+  font-weight:bold;
 }
 
 .event-title {
+  color:black;
   font-size: 16px;
   font-weight: bold;
   display: -webkit-box;
@@ -497,10 +503,17 @@ export default defineComponent({
 .event-subtitle {
   font-size: 14px;
   color: #777;
+  font-weight:bold;
 }
 
 .star-icon {
   color: gold;
   margin-right: 5px;
+}
+
+@media (max-width: 767px) {
+  .flex.flex-col > div {
+    margin-bottom: 0px !important; /* Overrides the default mb-4 class */
+  }
 }
 </style>
