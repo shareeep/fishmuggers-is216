@@ -31,7 +31,7 @@ export default {
         { id: 1, name: "Jane Cooper", username: "j-coopz", mutualFriends: 3, avatar: "https://randomuser.me/api/portraits/women/1.jpg" },
         { id: 2, name: "Daniel Matouf", username: "dani-matouf22", mutualFriends: 2, avatar: "https://randomuser.me/api/portraits/men/2.jpg" },
         { id: 3, name: "Blake Glory", username: "blakes-of-glory", mutualFriends: 4, avatar: "https://randomuser.me/api/portraits/men/3.jpg" },
-        { id: 3, name: "Blake Glory", username: "blakes-of-glory", mutualFriends: 4, avatar: "https://randomuser.me/api/portraits/men/3.jpg" },
+
       ],
     };
   },
@@ -52,9 +52,9 @@ h3 {
 
 /* Request List */
 .request-list {
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* 3 items per row */
   gap: 20px;
-  flex-wrap: wrap;
   justify-content: center;
   /* Center items when wrapping */
 }
@@ -161,5 +161,15 @@ h3 {
   transform: scale(0.98);
 }
 
+@media (max-width: 768px) {
+  .request-list {
+    grid-template-columns: repeat(2, 1fr); /* 2 items per row on medium screens */
+  }
+}
 
+@media (max-width: 480px) {
+  .request-list {
+    grid-template-columns: 1fr; /* 1 item per row on small screens */
+  }
+}
 </style>
