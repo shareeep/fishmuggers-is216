@@ -91,13 +91,18 @@
     ]"
     @click="showEventDetails(date.date, date.isCurrentMonth)"
 >
-    {{ date.date }}
+    <span class="date">{{ date.date }}</span>
 </td>
           </tr>
         </tbody>
       </table>
 
-      <EventPopup v-if="showPopup" :event="selectedEvent" @close="showPopup = false" />
+      <EventPopup
+  v-if="showPopup"
+  :event="selectedEvent"
+  @close="showPopup = false"
+  @delete-event="deleteEvent"
+/>
     </div>
     <!-- CUSTOMEVENTFORM -->
     <div v-if="showAddEventPopup" class="popup-overlay">
@@ -370,6 +375,46 @@ async mounted() {
     }
     },
     //ADD CUSTOM EVENT FORM FUNCTION
+
+    //DELETE EVENT
+    async deleteEvent(event) {
+    const user = auth.currentUser;
+    if (!user) {
+      console.error("User not authenticated");
+      return;
+    }
+
+    try {
+      const uid = user.uid;
+      const isCustomEvent = this.customEvents.some(e => e.customEventId === event.customEventId);
+
+      // Send delete request to the backend
+      await fetch(`http://localhost:3000/api/calendar/delete-event`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          uid,
+          eventId: isCustomEvent ? event.customEventId : event.eventId,
+          isCustomEvent,
+        }),
+      });
+
+      // Remove the event from the local data
+      if (isCustomEvent) {
+        this.customEvents = this.customEvents.filter(e => e.customEventId !== event.customEventId);
+      } else {
+        this.events = this.events.filter(e => e.eventId !== event.eventId);
+      }
+
+      // Refresh calendar
+      this.showPopup = false;
+    } catch (error) {
+      console.error("Error deleting event:", error);
+    }
+  },
+  //DELETE EVENT
   },
 
   components: { EventPopup }
@@ -578,18 +623,32 @@ async mounted() {
 
   .joined-event-date {
     /* background-color: rgba(21, 86, 239, 0.2); */
-    background-color: rgba(234, 148, 0, 0.559);
+    background-color: #d1c8ff;
     color: #000;
     cursor: pointer;
   }
-  .current-date {
-    font-weight: bolder;
+
+  .current-date .date{
+    padding: 10px;
+    border-radius: 50%;
+    /* background-color: #ff47dd8c; */
+    background-color: rgba(0, 0, 255, 0.539);
+    color: white;
     text-decoration: underline;
   }
+
+  /* CUSTOM EVENT DATE */
+  .custom-event-date {
+      background-color: #d1c8ff; /* Light blue for custom events */
+      color: #000;
+      cursor: pointer;
+  }
+  /* CUSTOM EVENT DATE */
+
   .clickable-date:hover {
     cursor: pointer;
     /* background-color: rgb(126, 165, 255); */
-    background-color: #6b4200e7;
+    background-color: rgba(0, 0, 255, 0.539);
     color: white;
     /* border: 2px solid #7b61ff; */
   }
@@ -691,13 +750,7 @@ async mounted() {
 }
 /* END ADD CUSTOM EVENTS CSS */
 
-/* CUSTOM EVENT DATE */
-.custom-event-date {
-    background-color: rgba(0, 0, 255, 0.2); /* Light blue for custom events */
-    color: #000;
-    cursor: pointer;
-}
-/* CUSTOM EVENT DATE */
+
 
 
 /* CUSTOM EVENTS FILTER */

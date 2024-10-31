@@ -116,4 +116,30 @@ router.post('/custom-events', async (req, res) => {
 });
 //CUSTOM EVENTS FORM POST
 
+// Delete an event
+router.delete('/delete-event', async (req, res) => {
+    const { uid, eventId, isCustomEvent } = req.body;
+    try {
+        // Choose the correct collection
+        const collectionName = isCustomEvent ? 'customEvents' : 'events';
+        
+        // Delete the event document from the chosen collection
+        await db.collection(collectionName).doc(eventId).delete();
+
+        // Update the user's document to remove the event from the customEvents or joinedEvents field
+        const userRef = db.collection('users').doc(uid);
+        const fieldToUpdate = isCustomEvent ? 'customEvents' : 'joinedEvents';
+        
+        await userRef.update({
+            [fieldToUpdate]: admin.firestore.FieldValue.arrayRemove(eventId)
+        });
+
+        res.status(200).json({ message: 'Event deleted successfully' });
+    } catch (error) {
+        console.error("Error deleting event:", error);
+        res.status(500).json({ error: 'Failed to delete event' });
+    }
+});
+
+
 module.exports = router;

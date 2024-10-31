@@ -22,9 +22,19 @@
           <p>Map of the location goes here</p>
         </div>
       </div>
+      <!-- Buttons container for Delete and Close -->
+      <div class="popup-buttons">
+        <button class="delete-button" @click="showDeleteConfirm = true">Delete</button>
+        <button class="close-button" @click="$emit('close')">Close</button>
+      </div>
 
-      <!-- Small Close Button in the Bottom Right -->
-      <button class="close-button" @click="$emit('close')">Close</button>
+      <!-- Confirmation Popup -->
+      <div v-if="showDeleteConfirm" class="delete-confirm-popup">
+        <p>Confirm deletion?</p>
+        <button @click="confirmDeletion">Yes</button>
+        <button @click="showDeleteConfirm = false">No</button>
+      </div>
+
     </div>
   </div>
 </template>
@@ -34,6 +44,18 @@
 export default {
   props: {
     event: Object,
+  },
+  data() {
+    return {
+      showDeleteConfirm: false, // Control visibility of the delete confirmation popup
+    };
+  },
+  methods: {
+    confirmDeletion() {
+      this.$emit('delete-event', this.event);
+      this.showDeleteConfirm = false;
+      this.$emit('close'); // Close the popup after deletion
+    },
   },
 };
 </script>
@@ -166,4 +188,64 @@ p {
   background-color: #f0e68c;
   color: #333;
 }
+
+
+
+/* Styles for delete button */
+.popup-buttons {
+  display: flex;
+  justify-content: space-between;
+
+}
+.delete-button {
+  align-self: flex-start;
+  margin: 16px;
+  padding: 6px 16px;
+  background-color: red;
+  color: white;
+  font-weight: bold;
+  border: 1px solid #4b4b4b;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  transition: background-color 0.3s;
+}
+.delete-button:hover {
+  background-color: darkred;
+}
+
+/* Styles for delete confirmation popup */
+.delete-confirm-popup {
+  background-color: white;
+  padding: 10px;
+  border-radius: 6px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  position: absolute;
+  bottom: 50px;
+  left: 10px;
+  border: 2px solid #ccc;
+}
+
+.delete-confirm-popup button {
+  background-color: #ffd700;
+  width: 100%;
+  color: #4b4b4b;
+  font-weight: bold;
+  font-size: 1rem;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 1px solid #4b4b4b; /* Adds the border */
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.delete-confirm-popup button:hover {
+  background-color: #f0e68c;
+  color: #333;
+}
+
 </style>
