@@ -49,18 +49,18 @@
           <span class="text">Chats</span>
         </router-link>
       </li>
-      <li>
+      <!-- <li>
         <router-link to="/eventsadmin" exact-active-class="active">
           <i class="fas fa-plus"></i>
           <span class="text">Add Events Temporary</span>
         </router-link>
-      </li>
-      <li>
+      </li> -->
+      <!-- <li>
         <router-link to="/sample" exact-active-class="active">
           <i class="fas fa-dog"></i>
           <span class="text">Sample Page</span>
         </router-link>
-      </li>
+      </li> -->
     </ul>
     <div class="more-options">
       <button @click="handleSignOut">
@@ -141,30 +141,37 @@ i {
 /* Medium screens - center content in each li */
 @media (max-width: 991px) {
   .navbar {
-    width: 80px; /* Narrower width for md screens */
+    width: 80px;
+    /* Narrower width for md screens */
   }
 
   .logo .text,
   .text {
-    display: none; /* Hide all text for icons-only view */
+    display: none;
+    /* Hide all text for icons-only view */
   }
 
   .nav-links {
     display: flex;
     flex-direction: column;
-    align-items: center; /* Center align all items */
+    align-items: center;
+    /* Center align all items */
   }
 
   .nav-links li {
     display: flex;
-    justify-content: center; /* Center icon horizontally */
-    align-items: center;     /* Center icon vertically */
+    justify-content: center;
+    /* Center icon horizontally */
+    align-items: center;
+    /* Center icon vertically */
     text-align: center;
-    width: 100%;             /* Full width to avoid left offset */
+    width: 100%;
+    /* Full width to avoid left offset */
   }
 
   .router-link i {
-    margin-right: 0;         /* Remove any margin for full centering */
+    margin-right: 0;
+    /* Remove any margin for full centering */
   }
 }
 
@@ -172,9 +179,10 @@ i {
 /* Small screens - navbar at bottom, icons only */
 @media (max-width: 767px) {
   .logo {
-    display: none; /* Hide the logo on small screens */
+    display: none;
+    /* Hide the logo on small screens */
   }
-  
+
   .navbar {
     width: 100%;
     height: 50px;
@@ -202,12 +210,27 @@ i {
 
   .more-options {
     position: static;
-    margin-left: 15px;
+    margin-left: 12px;
+    margin-top: 4px;
   }
 
   i {
-    margin-right: 0;
-    font-size: 20px; /* Optional: Adjust icon size if needed */
+    margin-right: 25px;
+    font-size: 20px;
+    /* Optional: Adjust icon size if needed */
+  }
+
+  .fa-users,
+  .fa-bell,
+  .fa-calendar-alt,
+  .fa-search,
+  .fa-home,
+  .fa-message {
+    margin-top: 4px;
+  }
+
+  .fa-user{
+    margin-top: 3px;
   }
 }
 </style>

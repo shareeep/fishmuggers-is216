@@ -31,6 +31,7 @@ export default {
         { id: 1, name: "Jane Cooper", username: "j-coopz", mutualFriends: 3, avatar: "https://randomuser.me/api/portraits/women/1.jpg" },
         { id: 2, name: "Daniel Matouf", username: "dani-matouf22", mutualFriends: 2, avatar: "https://randomuser.me/api/portraits/men/2.jpg" },
         { id: 3, name: "Blake Glory", username: "blakes-of-glory", mutualFriends: 4, avatar: "https://randomuser.me/api/portraits/men/3.jpg" },
+        { id: 3, name: "Blake Glory", username: "blakes-of-glory", mutualFriends: 4, avatar: "https://randomuser.me/api/portraits/men/3.jpg" },
       ],
     };
   },
