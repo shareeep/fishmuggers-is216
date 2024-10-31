@@ -93,7 +93,7 @@ onMounted(() => {
   position: fixed;
 }
 
-main {
+main { 
   align-items: center;
   margin-left: 250px;
   flex-grow: 1;

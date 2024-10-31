@@ -320,9 +320,11 @@ export default defineComponent({
 /* Carousel Container */
 .carousel {
   padding: 0;
-  width: 1200px;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
   color: #2c3e50;
-  overflow: visible;
+  overflow-x: hidden;
   position: relative;
   --vc-pgn-margin: 5px;
   --vc-pgn-width: 15px;
@@ -330,14 +332,15 @@ export default defineComponent({
   --vc-pgn-border-radius: 50%;
   --vc-pgn-background-color: white;
   --vc-pgn-active-color: gold;
-  width: 100%;
   /* Responsive scaling */
 }
 
+
+
 /* Carousel Item Styles */
 .carousel__item {
-  margin: 0 12px;
-  flex: 0 0 280px;
+  margin: 10px 15px;
+  flex: 0 0 600px;
   max-width: 100%;
   transition: transform 0.3s ease, opacity 0.3s ease;
   opacity: 1;
@@ -351,9 +354,9 @@ export default defineComponent({
 
 /* Carousel Slide Styles */
 .carousel__slide {
-  padding: 10px 5px;
+  padding: 10px 10px;
   opacity: 0.9;
-  transform: scale(0.83);
+  transform: scale(0.9);
 }
 
 
@@ -410,16 +413,18 @@ export default defineComponent({
 
 /* Card Styles */
 .card {
-  transform: scale(0.80);
+  transform: scale(0.85);
   border-radius: 15px;
   overflow: hidden;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   transition: transform 0.8s ease, box-shadow 0.8s ease;
   height: 100%;
+  width:100%;
+  max-width: 550px;
 }
 
 .card:hover {
-  transform: scale(0.86);
+  transform: scale(0.9);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
 }
 
