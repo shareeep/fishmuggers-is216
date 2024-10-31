@@ -6,7 +6,7 @@
     </router-link>
     <main id="scrollable-element">
       <PetsProfile />
-    </main> 
+    </main>
   </div>
 </template>
 
@@ -82,8 +82,28 @@ main {
   text-align: center;
 }
 
+.back-button {
+  position: absolute;
+  top: 20px;
+  left: 280px;
+  /* Adjust to appear beside the Navbar */
+  z-index: 10;
+  padding: 5px;
+  transition: transform 0.2s ease;
+}
+
+.back-button:hover {
+  transform: scale(1.1);
+}
+
 /* Responsive Adjustments */
 @media (max-width: 991px) {
+  .back-button {
+    position: fixed;
+    top: 15px;
+    left: 95px;
+  }
+
   .navbar {
     width: 80px;
     position: fixed
@@ -96,6 +116,12 @@ main {
 }
 
 @media (max-width: 767px) {
+  .back-button {
+    position: fixed;
+    top: 15px;
+    left: 0px;
+  }
+
   .home-container {
     flex-direction: column;
   }
@@ -114,8 +140,8 @@ main {
     margin-left: 0;
     margin-top: 0;
     padding: 15px;
-    padding-top:30px;
-    padding-bottom:75px;
+    padding-top: 30px;
+    padding-bottom: 75px;
     height: calc(100vh - 50px);
     overflow-y: auto;
   }
@@ -128,19 +154,5 @@ main {
   .heading {
     font-size: 1.5rem;
   }
-}
-
-.back-button {
-  position: absolute;
-  top: 20px;
-  left: 280px;
-  /* Adjust to appear beside the Navbar */
-  z-index: 10;
-  padding: 5px;
-  transition: transform 0.2s ease;
-}
-
-.back-button:hover {
-  transform: scale(1.1);
 }
 </style>

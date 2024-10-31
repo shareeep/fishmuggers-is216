@@ -210,12 +210,12 @@ i {
 
   .more-options {
     position: static;
-    margin-left: 12px;
+    margin-left: 15px;
     margin-top: 4px;
   }
 
   i {
-    margin-right: 25px;
+    margin-right: 15px;
     font-size: 20px;
     /* Optional: Adjust icon size if needed */
   }

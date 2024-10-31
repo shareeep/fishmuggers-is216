@@ -176,6 +176,11 @@ main {
 
 /* Responsive Adjustments */
 @media (max-width: 991px) {
+  .back-button {
+    top: 15px;
+    left: 85px;
+  }
+
   .navbar {
     width: 80px;
   }
@@ -193,6 +198,11 @@ main {
 }
 
 @media (max-width: 767px) {
+  .back-button {
+    top: 15px;
+    left: 1px;
+  }
+
   .home-container {
     flex-direction: column;
   }
@@ -211,7 +221,7 @@ main {
     margin-left: 0;
     margin-top: 0;
     padding: 15px;
-    margin-top:15px;
+    margin-top: 15px;
     margin-bottom: 35px;
     height: calc(100vh - 50px);
     /* Account for navbar height on mobile */

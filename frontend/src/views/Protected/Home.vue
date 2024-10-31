@@ -71,7 +71,7 @@ main {
   padding: 20px;
   box-sizing: border-box;
 }
-
+ 
 .floating-btn {
   position: fixed !important;
   bottom: 20px;
@@ -87,11 +87,23 @@ main {
   cursor: pointer;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
   z-index: 1000;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .floating-btn:hover {
-  background-color: rgb(238, 207, 30);
+    background-color: #e6c200;
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(75, 0, 130, 0.2);
 }
+
+
+.floating-btn:active {
+    transform: scale(0.98);
+
+
+}
+
 
 /* Responsive Adjustments */
 @media (max-width: 991px) {

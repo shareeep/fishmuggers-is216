@@ -5,7 +5,7 @@
       <!-- Button to open the popup -->
       <button @click="$emit('popup-toggle', true)" class="see-all">View All</button>
     </div>
-
+ 
     <div class="friends-scroll">
       <!-- Display only the first 8 friends -->
       <div v-for="friend in limitedFriends" :key="friend.id" class="friend-item">

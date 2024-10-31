@@ -2,8 +2,11 @@
   <div class="requests-sent">
     <h3>Requests Sent ({{ sentRequests.length }})</h3>
     <div class="request-list">
-      <div v-for="(request,index) in sentRequests" :key="request.id" class="request-item"
-        :style="{ animationDelay: `${index * 0.2}s` }">
+      <router-link v-for="(request, index) in sentRequests" :key="request.id" :to="{
+        name: 'friendProfile',
+        params: { id: request.id },
+        query: { username: request.username, avatar: request.avatar }
+      }" class="request-item" :style="{ animationDelay: `${index * 0.2}s` }">
         <img :src="request.avatar" alt="User Avatar" />
         <div class="info-container">
           <div class="details">
@@ -15,8 +18,8 @@
             <button class="cancel-button">✕ Cancel</button>
           </div>
         </div>
-      </div>
-    </div> 
+      </router-link>
+    </div>
   </div>
 </template>
 
@@ -60,31 +63,39 @@ h3 {
   display: flex;
   gap: 20px;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: start;
 
 }
 
+/* Request Item */
 .request-item {
   display: flex;
   align-items: center;
   padding: 15px;
-  background-color: #fff;
   border-radius: 15px;
+  background-color: #ffffff;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  min-width: 300px;
-  width: 325px;
-  opacity: 0; /* Start hidden */
-  transform: scale(0.9); /* Start slightly smaller */
-  animation: popFadeIn 0.4s forwards; /* Pop-in animation */
+  width: 300px;
+  /* Fixed width for all items */
+  opacity: 0;
+  transform: scale(1);
+  animation: popFadeIn 0.4s forwards;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Only scale the request-item on hover for the entire component */
+.request-item:hover {
+  transform: scale(1.02) !important;
+  box-shadow: 0 4px 8px rgba(75, 0, 130, 0.2);
 }
 
 @keyframes popFadeIn {
   to {
     opacity: 1;
-    transform: scale(1);
+    /* transform: scale(1); */
   }
 }
-
 
 .request-item img {
   width: 85px;
@@ -137,7 +148,7 @@ h3 {
   background-color: #bbb;
 }
 
-.cancel-button:hover{
+.cancel-button:hover {
   transform: scale(1.05);
   box-shadow: 0 4px 8px rgba(75, 0, 130, 0.2);
 }
@@ -146,4 +157,24 @@ h3 {
   transform: scale(0.98);
 }
 
+/* Responsive Layout Adjustments */
+@media (max-width: 1270px) {
+  .request-list {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 1024px) {
+  .request-list {
+    grid-template-columns: repeat(2, 1fr);
+    /* 2 items per row on medium screens */
+  }
+}
+
+@media (max-width: 768px) {
+  .request-list {
+    grid-template-columns: 1fr;
+    /* 1 item per row on small screens */
+  }
+}
 </style>

@@ -1,12 +1,12 @@
 <template>
   <div class="home-container"> <!-- Use a wrapper for flex layout -->
     <Navbar />
-    <router-link to="/" class="back-button"> 
-    <img src="../../assets/images/back_arrow.png" alt="back" width="40px" />
-  </router-link>
+    <router-link to="/" class="back-button">
+      <img src="../../assets/images/back_arrow.png" alt="back" width="40px" />
+    </router-link>
     <main> <!-- Wrap content in a main tag -->
       <PetpostAdd />
-    </main>  
+    </main>
   </div>
 </template>
 
@@ -17,7 +17,6 @@ import PetpostAdd from '@/components/Protected/PetPosts/PetPostAdd.vue';
 </script>
 
 <style scoped>
-
 .home-container {
   display: flex;
   height: 100vh;
@@ -31,6 +30,7 @@ import PetpostAdd from '@/components/Protected/PetPosts/PetPostAdd.vue';
 }
 
 main {
+  position: relative;
   align-items: center;
   margin-left: 250px;
   flex-grow: 1;
@@ -61,6 +61,11 @@ main {
 
 /* Responsive Adjustments */
 @media (max-width: 991px) {
+  .back-button {
+    top: 15px;
+    left: 120px;
+  }
+
   .navbar {
     width: 80px;
   }
@@ -69,15 +74,14 @@ main {
     margin-left: 80px;
     padding: 15px;
   }
-
-  .floating-btn {
-    width: 50px;
-    height: 50px;
-    font-size: 30px;
-  }
 }
 
 @media (max-width: 767px) {
+  .back-button {
+    top: 15px;
+    left: 5px;
+  }
+
   .home-container {
     flex-direction: column;
   }
@@ -96,7 +100,7 @@ main {
     margin-left: 0;
     margin-top: 0;
     padding: 15px;
-    margin-top:15px;
+    margin-top: 15px;
     margin-bottom: 35px;
     height: calc(100vh - 50px);
     /* Account for navbar height on mobile */
@@ -112,5 +116,4 @@ main {
     font-size: 30px;
   }
 }
-
 </style>

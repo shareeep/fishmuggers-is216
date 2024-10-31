@@ -72,7 +72,7 @@ onMounted(() => {
         maxOverscroll: 70,
       },
     },
-  });
+  }); 
 
   // Hide the scrollbar track by setting its opacity to 0
   scrollbar.track.xAxis.element.style.opacity = '0';
