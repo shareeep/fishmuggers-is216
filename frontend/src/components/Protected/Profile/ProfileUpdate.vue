@@ -1,7 +1,5 @@
 <template>
-  <router-link to="/profile" class="back-button"> 
-    <img src="../../../assets/images/back_arrow.png" alt="back" width="40px" />
-  </router-link>
+ 
   <div class="profile-update">
     <h2 class="text-2xl font-bold mb-6 text-center">Update Profile</h2>
     
@@ -71,7 +69,7 @@
           <img :src="newProfileImageUrl" alt="New Profile Image" class="w-16 h-16 rounded-full">
         </div>
       </div>
-
+ 
       <!-- Points Field -->
       <div class="mb-4">
         <label class="block text-gray-700">Points:</label>
@@ -101,28 +99,18 @@
         </div>
         <!-- Add New Event -->
         <div class="flex mt-2">
-          <input 
+          <input  
             v-model="newEvent" 
             type="text" 
             placeholder="Add new event ID" 
             class="border border-gray-300 rounded-md py-2 px-4 w-full mr-2"
           />
-          <button 
-            type="button" 
-            @click="addEvent" 
-            class="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600"
-          >
-            Add
-          </button>
+          <button type="button" @click="addEvent" class="edit-btn">Add</button>
         </div>
       </div>
 
       <!-- Submit Button -->
-      <button 
-        type="submit" 
-        class="bg-blue-500 text-white font-bold py-2 px-4 rounded w-full hover:bg-blue-700 transition"
-        :disabled="isSubmitting" 
-      >
+      <button type="submit" class="edit-btn w-full" :disabled="isSubmitting">
         {{ isSubmitting ? 'Updating...' : 'Update Profile' }}
       </button>
 
@@ -133,6 +121,7 @@
   </div>
 </template>
 
+ 
 <script setup>
 import { ref, onMounted } from 'vue';
 import axios from 'axios'; // Ensure axios is installed: npm install axios
@@ -366,35 +355,34 @@ onMounted(() => {
   flex-wrap: wrap;
 }
 
-.bg-blue-100 {
-  background-color: #ebf8ff;
+.edit-btn {
+  padding: 5px 15px;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  background-color: #FFD700;
+  color: #333;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.text-blue-700 {
-  color: #2b6cb0;
+.edit-btn:hover {
+  background-color: #E6C200;
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(75, 0, 130, 0.2);
 }
 
-.bg-green-500 {
-  background-color: #48bb78;
+.edit-btn:active {
+  transform: scale(0.98);
 }
 
-.hover\:bg-green-600:hover {
-  background-color: #38a169;
+.edit-btn:disabled {
+  background-color: #e6c200;
+  cursor: not-allowed;
+  opacity: 0.7;
 }
 
-.bg-blue-500 {
-  background-color: #4299e1;
-}
-
-.hover\:bg-blue-700:hover {
-  background-color: #2b6cb0;
-}
-
-.text-red-500 {
-  color: #f56565;
-}
-
-.hover\:text-red-700:hover {
-  color: #c53030;
-}
 </style>

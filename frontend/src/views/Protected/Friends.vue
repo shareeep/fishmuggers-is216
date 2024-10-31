@@ -60,7 +60,7 @@ function togglePopup(value) {
 }
 
 onMounted(() => {
-  Scrollbar.init(document.querySelector('#scrollable-element'), {
+  const scrollbar = Scrollbar.init(document.querySelector('#scrollable-element'), {
     damping: 0.05,
     renderByPixels: true,
     alwaysShowTracks: false,
@@ -73,6 +73,10 @@ onMounted(() => {
       },
     },
   });
+
+  // Hide the scrollbar track by setting its opacity to 0
+  scrollbar.track.xAxis.element.style.opacity = '0';
+  scrollbar.track.yAxis.element.style.opacity = '0';
 });
 </script>
 
@@ -98,7 +102,7 @@ main {
   gap: 5px;
   background-color: #FCEFB4;
   height: 100vh;
-  overflow: hidden;
+  overflow: scroll;
   padding: 20px;
   box-sizing: border-box;
 }
@@ -106,7 +110,7 @@ main {
 #scrollable-element {
   width: 100%;
   height: 100%;
-  overflow-y: auto;
+  overflow-y: scroll;
 
 }
 
@@ -150,6 +154,7 @@ main {
     margin-left: 0;
     margin-top: 0;
     padding: 15px;
+    padding-bottom:45px;
     height: calc(100vh - 50px);
     overflow-y: auto;
   }

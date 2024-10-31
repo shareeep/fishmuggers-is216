@@ -1,7 +1,10 @@
 <template>
   <div class="home-container">
     <Navbar />
-    <main>
+    <router-link to="/profile" class="back-button">
+      <img src="../../assets/images/back_arrow.png" alt="back" width="40px" />
+    </router-link>
+    <main id="scrollable-element"> 
       <ProfileUpdate />
     </main>
   </div>
@@ -9,28 +12,79 @@
 
 <script setup>
 // Any Home page-specific logic
+import { ref, onMounted } from 'vue';
+
 import Navbar from '@/components/Protected/Navbar.vue';
-import ProfileUpdate  from '@/components/Protected/Profile/ProfileUpdate.vue';
+import ProfileUpdate from '@/components/Protected/Profile/ProfileUpdate.vue';
+import Scrollbar from 'smooth-scrollbar';
+import OverscrollPlugin from 'smooth-scrollbar/plugins/overscroll';
+Scrollbar.use(OverscrollPlugin);
+
+onMounted(() => {
+  Scrollbar.init(document.querySelector('#scrollable-element'), {
+    damping: 0.05,
+    renderByPixels: true,
+    alwaysShowTracks: false,
+    continuousScrolling: true,
+    plugins: {
+      overscroll: {
+        effect: 'bounce',
+        damping: 0.2,
+        maxOverscroll: 70,
+      },
+    },
+  });
+})
 </script>
 
 <style scoped>
+#scrollable-element {
+  width: 100%;
+  height: 100%;
+}
+
 .navbar {
-  width: 250px; /* Width of the navbar */
-  height: 100vh; /* Full height of the viewport */
-  position: sticky; /* Make the navbar sticky */
-  top: 0; /* Stick to the top of the page */
+  width: 250px;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background-color: #ffffff;
+  z-index: 1;
 }
+
 .home-container {
-  display: flex; /* Set flexbox layout for the container */
+  display: flex;
+  height: 100vh;
+  overflow: hidden;
 }
 
-
-/* can change */
 main {
-  flex-grow: 1; /* Allow main to take the remaining width */
-  padding: 20px; /* Add padding for spacing */
-  /* Optional styling */
-  background-color: #FCEFB4; /* Example background color */
-  overflow-y: auto; /* Allow scrolling if content overflows */
+  align-items: center;
+  /* Center horizontally */
+  margin-left: 250px;
+  flex-grow: 1;
+  display: flex;
+  padding:3%;
+  flex-direction: column;
+  gap: 5px;
+  background-color: #FCEFB4;
+  height: 100vh;
 }
+
+.back-button {
+  position: absolute;
+  top: 20px;
+  left: 280px; /* Adjust to appear beside the Navbar */
+  z-index: 10;
+  padding: 5px;
+  transition: transform 0.2s ease;
+}
+
+.back-button:hover {
+  transform: scale(1.1);
+}
+
 </style>
+
+

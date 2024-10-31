@@ -20,7 +20,7 @@ import OverscrollPlugin from 'smooth-scrollbar/plugins/overscroll';
 Scrollbar.use(OverscrollPlugin);
 
 onMounted(() => {
-  Scrollbar.init(document.querySelector('#scrollable-element'), {
+  const scrollbar = Scrollbar.init(document.querySelector('#scrollable-element'), {
     damping: 0.05,
     renderByPixels: true,
     alwaysShowTracks: false,
@@ -33,6 +33,10 @@ onMounted(() => {
       },
     },
   });
+
+  // Hide the scrollbar track by setting its opacity to 0
+  scrollbar.track.xAxis.element.style.opacity = '0';
+  scrollbar.track.yAxis.element.style.opacity = '0';
 });
 </script>
 
@@ -61,7 +65,7 @@ main {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 5px; 
   background-color: #FCEFB4;
   height: 100vh;
   overflow: hidden;
