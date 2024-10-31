@@ -1,18 +1,28 @@
 <template>
-    <div class="home-container">
-        <Navbar />
-        <main>
-            <div >
-                <UserProfile/>
-            </div>
-        </main>
-    </div>
+  <div class="home-container">
+    <Navbar />
+    <main>
+      <div>
+        <UserProfile :userId="userId" :username="username" :avatar="avatar" />
+      </div>
+    </main>
+  </div>
 </template>
-
+ 
 <script setup>
+import { useRoute } from 'vue-router';
 import Navbar from '@/components/Protected/Navbar.vue';
 import UserProfile from '@/components/Protected/Profile/UserProfile.vue';
- 
+
+const route = useRoute();
+const userId = route.params.id;
+console.log('userId:', userId);
+
+const username = route.query.username;
+console.log('username:', username);
+
+const avatar = route.query.avatar;
+console.log('avatar:', avatar);
 </script>
 
 <style scoped>

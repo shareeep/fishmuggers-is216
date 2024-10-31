@@ -9,7 +9,11 @@
     <div class="friends-scroll">
       <!-- Display only the first 8 friends -->
       <div v-for="friend in limitedFriends" :key="friend.id" class="friend-item">
-        <router-link :to="{ name: 'friendProfile', params: { id: friend.id } }">
+        <router-link :to="{
+          name: 'friendProfile',
+          params: { id: friend.id },
+          query: { username: friend.username, avatar: friend.avatar }
+        }">
           <img :src="friend.avatar" alt="Friend Avatar" />
           <p class="friend-name">{{ friend.name }}</p>
           <p class="friend-username">{{ friend.username }}</p>

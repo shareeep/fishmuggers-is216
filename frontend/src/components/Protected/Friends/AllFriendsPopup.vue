@@ -1,4 +1,4 @@
-<template>
+<template> 
     <div class="popup-overlay" @click.self="$emit('close')">
         <div class="popup-content">
             <button class="close-button" @click="$emit('close')">✕</button>

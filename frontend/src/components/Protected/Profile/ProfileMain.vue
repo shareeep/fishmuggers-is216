@@ -1,7 +1,7 @@
 <template>
   <div class="profile-page">
     <!-- Profile Header -->
-    <div class="profile-header"> 
+    <div class="profile-header">
       <div class="profile-picture">
         <img :src="userData.profileImage || 'https://via.placeholder.com/150?text=Profile+Image'" alt="Profile Picture"
           class="profile-image" />
@@ -54,14 +54,14 @@
       <!-- Modal -->
       <div v-if="isModalOpen" class="post-modal" @click.self="closeModal">
         <div class="modal-content">
-          
+
           <div class="modal-left">
             <img :src="userData.posts[selectedPostIndex].image" alt="Selected Post" class="modal-image" />
           </div>
 
-         
+
           <div class="modal-right">
-           
+
             <div class="post-header">
               <div class="user-info">
                 <img :src="userData.profileImage || 'https://via.placeholder.com/50?text=Avatar'" alt="User Avatar"
@@ -71,7 +71,7 @@
 
             </div>
 
-           
+
             <div class="post-footer">
               <div class="caption-container">
                 <img :src="userData.profileImage || 'https://via.placeholder.com/50?text=Avatar'" alt="User Avatar"
@@ -90,7 +90,7 @@
               </div>
             </div>
           </div>
-          
+
           <i class="fas fa-chevron-left nav-arrow" @click="selectedPostIndex > 0 && prevPost()"
             :class="{ disabled: selectedPostIndex === 0 }" />
           <i class="fas fa-chevron-right nav-arrow" @click="selectedPostIndex < userData.posts.length - 1 && nextPost()"
@@ -140,6 +140,7 @@ const router = useRouter();
 
 
 const userData = ref({
+  id: 1,
   username: 'ihatewad2',
   profileImage: '',
   joinedEvents: [],
@@ -365,6 +366,7 @@ onMounted(fetchUserData);
   transform: scale(1.05);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
+
 .details h4 {
   font-weight: bold;
   color: #333;
@@ -705,4 +707,3 @@ onMounted(fetchUserData);
   pointer-events: none;
 }
 </style>
-
