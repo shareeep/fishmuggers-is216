@@ -52,11 +52,10 @@ h3 {
 
 /* Request List */
 .request-list {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr); /* 3 items per row */
+  display: flex;
+  flex-wrap: wrap;
   gap: 20px;
   justify-content: center;
-  /* Center items when wrapping */
 }
 
 /* Request Item */
@@ -67,8 +66,7 @@ h3 {
   border-radius: 15px;
   background-color: #ffffff;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  min-width: 300px;
-  width: 325px;
+  width: 300px; /* Fixed width for all items */
   opacity: 0;
   transform: scale(0.9);
   animation: popFadeIn 0.4s forwards;
@@ -94,10 +92,6 @@ h3 {
 .info-container {
   display: flex;
   flex-direction: column;
-  flex-grow: 1;
-}
-
-.details {
   flex-grow: 1;
 }
 
@@ -132,7 +126,7 @@ h3 {
 }
 
 .accept-button {
-  background-color: #FFD700;
+  background-color: #ffd700;
   color: #333;
 }
 
@@ -141,7 +135,6 @@ h3 {
   color: #333;
 }
 
-/* Hover/Active States */
 .accept-button:hover,
 .reject-button:hover {
   transform: scale(1.05);
@@ -149,7 +142,7 @@ h3 {
 }
 
 .accept-button:hover {
-  background-color: #E6C200;
+  background-color: #e6c200;
 }
 
 .reject-button:hover {
@@ -161,13 +154,14 @@ h3 {
   transform: scale(0.98);
 }
 
-@media (max-width: 768px) {
+/* Responsive Layout Adjustments */
+@media (max-width: 1024px) {
   .request-list {
     grid-template-columns: repeat(2, 1fr); /* 2 items per row on medium screens */
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 768px) {
   .request-list {
     grid-template-columns: 1fr; /* 1 item per row on small screens */
   }

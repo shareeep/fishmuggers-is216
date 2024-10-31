@@ -325,7 +325,7 @@ const fetchUserData = async () => {
 onMounted(() => {
   fetchUserData();
 });
-</script>
+</script>  
 
 <style scoped>
 .profile-update {

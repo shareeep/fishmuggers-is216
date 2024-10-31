@@ -6,7 +6,7 @@
     </router-link>
     <main id="scrollable-element">
       <PetsProfile />
-    </main>
+    </main> 
   </div>
 </template>
 
@@ -20,7 +20,7 @@ import OverscrollPlugin from 'smooth-scrollbar/plugins/overscroll';
 Scrollbar.use(OverscrollPlugin);
 
 onMounted(() => {
-  Scrollbar.init(document.querySelector('#scrollable-element'), {
+  const scrollbar = Scrollbar.init(document.querySelector('#scrollable-element'), {
     damping: 0.05,
     renderByPixels: true,
     alwaysShowTracks: false,
@@ -33,42 +33,101 @@ onMounted(() => {
       },
     },
   });
-})
+
+  // Hide the scrollbar track by setting its opacity to 0
+  scrollbar.track.xAxis.element.style.opacity = '0';
+  scrollbar.track.yAxis.element.style.opacity = '0';
+});
 </script>
 
 <style scoped>
-#scrollable-element {
-  width: 100%;
-  height: 100%;
-}
-
-.navbar {
-  width: 250px;
-  height: 100vh;
-  position: fixed;
-  top: 0;
-  left: 0;
-  background-color: #ffffff;
-  z-index: 1;
-}
-
 .home-container {
   display: flex;
   height: 100vh;
   overflow: hidden;
 }
 
+.navbar {
+  width: 250px;
+  height: 100vh;
+  position: fixed;
+}
+
 main {
   align-items: center;
-  /* Center horizontally */
   margin-left: 250px;
   flex-grow: 1;
   display: flex;
-  padding: 3%;
   flex-direction: column;
   gap: 5px;
   background-color: #FCEFB4;
   height: 100vh;
+  overflow: scroll;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+#scrollable-element {
+  width: 100%;
+  height: 100%;
+  overflow-y: scroll;
+
+}
+
+.heading {
+  font-size: 2rem;
+  color: #333;
+  font-weight: bold;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 991px) {
+  .navbar {
+    width: 80px;
+    position: fixed
+  }
+
+  main {
+    margin-left: 80px;
+    padding: 15px;
+  }
+}
+
+@media (max-width: 767px) {
+  .home-container {
+    flex-direction: column;
+  }
+
+  .navbar {
+    width: 100%;
+    height: 50px;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    background-color: #f9f9f9;
+    z-index: 10;
+  }
+
+  main {
+    margin-left: 0;
+    margin-top: 0;
+    padding: 15px;
+    padding-top:30px;
+    padding-bottom:75px;
+    height: calc(100vh - 50px);
+    overflow-y: auto;
+  }
+
+  .friends-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .heading {
+    font-size: 1.5rem;
+  }
 }
 
 .back-button {

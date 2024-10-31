@@ -455,7 +455,7 @@ onMounted(() => {
 
 <style scoped>
 .pets-profile-container {
-  max-width: 800px;
+  max-width: 600px;
   margin: 0 auto;
   padding: 2rem;
   background-color: #f9fafb;
@@ -470,8 +470,8 @@ onMounted(() => {
 
 .pets-profile-container form {
   background-color: #ffffff;
-  padding: 1.5rem;
-  border-radius: 0.5rem;
+  padding: 3rem;
+  border-radius: 15px;
   box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
 }
 

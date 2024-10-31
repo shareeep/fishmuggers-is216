@@ -73,27 +73,6 @@ main {
   box-sizing: border-box;
 }
 
-.floating-btn {
-  position: fixed !important;
-  bottom: 20px;
-  right: 20px;
-  background-color: gold;
-  color: white;
-  border: none;
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  font-size: 30px;
-  text-align: center;
-  cursor: pointer;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
-  z-index: 1000;
-}
-
-.floating-btn:hover {
-  background-color: rgb(238, 207, 30);
-}
-
 /* Responsive Adjustments */
 @media (max-width: 991px) {
   .navbar {
@@ -142,5 +121,26 @@ main {
     height: 40px;
     font-size: 24px;
   }
+}
+
+.floating-btn {
+  position: fixed !important;
+  bottom: 20px;
+  right: 20px;
+  background-color: gold;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  font-size: 30px;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+}
+
+.floating-btn:hover {
+  background-color: rgb(238, 207, 30);
 }
 </style>
