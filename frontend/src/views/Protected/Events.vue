@@ -7,10 +7,6 @@
           @filters-applied="handleFiltersApplied"
           @filters-reset="handleFiltersReset"
         />
-        <SearchandFilter
-          @filters-applied="handleFiltersApplied"
-          @filters-reset="handleFiltersReset"
-        />
       </div>
       <div class="content-container">
         <Carousel v-if="!filtersApplied" />
@@ -29,8 +25,6 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import Navbar from '@/components/Protected/Navbar.vue';
-import SearchandFilter from '@/components/Protected/Events/SearchandFilter.vue';
-import Carousel from '@/components/Protected/Events/Carousel.vue';
 import SearchandFilter from '@/components/Protected/Events/SearchandFilter.vue';
 import Carousel from '@/components/Protected/Events/Carousel.vue';
 import FilteredEvents from '@/components/Protected/Events/FilteredEvents.vue';
@@ -63,8 +57,6 @@ onMounted(() => {
 
 // State to track if filters are applied and the applied filter data
 const filtersApplied = ref(false);
-const appliedFilters = ref({});
-const appliedFilters = ref({});
 
 // This function is called when filters are applied
 function handleFiltersApplied(filters) {
