@@ -25,7 +25,7 @@
     <div class="profile-tabs">
       <button :class="{ active: activeTab === 'posts' }" @click="activeTab = 'posts'">Posts</button>
       <button :class="{ active: activeTab === 'eventsJoined' }" @click="activeTab = 'eventsJoined'">Events
-        Joined</button>
+        Joined/Created</button>
       <button :class="{ active: activeTab === 'pets' }" @click="activeTab = 'pets'">Pets</button>
     </div>
 
@@ -101,6 +101,32 @@
         </div>
       </div>
 
+      <div v-if="activeTab === 'events'">
+        <router-link to="/addpets">
+          <button class="edit-btn">Add Pets</button>
+        </router-link>
+        <div class="pets-wrapper">
+          <div class="pets-grid">
+            <div v-for="(pet, index) in pets" :key="index" class="pet-card"
+              :style="{ animationDelay: `${index * 0.2}s` }">
+              <img :src="pet.image" alt="Pet Image" class="pet-avatar" />
+              <div class="info-container">
+                <div class="details">
+                  <h4>{{ pet.name }}</h4>
+                  <p>Type: {{ pet.type }}</p>
+                  <p>Breed: {{ pet.breed }}</p>
+                  <p>Age: {{ pet.age }} years</p>
+                </div>
+                <div class="actions">
+                  <button class="edit-button">Edit</button>
+                  <button class="remove-button">Remove</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- PETS -->
       <div v-if="activeTab === 'pets'">
         <router-link to="/addpets">
@@ -143,7 +169,7 @@ const router = useRouter();
 
 const userData = ref({
   id: 1,
-  username: 'ihatewad2',
+  username: 'username',
   profileImage: '',
   joinedEvents: [],
   posts: [  // Adding sample post data
@@ -195,7 +221,7 @@ const prevPost = () => {
   } else {
     selectedPostIndex.value = userData.value.posts.length - 1;
   }
-};
+}; 
 
 const nextPost = () => {
   if (selectedPostIndex.value < userData.value.posts.length - 1) {
@@ -536,7 +562,7 @@ onMounted(fetchUserData);
 .modal-content {
   display: flex;
   background: #fff;
-  border-radius: 10px;\
+  border-radius: 10px;
   max-height: 90vh;
   overflow: hidden;
   padding: 0;

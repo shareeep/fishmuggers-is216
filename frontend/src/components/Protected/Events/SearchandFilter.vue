@@ -674,6 +674,8 @@
             Reset Filters
         </button>
     </div>
+
+   
 </template>
 
 <script>

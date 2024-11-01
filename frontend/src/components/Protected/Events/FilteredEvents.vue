@@ -25,6 +25,7 @@
                 </router-link>
             </div>
         </div>
+
         <div v-else>
             <p class="noevents">Uh oh...no events found.</p>
         </div>

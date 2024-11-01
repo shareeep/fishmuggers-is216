@@ -163,7 +163,6 @@ main {
     transform: scale(0.98);
 }
 
-
 /* Responsive Adjustments */
 @media (max-width: 991px) {
   .navbar {
