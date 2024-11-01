@@ -8,15 +8,15 @@
       </div>
       <div class="profile-info">
         <div class="profile-details">
-          <h2 class="username">{{ userData.username }}</h2>
+          <h2 class="username">{{ props.userData.username }}</h2>
           <router-link to="/editprofile">
             <button class="edit-btn">Edit profile</button>
           </router-link>
         </div>
         <div class="profile-stats">
-          <span><b>{{ posts }}</b> Posts</span>
-          <span><b>{{ userData.joinedEvents.length }}</b> Events Joined</span>
-          <span><b>{{ friends }}</b> Friends</span>
+          <span><b>{{ props.userData.posts.length }}</b> Posts</span>
+          <span><b>{{ props.userData.joinedEvents.length }}</b> Events Joined</span>
+          <span><b>{{ props.userData.posts.length }}</b> Friends</span>
         </div>
       </div>
     </div>
@@ -41,7 +41,7 @@
           </router-link>
         </div>
         <div v-else class="posts-grid">
-          <div v-for="(post, index) in userData.posts" :key="post.id" class="post-item" @click="openModal(index)">
+          <div v-for="(post, index) in props.userData.posts" :key="post.id" class="post-item" @click="openPostModal(post)">
             <img :src="post.image" alt="User Post" class="post-image" />
             <div class="overlay">
               <i class="fas fa-thumbs-up"></i>
@@ -51,55 +51,6 @@
         </div>
       </div>
 
-      <!-- Modal -->
-      <div v-if="isModalOpen" class="post-modal" @click.self="closeModal">
-        <div class="modal-content">
-
-          <!-- Left Column: Post Image -->
-          <div class="modal-left">
-            <img :src="userData.posts[selectedPostIndex].image" alt="Selected Post" class="modal-image" />
-          </div>
-
-          <!-- Right Column: User Info, Caption, and Likes -->
-          <div class="modal-right">
-            <!-- User Info Header -->
-            <div class="post-header">
-              <div class="user-info">
-                <img :src="userData.profileImage || 'https://via.placeholder.com/50?text=Avatar'" alt="User Avatar"
-                  class="avatar" />
-                <h3 class="user-name">{{ userData.username }}</h3>
-              </div>
-
-            </div>
-
-            <!-- Post Caption and Likes -->
-            <div class="post-footer">
-              <div class="caption-container">
-                <img :src="userData.profileImage || 'https://via.placeholder.com/50?text=Avatar'" alt="User Avatar"
-                  class="avatar-caption" />
-                <span class="caption-text">
-                  <span class="user-name-caption">{{ userData.username }}</span>
-                  {{ userData.posts[selectedPostIndex].caption }}
-                </span>
-              </div>
-
-              <div class="likes-container">
-
-                <p class="likes-caption">{{ userData.posts[selectedPostIndex].likes }} Likes</p>
-                <button @click="likePost(post)" class="like-button"><i class="fas fa-thumbs-up"
-                    style="color:black;"></i>Like</button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Navigation and Close Icons -->
-          <i class="fas fa-chevron-left nav-arrow" @click="selectedPostIndex > 0 && prevPost()"
-            :class="{ disabled: selectedPostIndex === 0 }" />
-          <i class="fas fa-chevron-right nav-arrow" @click="selectedPostIndex < userData.posts.length - 1 && nextPost()"
-            :class="{ disabled: selectedPostIndex === userData.posts.length - 1 }" />
-          <i class="fas fa-times close-modal" @click="closeModal"></i>
-        </div>
-      </div>
 
       <div v-if="activeTab === 'eventsJoined'">
         <!-- Buttons for toggling views -->
@@ -129,7 +80,7 @@
         </router-link>
         <div class="pets-wrapper">
           <div class="pets-grid">
-            <div v-for="(pet, index) in pets" :key="index" class="pet-card"
+            <div v-for="(pet, index) in props.pets" :key="index" class="pet-card"
               :style="{ animationDelay: `${index * 0.2}s` }">
               <img :src="pet.image" alt="Pet Image" class="pet-avatar" />
               <div class="info-container">
@@ -153,14 +104,19 @@
 </template>
 
 <script setup>
-import { ref, onMounted, defineEmits } from 'vue';
+import { ref, onMounted, defineEmits, defineProps } from 'vue';
 import axios from 'axios';
 import { getAuth } from 'firebase/auth';
 import { useRouter } from 'vue-router';
 import CreatedEvents from "@/components/Protected/EventsAdmin/CreatedEventsList.vue";
 import JoinedEvents from "@/components/Protected/EventsAdmin/JoinedEventsList.vue";
 
-const emit = defineEmits(['edit-event']);
+const props = defineProps({
+  userData: Object,
+  pets: Array
+});
+
+const emit = defineEmits(['edit-event', 'open-post']); // Add 'open-post' event
 const events = ref([]);
 
 // Initialize Firebase Auth and Router
@@ -180,29 +136,8 @@ const fetchEvents = async () => {
 };
 
 
-const userData = ref({
-  id: 1,
-  username: 'username',
-  profileImage: '',
-  joinedEvents: [],
-  posts: [  // Adding sample post data
-    { id: 1, image: 'https://www.tracyvets.com/files/Parakeets.jpeg', likes: 194000, caption: "First post caption" },
-    { id: 2, image: 'https://www.uk.pedigree.com/sites/g/files/fnmzdf5531/files/2023-06/pexels-sarah-chai-7282710-list.jpg', likes: 6290, caption: "woof woof " },
-    { id: 3, image: 'https://media.4-paws.org/a/e/6/f/ae6fefbd6d12cfc50d51ebb7da9d7cbdb322d006/VIER%20PFOTEN_2020-10-07_00138-2890x2000-1920x1329.jpg', likes: 1020, caption: "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Blanditiis quos iste ratione labore ea ex aliquid eaque? Enim obcaecati nisi corporis unde libero porro, incidunt accusantium repudiandae placeat, totam a." },
-  ],
-});
-
-const posts = ref(userData.value.posts.length);
 const eventsView = ref('createdEvents');
-const friends = ref(73);
 const activeTab = ref('posts');
-const selectedPostIndex = ref(0);
-const isModalOpen = ref(false);
-
-const pets = ref([
-  { name: 'Woofie', type: 'Dog', breed: 'Golden Retriever', age: 3, image: 'https://via.placeholder.com/150?text=Dog' },
-  { name: 'Meowers', type: 'Cat', breed: 'Siamese', age: 2, image: 'https://via.placeholder.com/150?text=Cat' }
-]);
 
 const fetchUserData = async () => {
   const currentUser = auth.currentUser;
@@ -228,6 +163,10 @@ const handleEditEvent = (event) => {
 // Sample deleteEvent function
 const deleteEvent = (eventId) => {
   console.log("Delete Event:", eventId);
+};
+
+const openPostModal = (post) => {
+  emit('open-post', post);
 };
 
 const prevPost = () => {
