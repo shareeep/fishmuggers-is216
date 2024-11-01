@@ -14,7 +14,7 @@
         <FriendsList @popup-toggle="togglePopup" :friends="friends" />
 
         <RequestsSent />
-      </div>
+      </div> 
     </main>
 
     <!-- AllFriendsPopup component, visible only when showPopup is true -->
@@ -111,7 +111,6 @@ main {
   width: 100%;
   height: 100%;
   overflow-y: scroll;
-
 }
 
 .heading {

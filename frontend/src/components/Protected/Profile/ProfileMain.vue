@@ -54,14 +54,15 @@
       <!-- Modal -->
       <div v-if="isModalOpen" class="post-modal" @click.self="closeModal">
         <div class="modal-content">
-
+        
+          <!-- Left Column: Post Image -->
           <div class="modal-left">
             <img :src="userData.posts[selectedPostIndex].image" alt="Selected Post" class="modal-image" />
           </div>
 
-
+          <!-- Right Column: User Info, Caption, and Likes -->
           <div class="modal-right">
-
+            <!-- User Info Header -->
             <div class="post-header">
               <div class="user-info">
                 <img :src="userData.profileImage || 'https://via.placeholder.com/50?text=Avatar'" alt="User Avatar"
@@ -71,7 +72,7 @@
 
             </div>
 
-
+            <!-- Post Caption and Likes -->
             <div class="post-footer">
               <div class="caption-container">
                 <img :src="userData.profileImage || 'https://via.placeholder.com/50?text=Avatar'" alt="User Avatar"
@@ -90,7 +91,8 @@
               </div>
             </div>
           </div>
-
+          
+          <!-- Navigation and Close Icons -->
           <i class="fas fa-chevron-left nav-arrow" @click="selectedPostIndex > 0 && prevPost()"
             :class="{ disabled: selectedPostIndex === 0 }" />
           <i class="fas fa-chevron-right nav-arrow" @click="selectedPostIndex < userData.posts.length - 1 && nextPost()"
@@ -534,7 +536,7 @@ onMounted(fetchUserData);
 .modal-content {
   display: flex;
   background: #fff;
-  border-radius: 10px;
+  border-radius: 10px;\
   max-height: 90vh;
   overflow: hidden;
   padding: 0;

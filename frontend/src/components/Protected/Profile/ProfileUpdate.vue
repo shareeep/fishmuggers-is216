@@ -1,5 +1,4 @@
 <template>
-
   <div class="profile-update">
     <h2 class="text-2xl font-bold mb-6 text-center">Update Profile</h2>
 
@@ -52,7 +51,7 @@
           <img :src="newProfileImageUrl" alt="New Profile Image" class="w-16 h-16 rounded-full">
         </div>
       </div>
-
+ 
       <!-- Points Field -->
       <div class="mb-4">
         <label class="block text-gray-700">Points:</label>
@@ -91,7 +90,6 @@
     </form>
   </div>
 </template>
-
 
 <script setup>
 import { ref, onMounted } from 'vue';

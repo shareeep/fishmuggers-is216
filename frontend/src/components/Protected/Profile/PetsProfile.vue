@@ -1,12 +1,11 @@
 <template>
-
   <div class="pets-profile-container">
     <h2 class="text-2xl font-bold mb-6 text-center" style="color:black;">Manage Your Pets</h2>
 
     <!-- Add New Pet Form -->
     <form @submit.prevent="addPet" enctype="multipart/form-data" class="mb-8">
       <h3 class="text-xl font-semibold mb-4" style="color:black;">Add New Pet</h3>
-
+      
       <!-- Name -->
       <div class="mb-4">
         <label class="block text-gray-700">Name:</label>
@@ -470,11 +469,11 @@ onMounted(() => {
   transform: scale(0.98);
 }
 
-/* .add-pet-btn:disabled {
+.add-pet-btn:disabled {
   background-color: #e6c200;
   cursor: not-allowed;
   opacity: 0.7;
-} */
+}
 
 /* Modal Styles */
 .modal-overlay {
@@ -486,7 +485,7 @@ onMounted(() => {
   background-color: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: center; 
   z-index: 1000;
 }
 

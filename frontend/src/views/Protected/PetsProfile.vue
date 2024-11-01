@@ -41,6 +41,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
+
 .home-container {
   display: flex;
   height: 100vh;
@@ -80,6 +81,7 @@ main {
   font-weight: bold;
   margin-bottom: 10px;
   text-align: center;
+
 }
 
 .back-button {

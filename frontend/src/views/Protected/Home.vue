@@ -8,7 +8,7 @@
       <button class="floating-btn">🐾</button>
     </router-link>
   </div>
-</template>
+</template> 
 
 <script setup>
 import { ref, onMounted } from 'vue';
