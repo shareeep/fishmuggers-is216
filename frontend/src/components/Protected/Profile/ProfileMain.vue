@@ -54,6 +54,7 @@
       <!-- Modal -->
       <div v-if="isModalOpen" class="post-modal" @click.self="closeModal">
         <div class="modal-content">
+        
           <!-- Left Column: Post Image -->
           <div class="modal-left">
             <img :src="userData.posts[selectedPostIndex].image" alt="Selected Post" class="modal-image" />
@@ -90,6 +91,7 @@
               </div>
             </div>
           </div>
+          
           <!-- Navigation and Close Icons -->
           <i class="fas fa-chevron-left nav-arrow" @click="selectedPostIndex > 0 && prevPost()"
             :class="{ disabled: selectedPostIndex === 0 }" />
@@ -140,6 +142,7 @@ const router = useRouter();
 
 
 const userData = ref({
+  id: 1,
   username: 'ihatewad2',
   profileImage: '',
   joinedEvents: [],
@@ -257,6 +260,7 @@ onMounted(fetchUserData);
 }
 
 .edit-btn:hover {
+  background-color: #E6C200;
   transform: scale(1.05);
   box-shadow: 0 4px 8px rgba(75, 0, 130, 0.2);
 }
@@ -312,7 +316,7 @@ onMounted(fetchUserData);
 /* Pets grid layout */
 .pets-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 16px;
   margin-top: 20px;
 }
@@ -364,6 +368,7 @@ onMounted(fetchUserData);
   transform: scale(1.05);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
+
 .details h4 {
   font-weight: bold;
   color: #333;
@@ -516,13 +521,13 @@ onMounted(fetchUserData);
 }
 
 .post-modal {
+  display: flex;
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.7);
-  display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
@@ -531,8 +536,8 @@ onMounted(fetchUserData);
 .modal-content {
   display: flex;
   background: #fff;
-  border-radius: 10px;
-  height: 500px;
+  border-radius: 10px;\
+  max-height: 90vh;
   overflow: hidden;
   padding: 0;
   width: auto;

@@ -55,7 +55,20 @@ input[type="search"]:focus {
 
 button {
     border-radius: 12px;
-    /* Ensure the button also has rounded corners */
+    cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+button:hover {
+    background-color: #e6c200;
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(75, 0, 130, 0.2);
+}
+
+
+button:active {
+    transform: scale(0.98);
+
 }
 
 @media (min-width: 1024px) {

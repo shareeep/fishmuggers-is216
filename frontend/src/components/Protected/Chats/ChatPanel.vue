@@ -208,4 +208,19 @@ onMounted(() => {
   background-repeat: no-repeat; /* Prevents the background from repeating */
   text-align: center; /* Center the text */
 }
+
+/* Media Query for Small Screens (max-width: 767px) */
+@media (max-width: 767px) {
+  .chat-panel {
+    height: calc(100vh - 50px); /* Subtract bottom navbar height */
+  }
+
+  .chat-messages {
+    padding-bottom: 60px; /* Additional padding for chat input area */
+  }
+
+  .chat-input {
+    padding-bottom: 10px; /* Extra padding to lift input above navbar */
+  }
+}
 </style>

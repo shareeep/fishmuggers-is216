@@ -7,7 +7,7 @@
       <div class="current-day">
         <h2>{{ currentDay }}</h2>
         <h3>{{ currentDate }}</h3>
-      </div>
+      </div> 
       <hr />
       <div class="filters">
         <h3>Filter Events</h3>

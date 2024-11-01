@@ -1,5 +1,4 @@
 <template>
-  
   <div class="pets-profile-container">
     <h2 class="text-2xl font-bold mb-6 text-center" style="color:black;">Manage Your Pets</h2>
 
@@ -10,12 +9,7 @@
       <!-- Name -->
       <div class="mb-4">
         <label class="block text-gray-700">Name:</label>
-        <input 
-          v-model="newPet.name" 
-          type="text" 
-          required 
-          class="border border-gray-300 rounded-md py-2 px-4 w-full"
-        />
+        <input v-model="newPet.name" type="text" required class="border border-gray-300 rounded-md py-2 px-4 w-full" />
       </div>
 
       <!-- Type -->
@@ -33,35 +27,21 @@
       <!-- Breed -->
       <div class="mb-4">
         <label class="block text-gray-700">Breed:</label>
-        <input 
-          v-model="newPet.breed" 
-          type="text" 
-          required 
-          class="border border-gray-300 rounded-md py-2 px-4 w-full"
-        />
+        <input v-model="newPet.breed" type="text" required class="border border-gray-300 rounded-md py-2 px-4 w-full" />
       </div>
 
       <!-- Age -->
       <div class="mb-4">
         <label class="block text-gray-700">Age:</label>
-        <input 
-          v-model.number="newPet.age" 
-          type="number" 
-          min="0" 
-          required 
-          class="border border-gray-300 rounded-md py-2 px-4 w-full"
-        />
+        <input v-model.number="newPet.age" type="number" min="0" required
+          class="border border-gray-300 rounded-md py-2 px-4 w-full" />
       </div>
 
       <!-- Profile Image -->
       <div class="mb-4">
         <label class="block text-gray-700">Profile Image:</label>
-        <input 
-          type="file" 
-          @change="handleNewPetFileUpload" 
-          accept="image/*"
-          class="border border-gray-300 rounded-md py-2 px-4 w-full"
-        />
+        <input type="file" @change="handleNewPetFileUpload" accept="image/*"
+          class="border border-gray-300 rounded-md py-2 px-4 w-full" />
         <!-- Image Preview -->
         <div v-if="newPetImageUrl" class="mt-4">
           <p class="text-gray-700 mb-2">Image Preview:</p>
@@ -70,11 +50,7 @@
       </div>
 
       <!-- Submit Button -->
-      <button 
-        type="submit" 
-        class="add-pet-btn w-full"
-        :disabled="isAdding"
-      >
+      <button type="submit" class="add-pet-btn w-full" :disabled="isAdding">
         {{ isAdding ? 'Adding...' : 'Add Pet' }}
       </button>
 
@@ -88,22 +64,18 @@
       <h3 class="text-xl font-semibold mb-4">Your Pets</h3>
       <div v-for="pet in pets" :key="pet.id" class="mb-6 p-4 bg-gray-100 rounded-md">
         <div class="flex items-center">
-          <img :src="pet.profileImage || 'https://via.placeholder.com/150?text=No+Image'" alt="Pet Image" class="w-24 h-24 rounded-full mr-4">
+          <img :src="pet.profileImage || 'https://via.placeholder.com/150?text=No+Image'" alt="Pet Image"
+            class="w-24 h-24 rounded-full mr-4">
           <div>
             <p><strong>Name:</strong> {{ pet.name }}</p>
             <p><strong>Type:</strong> {{ pet.type }}</p>
             <p><strong>Breed:</strong> {{ pet.breed }}</p>
             <p><strong>Age:</strong> {{ pet.age }}</p>
-            <button 
-              @click="openEditModal(pet)" 
-              class="mt-2 bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 mr-2"
-            >
+            <button @click="openEditModal(pet)"
+              class="mt-2 bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 mr-2">
               Edit Pet
             </button>
-            <button 
-              @click="deletePet(pet.id)" 
-              class="mt-2 bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
-            >
+            <button @click="deletePet(pet.id)" class="mt-2 bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
               Delete Pet
             </button>
           </div>
@@ -121,12 +93,8 @@
           <!-- Name -->
           <div class="mb-4">
             <label class="block text-gray-700">Name:</label>
-            <input 
-              v-model="editPetData.name" 
-              type="text" 
-              required 
-              class="border border-gray-300 rounded-md py-2 px-4 w-full"
-            />
+            <input v-model="editPetData.name" type="text" required
+              class="border border-gray-300 rounded-md py-2 px-4 w-full" />
           </div>
 
           <!-- Type -->
@@ -144,35 +112,22 @@
           <!-- Breed -->
           <div class="mb-4">
             <label class="block text-gray-700">Breed:</label>
-            <input 
-              v-model="editPetData.breed" 
-              type="text" 
-              required 
-              class="border border-gray-300 rounded-md py-2 px-4 w-full"
-            />
+            <input v-model="editPetData.breed" type="text" required
+              class="border border-gray-300 rounded-md py-2 px-4 w-full" />
           </div>
 
           <!-- Age -->
           <div class="mb-4">
             <label class="block text-gray-700">Age:</label>
-            <input 
-              v-model.number="editPetData.age" 
-              type="number" 
-              min="0" 
-              required 
-              class="border border-gray-300 rounded-md py-2 px-4 w-full"
-            />
+            <input v-model.number="editPetData.age" type="number" min="0" required
+              class="border border-gray-300 rounded-md py-2 px-4 w-full" />
           </div>
 
           <!-- Profile Image -->
           <div class="mb-4">
             <label class="block text-gray-700">Profile Image:</label>
-            <input 
-              type="file" 
-              @change="handleEditPetFileUpload" 
-              accept="image/*"
-              class="border border-gray-300 rounded-md py-2 px-4 w-full"
-            />
+            <input type="file" @change="handleEditPetFileUpload" accept="image/*"
+              class="border border-gray-300 rounded-md py-2 px-4 w-full" />
             <!-- Image Preview -->
             <div v-if="editPetImageUrl" class="mt-4">
               <p class="text-gray-700 mb-2">New Image Preview:</p>
@@ -180,16 +135,15 @@
             </div>
             <div v-else class="mt-4">
               <p class="text-gray-700 mb-2">Current Image:</p>
-              <img :src="currentEditPet.profileImage || 'https://via.placeholder.com/150?text=No+Image'" alt="Current Pet Image" class="w-32 h-32 rounded-full">
+              <img :src="currentEditPet.profileImage || 'https://via.placeholder.com/150?text=No+Image'"
+                alt="Current Pet Image" class="w-32 h-32 rounded-full">
             </div>
           </div>
 
           <!-- Submit Button -->
-          <button 
-            type="submit" 
+          <button type="submit"
             class="bg-blue-500 text-white font-bold py-2 px-4 rounded w-full hover:bg-blue-600 transition"
-            :disabled="isUpdating"
-          >
+            :disabled="isUpdating">
             {{ isUpdating ? 'Updating...' : 'Update Pet' }}
           </button>
 
@@ -455,12 +409,18 @@ onMounted(() => {
 
 <style scoped>
 .pets-profile-container {
-  max-width: 800px;
+  max-width: 600px;
   margin: 0 auto;
   padding: 2rem;
   background-color: #f9fafb;
   border-radius: 0.5rem;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 767px) {
+  .pets-profile-container {
+    max-width: 400px;
+  }
 }
 
 .pets-profile-container h2,
@@ -470,8 +430,8 @@ onMounted(() => {
 
 .pets-profile-container form {
   background-color: #ffffff;
-  padding: 1.5rem;
-  border-radius: 0.5rem;
+  padding: 3rem;
+  border-radius: 15px;
   box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
 }
 
@@ -491,13 +451,16 @@ onMounted(() => {
   cursor: pointer;
   background-color: #FFD700;
   color: #333;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
   display: inline-flex;
   justify-content: center;
   align-items: center;
+  transform:scale(1);
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease !important;
 }
 
 .add-pet-btn:hover {
+  background-color: #E6C200;
   transform: scale(1.05);
   box-shadow: 0 4px 8px rgba(75, 0, 130, 0.2);
 }
@@ -543,4 +506,3 @@ onMounted(() => {
   transition: background-color 0.3s;
 }
 </style>
-

@@ -1,10 +1,9 @@
 <template>
     <div class="max-w-md mx-auto relative wrapper">
-        <img src="../../../assets/images/search_image.png"
-            style="width:300px; margin-bottom: -10px;position:relative;"
+        <img src="../../../assets/images/search_image.png" style="width:300px; margin-bottom: -10px;position:relative;"
             class="block mx-auto z-30 md:w-2/3 lg:w-1/2">
 
-        <!-- SEARCH BAR --> 
+        <!-- SEARCH BAR -->
         <div class="flex justify-center items-center mx-auto mr-0">
             <div class=" mx-auto relative z-20 flex items-center max-w-lg">
                 <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none z-10">
@@ -20,14 +19,13 @@
                     placeholder="Search for an event" required>
                 <div class="absolute inset-y-0 right-0 flex items-center mr-2">
                     <button @click="applySearch"
-                        class="text-black bg-[#FFD700] hover:bg-[#E6C200] font-bold rounded-lg text-sm px-4 py-2">
+                        class="text-black bg-[#FFD700] hover:bg-[#E6C200] font-bold rounded-lg text-sm px-4 py-2 apply">
                         Search
                     </button>
                 </div>
                 </input>
             </div>
         </div>
-
     </div>
 
     <!--sort by sm block-->
@@ -234,7 +232,7 @@
         <!-- Apply Filters Button -->
         <div class="flex justify-center mt-3">
             <button @click="applyFilters"
-                class="rounded-lg text-sm py-2.5 text-center items-center  text-black bg-[#FFD700] hover:bg-[#E6C200] font-bold text-sm"
+                class="rounded-lg text-sm py-2.5 text-center items-center  text-black bg-[#FFD700] hover:bg-[#E6C200] font-bold text-sm apply"
                 style="width: 19rem;">
                 Apply Filters
             </button>
@@ -242,7 +240,7 @@
         <!-- Reset Filters Button -->
         <div class="flex justify-center mt-3">
             <button @click="resetFilters"
-                class="rounded-lg text-sm py-2.5 text-center items-center  text-black bg-[#FFD700] hover:bg-[#E6C200] font-bold text-sm"
+                class="rounded-lg text-sm py-2.5 text-center items-center  text-black bg-[#FFD700] hover:bg-[#E6C200] font-bold text-sm apply"
                 style="width: 19rem;">
                 Reset Filters
             </button>
@@ -453,7 +451,7 @@
         <!-- Apply Filters Button -->
         <div class="flex justify-center mt-3">
             <button @click="applyFilters"
-                class="rounded-lg text-sm py-2.5 text-center items-center text-black bg-[#FFD700] hover:bg-[#E6C200] font-bold text-sm"
+                class="rounded-lg text-sm py-2.5 text-center items-center text-black bg-[#FFD700] hover:bg-[#E6C200] font-bold text-sm apply"
                 style="width: 19rem;">
                 Apply Filters
             </button>
@@ -461,7 +459,7 @@
         <!-- Reset Filters Button -->
         <div class="flex justify-center mt-3">
             <button @click="resetFilters"
-                class="rounded-lg text-sm py-2.5 text-center items-center text-black  bg-[#FFD700] hover:bg-[#E6C200] font-bold text-sm"
+                class="rounded-lg text-sm py-2.5 text-center items-center text-black  bg-[#FFD700] hover:bg-[#E6C200] font-bold text-sm apply"
                 style="width: 19rem;">
                 Reset Filters
             </button>
@@ -667,12 +665,12 @@
         </div>
         <!-- Apply Filters Button -->
         <button @click="applyFilters"
-            class="rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center me-3 text-black  bg-[#FFD700] hover:bg-[#E6C200] font-bold text-sm whitespace-nowrap">
+            class="rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center me-3 text-black  bg-[#FFD700] hover:bg-[#E6C200] font-bold text-sm whitespace-nowrap apply">
             Apply Filters
         </button>
         <!-- Reset Filters Button -->
         <button @click="resetFilters"
-            class="rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center me-3 text-black  bg-[#FFD700] hover:bg-[#E6C200] font-bold text-sm">
+            class="rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center me-3 text-black  bg-[#FFD700] hover:bg-[#E6C200] font-bold text-sm apply">
             Reset Filters
         </button>
     </div>
@@ -893,13 +891,14 @@ export default {
 </script>
 
 <style scoped>
-.wrapper{
-    width:100%;
-    position:relative;
+.wrapper {
+    width: 100%;
+    position: relative;
 }
+
 /* DROPDOWN CONTAINER */
 .custom-dropdown {
-    position:fixed;
+    position: fixed;
     padding: 1rem;
     /* Ensure uniform dropdown padding */
     background-color: #FDF8E1;
@@ -991,7 +990,7 @@ button {
 .sort-by {
     /* Flexbox for sort by section */
     justify-content: center;
-    width:100%;
+    width: 100%;
     /* Center align items */
     margin-top: 15px;
     /* Margin on top */
@@ -1008,9 +1007,22 @@ button {
         /* Margin on top */
         transform: scale(0.9);
     }
+}
 
+.apply {
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
 
+.apply:hover {
+    background-color: #e6c200;
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(75, 0, 130, 0.2);
 }
 
 
+.apply:active {
+    transform: scale(0.98);
+
+}
 </style>

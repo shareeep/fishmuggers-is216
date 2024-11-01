@@ -2,7 +2,7 @@
     <div class="popup-overlay" @click.self="$emit('close')">
         <div class="popup-content">
             <button class="close-button" @click="$emit('close')">✕</button>
-            <h2>Friends</h2>
+            <h2>Share Event</h2>
 
             <div class="search-bar">
                 <input v-model="searchQuery" placeholder="Search" type="search" />
@@ -15,8 +15,8 @@
                         <p class="friend-name">{{ friend.name }}</p>
                         <p class="friend-username">{{ friend.username }}</p>
                     </div>
-                    <!-- "See Profile" button -->
-                    <button class="see-profile-button" @click="viewProfile(friend)">See Profile</button>
+                    <!-- share event button -->
+                    <button class="see-profile-button">Share</button>
                 </div>
             </div>
         </div>

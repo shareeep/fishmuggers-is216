@@ -2,8 +2,17 @@
   <div class="friend-requests">
     <h3>Friend Requests ({{ requests.length }})</h3>
     <div class="request-list">
-      <div v-for="(request, index) in requests" :key="request.id" class="request-item"
-        :style="{ animationDelay: `${index * 0.2}s` }">
+      <router-link
+        v-for="(request, index) in requests"
+        :key="request.id"
+        :to="{
+          name: 'friendProfile',
+          params: { id: request.id },
+          query: { username: request.username, avatar: request.avatar }
+        }"
+        class="request-item"
+        :style="{ animationDelay: `${index * 0.2}s` }"
+      >
         <img :src="request.avatar" alt="User Avatar" />
         <div class="info-container">
           <div class="details">
@@ -11,12 +20,13 @@
             <p>{{ request.username }}</p>
             <p>{{ request.mutualFriends }} mutual friends</p>
           </div>
-          <div class="actions">
+          <!-- Action buttons, click event stopped to prevent navigation -->
+          <div class="actions" @click.stop>
             <button class="accept-button hover:bg-[#E6C200]">Accept</button>
             <button class="reject-button">✕</button>
           </div>
         </div>
-      </div>
+      </router-link>
     </div>
   </div>
 </template>
@@ -31,6 +41,7 @@ export default {
         { id: 1, name: "Jane Cooper", username: "j-coopz", mutualFriends: 3, avatar: "https://randomuser.me/api/portraits/women/1.jpg" },
         { id: 2, name: "Daniel Matouf", username: "dani-matouf22", mutualFriends: 2, avatar: "https://randomuser.me/api/portraits/men/2.jpg" },
         { id: 3, name: "Blake Glory", username: "blakes-of-glory", mutualFriends: 4, avatar: "https://randomuser.me/api/portraits/men/3.jpg" },
+
       ],
     };
   },
@@ -52,10 +63,9 @@ h3 {
 /* Request List */
 .request-list {
   display: flex;
-  gap: 20px;
   flex-wrap: wrap;
-  justify-content: center;
-  /* Center items when wrapping */
+  gap: 20px;
+  justify-content: start;
 }
 
 /* Request Item */
@@ -66,17 +76,25 @@ h3 {
   border-radius: 15px;
   background-color: #ffffff;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  min-width: 300px;
-  width: 325px;
+  width: 300px;
+  /* Fixed width for all items */
   opacity: 0;
-  transform: scale(0.9);
+  transform: scale(1);
   animation: popFadeIn 0.4s forwards;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Only scale the request-item on hover for the entire component */
+.request-item:hover {
+  transform: scale(1.02) !important;
+  box-shadow: 0 4px 8px rgba(75, 0, 130, 0.2);
 }
 
 @keyframes popFadeIn {
   to {
     opacity: 1;
-    transform: scale(1);
+    /* transform: scale(1); */
   }
 }
 
@@ -93,10 +111,6 @@ h3 {
 .info-container {
   display: flex;
   flex-direction: column;
-  flex-grow: 1;
-}
-
-.details {
   flex-grow: 1;
 }
 
@@ -131,7 +145,7 @@ h3 {
 }
 
 .accept-button {
-  background-color: #FFD700;
+  background-color: #ffd700;
   color: #333;
 }
 
@@ -140,7 +154,7 @@ h3 {
   color: #333;
 }
 
-/* Hover/Active States */
+/* Individual button scale without affecting entire request-item */
 .accept-button:hover,
 .reject-button:hover {
   transform: scale(1.05);
@@ -148,17 +162,37 @@ h3 {
 }
 
 .accept-button:hover {
-  background-color: #E6C200;
+  background-color: #e6c200;
 }
 
 .reject-button:hover {
   background-color: #bbb;
 }
 
+.request-item:active,
 .accept-button:active,
 .reject-button:active {
   transform: scale(0.98);
 }
 
+/* Responsive Layout Adjustments */
+@media (max-width: 1270px) {
+  .request-list {
+    justify-content: center;
+  }
+}
 
+@media (max-width: 1024px) {
+  .request-list {
+    grid-template-columns: repeat(2, 1fr);
+    /* 2 items per row on medium screens */
+  }
+}
+
+@media (max-width: 768px) {
+  .request-list {
+    grid-template-columns: 1fr;
+    /* 1 item per row on small screens */
+  }
+}
 </style>
