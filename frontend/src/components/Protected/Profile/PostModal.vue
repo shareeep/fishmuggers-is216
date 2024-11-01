@@ -182,7 +182,14 @@ const isLastPost = computed(() => props.selectedPostIndex === props.totalPosts -
     object-fit: cover;
 }
 
+.user-name-caption {
+    font-weight: bold;
+    margin-right: 5px;
+    color: black;
+}
+
 .caption-text {
+    margin-top: 6px;
     font-size: 1rem;
     color: #333;
     line-height: 1.5;
@@ -190,6 +197,7 @@ const isLastPost = computed(() => props.selectedPostIndex === props.totalPosts -
     white-space: normal;
     text-align: left;
 }
+
 
 .likes-container {
     display: flex;
@@ -276,5 +284,106 @@ const isLastPost = computed(() => props.selectedPostIndex === props.totalPosts -
     opacity: 0.3;
     cursor: not-allowed;
     pointer-events: none;
+}
+
+/* Responsive adjustments */
+/* Responsive adjustments for screens above 600px */
+@media (min-width: 767px) {
+    .modal-content {
+        flex-direction: row;
+        max-width: 80vw;
+        max-height: 80vh;
+    }
+
+    .modal-left {
+        height: auto;
+        flex: 1;
+    }
+
+    .modal-image {
+        width: 100%;
+        height: 100%;
+        overflow: scroll;
+    }
+
+    .modal-right {
+        padding: 20px;
+        flex: 1;
+    }
+
+    .post-header {
+        display: flex;
+    }
+
+    .user-name {
+        font-size: 1.4rem;
+    }
+
+    .likes-caption,
+    .like-button,
+    .caption-text {
+        font-size: 1.1rem;
+    }
+
+    .nav-arrow {
+        font-size: 2.5rem;
+    }
+}
+
+
+
+@media (max-width: 767px) {
+    .modal-content {
+        flex-direction: column;
+        width: 100%;
+        max-width: 350px;
+        height: auto;
+    }
+
+    .modal-left,
+    .modal-right {
+        width: 100%;
+    }
+
+    .modal-right {
+        padding: 10px;
+    }
+
+    .modal-left {
+        height: auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .modal-image {
+        width: 100%;
+        height: auto;
+    }
+
+    .avatar,
+    .avatar-caption {
+        width: 40px;
+        height: 40px;
+    }
+
+    .user-name,
+    .likes-caption {
+        font-size: 1rem;
+    }
+
+    .like-button,
+    .caption-text {
+        font-size: 0.9rem;
+    }
+
+    .nav-arrow {
+        font-size: 1.5rem;
+    }
+
+    /* Hide the post-header on small screens */
+    .post-header {
+        display: none;
+    }
 }
 </style>
