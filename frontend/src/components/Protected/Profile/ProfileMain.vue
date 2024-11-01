@@ -54,7 +54,7 @@
       <!-- Modal -->
       <div v-if="isModalOpen" class="post-modal" @click.self="closeModal">
         <div class="modal-content">
-        
+
           <!-- Left Column: Post Image -->
           <div class="modal-left">
             <img :src="userData.posts[selectedPostIndex].image" alt="Selected Post" class="modal-image" />
@@ -91,7 +91,7 @@
               </div>
             </div>
           </div>
-          
+
           <!-- Navigation and Close Icons -->
           <i class="fas fa-chevron-left nav-arrow" @click="selectedPostIndex > 0 && prevPost()"
             :class="{ disabled: selectedPostIndex === 0 }" />
@@ -101,31 +101,26 @@
         </div>
       </div>
 
-      <div v-if="activeTab === 'events'">
-        <router-link to="/addpets">
-          <button class="edit-btn">Add Pets</button>
-        </router-link>
-        <div class="pets-wrapper">
-          <div class="pets-grid">
-            <div v-for="(pet, index) in pets" :key="index" class="pet-card"
-              :style="{ animationDelay: `${index * 0.2}s` }">
-              <img :src="pet.image" alt="Pet Image" class="pet-avatar" />
-              <div class="info-container">
-                <div class="details">
-                  <h4>{{ pet.name }}</h4>
-                  <p>Type: {{ pet.type }}</p>
-                  <p>Breed: {{ pet.breed }}</p>
-                  <p>Age: {{ pet.age }} years</p>
-                </div>
-                <div class="actions">
-                  <button class="edit-button">Edit</button>
-                  <button class="remove-button">Remove</button>
-                </div>
-              </div>
-            </div>
-          </div>
+      <div v-if="activeTab === 'eventsJoined'">
+        <!-- Buttons for toggling views -->
+        <div class="toggle-buttons">
+          <button :class="{ active: eventsView === 'createdEvents' }" @click="eventsView = 'createdEvents'">
+            Created Events
+          </button>
+          <button :class="{ active: eventsView === 'joinedEvents' }" @click="eventsView = 'joinedEvents'">
+            Joined Events
+          </button>
+        </div>
+
+        <!-- Display CreatedEvents or JoinedEvents component based on eventsView -->
+        <div v-if="eventsView === 'createdEvents'">
+          <CreatedEvents :events="events" @edit-event="openEditEventModal" @delete-event="deleteEvent" />
+        </div>
+        <div v-if="eventsView === 'joinedEvents'">
+          <JoinedEvents :events="events" />
         </div>
       </div>
+
 
       <!-- PETS -->
       <div v-if="activeTab === 'pets'">
@@ -162,9 +157,25 @@ import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import { getAuth } from 'firebase/auth';
 import { useRouter } from 'vue-router';
+import CreatedEvents from "@/components/Protected/EventsAdmin/CreatedEventsList.vue";
+import JoinedEvents from "@/components/Protected/EventsAdmin/JoinedEventsList.vue";
+const events = ref([]);
 
+// Initialize Firebase Auth and Router
 const auth = getAuth();
 const router = useRouter();
+
+
+const fetchEvents = async () => {
+  try {
+    const response = await axios.get("http://localhost:3000/api/events");
+    events.value = response.data;
+    console.log("Fetched Events:", events.value); // Add this line
+  } catch (error) {
+    console.error("Error fetching events:", error);
+    errorMessage.value = "Failed to fetch events.";
+  }
+};
 
 
 const userData = ref({
@@ -180,6 +191,7 @@ const userData = ref({
 });
 
 const posts = ref(userData.value.posts.length);
+const eventsView = ref('createdEvents');
 const friends = ref(73);
 const activeTab = ref('posts');
 const selectedPostIndex = ref(0);
@@ -221,7 +233,7 @@ const prevPost = () => {
   } else {
     selectedPostIndex.value = userData.value.posts.length - 1;
   }
-}; 
+};
 
 const nextPost = () => {
   if (selectedPostIndex.value < userData.value.posts.length - 1) {
@@ -230,7 +242,9 @@ const nextPost = () => {
     selectedPostIndex.value = 0;
   }
 };
-
+onMounted(() => {
+  fetchEvents();
+});
 onMounted(fetchUserData);
 </script>
 
@@ -593,6 +607,25 @@ onMounted(fetchUserData);
   justify-content: flex-start;
   max-width: 400px;
   padding: 20px;
+}
+
+.toggle-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.toggle-buttons button {
+  padding: 10px;
+  background-color: #f0f0f0;
+  cursor: pointer;
+  font-weight: bold;
+  border-radius: 10px;
+}
+
+.toggle-buttons .active {
+  background-color: #333;
+  color: white;
 }
 
 .post-header {

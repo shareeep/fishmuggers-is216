@@ -1,7 +1,7 @@
 <template>
   <div class="home-container">
     <Navbar /> 
-    <main>
+    <main id="scrollable-element">
       <ProfileMain />
     </main>
   </div>
@@ -13,9 +13,40 @@ import { ref, onMounted } from 'vue';
 import Navbar from '@/components/Protected/Navbar.vue';
 import ProfileMain from '@/components/Protected/Profile/ProfileMain.vue';
 
+
+import Scrollbar from 'smooth-scrollbar';
+import OverscrollPlugin from 'smooth-scrollbar/plugins/overscroll';
+Scrollbar.use(OverscrollPlugin);
+
+onMounted(() => {
+  const scrollbar = Scrollbar.init(document.querySelector('#scrollable-element'), {
+    damping: 0.05,
+    renderByPixels: true,
+    alwaysShowTracks: false,
+    continuousScrolling: true,
+    plugins: {
+      overscroll: {
+        effect: 'bounce',
+        damping: 0.2,
+        maxOverscroll: 70,
+      },
+    },
+  });
+
+  // Hide the scrollbar track by setting its opacity to 0
+  scrollbar.track.xAxis.element.style.opacity = '0';
+  scrollbar.track.yAxis.element.style.opacity = '0';
+});
 </script>
 
 <style scoped>
+#scrollable-element {
+  width: 100%;
+  height: 100%;
+  overflow-y: scroll;
+
+}
+
 .navbar {
   width: 250px;
   /* Width of the navbar */

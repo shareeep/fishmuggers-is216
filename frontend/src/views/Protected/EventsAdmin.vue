@@ -23,7 +23,7 @@
 import { ref, onMounted } from "vue";
 import Navbar from '@/components/Protected/Navbar.vue';
 import EventCreationForm from "@/components/Protected/EventsAdmin/EventCreationForm.vue";
-import EventsList from "@/components/Protected/EventsAdmin/EventsList.vue";
+import EventsList from "@/components/Protected/EventsAdmin/CreatedEventsList.vue";
 import EditEventModal from "@/components/Protected/EventsAdmin/EditEventModal.vue";
 import Scrollbar from 'smooth-scrollbar';
 import OverscrollPlugin from 'smooth-scrollbar/plugins/overscroll';
