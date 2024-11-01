@@ -7,8 +7,13 @@
           @filters-applied="handleFiltersApplied"
           @filters-reset="handleFiltersReset"
         />
+        <SearchandFilter
+          @filters-applied="handleFiltersApplied"
+          @filters-reset="handleFiltersReset"
+        />
       </div>
       <div class="content-container">
+        <Carousel v-if="!filtersApplied" />
         <Carousel v-if="!filtersApplied" />
         <FilteredEvents v-if="filtersApplied" :filters="appliedFilters" />
       </div>
@@ -24,6 +29,8 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import Navbar from '@/components/Protected/Navbar.vue';
+import SearchandFilter from '@/components/Protected/Events/SearchandFilter.vue';
+import Carousel from '@/components/Protected/Events/Carousel.vue';
 import SearchandFilter from '@/components/Protected/Events/SearchandFilter.vue';
 import Carousel from '@/components/Protected/Events/Carousel.vue';
 import FilteredEvents from '@/components/Protected/Events/FilteredEvents.vue';
@@ -57,12 +64,16 @@ onMounted(() => {
 // State to track if filters are applied and the applied filter data
 const filtersApplied = ref(false);
 const appliedFilters = ref({});
+const appliedFilters = ref({});
 
 // This function is called when filters are applied
 function handleFiltersApplied(filters) {
   // Check if any filters are actually applied (not empty)
   const hasFilters =
     filters.searchQuery ||
+    (filters.petType.cats || filters.petType.dogs) ||
+    filters.eventSizeMin !== null ||
+    filters.eventSizeMax !== null ||
     (filters.petType.cats || filters.petType.dogs) ||
     filters.eventSizeMin !== null ||
     filters.eventSizeMax !== null ||
@@ -73,6 +84,7 @@ function handleFiltersApplied(filters) {
   filtersApplied.value = hasFilters; // Set the filters as applied only if filters are not empty
   appliedFilters.value = filters; // Store the applied filters
 }
+
 
 // This function is called when filters are reset
 function handleFiltersReset() {
@@ -235,3 +247,4 @@ main {
   z-index: 1000;
 }
 </style>
+
