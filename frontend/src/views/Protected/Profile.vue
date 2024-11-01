@@ -2,8 +2,19 @@
   <div class="home-container">
     <Navbar /> 
     <main id="scrollable-element">
-      <ProfileMain />
+      <ProfileMain 
+      
+        @edit-event="openEditEventModal" 
+        @event-updated="fetchEvents" 
+      />
     </main>
+    <!-- Edit Event Modal -->
+    <EditEventModal 
+      v-if="showEditModal" 
+      :eventData="editEventData" 
+      @close="closeEditEventModal" 
+      @event-updated="handleEventUpdated" 
+    />
   </div>
 </template>
 
@@ -12,7 +23,20 @@
 import { ref, onMounted } from 'vue';
 import Navbar from '@/components/Protected/Navbar.vue';
 import ProfileMain from '@/components/Protected/Profile/ProfileMain.vue';
+import EditEventModal from '@/components/Protected/EventsAdmin/EditEventModal.vue';
 
+const showEditModal = ref(false);
+const editEventData = ref(null);
+
+const openEditEventModal = (event) => {
+  editEventData.value = event;
+  showEditModal.value = true;
+};
+
+const closeEditEventModal = () => {
+  showEditModal.value = false;
+  editEventData.value = null;
+};
 
 import Scrollbar from 'smooth-scrollbar';
 import OverscrollPlugin from 'smooth-scrollbar/plugins/overscroll';

@@ -5,7 +5,7 @@
       <div class="profile-picture">
         <img :src="userData.profileImage || 'https://via.placeholder.com/150?text=Profile+Image'" alt="Profile Picture"
           class="profile-image" />
-      </div>
+      </div> 
       <div class="profile-info">
         <div class="profile-details">
           <h2 class="username">{{ userData.username }}</h2>

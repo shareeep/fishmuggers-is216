@@ -114,7 +114,7 @@
 
         <!-- Display CreatedEvents or JoinedEvents component based on eventsView -->
         <div v-if="eventsView === 'createdEvents'">
-          <CreatedEvents :events="events" @edit-event="openEditEventModal" @delete-event="deleteEvent" />
+          <CreatedEvents :events="events" @edit-event="handleEditEvent" @delete-event="deleteEvent" />
         </div>
         <div v-if="eventsView === 'joinedEvents'">
           <JoinedEvents :events="events" />
@@ -153,12 +153,14 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, defineEmits } from 'vue';
 import axios from 'axios';
 import { getAuth } from 'firebase/auth';
 import { useRouter } from 'vue-router';
 import CreatedEvents from "@/components/Protected/EventsAdmin/CreatedEventsList.vue";
 import JoinedEvents from "@/components/Protected/EventsAdmin/JoinedEventsList.vue";
+
+const emit = defineEmits(['edit-event']);
 const events = ref([]);
 
 // Initialize Firebase Auth and Router
@@ -218,13 +220,14 @@ const fetchUserData = async () => {
 };
 
 
-const openModal = (index) => {
-  selectedPostIndex.value = index;
-  isModalOpen.value = true;
+const handleEditEvent = (event) => {
+  // Emit event to Profile.vue to open modal
+  emit('edit-event', event);
 };
 
-const closeModal = () => {
-  isModalOpen.value = false;
+// Sample deleteEvent function
+const deleteEvent = (eventId) => {
+  console.log("Delete Event:", eventId);
 };
 
 const prevPost = () => {

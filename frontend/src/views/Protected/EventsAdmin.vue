@@ -9,7 +9,7 @@
         <!-- Event Creation Form -->
         <EventCreationForm @event-created="fetchEvents" />
         <!-- Events List -->
-        <EventsList :events="events" @edit-event="openEditEventModal" @delete-event="deleteEvent" />
+        <!-- <EventsList :events="events" @edit-event="openEditEventModal" @delete-event="deleteEvent" /> -->
         <!-- Edit Event Modal -->
         <EditEventModal v-if="showEditModal" :eventData="editEventData" @close="closeEditModal"
           @event-updated="handleEventUpdated" />

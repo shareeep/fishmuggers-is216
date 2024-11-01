@@ -19,7 +19,7 @@
           <strong>Interested Users:</strong> {{ event.interestedUsers.length }}
         </p>
         <!-- Action Buttons -->
-         <!-- i just put '||' instead of '&&' to see if edit/delete buttons will show up-->
+        <!-- i just put '||' instead of '&&' to see if edit/delete buttons will show up-->
         <div class="ml-auto" v-if="showActions || isEventHost">
           <button @click="$emit('edit-event', event)" class="edit-btn mr-3">
             Edit
@@ -40,12 +40,11 @@ import { getAuth } from "firebase/auth";
 // Props
 const props = defineProps({
   event: Object,
-  showActions: Boolean, // Prop to control action button visibility
+  showActions: Boolean, 
 });
 
 const auth = getAuth();
 const currentUser = computed(() => auth.currentUser);
-const emit = defineEmits(["edit-event", "delete-event"]);
 
 // Computed property to check if current user is the event host
 const isEventHost = computed(() => {
