@@ -24,7 +24,7 @@
         <div v-if="activeTab === 'large' && showCarousel" >
           <!-- Vertical Cards for Small Screens (1 Column) -->
           <div class="flex flex-col md:hidden">
-            <div v-for="(event, index) in filteredEvents" :key="index" class="mb-4 mx-auto">
+            <div v-for="(event, index) in tabEvents" :key="index" class="mb-4 mx-auto">
               <router-link :to="{ name: 'eventDetail', params: { id: event.eventId } }">
                 <div class="carousel__item">
                   <div class="card">
@@ -57,7 +57,7 @@
           <!-- Carousel for Medium Screens (1 Item) -->
           <div class="hidden md:block lg:hidden">
             <Carousel :itemsToShow="1" :wrapAround="true" :transition="500" class="mx-auto" style="width:600px;">
-              <Slide v-for="(event, index) in filteredEvents" :key="index" class="mb-4 mx-auto">
+              <Slide v-for="(event, index) in tabEvents" :key="index" class="mb-4 mx-auto">
                 <router-link :to="{ name: 'eventDetail', params: { id: event.eventId } }">
                   <div class="carousel__item">
                     <div class="card">
@@ -105,7 +105,7 @@
           <!-- Carousel for Large Screens (3 Items) -->
           <div v-if="showLargeCarousel" class="hidden lg:block">
             <Carousel :itemsToShow="3" :wrapAround="true" :transition="500" :partialVisible="false">
-              <Slide v-for="(event, index) in filteredEvents" :key="index" :class="{ active: index === currentIndex }">
+              <Slide v-for="(event, index) in tabEvents" :key="index" :class="{ active: index === currentIndex }">
                 <router-link :to="{ name: 'eventDetail', params: { id: event.eventId } }">
                   <div class="carousel__item">
                     <div class="card">
@@ -157,7 +157,7 @@
         <div v-if="activeTab === 'casual' && showCarousel">
           <!-- Vertical Cards for Small Screens (1 Column) -->
           <div class="flex flex-col md:hidden">
-            <div v-for="(event, index) in filteredEvents" :key="index"class="mb-4 mx-auto">
+            <div v-for="(event, index) in tabEvents" :key="index"class="mb-4 mx-auto">
               <router-link :to="{ name: 'eventDetail', params: { id: event.eventId } }">
                 <div class="carousel__item">
                   <div class="card">
@@ -190,7 +190,7 @@
           <!-- Carousel for Medium Screens (1 Item) -->
           <div class="hidden md:block lg:hidden">
             <Carousel :itemsToShow="1" :wrapAround="true" :transition="500" class="mx-auto" style="width:600px;">
-              <Slide v-for="(event, index) in filteredEvents" :key="index">
+              <Slide v-for="(event, index) in tabEvents" :key="index">
                 <router-link :to="{ name: 'eventDetail', params: { id: event.eventId } }">
                   <div class="carousel__item">
                     <div class="card">
@@ -238,7 +238,7 @@
           <!-- Carousel for Large Screens (3 Items) -->
           <div v-if="showLargeCarousel" class="hidden lg:block">
             <Carousel :itemsToShow="3" :wrapAround="true" :transition="500" :partialVisible="false">
-              <Slide v-for="(event, index) in filteredEvents" :key="index" :class="{ active: index === currentIndex }">
+              <Slide v-for="(event, index) in tabEvents" :key="index" :class="{ active: index === currentIndex }">
                 <router-link :to="{ name: 'eventDetail', params: { id: event.eventId } }">
                   <div class="carousel__item">
                     <div class="card">
@@ -315,7 +315,7 @@ export default defineComponent({
     };
   },
 computed: {
-  filteredEvents() {
+  tabEvents() {
     const eventTypeFilter = this.activeTab === 'large' ? 'large' : 'casual';
     console.log('Active Tab:', this.activeTab);
     return this.events.filter(event => {

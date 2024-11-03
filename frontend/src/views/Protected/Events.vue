@@ -130,7 +130,7 @@ const applyFilters = (filters) => {
     }
 
     // Apply Event Size
-    if (filters.eventSize !== null) {
+    if (filters.eventSize && filters.eventSize !== '') {
       if (Number(event.eventSize) > Number(filters.eventSize)) {
         console.log('Event excluded by eventSize:', event.title);
         return false;
