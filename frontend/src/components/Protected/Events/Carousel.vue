@@ -503,6 +503,7 @@ export default defineComponent({
   color: #2c3e50;
   overflow-x: hidden;
   position: relative;
+  z-index: 100;
   --vc-pgn-margin: 5px;
   --vc-pgn-width: 15px;
   --vc-pgn-height: 15px;
@@ -517,6 +518,7 @@ export default defineComponent({
 
 /* Carousel Item Styles */
 .carousel__item {
+  overflow: visible;
   margin: 10px 15px;
   flex: 0 0 600px;
   max-width: 100%;
@@ -591,6 +593,8 @@ export default defineComponent({
 
 /* Card Styles */
 .card {
+  position:relative;
+  z-index: 30;
   transform: scale(0.85);
   border-radius: 15px;
   overflow: hidden;
@@ -602,7 +606,8 @@ export default defineComponent({
 }
 
 .card:hover {
-  transform: scale(0.9);
+  z-index: 10;
+  transform: scale(0.88);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
 }
 
