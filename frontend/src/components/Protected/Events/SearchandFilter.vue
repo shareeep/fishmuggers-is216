@@ -851,6 +851,7 @@ export default {
     },
     resetFilters() {
       this.closeAllDropdowns();
+      this.searchQuery= '',
       this.selectedCats = false;
       this.selectedDogs = false;
       this.selectedEventSize = null;
