@@ -1,12 +1,11 @@
 <template>
   <!-- <div class="carousel-wrapper"> -->
   <div class="carousel">
-    <h1 class="title">Events</h1>
     <!-- Profile Tabs -->
-    <div class="profile-tabs">
+    <!-- <div class="profile-tabs">
       <button :class="{ active: activeTab === 'large' }" @click="switchTab('large')">Large Scale</button>
       <button :class="{ active: activeTab === 'casual' }" @click="switchTab('casual')">Casual</button>
-    </div>
+    </div> -->
     <!-- Loading Indicator -->
     <div v-if="loading" class="loading-indicator">
       Loading events...
@@ -21,7 +20,7 @@
     <div v-else>
       <!-- Tab Content (LARGE SCALE)-->
       <div class="tab-content">
-        <div v-if="activeTab === 'large' && showCarousel" >
+        <div v-if="activeTab === 'large' && showCarousel">
           <!-- Vertical Cards for Small Screens (1 Column) -->
           <div class="flex flex-col md:hidden">
             <div v-for="(event, index) in tabEvents" :key="index" class="mb-4 mx-auto">
@@ -157,7 +156,7 @@
         <div v-if="activeTab === 'casual' && showCarousel">
           <!-- Vertical Cards for Small Screens (1 Column) -->
           <div class="flex flex-col md:hidden">
-            <div v-for="(event, index) in tabEvents" :key="index"class="mb-4 mx-auto">
+            <div v-for="(event, index) in tabEvents" :key="index" class="mb-4 mx-auto">
               <router-link :to="{ name: 'eventDetail', params: { id: event.eventId } }">
                 <div class="carousel__item">
                   <div class="card">
@@ -304,6 +303,12 @@ export default defineComponent({
     Pagination,
     Slide,
   },
+  props: {
+    selectedEventType: {
+      type: String,
+      required: true,
+    },
+  },
   data() {
     return {
       loading: true,
@@ -314,16 +319,12 @@ export default defineComponent({
       events: []
     };
   },
-computed: {
-  tabEvents() {
-    const eventTypeFilter = this.activeTab === 'large' ? 'large' : 'casual';
-    console.log('Active Tab:', this.activeTab);
-    return this.events.filter(event => {
-      const eventType = event.eventType || '';
-      return eventType === eventTypeFilter;
-    });
+  computed: {
+    tabEvents() {
+      return this.events.filter(event => event.eventType === this.selectedEventType);
+
+    },
   },
-},
 
 
   setup() {
@@ -338,7 +339,7 @@ computed: {
       updateActiveSlide,
     };
   },
-mounted() {
+  mounted() {
     this.fetchEvents(); // Fetch events data
     this.setInitialCarouselView();
     // Ensure the default tab's data is computed on load
@@ -354,32 +355,32 @@ mounted() {
       }, 0); // Adjust delay as needed
     },
   },
-methods: {
-  switchTab(tab) {
-    this.activeTab = tab;
-    console.log('Tab switched to:', this.activeTab); // Log to check the tab
-    this.showCarousel = false;
-    setTimeout(() => {
-      this.showCarousel = true;
-      window.dispatchEvent(new Event('resize'));
-    }, 10);
-  },
+  methods: {
+    switchTab(tab) {
+      this.activeTab = tab;
+      console.log('Tab switched to:', this.activeTab); // Log to check the tab
+      this.showCarousel = false;
+      setTimeout(() => {
+        this.showCarousel = true;
+        window.dispatchEvent(new Event('resize'));
+      }, 10);
+    },
 
-async fetchEvents() {
-  try {
-    const response = await axios.get('http://localhost:3000/api/events');
-    this.events = response.data;
-    console.log('Fetched Events:', this.events); // Add this line
-  } catch (error) {
-    console.error('Error fetching events:', error);
-    this.errorMessage = 'Failed to load events.';
-  } finally {
-    this.loading = false;
-    setTimeout(() => {
-      window.dispatchEvent(new Event('resize'));
-    }, 10);
-  }
-},
+    async fetchEvents() {
+      try {
+        const response = await axios.get('http://localhost:3000/api/events');
+        this.events = response.data;
+        console.log('Fetched Events:', this.events); // Add this line
+      } catch (error) {
+        console.error('Error fetching events:', error);
+        this.errorMessage = 'Failed to load events.';
+      } finally {
+        this.loading = false;
+        setTimeout(() => {
+          window.dispatchEvent(new Event('resize'));
+        }, 10);
+      }
+    },
     formatEventDay(dateInput) {
       const dateObj = this.convertToDate(dateInput);
       return dateObj.toLocaleDateString('en-US', { weekday: 'long' });
@@ -472,14 +473,14 @@ async fetchEvents() {
 }
 
 /* General Styles */
-.title {
+/* .title {
   color: rgb(46, 46, 46);
   text-align: center;
   font-family: 'Montserrat', sans-serif;
   font-size: 30px;
   font-weight: bold;
   margin-top: 40px;
-}
+} */
 
 /* Loading Indicator and Error Message Styles */
 .loading-indicator,
@@ -688,33 +689,4 @@ async fetchEvents() {
   margin-right: 5px;
 }
 
-
-.profile-tabs {
-  display: flex;
-  justify-content: space-around;
-  border-top: 1px solid #ddd;
-  padding: 10px;
-  margin-top: 20px;
-  font-size: 16px;
-}
-
-.profile-tabs button {
-  background: none;
-  border: none;
-  font-weight: bold;
-  color: #888;
-  cursor: pointer;
-}
-
-.profile-tabs .active {
-  color: black;
-  border-bottom: 2px solid black;
-}
-
-@media (max-width: 767px) {
-  .flex.flex-col>div {
-    margin-bottom: 0px !important;
-    /* Overrides the default mb-4 class */
-  }
-}
 </style>
