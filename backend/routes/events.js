@@ -119,55 +119,13 @@ const fetchUsersDetails = async (uids) => {
 // --------------------
 // Routes
 // --------------------
+
 // @route   GET /api/events
-// @desc    Get all events with host details and filter by query parameters
+// @desc    Get all events with host details
 // @access  Public
 router.get("/", async (req, res) => {
   try {
-    const {
-      petType,
-      eventSizeMin,
-      eventSizeMax,
-      startDate,
-      endDate,
-      location,
-      searchQuery,
-    } = req.query;
-
-    let query = db.collection("events").orderBy("createdAt", "desc");
-
-    // Apply Filters
-    if (petType) {
-      // Firestore allows only one 'array-contains' per query
-      query = query.where("petType", "array-contains", petType);
-    }
-
-    if (eventSizeMin && eventSizeMax) {
-      query = query
-        .where("eventSize", ">=", parseInt(eventSizeMin, 10))
-        .where("eventSize", "<=", parseInt(eventSizeMax, 10));
-    } else if (eventSizeMin) {
-      query = query.where("eventSize", ">=", parseInt(eventSizeMin, 10));
-    } else if (eventSizeMax) {
-      query = query.where("eventSize", "<=", parseInt(eventSizeMax, 10));
-    }
-
-    if (startDate) {
-      query = query.where("date", ">=", new Date(startDate));
-    }
-
-    if (endDate) {
-      query = query.where("date", "<=", new Date(endDate));
-    }
-
-    if (location) {
-      query = query.where("location", "==", location);
-    }
-
-    // Note: Firestore requires that all where clauses on different fields are indexed appropriately.
-    // Ensure you have the necessary composite indexes set up in Firestore.
-
-    const eventsSnapshot = await query.get();
+    const eventsSnapshot = await db.collection("events").orderBy("createdAt", "desc").get();
     const events = [];
     const hostUids = new Set();
 
@@ -202,24 +160,12 @@ router.get("/", async (req, res) => {
         host: {
           uid: event.host,
           username: hostDetails.username || "Unknown",
-          profilePic:
-            hostDetails.profileImage || "https://via.placeholder.com/50",
+          profilePic: hostDetails.profileImage || "https://via.placeholder.com/50",
         },
       };
     });
 
-    // Apply search query filtering on the backend if provided
-    let finalEvents = eventsWithHostDetails;
-    if (searchQuery) {
-      const lowerSearch = searchQuery.toLowerCase();
-      finalEvents = finalEvents.filter(
-        (event) =>
-          event.title.toLowerCase().includes(lowerSearch) ||
-          event.description.toLowerCase().includes(lowerSearch)
-      );
-    }
-
-    res.status(200).json(finalEvents);
+    res.status(200).json(eventsWithHostDetails);
   } catch (error) {
     console.error("Error fetching events:", error);
     res.status(500).json({ error: "Failed to fetch events" });

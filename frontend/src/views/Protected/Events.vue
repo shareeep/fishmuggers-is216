@@ -1,3 +1,4 @@
+<!-- Events.vue -->
 <template>
   <div class="home-container">
     <Navbar />
@@ -10,10 +11,8 @@
       </div>
       <div class="content-container">
         <Carousel v-if="!filtersApplied" />
-        <Carousel v-if="!filtersApplied" />
-        <FilteredEvents v-if="filtersApplied" :filters="appliedFilters" />
+        <FilteredEvents v-else :events="filteredEvents" />
       </div>
-
     </main>
     <!--Go to Add Events Page-->
     <router-link to="/eventsadmin">
@@ -30,6 +29,7 @@ import Carousel from '@/components/Protected/Events/Carousel.vue';
 import FilteredEvents from '@/components/Protected/Events/FilteredEvents.vue';
 import Scrollbar from 'smooth-scrollbar';
 import OverscrollPlugin from 'smooth-scrollbar/plugins/overscroll';
+import axios from 'axios';
 
 Scrollbar.use(OverscrollPlugin);
 
@@ -54,41 +54,123 @@ onMounted(() => {
   scrollbar.track.yAxis.element.style.opacity = '0';
 });
 
-
-// State to track if filters are applied and the applied filter data
+// Reactive variables to manage filters and events
 const filtersApplied = ref(false);
+const appliedFilters = ref({});
+const allEvents = ref([]);
+const filteredEvents = ref([]);
 
-// This function is called when filters are applied
-function handleFiltersApplied(filters) {
-  // Check if any filters are actually applied (not empty)
-  const hasFilters =
-    filters.searchQuery ||
-    (filters.petType.cats || filters.petType.dogs) ||
-    filters.eventSizeMin !== null ||
-    filters.eventSizeMax !== null ||
-    (filters.petType.cats || filters.petType.dogs) ||
-    filters.eventSizeMin !== null ||
-    filters.eventSizeMax !== null ||
-    filters.dateRange.startDate ||
-    filters.dateRange.endDate ||
-    filters.location;
+// Function to fetch all events from the backend
+const fetchAllEvents = async () => {
+  try {
+    const response = await axios.get('/api/events');
+    allEvents.value = response.data;
+    filteredEvents.value = allEvents.value; // Initialize with all events
+  } catch (error) {
+    console.error('Error fetching all events:', error);
+  }
+};
 
-  filtersApplied.value = hasFilters; // Set the filters as applied only if filters are not empty
-  appliedFilters.value = filters; // Store the applied filters
-}
+// Fetch all events when the component mounts
+onMounted(() => {
+  fetchAllEvents();
+});
 
+// Function to handle applied filters
+const handleFiltersApplied = (filters) => {
+  appliedFilters.value = filters;
+  filtersApplied.value = Object.keys(filters).some(key => {
+    if (key === 'petType') {
+      return filters.petType.cats || filters.petType.dogs;
+    }
+    return filters[key];
+  });
 
-// This function is called when filters are reset
-function handleFiltersReset() {
-  filtersApplied.value = false; // Reset the filtersApplied to false to show the carousel
-  appliedFilters.value = {}; // Clear the applied filters
-}
-// function handleSearchCleared() {
-//   filtersApplied.value = false; // No filters applied, so reset
-//   appliedFilters.value = {}; // Clear filters
-// }
+  applyFilters(filters);
+};
 
+// Function to handle filter reset
+const handleFiltersReset = () => {
+  appliedFilters.value = {};
+  filtersApplied.value = false;
+  filteredEvents.value = allEvents.value;
+};
+const applyFilters = (filters) => {
+  console.log('Filters received:', filters); // Log received filters
 
+  filteredEvents.value = allEvents.value.filter(event => {
+    console.log('Processing event:', event); // Log event details
+
+    // Apply Search Query
+    if (filters.searchQuery) {
+      const query = filters.searchQuery.toLowerCase();
+      if (
+        !event.title.toLowerCase().includes(query) &&
+        !event.description.toLowerCase().includes(query)
+      ) {
+        console.log('Event excluded by search query:', event.title);
+        return false;
+      }
+    }
+
+    // Apply Pet Type
+    if (filters.petType) {
+      const selectedPetTypes = [];
+      if (filters.petType.cats) selectedPetTypes.push('Cat');
+      if (filters.petType.dogs) selectedPetTypes.push('Dog');
+      if (filters.petType.birds) selectedPetTypes.push('Bird');
+
+      if (selectedPetTypes.length > 0) {
+        const hasPetType = selectedPetTypes.some(type => event.petType.includes(type));
+        if (!hasPetType) {
+          console.log('Event excluded by pet type:', event.title);
+          return false;
+        }
+      }
+    }
+
+    // Apply Event Size
+    if (filters.eventSize !== null) {
+      if (Number(event.eventSize) > Number(filters.eventSize)) {
+        console.log('Event excluded by eventSize:', event.title);
+        return false;
+      }
+    }
+
+    // Apply Date Range
+    if (filters.dateRange) {
+      const eventDate = new Date(event.date);
+      if (filters.dateRange.startDate) {
+        const startDate = new Date(filters.dateRange.startDate);
+        if (eventDate < startDate) {
+          console.log('Event excluded by startDate:', event.title);
+          return false;
+        }
+      }
+      if (filters.dateRange.endDate) {
+        const endDate = new Date(filters.dateRange.endDate);
+        if (eventDate > endDate) {
+          console.log('Event excluded by endDate:', event.title);
+          return false;
+        }
+      }
+    }
+
+    // Apply Location
+    if (filters.location) {
+      if (event.location !== filters.location) {
+        console.log('Event excluded by location:', event.title);
+        return false;
+      }
+    }
+
+    // Log event passed all filters
+    console.log('Event passed all filters:', event.title);
+    return true;
+  });
+
+  console.log('Filtered events:', filteredEvents.value); // Log final filtered events
+};
 
 </script>
 
