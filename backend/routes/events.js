@@ -7,6 +7,10 @@ const admin = require("firebase-admin");
 const { body, validationResult } = require("express-validator");
 const authenticate = require("../middleware/auth.js");
 const upload = require("../middleware/upload.js");
+const cors = require('cors');
+
+router.use(cors({ origin: 'http://localhost:5173' }));
+
 
 // --------------------
 // Helper Functions
@@ -121,10 +125,7 @@ const fetchUsersDetails = async (uids) => {
 // @access  Public
 router.get("/", async (req, res) => {
   try {
-    const eventsSnapshot = await db
-      .collection("events")
-      .orderBy("createdAt", "desc")
-      .get();
+    const eventsSnapshot = await db.collection("events").orderBy("createdAt", "desc").get();
     const events = [];
     const hostUids = new Set();
 
@@ -159,8 +160,7 @@ router.get("/", async (req, res) => {
         host: {
           uid: event.host,
           username: hostDetails.username || "Unknown",
-          profilePic:
-            hostDetails.profileImage || "https://via.placeholder.com/50",
+          profilePic: hostDetails.profileImage || "https://via.placeholder.com/50",
         },
       };
     });
