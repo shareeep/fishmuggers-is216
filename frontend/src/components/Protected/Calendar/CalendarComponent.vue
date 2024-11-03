@@ -2,7 +2,7 @@
   <div class="calendar-container">
     <div class="side-panel">
       <div class="calendar-img">
-        <img src="../../../assets/images/sus_cat_calendar.png" alt="" />
+        <img src="https://firebasestorage.googleapis.com/v0/b/fishmugger-is216.appspot.com/o/profileImages%2F1.jpg?alt=media&token=2752a088-3d5f-4080-9b0a-c1e73718c34c" alt="" />
       </div>
       <div class="current-day">
         <h2>{{ currentDay }}</h2>
@@ -114,8 +114,8 @@
         <label for="description">Description:</label>
         <textarea v-model="newCustomEvent.description" id="description" required></textarea>
 
-        <label for="date">Date:</label>
-        <input type="date" v-model="newCustomEvent.date" id="date" required />
+        <label for="datetime">Date and Time:</label>
+        <input type="datetime-local" v-model="newCustomEvent.datetime" id="datetime" required />
 
         <label for="location">Location:</label>
         <input type="text" v-model="newCustomEvent.location" id="location" required />
@@ -159,7 +159,7 @@ export default {
         newCustomEvent: {
         title: '',
         description: '',
-        date: '',
+        datetime: '',
         location: ''
       },
       showAddEventPopup: false,
@@ -286,11 +286,10 @@ async mounted() {
     isEventDate(date, isCurrentMonth) {
         if (!isCurrentMonth || !date) return false;
         const formattedDate = new Date(this.currentYear, this.currentMonthIndex, date).toDateString();
-
-        // Show or hide custom events based on the filter
         if (this.showCustomEvents === 'yes' && this.customEventDates.includes(formattedDate)) {
-            return 'custom-event-date'; // Blue highlight for custom events
+          return 'custom-event-date';
         }
+
         if (this.eventDates.includes(formattedDate)) {
             return 'joined-event-date'; // Orange highlight for joined events
         }
@@ -355,7 +354,7 @@ async mounted() {
                 // Add the new event to customEvents and update the calendar
                 this.customEvents.push({
                     ...this.newCustomEvent,
-                    EventDate: new Date(this.newCustomEvent.date),
+                    EventDate: new Date(this.newCustomEvent.datetime),
                     customEventId: result.customEventId
                 });
 
@@ -363,7 +362,7 @@ async mounted() {
                 this.showAddEventPopup = false;
                 
                 // Clear the form fields
-                this.newCustomEvent = { title: '', description: '', date: '', location: '' };
+                this.newCustomEvent = { title: '', description: '', datetime: '', location: '' };
             } else {
                 console.error("Failed to create custom event:", result.error);
             }
@@ -426,7 +425,7 @@ async mounted() {
 <style scoped>
   .calendar-container {
     display: flex;
-    width: 90%;
+    width: 100%;
     margin: auto;
     height: 80vh;
     min-height: 550px;
@@ -450,19 +449,25 @@ async mounted() {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 5%;
-    padding-bottom: 0px;
-    width: 75%;
+    width: 75%; /* Adjust as needed for sizing */
+    padding-top: 75%; /* This helps maintain a square ratio based on width */
+    border-radius: 50%; /* Circular container */
+    overflow: hidden; /* Ensures the image doesn’t overflow outside the circle */
+    background-color: #f0f0f0; /* Optional background color */
+    position: relative;
+    margin:auto;
+    margin-top: 10px;
+}
 
-    margin: 0 auto; /* Center the container horizontally */
+.calendar-img img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ensures the image is centered and cropped */
+}
 
-  }
-  .calendar-img img {
-    /* width: 90%; */
-    height: auto ;
-    display: block;
-    border-radius: 50%;
-  }
   .current-day{
     text-align: center;
   }

@@ -19,6 +19,7 @@
     width: 250px;
     height: 100vh;
     position: fixed;
+
     top: 0;
     left: 0;
     background-color: #ffffff;

@@ -84,28 +84,25 @@ router.get('/custom-events/:uid', async (req, res) => {
 //CUSTOM EVENTS FORM POST
 // Create a new custom event and add it to the user's customEvents field
 router.post('/custom-events', async (req, res) => {
-    const { uid, title, description, date, location } = req.body;
+    const { uid, title, description, datetime, location } = req.body;
     try {
-        // Convert the date to a Firestore Timestamp
-        const eventDate = admin.firestore.Timestamp.fromDate(new Date(date));
+        // Convert the datetime to a Firestore Timestamp
+        const eventDate = admin.firestore.Timestamp.fromDate(new Date(datetime));
 
-        // Generate a new document reference with an auto-generated ID
-        const newEventRef = db.collection('customEvents').doc(); // Create a reference with an auto-generated ID
-        const customEventId = newEventRef.id; // Retrieve the generated ID
+        const newEventRef = db.collection('customEvents').doc();
+        const customEventId = newEventRef.id;
 
-        // Step 1: Set the custom event document with the customEventId included in the data
         await newEventRef.set({
-            customEventId, // Add the customEventId directly to the document
+            customEventId,
             title,
             desc: description,
-            date: eventDate, // Store the date as a Firestore Timestamp
+            date: eventDate, // Store as a Firestore timestamp
             location
         });
 
-        // Step 2: Add the new custom event ID to the user's customEvents array field
         const userRef = db.collection('users').doc(uid);
         await userRef.update({
-            customEvents: admin.firestore.FieldValue.arrayUnion(customEventId) // Adds the new custom event ID to the array
+            customEvents: admin.firestore.FieldValue.arrayUnion(customEventId)
         });
 
         res.status(201).json({ message: 'Custom event created successfully', customEventId });
@@ -116,17 +113,16 @@ router.post('/custom-events', async (req, res) => {
 });
 //CUSTOM EVENTS FORM POST
 
-// Delete an event
+// Delete an event (only removes the event document if it's a custom event)
 router.delete('/delete-event', async (req, res) => {
     const { uid, eventId, isCustomEvent } = req.body;
     try {
-        // Choose the correct collection
-        const collectionName = isCustomEvent ? 'customEvents' : 'events';
-        
-        // Delete the event document from the chosen collection
-        await db.collection(collectionName).doc(eventId).delete();
+        // If it's a custom event, delete the document from the customEvents collection
+        if (isCustomEvent) {
+            await db.collection('customEvents').doc(eventId).delete();
+        }
 
-        // Update the user's document to remove the event from the customEvents or joinedEvents field
+        // Update the user's document to remove the event from the appropriate field (customEvents or joinedEvents)
         const userRef = db.collection('users').doc(uid);
         const fieldToUpdate = isCustomEvent ? 'customEvents' : 'joinedEvents';
         
@@ -134,12 +130,13 @@ router.delete('/delete-event', async (req, res) => {
             [fieldToUpdate]: admin.firestore.FieldValue.arrayRemove(eventId)
         });
 
-        res.status(200).json({ message: 'Event deleted successfully' });
+        res.status(200).json({ message: 'Event deleted successfully from user\'s events list' });
     } catch (error) {
         console.error("Error deleting event:", error);
         res.status(500).json({ error: 'Failed to delete event' });
     }
 });
+
 
 
 module.exports = router;
