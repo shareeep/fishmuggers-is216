@@ -1,135 +1,124 @@
-<!-- SearchandFilter.vue -->
 <template>
   <div class="search-filter-wrapper">
-    <!-- Search Input -->
-    <div class="mb-4">
-      <label for="search" class="block text-gray-700">Search:</label>
-      <input
-        id="search"
-        v-model="searchQuery"
-        type="search"
-        @input="handleSearchInput"
-        class="w-full border border-gray-300 p-2 rounded"
-        placeholder="Search for events..."
-      />
-    </div>
-
-    <!-- Pet Type Dropdown -->
-    <div class="dropdown-wrapper">
-      <button @click="togglePetTypeDropdown" type="button">
-        Pet Type
-      </button>
-
-      <!-- Pet Type Dropdown Menu -->
-      <div v-if="isPetTypeDropdownOpen" class="custom-dropdown">
-        <h6>Category</h6>
-        <ul>
-          <li>
-            <input id="cats" type="checkbox" v-model="selectedCats" />
-            <label for="cats">Cats</label>
-          </li>
-          <li>
-            <input id="dogs" type="checkbox" v-model="selectedDogs" />
-            <label for="dogs">Dogs</label>
-          </li>
-          <li>
-            <input id="birds" type="checkbox" v-model="selectedBirds" />
-            <label for="birds">Birds</label>
-          </li>
-          <!-- Add more pet types as needed -->
-        </ul>
-        <button @click="applyPetTypeFilters">Apply</button>
-      </div>
-    </div>
-
-    <!-- Event Size Dropdown -->
-    <div class="dropdown-wrapper">
-      <button @click="toggleEventSizeDropdown" type="button">
-        Event Size
-        <!-- Dropdown Icon (optional) -->
-      </button>
-
-      <!-- Event Size Dropdown Menu -->
-      <div v-if="isEventSizeDropdownOpen" class="custom-dropdown">
-        <h6>Maximum Attendees</h6>
-        <select v-model.number="selectedEventSize">
-          <option disabled value="">Select maximum attendees</option>
-          <option value="5">5</option>
-          <option value="10">10</option>
-          <option value="20">20</option>
-          <option value="50">50</option>
-          <option value="100">100</option>
-        </select>
-        <button @click="applyEventSizeFilters">Apply</button>
-      </div>
-    </div>
-
-    <!-- Date Range Filter -->
-    <div class="dropdown-wrapper">
-      <button @click="toggleDateRangeDropdown" type="button">
-        Date Range
-        <!-- Dropdown Icon (optional) -->
-      </button>
-
-      <!-- Date Range Dropdown Menu -->
-      <div v-if="isDateRangeDropdownOpen" class="custom-dropdown">
-        <h6>Date Range</h6>
-        <div>
-          <label for="start-date">Start Date:</label>
-          <input
-            id="start-date"
-            v-model="startDate"
-            type="date"
-            class="w-full border border-gray-300 p-2 rounded"
-          />
-        </div>
-        <div>
-          <label for="end-date">End Date:</label>
-          <input
-            id="end-date"
-            v-model="endDate"
-            type="date"
-            class="w-full border border-gray-300 p-2 rounded"
-          />
-        </div>
-        <button @click="applyDateRangeFilters">Apply</button>
-      </div>
-    </div>
-
-    <!-- Location Dropdown -->
-    <div class="dropdown-wrapper">
-      <button @click="toggleLocationDropdown" type="button">
-        Location
-        <!-- Dropdown Icon (optional) -->
-      </button>
-
-      <!-- Location Dropdown Menu -->
-      <div v-if="isLocationDropdownOpen" class="custom-dropdown">
-        <h6>Location</h6>
+    <div class="filters-container">
+      <!-- Search Input -->
+      <div class="filter-item search-input">
         <input
-          v-model="searchedLoc"
-          @input="fetchLocationSuggestions"
-          type="text"
-          placeholder="Search for Location"
-          class="w-full border border-gray-300 p-2 rounded"
+          id="search"
+          v-model="searchQuery"
+          type="search"
+          @input="handleSearchInput"
+          class="search-bar"
+          placeholder="Search for events..."
         />
-        <ul v-if="locationSuggestions.length">
-          <li
-            v-for="suggestion in locationSuggestions"
-            :key="suggestion.id"
-            @click="selectLocation(suggestion)"
-          >
-            {{ suggestion.name }}
-          </li>
-        </ul>
-        <button @click="applyLocationFilters">Apply</button>
+      </div>
+
+      <!-- Pet Type Dropdown -->
+      <div class="filter-item dropdown-wrapper">
+        <button class="dropdown-btn" @click="togglePetTypeDropdown" type="button">
+          Pet Type <i class="fas fa-caret-down"></i>
+        </button>
+        <div v-if="isPetTypeDropdownOpen" class="custom-dropdown">
+          <h6>Category</h6>
+          <ul>
+            <li>
+              <input id="cats" type="checkbox" v-model="selectedCats" />
+              <label for="cats">Cats</label>
+            </li>
+            <li>
+              <input id="dogs" type="checkbox" v-model="selectedDogs" />
+              <label for="dogs">Dogs</label>
+            </li>
+            <li>
+              <input id="birds" type="checkbox" v-model="selectedBirds" />
+              <label for="birds">Birds</label>
+            </li>
+          </ul>
+          <button class="apply-btn" @click="applyPetTypeFilters">Apply</button>
+        </div>
+      </div>
+
+      <!-- Event Size Dropdown -->
+      <div class="filter-item dropdown-wrapper">
+        <button class="dropdown-btn" @click="toggleEventSizeDropdown" type="button">
+          Event Size <i class="fas fa-caret-down"></i>
+        </button>
+        <div v-if="isEventSizeDropdownOpen" class="custom-dropdown">
+          <h6>Maximum Attendees</h6>
+          <select v-model.number="selectedEventSize" class="dropdown-select">
+            <option disabled value="">Select maximum attendees</option>
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="20">20</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+          </select>
+          <button class="apply-btn" @click="applyEventSizeFilters">Apply</button>
+        </div>
+      </div>
+
+      <!-- Date Range Filter -->
+      <div class="filter-item dropdown-wrapper">
+        <button class="dropdown-btn" @click="toggleDateRangeDropdown" type="button">
+          Date Range <i class="fas fa-caret-down"></i>
+        </button>
+        <div v-if="isDateRangeDropdownOpen" class="custom-dropdown">
+          <h6>Date Range</h6>
+          <div>
+            <label for="start-date" class="block text-gray-700">Start Date:</label>
+            <input
+              id="start-date"
+              v-model="startDate"
+              type="date"
+              class="date-input"
+            />
+          </div>
+          <div class="mt-2">
+            <label for="end-date" class="block text-gray-700">End Date:</label>
+            <input
+              id="end-date"
+              v-model="endDate"
+              type="date"
+              class="date-input"
+            />
+          </div>
+          <button class="apply-btn mt-2" @click="applyDateRangeFilters">Apply</button>
+        </div>
+      </div>
+
+      <!-- Location Dropdown -->
+      <div class="filter-item dropdown-wrapper">
+        <button class="dropdown-btn" @click="toggleLocationDropdown" type="button">
+          Location <i class="fas fa-caret-down"></i>
+        </button>
+        <div v-if="isLocationDropdownOpen" class="custom-dropdown">
+          <h6>Location</h6>
+          <input
+            v-model="searchedLoc"
+            @input="fetchLocationSuggestions"
+            type="text"
+            placeholder="Search for Location"
+            class="location-input"
+          />
+          <ul v-if="locationSuggestions.length" class="location-suggestions">
+            <li
+              v-for="suggestion in locationSuggestions"
+              :key="suggestion.id"
+              @click="selectLocation(suggestion)"
+              class="suggestion-item"
+            >
+              {{ suggestion.name }}
+            </li>
+          </ul>
+          <button class="apply-btn mt-2" @click="applyLocationFilters">Apply</button>
+        </div>
       </div>
     </div>
 
     <!-- Apply and Reset Filters Buttons -->
-    <div class="filter-buttons">
-      <button @click="applyFilters">Apply Filters</button>
-      <button @click="resetFilters">Reset Filters</button>
+    <div class="filter-buttons mt-4">
+      <button class="apply-btn mr-2" @click="applyFilters">Apply Filters</button>
+      <button class="reset-btn" @click="resetFilters">Reset Filters</button>
     </div>
   </div>
 </template>
@@ -303,6 +292,7 @@ export default {
 
     // Handle Search Input
     handleSearchInput() {
+    console.log('Search Query:', this.searchQuery);
       const filters = {
         searchQuery: this.searchQuery,
         petType: {
@@ -363,138 +353,124 @@ applyFilters() {
 </script>
 
 <style scoped>
-.wrapper {
-    width: 100%;
-    position: relative;
+.search-filter-wrapper {
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* DROPDOWN CONTAINER */
+.filters-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: space-between;
+}
+
+.filter-item {
+  flex: 1 1 200px; /* Adjusts width as necessary */
+  min-width: 180px;
+}
+
+.search-bar {
+  width: 100%;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  padding: 10px;
+  font-size: 14px;
+  transition: border-color 0.3s;
+}
+
+.search-bar:focus {
+  border-color: #7b61ff;
+  outline: none;
+  box-shadow: 0 0 5px rgba(123, 97, 255, 0.3);
+}
+
+.dropdown-btn {
+  width: 100%;
+  background-color: #7b61ff;
+  color: #fff;
+  border: none;
+  padding: 10px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.dropdown-btn:hover {
+  background-color: #5e48e6;
+}
+
 .custom-dropdown {
-    position: fixed;
-    padding: 1rem;
-    /* Ensure uniform dropdown padding */
-    background-color: #FDF8E1;
-    /* Cornsilk */
-    border: 1px solid #FAE588;
-    /* Jasmine */
-    position: absolute;
-    /* Set dropdown menu position to absolute */
-    top: 100%;
-    /* Position the menu below the button */
-    left: 0;
-    /* Align it to the left of the button */
-    z-index: 100000000000;
-    /* Ensure it appears above other elements */
-
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  padding: 15px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 10;
+  width: 100%;
 }
 
-/* Dropdown header */
-.custom-dropdown h6 {
-    color: black;
-    font-weight: bold;
+.date-input,
+.dropdown-select,
+.location-input {
+  width: 100%;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  padding: 8px;
+  margin-top: 5px;
 }
 
-/* Checkbox styling */
-.custom-dropdown input[type="checkbox"] {
-    accent-color: #7B61FF;
+.apply-btn {
+  background-color: #7b61ff;
+  color: #fff;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 8px;
+  font-weight: bold;
+  margin-top: 10px;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
-/* Apply button */
-.custom-dropdown button {
-    background-color: #7B61FF;
-    color: #FFFFFF;
-    font-weight: bold;
-    transition: background-color 0.3s ease, transform 0.2s;
+.apply-btn:hover {
+  background-color: #5e48e6;
 }
 
-
-.custom-dropdown button:hover {
-    background-color: #5e48e6;
+.reset-btn {
+  background-color: #ddd;
+  color: #333;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
-/* List items */
-.custom-dropdown ul li label {
-    color: #333333;
-    /* Darker for contrast */
+.reset-btn:hover {
+  background-color: #bbb;
 }
 
-.custom-dropdown ul li:hover {
-    background-color: #FDF4CB;
-    /* Lemon Chiffon */
-    border-radius: 5px;
+.location-suggestions {
+  list-style: none;
+  padding: 0;
+  margin-top: 10px;
 }
 
-.dropdown-wrapper {
-    position: relative;
-    /*Set relative positioning for dropdown menus */
-    padding: 0;
+.suggestion-item {
+  padding: 8px;
+  border-bottom: 1px solid #ddd;
+  cursor: pointer;
+  transition: background-color 0.3s;
 }
 
-
-/* Search Bar */
-input[type="search"] {
-    background-color: white;
-    /* White fill */
-    border: 2px solid #FFD700;
-    /* Gray border */
-    border-radius: 15px;
-    /* Rounded corners */
-    width: 400px;
-    /* Set the width of the search bar */
-    color: black;
-    transition: border-color 0.3s, box-shadow 0.3s;
-}
-
-input[type="search"]:focus {
-    border-color: #FAE588;
-    /* Change border color on focus (blue) */
-    box-shadow: 0 0 0 2px #FFD700;
-    /* Blue focus outline */
-    color: black;
-}
-
-button {
-    border-radius: 12px;
-    /* Ensure the button also has rounded corners */
-}
-
-/* SORT BY */
-.sort-by {
-    /* Flexbox for sort by section */
-    justify-content: center;
-    width: 100%;
-    /* Center align items */
-    margin-top: 15px;
-    /* Margin on top */
-}
-
-/* SORT BY */
-@media (min-width: 1024px) {
-    .sort-by {
-        display: flex;
-        /* Flexbox for sort by section */
-        align-items: center;
-        /* Center align items */
-        margin-top: 15px;
-        /* Margin on top */
-        transform: scale(0.9);
-    }
-}
-
-.apply {
-    cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.apply:hover {
-    background-color: #e6c200;
-    transform: scale(1.05);
-    box-shadow: 0 4px 8px rgba(75, 0, 130, 0.2);
-}
-
-
-.apply:active {
-    transform: scale(0.98);
-
+.suggestion-item:hover {
+  background-color: #f4f4f4;
 }
 </style>
