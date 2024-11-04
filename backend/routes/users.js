@@ -315,5 +315,25 @@ router.get("/:userId/view/:friendId", authenticate, async (req, res) => {
   }
 });
 
+// GET /api/users - Fetch all users
+router.get("/", authenticate, async (req, res) => {
+  try {
+    const usersSnapshot = await db.collection("users").get();
+    const users = [];
+
+    usersSnapshot.forEach((doc) => {
+      users.push({
+        id: doc.id,
+        ...doc.data(),
+      });
+    });
+
+    res.status(200).json(users);
+  } catch (error) {
+    console.error("Error fetching all users:", error);
+    res.status(500).json({ error: "Failed to fetch users" });
+  }
+});
+
 
 module.exports = router;

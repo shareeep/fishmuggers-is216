@@ -11,19 +11,21 @@
         <FriendRequests />
 
         <!-- FriendsList component with popup toggle function passed down -->
-        <FriendsList @popup-toggle="togglePopup" :friends="friends" />
+        <FriendsList @popup-toggle="togglePopup" :myFriends="myFriends" :suggestedFriends="suggestedFriends" />
 
         <RequestsSent />
       </div> 
     </main>
 
     <!-- AllFriendsPopup component, visible only when showPopup is true -->
-    <AllFriendsPopup v-if="showPopup" :friends="friends" @close="togglePopup(false)" />
+    <AllFriendsPopup v-if="showPopup" :friends="suggestedFriends" @close="togglePopup(false)" />
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue';
+import { getAuth } from "firebase/auth";
+import axios from 'axios';
 import Navbar from '@/components/Protected/Navbar.vue';
 import SearchBar from '@/components/Protected/Friends/Searchbar.vue';
 import FriendRequests from '@/components/Protected/Friends/FriendRequests.vue';
@@ -38,25 +40,36 @@ import OverscrollPlugin from 'smooth-scrollbar/plugins/overscroll';
 Scrollbar.use(OverscrollPlugin);
 
 const showPopup = ref(false);
-const friends = ref([
-  { id: 1, name: "Jerome", username: "jerome-with-a-j", avatar: "https://randomuser.me/api/portraits/men/10.jpg" },
-  { id: 2, name: "Becky Gianani", username: "becky-gee", avatar: "https://randomuser.me/api/portraits/women/12.jpg" },
-  { id: 3, name: "Lauren Moore", username: "lauren-moore", avatar: "https://randomuser.me/api/portraits/women/18.jpg" },
-  { id: 4, name: "Brad Garner", username: "bradgarner", avatar: "https://randomuser.me/api/portraits/men/17.jpg" },
-  { id: 5, name: "Zafira Bee", username: "zafira-bee", avatar: "https://randomuser.me/api/portraits/men/14.jpg" },
-  { id: 6, name: "Tim Double-U", username: "tim-double-u", avatar: "https://randomuser.me/api/portraits/men/19.jpg" },
-  { id: 7, name: "Georgia Plué", username: "gee-plue", avatar: "https://randomuser.me/api/portraits/women/20.jpg" },
-  { id: 8, name: "Alex Johnson", username: "alex-j", avatar: "https://randomuser.me/api/portraits/men/23.jpg" },
-  { id: 9, name: "Samantha Rose", username: "sam-rose", avatar: "https://randomuser.me/api/portraits/women/25.jpg" },
-  { id: 10, name: "Chris Lee", username: "chris-lee", avatar: "https://randomuser.me/api/portraits/men/29.jpg" },
-  { id: 11, name: "Emily Nguyen", username: "em-nguyen", avatar: "https://randomuser.me/api/portraits/women/33.jpg" },
-  { id: 12, name: "Michael Tan", username: "mike-tan", avatar: "https://randomuser.me/api/portraits/men/35.jpg" },
-  // ... Add other friends here
-]);
+const friends = ref([]); // Initialize friends as an empty array
+const auth = getAuth();
+const allUsers = ref([]); // All fetched users
+const myFriends = ref([]); // This will remain empty as per requirement
+const suggestedFriends = ref([]); // Suggested friends list
+
+// Get the current user ID from Firebase Auth
+const userId = auth.currentUser ? auth.currentUser.uid : null;
+console.log("Current user ID:", userId);
 
 // Function to toggle popup visibility
 function togglePopup(value) {
   showPopup.value = value;
+}
+
+// Fetch all users and add them to suggested friends
+async function fetchUsers() {
+  try {
+    const response = await axios.get('http://localhost:3000/api/users');
+    allUsers.value = response.data;
+
+    // Set myFriends to empty and filter out the current user from suggestedFriends
+    myFriends.value = []; // Keep 'My Friends' empty
+    suggestedFriends.value = allUsers.value.filter(user => user.id !== userId);
+
+    console.log("My Friends (should be empty):", myFriends.value);
+    console.log("Suggested Friends (excluding current user):", suggestedFriends.value);
+  } catch (error) {
+    console.error("Error fetching users:", error);
+  }
 }
 
 onMounted(() => {
@@ -73,6 +86,8 @@ onMounted(() => {
       },
     },
   });
+
+  fetchUsers(); // Fetch all users when the component mounts
 });
 </script>
 
