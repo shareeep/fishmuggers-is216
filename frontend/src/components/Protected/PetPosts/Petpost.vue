@@ -18,40 +18,80 @@
       <div class="post-footer">
         <p>{{ post.caption }}</p>
         <p class="likes">{{ post.likes ? post.likes.length : 0 }} likes</p>
-        <button @click="likePost(post)" class="like-button"><i
-            :class="post.hasLiked ? 'fas fa-thumbs-up thumbs-up-icon' : 'far fa-thumbs-up thumbs-up-icon'"></i>Like</button>
+
+        <!-- Like Button -->
+        <button @click="likePost(post)" class="like-button" style="display: inline-block; margin-right: 10px;">
+          <i :class="post.hasLiked ? 'fas fa-thumbs-up thumbs-up-icon' : 'far fa-thumbs-up thumbs-up-icon'"></i> Like
+        </button>
+
+        <!-- Share Button -->
+        <button @click="openSharePopup(post)" class="like-button" style="display: inline-block;">
+          <i class="fas fa-share"></i> Share
+        </button>
+
+        <!-- Share Popup Component -->
+        <!-- Update the :shareContent to use the correct URL dynamically -->
+        <HomeSharePopup
+          v-if="post.showPopup"
+          :friends="friends"
+          :shareContent="`http://localhost:5173/posts/${post.postId}`"
+          :postId="post.postId"
+          :userId="userId"
+          @close="post.showPopup = false"
+        />
+
       </div>
     </div>
   </div>
-
 </template>
+
 
 <script>
 import axios from "axios";
-import { auth } from "../../../../firebase"; // Firebase auth for user ID
+import { getAuth } from "firebase/auth"; // Use getAuth directly here
+import HomeSharePopup from './PetpostShare.vue';
 
 export default {
+  components: {
+    HomeSharePopup,
+  },
   data() {
     return {
       activeMenu: null,
       posts: [],
+      friends: [],
+      userId: null,
     };
   },
   methods: {
     async fetchPosts() {
+      const auth = getAuth();
+      const userId = auth.currentUser ? auth.currentUser.uid : null;
+      
       try {
         const response = await axios.get("http://localhost:3000/api/posts/feed");
-
-        // Add `hasLiked` for each post based on if the current user has liked it
-        const userId = auth.currentUser ? auth.currentUser.uid : null;
         this.posts = response.data.map(post => ({
           ...post,
           hasLiked: post.likes && post.likes.includes(userId),
+          showPopup: false, // Initialize showPopup as false for each post
         }));
+        this.userId = userId;
       } catch (error) {
         console.error("Failed to load posts:", error);
         alert("Failed to load posts.");
       }
+    },
+    openSharePopup(post) {
+      if (!this.userId) {
+        alert("Please log in to share posts.");
+        return;
+      }
+      
+      // Only update showPopup for the selected post
+      post.showPopup = true;
+    },
+    closeSharePopup(post) {
+      post.showPopup = false;
     },
     toggleMenu(postId) {
       this.activeMenu = this.activeMenu === postId ? null : postId;
@@ -62,55 +102,15 @@ export default {
     deletePost(postId) {
       this.posts = this.posts.filter(post => post.postId !== postId);
     },
-    async likePost(post) {
-      const userId = auth.currentUser ? auth.currentUser.uid : null;
-      if (!userId) {
-        alert("Please log in to like posts.");
-        return;
-      }
-
-      const hasLiked = post.hasLiked;
-
-      // Optimistically toggle `hasLiked` on the frontend
-      post.hasLiked = !hasLiked;
-      if (hasLiked) {
-        post.likes = post.likes.filter(id => id !== userId);
-      } else {
-        post.likes = post.likes ? [...post.likes, userId] : [userId];
-      }
-
-      try {
-        // Update the like state in the backend
-        const token = await auth.currentUser.getIdToken();
-        await axios.post(
-          `http://localhost:3000/api/posts/${post.postId}/like`,
-          { userId },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-      } catch (error) {
-        console.error("Error toggling like:", error);
-        alert("Failed to toggle like. Please try again.");
-
-        // Rollback the optimistic update on error
-        post.hasLiked = hasLiked;
-        if (hasLiked) {
-          post.likes.push(userId);
-        } else {
-          post.likes = post.likes.filter(id => id !== userId);
-        }
-      }
-    },
   },
   mounted() {
+    const auth = getAuth();
+    this.userId = auth.currentUser ? auth.currentUser.uid : null;
     this.fetchPosts();
   },
 };
-
 </script>
+
 
 
 

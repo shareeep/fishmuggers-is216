@@ -4,8 +4,10 @@
     <main id="scrollable-element">
       <Details v-if="event" :event="event" />
     </main>
-    <!-- Share Popup -->
-    <ShareEventPopup v-if="showPopup" @close="showPopup = false" :friends="friends" />
+    <!-- Pass both friends and event to Share Popup -->
+    <!-- Pass both friends and event to Share Popup -->
+    <ShareEventPopup v-if="showPopup" @close="showPopup = false" :friends="friends" :event="event" />
+
   </div>
 </template>
 
@@ -16,7 +18,7 @@ import axios from "axios";
 import Details from "@/components/Protected/Events/Details.vue";
 import RSVPBar from "@/components/Protected/Events/RSVPbar.vue";
 import ShareEventPopup from "@/components/Protected/Events/ShareEventPopup.vue"; 
-
+import { getAuth } from "firebase/auth";
 
 import Scrollbar from 'smooth-scrollbar';
 import OverscrollPlugin from 'smooth-scrollbar/plugins/overscroll';
@@ -71,13 +73,23 @@ const fetchEvent = async () => {
 // };
 
 // fake data for now
-const fetchFriends = () => {
-  friends.value = [
-    { id: 1, name: "Alice Johnson", username: "alice_j", avatar: "https://randomuser.me/api/portraits/women/1.jpg" },
-    { id: 2, name: "Bob Smith", username: "bob_smith", avatar: "https://randomuser.me/api/portraits/men/2.jpg" },
-    { id: 3, name: "Charlie Brown", username: "charlie_b", avatar: "https://randomuser.me/api/portraits/men/3.jpg" },
-    { id: 4, name: "Dana Lee", username: "dana_lee", avatar: "https://randomuser.me/api/portraits/women/4.jpg" },
-  ];
+const fetchFriends = async () => {
+  try {
+    // Get the authenticated user's UID
+    const auth = getAuth();
+    const userUid = auth.currentUser?.uid;
+
+    if (!userUid) {
+      console.error("User is not authenticated.");
+      return;
+    }
+
+    // Make the request with the user's UID
+    const response = await axios.get(`http://localhost:3000/api/events/${userUid}/friends`);
+    friends.value = response.data;
+  } catch (error) {
+    console.error("Failed to fetch friends:", error);
+  }
 };
 
 

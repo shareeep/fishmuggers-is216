@@ -140,5 +140,36 @@ router.post("/:postId/like", authenticate, async (req, res) => {
   }
 });
 
+// Route to share a post with a friend
+router.post("/:postId/share", authenticate, async (req, res) => {
+  const { postId } = req.params;
+  const { receiverUid, messageText } = req.body;
+
+  if (!receiverUid || !messageText) {
+    return res.status(400).json({ error: "Missing required fields: receiverUid and messageText" });
+  }
+
+  try {
+    const senderUid = req.user.uid; // Get the sender's UID from the authenticated user
+
+    // Save the share message in the 'messages' collection or as a sub-collection
+    const messageData = {
+      senderUid,
+      receiverUid,
+      postId,
+      messageText,
+      timestamp: admin.firestore.FieldValue.serverTimestamp(),
+    };
+
+    await db.collection("messages").add(messageData);
+
+    res.status(200).json({ message: "Post shared successfully!" });
+  } catch (error) {
+    console.error("Error sharing post:", error);
+    res.status(500).json({ error: "Failed to share post" });
+  }
+});
+
+
 
 module.exports = router;

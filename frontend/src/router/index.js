@@ -20,7 +20,7 @@ import sample from '@/views/Protected/Sample.vue'
 
 import PublicLayout from '../layouts/PublicLayout.vue';
 import ProtectedLayout from '../layouts/ProtectedLayout.vue'; 
-import { getAuth } from 'firebase/auth';
+import { getAuth, onAuthStateChanged } from 'firebase/auth'; // Add onAuthStateChanged here
 import EventsAdmin from '@/views/Protected/EventsAdmin.vue';
 
 const router = createRouter({
@@ -35,6 +35,12 @@ const router = createRouter({
           path: "",
           name: "Home",
           component: Home,
+        },
+        {
+          path: "/posts/:id",
+          name: "eventDetail",
+          component: EventDetail,
+          props: true,
         },
         {
           path: 'addpost',
@@ -146,22 +152,34 @@ const router = createRouter({
 });
 
 // Add route guard to check Firebase authentication status
+// Add route guard to check Firebase authentication status
 router.beforeEach((to, from, next) => {
   const auth = getAuth();
-  const user = auth.currentUser;
   const requiresAuth = to.meta.requiresAuth;
 
-  // If trying to access a protected route and not authenticated
-  if (requiresAuth && !user) {
-    next({ name: 'Login' }); // Redirect to login if not authenticated
-  } 
-  // If trying to access a public route and already authenticated
-  else if (!requiresAuth && user && (to.name === 'Login' || to.name === 'Register')) {
-    next({ name: 'Home' }); // Redirect to home if authenticated
-  } 
-  else {
-    next(); // Proceed to route
-  }
+  // Wait for Firebase to initialize the user state before proceeding
+  const checkAuthState = () =>
+    new Promise((resolve) => {
+      const unsubscribe = onAuthStateChanged(auth, (user) => {
+        unsubscribe(); // Unsubscribe after getting the user state
+        resolve(user); // Resolve with the user state
+      });
+    });
+
+  checkAuthState().then((user) => {
+    // If trying to access a protected route and not authenticated
+    if (requiresAuth && !user) {
+      next({ name: 'Login' }); // Redirect to login if not authenticated
+    }
+    // If trying to access a public route and already authenticated
+    else if (!requiresAuth && user && (to.name === 'Login' || to.name === 'Register')) {
+      next({ name: 'Home' }); // Redirect to home if authenticated
+    }
+    else {
+      next(); // Proceed to route
+    }
+  });
 });
+
 
 export default router;
