@@ -16,7 +16,7 @@
                         <p class="friend-username">{{ friend.username }}</p>
                     </div>
                     <!-- share event button -->
-                    <button class="see-profile-button">Share</button>
+                    <button class="see-profile-button" @click="shareEvent(friend)">Share</button>
                 </div>
             </div>
         </div>
@@ -24,33 +24,63 @@
 </template>
 
 <script>
+import axios from 'axios';
+import { getAuth } from 'firebase/auth';
+
 export default {
-    name: "AllFriendsPopup",
-    props: {
-        friends: {
-            type: Array,
-            required: true
-        }
+  name: "ShareEventPopup",
+  props: {
+    friends: {
+      type: Array,
+      required: true
     },
-    data() {
-        return {
-            searchQuery: ""
-        };
+    event: {
+      type: Object,
+      required: true
+    }
+  },
+  data() {
+    return {
+      searchQuery: ""
+    };
+  },
+  computed: {
+    filteredFriends() {
+      const query = this.searchQuery.toLowerCase();
+      return this.friends.filter(friend =>
+        friend.name.toLowerCase().startsWith(query) ||
+        friend.username.toLowerCase().startsWith(query)
+      );
+    }
+  },
+  methods: {
+    async shareEvent(friend) {
+      const auth = getAuth();
+      const senderUid = auth.currentUser?.uid;
+
+      if (!senderUid) {
+        console.error("User is not authenticated.");
+        return;
+      }
+
+      try {
+        console.log(this.event)
+        
+        const messageText = `Join me at <a href="${window.location.origin}/eventdetail/${this.event.eventId}" target="_blank">${this.event.title}</a>`;
+        
+        await axios.post('http://localhost:3000/api/messages/send', {
+          senderUid,
+          receiverUid: friend.id,
+          messageText,
+          timestamp: new Date()
+        });
+
+        alert(`Event shared with ${friend.name}!`);
+      } catch (error) {
+        console.error("Failed to share event:", error);
+      }
     },
-    computed: {
-        filteredFriends() {
-            const query = this.searchQuery.toLowerCase();
-            return this.friends.filter(friend =>
-                friend.name.toLowerCase().startsWith(query) ||
-                friend.username.toLowerCase().startsWith(query)
-            );
-        }
-    },
-    methods: {
-        viewProfile(friend) {
-            this.$router.push({ name: "friendProfile", params: { id: friend.id }, query: { username: friend.username, avatar: friend.avatar } });
-        },
-    },
+  }
 };
 </script>
 
