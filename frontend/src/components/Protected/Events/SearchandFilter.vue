@@ -711,7 +711,8 @@ export default {
             isLocationFilled: false,
             locationSuggestions: [],
             selectedLocation: null,
-            showSuggestions: false // New property to control suggestions visibility
+            showSuggestions: false,
+            initialValues: {},
         };
     },
     methods: {
@@ -739,41 +740,43 @@ export default {
             }
         },
         togglePetTypeDropdown() {
-            if (!this.isPetTypeDropdownOpen) {
-                this.closeAllDropdowns();
-            }
+            this.closeAllDropdowns();
             this.isPetTypeDropdownOpen = !this.isPetTypeDropdownOpen;
-        },
-        toggleCheckbox(type) {
-            this[type] = !this[type];
+            if (this.isPetTypeDropdownOpen) {
+                this.saveInitialValues('petType');
+            }
         },
         toggleEventSizeDropdown() {
-            if (!this.isEventSizeDropdownOpen) {
-                this.closeAllDropdowns();
-            }
+            this.closeAllDropdowns();
             this.isEventSizeDropdownOpen = !this.isEventSizeDropdownOpen;
+            if (this.isEventSizeDropdownOpen) {
+                this.saveInitialValues('eventSize');
+            }
         },
         toggleDateRangeDropdown() {
-            if (!this.isDateRangeDropdownOpen) {
-                this.closeAllDropdowns();
-            }
+            this.closeAllDropdowns();
             this.isDateRangeDropdownOpen = !this.isDateRangeDropdownOpen;
+            if (this.isDateRangeDropdownOpen) {
+                this.saveInitialValues('dateRange');
+            }
         },
         toggleLocationDropdown() {
-            // Toggle location dropdown, resetting suggestions visibility on close
-            if (!this.isLocationDropdownOpen) {
-                this.closeAllDropdowns();
-            }
+            this.closeAllDropdowns();
             this.isLocationDropdownOpen = !this.isLocationDropdownOpen;
             this.showSuggestions = false;
+            if (this.isLocationDropdownOpen) {
+                this.saveInitialValues('location');
+            }
         },
         applyPetTypeFilters() {
             this.isPetTypeFilled = this.selectedCats || this.selectedDogs;
             this.isPetTypeDropdownOpen = false;
+            delete this.initialValues.petType; // Clear stored initial values on apply
         },
         applyEventSizeFilters() {
             this.isEventSizeFilled = this.selectedEventSize !== null;
             this.isEventSizeDropdownOpen = false;
+            delete this.initialValues.eventSize;
         },
         applyDateRangeFilters() {
             const today = new Date().toISOString().split('T')[0];
@@ -785,6 +788,7 @@ export default {
                 this.isDateRangeFilled = false;
             }
             this.isDateRangeDropdownOpen = false;
+            delete this.initialValues.dateRange;
         },
         fetchLocationSuggestions() {
             if (this.searchedLoc.trim() === '') {
@@ -863,6 +867,47 @@ export default {
                 this.selectedLocation = null;
             }
             this.isLocationDropdownOpen = false; // Close the dropdown when applying
+            delete this.initialValues.location;
+        },
+        saveInitialValues(type) {
+            // Save current values as initial values for dropdown reset on cancel
+            if (type === 'petType') {
+                this.initialValues.petType = {
+                    selectedCats: this.selectedCats,
+                    selectedDogs: this.selectedDogs
+                };
+            } else if (type === 'eventSize') {
+                this.initialValues.eventSize = {
+                    selectedEventSize: this.selectedEventSize
+                };
+            } else if (type === 'dateRange') {
+                this.initialValues.dateRange = {
+                    startDate: this.startDate,
+                    endDate: this.endDate
+                };
+            } else if (type === 'location') {
+                this.initialValues.location = {
+                    selectedLocation: this.selectedLocation,
+                    searchedLoc: this.searchedLoc
+                };
+            }
+        },
+        resetToInitialValues(type) {
+            if (this.initialValues[type]) {
+                if (type === 'petType') {
+                    this.selectedCats = this.initialValues.petType.selectedCats;
+                    this.selectedDogs = this.initialValues.petType.selectedDogs;
+                } else if (type === 'eventSize') {
+                    this.selectedEventSize = this.initialValues.eventSize.selectedEventSize;
+                } else if (type === 'dateRange') {
+                    this.startDate = this.initialValues.dateRange.startDate;
+                    this.endDate = this.initialValues.dateRange.endDate;
+                } else if (type === 'location') {
+                    this.selectedLocation = this.initialValues.location.selectedLocation;
+                    this.searchedLoc = this.initialValues.location.searchedLoc;
+                }
+                delete this.initialValues[type]; // Clear initial values after reset
+            }
         },
         resetFilters() {
             this.closeAllDropdowns();
@@ -908,21 +953,13 @@ export default {
             this.$emit('filters-applied', filters);
         },
         handleClickOutside(event) {
-            console.log("Click detected outside");
             const dropdowns = ['petType', 'eventSize', 'dateRange', 'location'];
             dropdowns.forEach(dropdown => {
                 const isDropdownOpen = this[`is${dropdown.charAt(0).toUpperCase() + dropdown.slice(1)}DropdownOpen`];
                 const dropdownContainer = this.$refs[`${dropdown}DropdownContainer`];
-
                 if (isDropdownOpen && dropdownContainer && !dropdownContainer.contains(event.target)) {
-                    if (dropdown === 'location') {
-                        // Close both the suggestions list and the dropdown for location in one click
-                        this.isLocationDropdownOpen = false;
-                        this.showSuggestions = false;
-                    } else {
-                        // Close other dropdowns normally
-                        this[`is${dropdown.charAt(0).toUpperCase() + dropdown.slice(1)}DropdownOpen`] = false;
-                    }
+                    this.resetToInitialValues(dropdown);
+                    this[`is${dropdown.charAt(0).toUpperCase() + dropdown.slice(1)}DropdownOpen`] = false;
                 }
             });
         },
