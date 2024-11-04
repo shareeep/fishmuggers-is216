@@ -63,8 +63,8 @@ const searchFilterRef = ref(null);
 function handleFiltersApplied(filters) {
   const hasFilters =
     filters.searchQuery ||
-    filters.petType.Cats ||
-    filters.petType.Dogs ||
+    filters.petType.cats ||
+    filters.petType.dogs ||
     filters.eventSize ||
     filters.dateRange.startDate ||
     filters.dateRange.endDate ||

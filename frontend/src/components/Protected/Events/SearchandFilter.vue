@@ -689,7 +689,8 @@
 import { Loader } from "@googlemaps/js-api-loader";
 
 export default {
-    emits: ['filtersApplied', 'filtersReset'],
+    emits: ['filters-applied', 'filtersReset'],
+
     data() {
         return {
             searchQuery: '',
