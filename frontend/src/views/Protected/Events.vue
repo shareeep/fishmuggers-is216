@@ -63,8 +63,8 @@ const searchFilterRef = ref(null);
 function handleFiltersApplied(filters) {
   const hasFilters =
     filters.searchQuery ||
-    filters.petType.cats ||
-    filters.petType.dogs ||
+    filters.petType.Cats ||
+    filters.petType.Dogs ||
     filters.eventSize ||
     filters.dateRange.startDate ||
     filters.dateRange.endDate ||
@@ -101,8 +101,6 @@ function setEventType(type) {
 }
 
 .profile-tabs {
-  position: relative;
-  z-index: 1;
   display: flex;
   justify-content: space-around;
   border-top: 1px solid #ddd;
@@ -254,9 +252,6 @@ main {
 
 /* Center the content-container */
 .content-container {
-  overflow: visible;
-  position: relative;
-  z-index: 20;
   max-width: 1400px;
   /* Set a maximum width for the centered content */
   width: 100%;
@@ -272,5 +267,4 @@ main {
   z-index: 1000;
 }
 </style>
-
 

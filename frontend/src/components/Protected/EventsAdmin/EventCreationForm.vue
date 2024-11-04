@@ -118,17 +118,6 @@
         </select>
       </div>
 
-      <!-- Casual or Large-scale Radio Options -->
-      <div class="mb-4">
-        <label class="block text-gray-700">Event Type:</label>
-        <label>
-          <input type="radio" v-model="event.eventType" value="casual" /> Casual Event
-        </label>
-        <label>
-          <input type="radio" v-model="event.eventType" value="large" /> Large-scale Event
-        </label>
-      </div>
-
       <!-- Event Image -->
       <div class="mb-4">
         <label class="block text-gray-700">Event Image:</label>
@@ -186,7 +175,6 @@ const event = ref({
   petType: [],
   eventSize: "",
   eventImage: null,
-  eventType: "",
 });
 
 const petTypeSelection = ref([]);
@@ -292,8 +280,6 @@ const handleCreateEvent = async () => {
     formData.append("locationData", JSON.stringify(event.value.locationData)); // Send as JSON string
     event.value.petType.forEach((type) => formData.append("petType", type));
     formData.append("eventSize", event.value.eventSize);
-    formData.append("isCasual", event.value.isCasual);
-    formData.append("isLargeScale", event.value.isLargeScale);
     if (event.value.eventImage) {
       formData.append("eventImage", event.value.eventImage);
     }
