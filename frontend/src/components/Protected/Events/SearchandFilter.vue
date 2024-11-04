@@ -35,9 +35,9 @@
         </div>
 
         <div class="flex justify-center">
-            <div class="dropdown-wrapper">
+            <div class="dropdown-wrapper" ref="petTypeDropdownContainer">
                 <!-- Pet Type Dropdown -->
-                <button @click="togglePetTypeDropdown" :class="[
+                <button @click.stop="togglePetTypeDropdown" :class="[
                     'w-36 border border-[#7B61FF] border-2 font-bold rounded-lg text-sm px-4 py-2.5 text-center inline-flex justify-center items-center mr-3',
                     isPetTypeFilled ? 'bg-[#7B61FF] text-white' : 'text-[#7B61FF] hover:bg-[#7B61FF] hover:text-white'
                 ]" type="button">
@@ -49,24 +49,25 @@
                 </button>
 
                 <!-- Pet Type Dropdown Menu -->
-                <div v-if="isPetTypeDropdownOpen" class="custom-dropdown z-10 w-56 p-3 rounded-lg shadow-lg">
+                <div v-if="isPetTypeDropdownOpen" class="custom-dropdown z-40 w-56 p-3 rounded-lg shadow-lg"
+                    @click.stop>
                     <h6 class="mb-3 text-sm font-medium text-gray-800">
                         Category
                     </h6>
                     <ul class="space-y-2 text-sm">
                         <li class="flex items-center">
-                            <input id="cats" type="checkbox" v-model="selectedCats"
-                                class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500" />
-                            <label for="cats" class="ml-2 text-sm font-medium text-gray-900">
-                                Cats
+                            <label class="flex items-center text-sm font-medium text-gray-900 cursor-pointer">
+                                <input type="checkbox" v-model="selectedCats"
+                                    class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 cursor-pointer" />
+                                <span class="ml-2">Cats</span>
                             </label>
                         </li>
 
-                        <li class="flex items-center">
-                            <input id="dogs" type="checkbox" v-model="selectedDogs"
-                                class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500" />
-                            <label for="dogs" class="ml-2 text-sm font-medium text-gray-900">
-                                Dogs
+                        <li class="flex items-center cursor-pointer">
+                            <label class="flex items-center text-sm font-medium text-gray-900 cursor-pointer">
+                                <input type="checkbox" v-model="selectedDogs"
+                                    class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 cursor-pointer" />
+                                <span class="ml-2">Dogs</span>
                             </label>
                         </li>
                     </ul>
@@ -78,9 +79,9 @@
                     </button>
                 </div>
             </div>
-            <div class="dropdown-wrapper">
+            <div class="dropdown-wrapper" ref="eventSizeDropdownContainer">
                 <!-- Event Size Dropdown -->
-                <button @click="toggleEventSizeDropdown" :class="[
+                <button @click.stop="toggleEventSizeDropdown" :class="[
                     'w-36 border border-[#7B61FF] border-2 font-bold rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center justify-center',
                     isEventSizeFilled ? 'bg-[#7B61FF] text-white' : 'text-[#7B61FF] hover:bg-[#7B61FF] hover:text-white'
                 ]" type="button">
@@ -92,40 +93,41 @@
                 </button>
 
                 <!-- Event Size Dropdown Menu -->
-                <div v-if="isEventSizeDropdownOpen" class="custom-dropdown z-10 w-56 p-3 rounded-lg shadow-lg">
+                <div v-if="isEventSizeDropdownOpen" class="custom-dropdown z-10 w-56 p-3 rounded-lg shadow-lg"
+                    @click.stop>
                     <h6 class="mb-3 text-sm font-medium text-gray-800">
                         Event Size
                     </h6>
                     <ul class="space-y-2 text-sm">
                         <li class="flex items-center">
-                            <input id="lessThan10" type="radio" value="lessThan10" v-model="selectedEventSize"
-                                class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500" />
-                            <label for="lessThan10" class="ml-2 text-sm font-medium text-gray-900">
-                                &lt;10
+                            <label class="flex items-center text-sm font-medium text-gray-900 cursor-pointer">
+                                <input type="radio" value="<10" v-model="selectedEventSize"
+                                    class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 cursor-pointer" />
+                                <span class="ml-2">&lt;10</span>
                             </label>
                         </li>
 
                         <li class="flex items-center">
-                            <input id="tenToFifty" type="radio" value="tenToFifty" v-model="selectedEventSize"
-                                class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500" />
-                            <label for="tenToFifty" class="ml-2 text-sm font-medium text-gray-900">
-                                10-50
+                            <label class="flex items-center text-sm font-medium text-gray-900 cursor-pointer">
+                                <input type="radio" value="10-50" v-model="selectedEventSize"
+                                    class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 cursor-pointer" />
+                                <span class="ml-2">10-50</span>
                             </label>
                         </li>
 
                         <li class="flex items-center">
-                            <input id="fiftyToHundred" type="radio" value="fiftyToHundred" v-model="selectedEventSize"
-                                class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500" />
-                            <label for="fiftyToHundred" class="ml-2 text-sm font-medium text-gray-900">
-                                50-100
+                            <label class="flex items-center text-sm font-medium text-gray-900 cursor-pointer">
+                                <input type="radio" value="50-100" v-model="selectedEventSize"
+                                    class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 cursor-pointer" />
+                                <span class="ml-2">50-100</span>
                             </label>
                         </li>
 
                         <li class="flex items-center">
-                            <input id="moreThanHundred" type="radio" value="moreThanHundred" v-model="selectedEventSize"
-                                class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500" />
-                            <label for="moreThanHundred" class="ml-2 text-sm font-medium text-gray-900">
-                                &gt;100
+                            <label class="flex items-center text-sm font-medium text-gray-900 cursor-pointer">
+                                <input type="radio" value=">100" v-model="selectedEventSize"
+                                    class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 cursor-pointer" />
+                                <span class="ml-2">&gt;100</span>
                             </label>
                         </li>
                     </ul>
@@ -140,8 +142,8 @@
         </div>
         <div class="flex justify-center mt-3">
             <!-- Date Range Dropdown -->
-            <div class="dropdown-wrapper flex-2">
-                <button @click="toggleDateRangeDropdown" :class="[
+            <div class="dropdown-wrapper flex-2" ref="dateRangeDropdownContainer">
+                <button @click.stop="toggleDateRangeDropdown" :class="[
                     'w-36 border border-[#7B61FF] border-2 font-bold rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center justify-center mr-3',
                     isDateRangeFilled ? 'bg-[#7B61FF] text-white' : 'text-[#7B61FF] hover:bg-[#7B61FF] hover:text-white'
                 ]" type="button">
@@ -153,7 +155,8 @@
                 </button>
 
                 <!-- Date Range Dropdown Menu -->
-                <div v-if="isDateRangeDropdownOpen" class="custom-dropdown z-10 w-56 p-3 rounded-lg shadow-lg">
+                <div v-if="isDateRangeDropdownOpen" class="custom-dropdown z-10 w-56 p-3 rounded-lg shadow-lg"
+                    @click.stop>
                     <h6 class="mb-3 text-sm font-medium text-gray-800">Date Range</h6>
                     <div class="mb-4">
                         <label for="start-date" class="block text-sm font-medium text-gray-700">From:</label>
@@ -185,8 +188,8 @@
             </div>
 
             <!-- Location Dropdown -->
-            <div class="dropdown-wrapper">
-                <button @click="toggleLocationDropdown" :class="[
+            <div class="dropdown-wrapper" ref="locationDropdownContainer">
+                <button @click.stop="toggleLocationDropdown" :class="[
                     'w-36 border border-[#7B61FF] border-2 font-bold rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center justify-center',
                     isLocationFilled ? 'bg-[#7B61FF] text-white' : 'text-[#7B61FF] hover:bg-[#7B61FF] hover:text-white'
                 ]" type="button">
@@ -197,7 +200,8 @@
                     </svg>
                 </button>
                 <!-- Location Dropdown Menu -->
-                <div v-if="isLocationDropdownOpen" class="custom-dropdown z-10 w-56 p-3 rounded-lg shadow-lg">
+                <div v-if="isLocationDropdownOpen" class="custom-dropdown z-10 w-56 p-3 rounded-lg shadow-lg"
+                    @click.stop>
                     <h6 class="mb-3 text-sm font-medium text-gray-800">Location</h6>
                     <div class="mb-4">
                         <div class="relative">
@@ -240,7 +244,7 @@
         <!-- Reset Filters Button -->
         <div class="flex justify-center mt-3">
             <button @click="resetFilters"
-                class="rounded-lg text-sm py-2.5 text-center items-center  text-black bg-[#FFD700] hover:bg-[#E6C200] font-bold text-sm apply"
+                class="rounded-lg text-sm py-2.5 text-center items-center  text-black bg-[#FFD700] hover:bg-[#E6C200] font-bold text-sm apply reset"
                 style="width: 19rem;">
                 Reset Filters
             </button>
@@ -254,9 +258,9 @@
         </div>
 
         <div class="flex justify-center">
-            <div class="dropdown-wrapper">
+            <div class="dropdown-wrapper" ref="petTypeDropdownContainer">
                 <!-- Pet Type Dropdown -->
-                <button @click="togglePetTypeDropdown" :class="[
+                <button @click.stop="togglePetTypeDropdown" :class="[
                     'w-36 border border-[#7B61FF] border-2 font-bold rounded-lg text-sm px-4 py-2.5 text-center inline-flex justify-center items-center mr-3',
                     isPetTypeFilled ? 'bg-[#7B61FF] text-white' : 'text-[#7B61FF] hover:bg-[#7B61FF] hover:text-white'
                 ]" type="button">
@@ -268,24 +272,25 @@
                 </button>
 
                 <!-- Pet Type Dropdown Menu -->
-                <div v-if="isPetTypeDropdownOpen" class="custom-dropdown z-10 w-56 p-3 rounded-lg shadow-lg">
+                <div v-if="isPetTypeDropdownOpen" class="custom-dropdown z-10 w-56 p-3 rounded-lg shadow-lg"
+                    @click.stop>
                     <h6 class="mb-3 text-sm font-medium text-gray-800">
                         Category
                     </h6>
                     <ul class="space-y-2 text-sm">
                         <li class="flex items-center">
-                            <input id="cats" type="checkbox" v-model="selectedCats"
-                                class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500" />
-                            <label for="cats" class="ml-2 text-sm font-medium text-gray-900">
-                                Cats
+                            <label class="flex items-center text-sm font-medium text-gray-900 cursor-pointer">
+                                <input type="checkbox" v-model="selectedCats"
+                                    class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 cursor-pointer" />
+                                <span class="ml-2">Cats</span>
                             </label>
                         </li>
 
                         <li class="flex items-center">
-                            <input id="dogs" type="checkbox" v-model="selectedDogs"
-                                class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500" />
-                            <label for="dogs" class="ml-2 text-sm font-medium text-gray-900">
-                                Dogs
+                            <label class="flex items-center text-sm font-medium text-gray-900 cursor-pointer">
+                                <input type="checkbox" v-model="selectedDogs"
+                                    class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 cursor-pointer" />
+                                <span class="ml-2">Dogs</span>
                             </label>
                         </li>
                     </ul>
@@ -297,7 +302,7 @@
                     </button>
                 </div>
             </div>
-            <div class="dropdown-wrapper">
+            <div class="dropdown-wrapper" ref="eventSizeDropdownContainer">
                 <!-- Event Size Dropdown -->
                 <button @click="toggleEventSizeDropdown" :class="[
                     'w-36 border border-[#7B61FF] border-2 font-bold rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center justify-center',
@@ -311,40 +316,41 @@
                 </button>
 
                 <!-- Event Size Dropdown Menu -->
-                <div v-if="isEventSizeDropdownOpen" class="custom-dropdown z-10 w-56 p-3 rounded-lg shadow-lg">
+                <div v-if="isEventSizeDropdownOpen" class="custom-dropdown z-10 w-56 p-3 rounded-lg shadow-lg"
+                    @click.stop>
                     <h6 class="mb-3 text-sm font-medium text-gray-800">
                         Event Size
                     </h6>
                     <ul class="space-y-2 text-sm">
                         <li class="flex items-center">
-                            <input id="lessThan10" type="radio" value="lessThan10" v-model="selectedEventSize"
-                                class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500" />
-                            <label for="lessThan10" class="ml-2 text-sm font-medium text-gray-900">
-                                &lt;10
+                            <label class="flex items-center text-sm font-medium text-gray-900">
+                                <input type="radio" value="<10" v-model="selectedEventSize"
+                                    class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500" />
+                                <span class="ml-2">&lt;10</span>
                             </label>
                         </li>
 
                         <li class="flex items-center">
-                            <input id="tenToFifty" type="radio" value="tenToFifty" v-model="selectedEventSize"
-                                class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500" />
-                            <label for="tenToFifty" class="ml-2 text-sm font-medium text-gray-900">
-                                10-50
+                            <label class="flex items-center text-sm font-medium text-gray-900">
+                                <input type="radio" value="10-50" v-model="selectedEventSize"
+                                    class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500" />
+                                <span class="ml-2">10-50</span>
                             </label>
                         </li>
 
                         <li class="flex items-center">
-                            <input id="fiftyToHundred" type="radio" value="fiftyToHundred" v-model="selectedEventSize"
-                                class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500" />
-                            <label for="fiftyToHundred" class="ml-2 text-sm font-medium text-gray-900">
-                                50-100
+                            <label class="flex items-center text-sm font-medium text-gray-900">
+                                <input type="radio" value="50-100" v-model="selectedEventSize"
+                                    class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500" />
+                                <span class="ml-2">50-100</span>
                             </label>
                         </li>
 
                         <li class="flex items-center">
-                            <input id="moreThanHundred" type="radio" value="moreThanHundred" v-model="selectedEventSize"
-                                class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500" />
-                            <label for="moreThanHundred" class="ml-2 text-sm font-medium text-gray-900">
-                                &gt;100
+                            <label class="flex items-center text-sm font-medium text-gray-900">
+                                <input type="radio" value=">100" v-model="selectedEventSize"
+                                    class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500" />
+                                <span class="ml-2">&gt;100</span>
                             </label>
                         </li>
                     </ul>
@@ -359,8 +365,8 @@
         </div>
         <div class="flex justify-center mt-3">
             <!-- Date Range Dropdown -->
-            <div class="dropdown-wrapper flex-2">
-                <button @click="toggleDateRangeDropdown" :class="[
+            <div class="dropdown-wrapper flex-2" ref="dateRangeDropdownContainer">
+                <button @click.stop="toggleDateRangeDropdown" :class="[
                     'w-36 border border-[#7B61FF] border-2 font-bold rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center justify-center mr-3',
                     isDateRangeFilled ? 'bg-[#7B61FF] text-white' : 'text-[#7B61FF] hover:bg-[#7B61FF] hover:text-white'
                 ]" type="button">
@@ -372,7 +378,8 @@
                 </button>
 
                 <!-- Date Range Dropdown Menu -->
-                <div v-if="isDateRangeDropdownOpen" class="custom-dropdown z-10 w-56 p-3 rounded-lg shadow-lg">
+                <div v-if="isDateRangeDropdownOpen" class="custom-dropdown z-10 w-56 p-3 rounded-lg shadow-lg"
+                    @click.stop>
                     <h6 class="mb-3 text-sm font-medium text-gray-800">Date Range</h6>
                     <div class="mb-4">
                         <label for="start-date" class="block text-sm font-medium text-gray-700">From:</label>
@@ -404,8 +411,8 @@
             </div>
 
             <!-- Location Dropdown -->
-            <div class="dropdown-wrapper">
-                <button @click="toggleLocationDropdown" :class="[
+            <div class="dropdown-wrapper" ref="locationDropdownContainer">
+                <button @click.stop="toggleLocationDropdown" :class="[
                     'w-36 border border-[#7B61FF] border-2 font-bold rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center justify-center',
                     isLocationFilled ? 'bg-[#7B61FF] text-white' : 'text-[#7B61FF] hover:bg-[#7B61FF] hover:text-white'
                 ]" type="button">
@@ -416,7 +423,8 @@
                     </svg>
                 </button>
                 <!-- Location Dropdown Menu -->
-                <div v-if="isLocationDropdownOpen" class="custom-dropdown z-10 w-56 p-3 rounded-lg shadow-lg">
+                <div v-if="isLocationDropdownOpen" class="custom-dropdown z-10 w-56 p-3 rounded-lg shadow-lg"
+                    @click.stop>
                     <h6 class="mb-3 text-sm font-medium text-gray-800">Location</h6>
                     <div class="mb-4">
                         <div class="relative">
@@ -472,10 +480,10 @@
     <div class="sort-by hidden sm:hidden md:hidden lg:block mx-auto">
         <span class="sort-by-text mr-3" style="font-weight: bold;color:#7B61FF;">Sort by:</span>
 
-        <div class="dropdown-wrapper me-3 d-inline-block">
+        <div class="dropdown-wrapper me-3 d-inline-block" ref="petTypeDropdownContainer">
             <!-- Pet Type Dropdown -->
             <button @click="togglePetTypeDropdown" :class="[
-                'lg:w-36 border border-[#7B61FF] border-2 font-bold rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center me-3',
+                'lg:w-36 border border-[#7B61FF] border-2 font-bold rounded-lg text-sm px-4 py-2.5 justify-center text-center inline-flex items-center me-3',
                 isPetTypeFilled ? 'bg-[#7B61FF] text-white' : 'text-[#7B61FF] hover:bg-[#7B61FF] hover:text-white'
             ]" type="button">
                 Pet Type
@@ -491,19 +499,19 @@
                     Category
                 </h6>
                 <ul class="space-y-2 text-sm">
-                    <li class="flex items-center">
-                        <input id="cats" type="checkbox" v-model="selectedCats"
-                            class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500" />
-                        <label for="cats" class="ml-2 text-sm font-medium text-gray-900">
-                            Cats
+                    <li class="flex items-center cursor-pointer">
+                        <label class="flex items-center text-sm font-medium text-gray-900 cursor-pointer">
+                            <input type="checkbox" v-model="selectedCats"
+                                class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 cursor-pointer" />
+                            <span class="ml-2">Cats</span>
                         </label>
                     </li>
 
-                    <li class="flex items-center">
-                        <input id="dogs" type="checkbox" v-model="selectedDogs"
-                            class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500" />
-                        <label for="dogs" class="ml-2 text-sm font-medium text-gray-900">
-                            Dogs
+                    <li class="flex items-center cursor-pointer">
+                        <label class="flex items-center text-sm font-medium text-gray-900 cursor-pointer">
+                            <input type="checkbox" v-model="selectedDogs"
+                                class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 cursor-pointer" />
+                            <span class="ml-2">Dogs</span>
                         </label>
                     </li>
                 </ul>
@@ -515,10 +523,10 @@
                 </button>
             </div>
         </div>
-        <div class="dropdown-wrapper me-3 d-inline-block">
+        <div class="dropdown-wrapper me-3 d-inline-block" ref="eventSizeDropdownContainer">
             <!-- Event Size Dropdown -->
             <button @click="toggleEventSizeDropdown" :class="[
-                'lg:w-36 border border-[#7B61FF] border-2 font-bold rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center me-3',
+                'lg:w-36 border border-[#7B61FF] border-2 font-bold rounded-lg text-sm px-4 py-2.5 justify-center text-center inline-flex items-center me-3',
                 isEventSizeFilled ? 'bg-[#7B61FF] text-white' : 'text-[#7B61FF] hover:bg-[#7B61FF] hover:text-white'
             ]" type="button">
                 Event Size
@@ -534,35 +542,35 @@
                     Event Size
                 </h6>
                 <ul class="space-y-2 text-sm">
-                    <li class="flex items-center">
-                        <input id="<10" type="radio" value="<10" v-model="selectedEventSize"
-                            class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500" />
-                        <label for="lessThan10" class="ml-2 text-sm font-medium text-gray-900">
-                            &lt;10
+                    <li class="flex items-center cursor-pointer">
+                        <label class="flex items-center text-sm font-medium text-gray-900 cursor-pointer">
+                            <input type="radio" value="<10" v-model="selectedEventSize"
+                                class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 cursor-pointer" />
+                            <span class="ml-2">&lt;10</span>
                         </label>
                     </li>
 
                     <li class="flex items-center">
-                        <input id="10-50" type="radio" value="10-50" v-model="selectedEventSize"
-                            class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500" />
-                        <label for="tenToFifty" class="ml-2 text-sm font-medium text-gray-900">
-                            10-50
+                        <label class="flex items-center text-sm font-medium text-gray-900 cursor-pointer">
+                            <input type="radio" value="10-50" v-model="selectedEventSize"
+                                class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 cursor-pointer" />
+                            <span class="ml-2">10-50</span>
                         </label>
                     </li>
 
                     <li class="flex items-center">
-                        <input id="50-100" type="radio" value="50-100" v-model="selectedEventSize"
-                            class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500" />
-                        <label for="fiftyToHundred" class="ml-2 text-sm font-medium text-gray-900">
-                            50-100
+                        <label class="flex items-center text-sm font-medium text-gray-900 cursor-pointer">
+                            <input type="radio" value="50-100" v-model="selectedEventSize"
+                                class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 cursor-pointer" />
+                            <span class="ml-2">50-100</span>
                         </label>
                     </li>
 
                     <li class="flex items-center">
-                        <input id=">100" type="radio" value=">100" v-model="selectedEventSize"
-                            class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500" />
-                        <label for="moreThanHundred" class="ml-2 text-sm font-medium text-gray-900">
-                            &gt;100
+                        <label class="flex items-center text-sm font-medium text-gray-900 cursor-pointer">
+                            <input type="radio" value=">100" v-model="selectedEventSize"
+                                class="w-4 h-4 bg-gray-100 border-gray-300 rounded text-primary-600 focus:ring-primary-500 cursor-pointer" />
+                            <span class="ml-2">&gt;100</span>
                         </label>
                     </li>
                 </ul>
@@ -576,9 +584,9 @@
         </div>
 
         <!-- Date Range Dropdown -->
-        <div class="dropdown-wrapper me-3 d-inline-block">
+        <div class="dropdown-wrapper me-3 d-inline-block" ref="dateRangeDropdownContainer">
             <button @click="toggleDateRangeDropdown" :class="[
-                'lg:w-36 border border-[#7B61FF] border-2 font-bold rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center me-3',
+                'lg:w-36 border border-[#7B61FF] border-2 font-bold rounded-lg text-sm px-4 py-2.5 justify-center text-center inline-flex items-center me-3',
                 isDateRangeFilled ? 'bg-[#7B61FF] text-white' : 'text-[#7B61FF] hover:bg-[#7B61FF] hover:text-white'
             ]" type="button">
                 Date Range
@@ -620,9 +628,9 @@
         </div>
 
         <!-- Location Dropdown -->
-        <div class="dropdown-wrapper me-3 d-inline-block">
+        <div class="dropdown-wrapper me-3 d-inline-block" ref="locationDropdownContainer">
             <button @click="toggleLocationDropdown" :class="[
-                'lg:w-36 border border-[#7B61FF] border-2 font-bold rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center me-3',
+                'lg:w-36 border border-[#7B61FF] border-2 font-bold rounded-lg text-sm px-4 py-2.5 justify-center text-center inline-flex items-center me-3',
                 isLocationFilled ? 'bg-[#7B61FF] text-white' : 'text-[#7B61FF] hover:bg-[#7B61FF] hover:text-white'
             ]" type="button">
                 Location
@@ -650,7 +658,8 @@
                 </div>
 
                 <!-- Suggestions -->
-                <ul v-if="locationSuggestions.length" class="bg-white border border-gray-300 rounded-lg shadow-lg">
+                <ul v-if="showSuggestions" @click.stop
+                    class="bg-white border border-gray-300 rounded-lg shadow-lg whitespace-normal break-words">
                     <li v-for="suggestion in locationSuggestions" :key="suggestion.id"
                         @click="selectLocation(suggestion)" class="px-2 py-1 cursor-pointer hover:bg-gray-200">
                         {{ suggestion.name }}
@@ -674,46 +683,41 @@
             Reset Filters
         </button>
     </div>
-
-   
 </template>
 
 <script>
+import { Loader } from "@googlemaps/js-api-loader";
+
 export default {
+    emits: ['filtersApplied', 'filtersReset'],
     data() {
         return {
-            searchQuery: '', // Holds the search query
-            today: new Date().toISOString().split('T')[0], // Calculate today's date
-            // PET SIZE FILTER
+            searchQuery: '',
+            today: new Date().toISOString().split('T')[0],
             isPetTypeDropdownOpen: false,
             selectedCats: false,
             selectedDogs: false,
             isPetTypeFilled: false,
-
-            // EVENT SIZE FILTER
             isEventSizeDropdownOpen: false,
-            selectedEventSize: null, // Default to null
+            selectedEventSize: null,
             isEventSizeFilled: false,
-
-            // DATE RANGE FILTER
             isDateRangeDropdownOpen: false,
             startDate: '',
             endDate: '',
             isDateRangeFilled: false,
-
-            // LOCATION FILTER
             isLocationDropdownOpen: false,
             searchedLoc: '',
             isLocationFilled: false,
             locationSuggestions: [],
-            selectedLocation: null, // Add this to hold selected location
+            selectedLocation: null,
+            showSuggestions: false // New property to control suggestions visibility
         };
     },
     methods: {
         applySearch() {
             if (this.searchQuery) {
                 const filters = {
-                    searchQuery: this.searchQuery, // Add search query to filters
+                    searchQuery: this.searchQuery,
                     petType: {
                         cats: this.selectedCats,
                         dogs: this.selectedDogs,
@@ -725,40 +729,42 @@ export default {
                     },
                     location: this.selectedLocation
                 };
-
-                // Emit the filters and search query to the parent component
                 this.$emit('filters-applied', filters);
             }
         },
         handleSearchInput() {
-            // If search query is cleared, emit a reset event
             if (!this.searchQuery) {
                 this.$emit('search-cleared');
             }
         },
         togglePetTypeDropdown() {
             if (!this.isPetTypeDropdownOpen) {
-                this.closeAllDropdowns(); // Close all other dropdowns
+                this.closeAllDropdowns();
             }
-            this.isPetTypeDropdownOpen = !this.isPetTypeDropdownOpen; // Toggle the Pet Type dropdown
+            this.isPetTypeDropdownOpen = !this.isPetTypeDropdownOpen;
+        },
+        toggleCheckbox(type) {
+            this[type] = !this[type];
         },
         toggleEventSizeDropdown() {
             if (!this.isEventSizeDropdownOpen) {
-                this.closeAllDropdowns(); // Close all other dropdowns
+                this.closeAllDropdowns();
             }
-            this.isEventSizeDropdownOpen = !this.isEventSizeDropdownOpen; // Toggle the Event Size dropdown
+            this.isEventSizeDropdownOpen = !this.isEventSizeDropdownOpen;
         },
         toggleDateRangeDropdown() {
             if (!this.isDateRangeDropdownOpen) {
-                this.closeAllDropdowns(); // Close all other dropdowns
+                this.closeAllDropdowns();
             }
-            this.isDateRangeDropdownOpen = !this.isDateRangeDropdownOpen; // Toggle the Date Range dropdown
+            this.isDateRangeDropdownOpen = !this.isDateRangeDropdownOpen;
         },
         toggleLocationDropdown() {
+            // Toggle location dropdown, resetting suggestions visibility on close
             if (!this.isLocationDropdownOpen) {
-                this.closeAllDropdowns(); // Close all other dropdowns
+                this.closeAllDropdowns();
             }
-            this.isLocationDropdownOpen = !this.isLocationDropdownOpen; // Toggle the Location dropdown
+            this.isLocationDropdownOpen = !this.isLocationDropdownOpen;
+            this.showSuggestions = false;
         },
         applyPetTypeFilters() {
             this.isPetTypeFilled = this.selectedCats || this.selectedDogs;
@@ -769,109 +775,124 @@ export default {
             this.isEventSizeDropdownOpen = false;
         },
         applyDateRangeFilters() {
-            const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
-
-            // Set default values for startDate and endDate if they're empty
-            // if (!this.startDate) {
-            //     this.startDate = today; // Set startDate to today if empty
-            // }
-
-            // If endDate is empty, leave it as null (the user may not want to specify an end date)
+            const today = new Date().toISOString().split('T')[0];
             if (this.endDate) {
                 this.isDateRangeFilled = true;
-                // Handle filtering logic based on startDate and endDate
             } else if (this.startDate && !this.endDate) {
-                // Optionally handle empty input case
                 this.isDateRangeFilled = true;
             } else {
                 this.isDateRangeFilled = false;
             }
-
-            this.isDateRangeDropdownOpen = false; // Close dropdown after applying
+            this.isDateRangeDropdownOpen = false;
         },
         fetchLocationSuggestions() {
             if (this.searchedLoc.trim() === '') {
-                this.locationSuggestions = []; // Clear suggestions if input is empty
+                this.locationSuggestions = [];
+                this.showSuggestions = false; // Hide suggestions if input is empty
                 return;
             }
 
-            const oneMapURL = "https://www.onemap.gov.sg/api/common/elastic/search?searchVal=";
-            const url = `${oneMapURL}${encodeURIComponent(this.searchedLoc)}&returnGeom=Y&getAddrDetails=Y&pageNum=1`;
+            const loader = new Loader({
+                apiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
+                libraries: ["places"],
+            });
 
-            fetch(url)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok ' + response.statusText);
+            loader.load().then(() => {
+                const service = new google.maps.places.AutocompleteService();
+                service.getPlacePredictions(
+                    {
+                        input: this.searchedLoc,
+                        componentRestrictions: { country: "SG" },
+                        types: ["neighborhood"],
+                    },
+                    (predictions, status) => {
+                        if (status === google.maps.places.PlacesServiceStatus.OK && predictions) {
+                            // Apply additional filtering to show only suggestions that start with the input
+                            const lowercaseInput = this.searchedLoc.toLowerCase();
+                            this.locationSuggestions = predictions
+                                .filter(prediction =>
+                                    prediction.description.toLowerCase().startsWith(lowercaseInput)
+                                )
+                                .map(prediction => ({
+                                    id: prediction.place_id,
+                                    name: prediction.description,
+                                }));
+                            this.showSuggestions = this.locationSuggestions.length > 0; // Show suggestions only if there are results
+                        } else {
+                            this.locationSuggestions = [];
+                            this.showSuggestions = false; // Hide suggestions if no results
+                        }
                     }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.results && data.results.length > 0) {
-                        // Use a Set to keep track of unique location names
-                        const uniqueResults = new Map();
-                        data.results.forEach(item => {
-                            // Use the SEARCHVAL as the key to avoid duplicates
-                            uniqueResults.set(item.SEARCHVAL, {
-                                id: item.SEARCHVAL,
-                                name: item.SEARCHVAL,
-                                location: item.LAYER // Adjust based on actual structure of response
-                            });
-                        });
-                        // Convert the Map back to an array
-                        this.locationSuggestions = Array.from(uniqueResults.values());
-                    } else {
-                        this.locationSuggestions = []; // Clear suggestions if no results
-                    }
-                })
-                .catch(error => {
-                    console.error('Error fetching location suggestions:', error);
-                });
+                );
+            });
         },
-
         selectLocation(suggestion) {
-            this.selectedLocation = suggestion.name; // Store selected location
-            this.searchedLoc = suggestion.name; // Set input value to selected name
-            this.locationSuggestions = []; // Clear suggestions
+            this.selectedLocation = suggestion.name;
+            this.searchedLoc = suggestion.name;
+            this.showSuggestions = false; // Close only the suggestions list
+            this.getPlaceDetails(suggestion.id);
         },
+        getPlaceDetails(placeId) {
+            const loader = new Loader({
+                apiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
+                libraries: ["places"],
+            });
 
+            loader.load().then(() => {
+                const service = new google.maps.places.PlacesService(document.createElement("div"));
+                service.getDetails({ placeId: placeId }, (place, status) => {
+                    if (status === google.maps.places.PlacesServiceStatus.OK) {
+                        this.selectedLocation = {
+                            lat: place.geometry.location.lat(),
+                            lng: place.geometry.location.lng(),
+                        };
+                        this.$emit("filters-applied", { ...this.$data, location: this.selectedLocation }); // Emit location coordinates
+                    } else {
+                        console.error(`Failed to fetch place details for placeId: ${placeId}`);
+                    }
+                });
+            });
+        },
         applyLocationFilters() {
-            if (this.searchedLoc) {
-                // Only set the location as filled if a suggestion was selected
+            // Apply the filter and close the entire location dropdown
+            if (this.selectedLocation && this.selectedLocation.lat && this.selectedLocation.lng) {
                 this.isLocationFilled = true;
-                this.selectedLocation = this.searchedLoc;
             } else {
-                // Clear the location input and prevent it from being stored
                 this.isLocationFilled = false;
-                this.selectedLocation = null; // Clear selected location
+                this.selectedLocation = null;
             }
-            this.isLocationDropdownOpen = false; // Close dropdown after applying
+            this.isLocationDropdownOpen = false; // Close the dropdown when applying
         },
         resetFilters() {
-            this.closeAllDropdowns(); // Close dropdowns after resetting
+            this.closeAllDropdowns();
             this.selectedCats = false;
             this.selectedDogs = false;
             this.selectedEventSize = null;
             this.startDate = '';
             this.endDate = '';
-            this.selectedLocation = null; // Reset selected location
-            this.searchedLoc = ''; // Reset search input for location
+            this.selectedLocation = null;
+            this.searchedLoc = '';
             this.isPetTypeFilled = false;
             this.isEventSizeFilled = false;
             this.isDateRangeFilled = false;
-            this.isLocationFilled = false; // Reset location filled status
-            this.locationSuggestions = []; // Clear suggestions if necessary
-            this.$emit('filters-reset');
+            this.isLocationFilled = false;
+            this.locationSuggestions = [];
+            this.showSuggestions = false;
+            this.$emit('filtersReset');
         },
         closeAllDropdowns() {
+            console.log("Closing all dropdowns");
             this.isPetTypeDropdownOpen = false;
             this.isEventSizeDropdownOpen = false;
             this.isDateRangeDropdownOpen = false;
             this.isLocationDropdownOpen = false;
+            this.showSuggestions = false; // Ensure suggestions are closed with dropdown
         },
         applyFilters() {
-            this.closeAllDropdowns(); // Close dropdowns after applying
-            // Collect the applied filters
+            this.closeAllDropdowns();
+
             const filters = {
+                searchQuery: this.searchQuery,
                 petType: {
                     cats: this.selectedCats,
                     dogs: this.selectedDogs,
@@ -883,14 +904,37 @@ export default {
                 },
                 location: this.selectedLocation
             };
-
-            // Emit the filters to the parent component
             this.$emit('filters-applied', filters);
-            // Optionally, you can close the dropdowns or reset any temporary states
         },
+        handleClickOutside(event) {
+            console.log("Click detected outside");
+            const dropdowns = ['petType', 'eventSize', 'dateRange', 'location'];
+            dropdowns.forEach(dropdown => {
+                const isDropdownOpen = this[`is${dropdown.charAt(0).toUpperCase() + dropdown.slice(1)}DropdownOpen`];
+                const dropdownContainer = this.$refs[`${dropdown}DropdownContainer`];
+
+                if (isDropdownOpen && dropdownContainer && !dropdownContainer.contains(event.target)) {
+                    if (dropdown === 'location') {
+                        // Close both the suggestions list and the dropdown for location in one click
+                        this.isLocationDropdownOpen = false;
+                        this.showSuggestions = false;
+                    } else {
+                        // Close other dropdowns normally
+                        this[`is${dropdown.charAt(0).toUpperCase() + dropdown.slice(1)}DropdownOpen`] = false;
+                    }
+                }
+            });
+        },
+    },
+    mounted() {
+        document.addEventListener('click', this.handleClickOutside);
+    },
+    beforeDestroy() {
+        document.removeEventListener('click', this.handleClickOutside);
     }
 };
 </script>
+
 
 <style scoped>
 .wrapper {
@@ -996,6 +1040,7 @@ button {
     /* Center align items */
     margin-top: 15px;
     /* Margin on top */
+    white-space: nowrap;
 }
 
 /* SORT BY */
@@ -1014,6 +1059,8 @@ button {
 .apply {
     cursor: pointer;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
+    white-space: nowrap;
+
 }
 
 .apply:hover {

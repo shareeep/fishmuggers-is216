@@ -3,21 +3,27 @@
     <Navbar />
     <main id="scrollable-element">
       <div class="search-filter-container">
-        <search_filter @filters-applied="handleFiltersApplied" @filters-reset="handleFiltersReset" />
+        <!-- Add ref="searchFilterRef" to access reset method from here -->
+        <search_filter ref="searchFilterRef" @filters-applied="handleFiltersApplied"
+          @filters-reset="handleFiltersReset" />
+        <h1 class="title">Events</h1>
+      </div>
+      <!-- Event Type Tabs -->
+      <div class="profile-tabs">
+        <button :class="{ active: selectedEventType === 'large' }" @click="setEventType('large')">Large Scale</button>
+        <button :class="{ active: selectedEventType === 'casual' }" @click="setEventType('casual')">Casual</button>
       </div>
       <div class="content-container">
-        <carousel v-if="!filtersApplied" />
-        <FilteredEvents v-if="filtersApplied" :filters="appliedFilters" />
+        <carousel v-if="!filtersApplied" :selectedEventType="selectedEventType" />
+        <FilteredEvents v-if="filtersApplied" :filters="appliedFilters" :selectedEventType="selectedEventType" />
       </div>
-
     </main>
-    <!--Go to Add Events Page-->
+    <!-- Go to Add Events Page -->
     <router-link to="/eventsadmin">
       <button class="floating-btn">🐾</button>
     </router-link>
   </div>
 </template>
-
 
 <script setup>
 import { ref, onMounted } from 'vue';
@@ -45,63 +51,90 @@ onMounted(() => {
       },
     },
   });
-
-  // Hide the scrollbar track by setting its opacity to 0
   scrollbar.track.xAxis.element.style.opacity = '0';
   scrollbar.track.yAxis.element.style.opacity = '0';
 });
 
-
-// State to track if filters are applied and the applied filter data
 const filtersApplied = ref(false);
-const appliedFilters = ref({}); // This will hold the filter values
+const appliedFilters = ref({});
+const selectedEventType = ref('large');
+const searchFilterRef = ref(null);
 
-// This function is called when filters are applied
 function handleFiltersApplied(filters) {
-  // Check if any filters are actually applied (not empty)
   const hasFilters =
     filters.searchQuery ||
-    filters.petType.cats ||
-    filters.petType.dogs ||
+    filters.petType.Cats ||
+    filters.petType.Dogs ||
     filters.eventSize ||
     filters.dateRange.startDate ||
     filters.dateRange.endDate ||
-    filters.location;
+    (filters.location && filters.location.lat && filters.location.lng);
+    console.log('This is the location lat: ' + filters.location?.lat + ', lng: ' + filters.location?.lng);
 
-  filtersApplied.value = hasFilters; // Set the filters as applied only if filters are not empty
-  appliedFilters.value = filters; // Store the applied filters
+  filtersApplied.value = hasFilters;
+  appliedFilters.value = filters;
 }
 
-// This function is called when filters are reset
 function handleFiltersReset() {
-  filtersApplied.value = false; // Reset the filtersApplied to false to show the carousel
-  appliedFilters.value = {}; // Clear the applied filters
+  filtersApplied.value = false;
+  appliedFilters.value = {};
 }
-// function handleSearchCleared() {
-//   filtersApplied.value = false; // No filters applied, so reset
-//   appliedFilters.value = {}; // Clear filters
-// }
 
-
-
+function setEventType(type) {
+  selectedEventType.value = type;
+  filtersApplied.value = false;
+  handleFiltersReset();
+  // Use searchFilterRef to call resetFilters on search_filter component
+  searchFilterRef.value?.resetFilters();
+}
 </script>
 
+
 <style scoped>
-html,
-body {
-  overflow-x: hidden;
-  width: 100%;
+.title {
+  color: rgb(46, 46, 46);
+  text-align: center;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 30px;
+  font-weight: bold;
+  margin-top: 40px;
 }
 
-body {
-  overflow-x: hidden;
+.profile-tabs {
+  display: flex;
+  justify-content: space-around;
+  border-top: 1px solid #ddd;
+  padding: 10px;
+  margin-top: 20px;
+  font-size: 16px;
+
+}
+
+.profile-tabs button {
+  background: none;
+  border: none;
+  font-weight: bold;
+  color: #888;
+  cursor: pointer;
+}
+
+.profile-tabs .active {
+  color: black;
+  border-bottom: 2px solid black;
+}
+
+@media (max-width: 767px) {
+  .flex.flex-col>div {
+    margin-bottom: 0px !important;
+    /* Overrides the default mb-4 class */
+  }
 }
 
 #scrollable-element {
   width: 100%;
   height: 100%;
   overflow-y: scroll !important;
-  overflow-x: hidden !important;
+  overflow-x: hidden;
 }
 
 .home-container {
@@ -131,6 +164,7 @@ main {
   padding: 20px;
   box-sizing: border-box;
   width: 100vh;
+  margin-bottom: 55px;
 }
 
 .floating-btn {
@@ -153,14 +187,14 @@ main {
 }
 
 .floating-btn:hover {
-    background-color: #e6c200;
-    transform: scale(1.05);
-    box-shadow: 0 4px 8px rgba(75, 0, 130, 0.2);
+  background-color: #e6c200;
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(75, 0, 130, 0.2);
 }
 
 
 .floating-btn:active {
-    transform: scale(0.98);
+  transform: scale(0.98);
 }
 
 /* Responsive Adjustments */
@@ -233,3 +267,4 @@ main {
   z-index: 1000;
 }
 </style>
+
