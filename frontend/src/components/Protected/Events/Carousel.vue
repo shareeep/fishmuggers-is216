@@ -1,11 +1,12 @@
 <template>
   <!-- <div class="carousel-wrapper"> -->
   <div class="carousel">
+    <h1 class="title">Events</h1>
     <!-- Profile Tabs -->
-    <!-- <div class="profile-tabs">
-      <button :class="{ active: activeTab === 'large' }" @click="switchTab('large')">Large Scale</button>
+    <div class="profile-tabs">
+      <button :class="{ active: activeTab === 'largeScale' }" @click="switchTab('largeScale')">Large Scale</button>
       <button :class="{ active: activeTab === 'casual' }" @click="switchTab('casual')">Casual</button>
-    </div> -->
+    </div>
     <!-- Loading Indicator -->
     <div v-if="loading" class="loading-indicator">
       Loading events...
@@ -20,10 +21,10 @@
     <div v-else>
       <!-- Tab Content (LARGE SCALE)-->
       <div class="tab-content">
-        <div v-if="activeTab === 'large' && showCarousel">
+        <div v-if="activeTab === 'largeScale' && showCarousel" >
           <!-- Vertical Cards for Small Screens (1 Column) -->
           <div class="flex flex-col md:hidden">
-            <div v-for="(event, index) in tabEvents" :key="index" class="mb-4 mx-auto">
+            <div v-for="(event, index) in events" :key="index" class="mb-4 mx-auto">
               <router-link :to="{ name: 'eventDetail', params: { id: event.eventId } }">
                 <div class="carousel__item">
                   <div class="card">
@@ -56,7 +57,7 @@
           <!-- Carousel for Medium Screens (1 Item) -->
           <div class="hidden md:block lg:hidden">
             <Carousel :itemsToShow="1" :wrapAround="true" :transition="500" class="mx-auto" style="width:600px;">
-              <Slide v-for="(event, index) in tabEvents" :key="index" class="mb-4 mx-auto">
+              <Slide v-for="(event, index) in events" :key="index">
                 <router-link :to="{ name: 'eventDetail', params: { id: event.eventId } }">
                   <div class="carousel__item">
                     <div class="card">
@@ -104,7 +105,7 @@
           <!-- Carousel for Large Screens (3 Items) -->
           <div v-if="showLargeCarousel" class="hidden lg:block">
             <Carousel :itemsToShow="3" :wrapAround="true" :transition="500" :partialVisible="false">
-              <Slide v-for="(event, index) in tabEvents" :key="index" :class="{ active: index === currentIndex }">
+              <Slide v-for="(event, index) in events" :key="index" :class="{ active: index === currentIndex }">
                 <router-link :to="{ name: 'eventDetail', params: { id: event.eventId } }">
                   <div class="carousel__item">
                     <div class="card">
@@ -156,7 +157,7 @@
         <div v-if="activeTab === 'casual' && showCarousel">
           <!-- Vertical Cards for Small Screens (1 Column) -->
           <div class="flex flex-col md:hidden">
-            <div v-for="(event, index) in tabEvents" :key="index" class="mb-4 mx-auto">
+            <div v-for="(event, index) in events" :key="index" class="mb-4 mx-auto">
               <router-link :to="{ name: 'eventDetail', params: { id: event.eventId } }">
                 <div class="carousel__item">
                   <div class="card">
@@ -189,7 +190,7 @@
           <!-- Carousel for Medium Screens (1 Item) -->
           <div class="hidden md:block lg:hidden">
             <Carousel :itemsToShow="1" :wrapAround="true" :transition="500" class="mx-auto" style="width:600px;">
-              <Slide v-for="(event, index) in tabEvents" :key="index">
+              <Slide v-for="(event, index) in events" :key="index">
                 <router-link :to="{ name: 'eventDetail', params: { id: event.eventId } }">
                   <div class="carousel__item">
                     <div class="card">
@@ -237,7 +238,7 @@
           <!-- Carousel for Large Screens (3 Items) -->
           <div v-if="showLargeCarousel" class="hidden lg:block">
             <Carousel :itemsToShow="3" :wrapAround="true" :transition="500" :partialVisible="false">
-              <Slide v-for="(event, index) in tabEvents" :key="index" :class="{ active: index === currentIndex }">
+              <Slide v-for="(event, index) in events" :key="index" :class="{ active: index === currentIndex }">
                 <router-link :to="{ name: 'eventDetail', params: { id: event.eventId } }">
                   <div class="carousel__item">
                     <div class="card">
@@ -303,29 +304,16 @@ export default defineComponent({
     Pagination,
     Slide,
   },
-  props: {
-    selectedEventType: {
-      type: String,
-      required: true,
-    },
-  },
   data() {
     return {
+      events: [],
       loading: true,
       errorMessage: '',
       showLargeCarousel: false,
-      activeTab: 'large', // Initial active tab
+      activeTab: 'largeScale', // Initial active tab
       showCarousel: true,
-      events: []
     };
   },
-  computed: {
-    tabEvents() {
-      return this.events.filter(event => event.eventType === this.selectedEventType);
-
-    },
-  },
-
 
   setup() {
     const currentIndex = ref(0);
@@ -340,10 +328,8 @@ export default defineComponent({
     };
   },
   mounted() {
-    this.fetchEvents(); // Fetch events data
+    this.fetchEvents();
     this.setInitialCarouselView();
-    // Ensure the default tab's data is computed on load
-    console.log('Default tab set to:', this.activeTab);
   },
   watch: {
     activeTab() {
@@ -356,30 +342,29 @@ export default defineComponent({
     },
   },
   methods: {
-    switchTab(tab) {
-      this.activeTab = tab;
-      console.log('Tab switched to:', this.activeTab); // Log to check the tab
-      this.showCarousel = false;
-      setTimeout(() => {
-        this.showCarousel = true;
-        window.dispatchEvent(new Event('resize'));
-      }, 10);
-    },
-
     async fetchEvents() {
       try {
         const response = await axios.get('http://localhost:3000/api/events');
+        // Assign the fetched events to the events array
         this.events = response.data;
-        console.log('Fetched Events:', this.events); // Add this line
       } catch (error) {
         console.error('Error fetching events:', error);
         this.errorMessage = 'Failed to load events.';
       } finally {
         this.loading = false;
+        // Delay and trigger a resize event
         setTimeout(() => {
           window.dispatchEvent(new Event('resize'));
-        }, 10);
+        }, 10); // Adjust delay as needed
       }
+    },
+    switchTab(tab) {
+      this.activeTab = tab;
+      this.showCarousel = false;
+      setTimeout(() => {
+        this.showCarousel = true;
+        window.dispatchEvent(new Event('resize'));
+      }, 10);
     },
     formatEventDay(dateInput) {
       const dateObj = this.convertToDate(dateInput);
@@ -473,14 +458,14 @@ export default defineComponent({
 }
 
 /* General Styles */
-/* .title {
+.title {
   color: rgb(46, 46, 46);
   text-align: center;
   font-family: 'Montserrat', sans-serif;
   font-size: 30px;
   font-weight: bold;
   margin-top: 40px;
-} */
+}
 
 /* Loading Indicator and Error Message Styles */
 .loading-indicator,
@@ -503,7 +488,6 @@ export default defineComponent({
   color: #2c3e50;
   overflow-x: hidden;
   position: relative;
-  z-index: 100;
   --vc-pgn-margin: 5px;
   --vc-pgn-width: 15px;
   --vc-pgn-height: 15px;
@@ -518,7 +502,6 @@ export default defineComponent({
 
 /* Carousel Item Styles */
 .carousel__item {
-  overflow: visible;
   margin: 10px 15px;
   flex: 0 0 600px;
   max-width: 100%;
@@ -593,8 +576,6 @@ export default defineComponent({
 
 /* Card Styles */
 .card {
-  position:relative;
-  z-index: 30;
   transform: scale(0.85);
   border-radius: 15px;
   overflow: hidden;
@@ -606,8 +587,7 @@ export default defineComponent({
 }
 
 .card:hover {
-  z-index: 10;
-  transform: scale(0.88);
+  transform: scale(0.9);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
 }
 
@@ -694,4 +674,33 @@ export default defineComponent({
   margin-right: 5px;
 }
 
+
+.profile-tabs {
+  display: flex;
+  justify-content: space-around;
+  border-top: 1px solid #ddd;
+  padding: 10px;
+  margin-top: 20px;
+  font-size: 16px;
+}
+
+.profile-tabs button {
+  background: none;
+  border: none;
+  font-weight: bold;
+  color: #888;
+  cursor: pointer;
+}
+
+.profile-tabs .active {
+  color: black;
+  border-bottom: 2px solid black;
+}
+
+@media (max-width: 767px) {
+  .flex.flex-col>div {
+    margin-bottom: 0px !important;
+    /* Overrides the default mb-4 class */
+  }
+}
 </style>
