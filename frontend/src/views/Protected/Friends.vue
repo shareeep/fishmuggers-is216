@@ -13,7 +13,7 @@
         <!-- FriendsList component with popup toggle function passed down -->
         <FriendsList @popup-toggle="togglePopup" :myFriends="myFriends" :suggestedFriends="suggestedFriends" />
 
-        <RequestsSent />
+        <RequestsSent :sentRequests="sentRequests" @updateSentRequests="removeSentRequest" />
       </div> 
     </main>
 
@@ -45,6 +45,7 @@ const auth = getAuth();
 const allUsers = ref([]); // All fetched users
 const myFriends = ref([]); // This will remain empty as per requirement
 const suggestedFriends = ref([]); // Suggested friends list
+const sentRequests = ref([]);
 
 // Get the current user ID from Firebase Auth
 const userId = auth.currentUser ? auth.currentUser.uid : null;
@@ -72,6 +73,60 @@ async function fetchUsers() {
   }
 }
 
+async function fetchSentRequests() {
+  try {
+    const response = await axios.get(`http://localhost:3000/api/friends/requests/sent/${userId}`);
+    console.log("Fetched sent requests from backend:", response.data);
+    
+    sentRequests.value = response.data.map(request => {
+      const user = allUsers.value.find(user => user.id === request.receiverId);
+      return {
+        ...request,
+        name: user ? user.name : 'Unknown',
+        username: user ? user.username : '',
+        avatar: user ? user.profileImage || 'default-avatar.jpg' : 'default-avatar.jpg',
+        daysAgo: calculateDaysAgo(request.createdAt),
+      };
+    });
+  } catch (error) {
+    console.error("Error fetching sent friend requests:", error);
+  }
+}
+
+function calculateDaysAgo(timestamp) {
+  console.log("Raw timestamp:", timestamp); // Log the exact format of the timestamp
+
+  let createdAt;
+
+  // Parse Firestore Timestamp (with _seconds and _nanoseconds)
+  if (timestamp && typeof timestamp._seconds === 'number') {
+    createdAt = new Date(timestamp._seconds * 1000); // Convert seconds to milliseconds
+    console.log("Parsed Firestore Timestamp:", createdAt); // Log the parsed Firestore timestamp
+  } else {
+    console.warn("Unrecognized timestamp format");
+    return "Unknown";
+  }
+
+  const now = new Date();
+  const differenceInTime = now - createdAt;
+  const daysAgo = Math.floor(differenceInTime / (1000 * 3600 * 24)); // Convert milliseconds to days
+
+  // Return custom labels based on the number of days ago
+  if (daysAgo === 0) {
+    return "Sent today";
+  } else if (daysAgo === 1) {
+    return "Yesterday";
+  } else {
+    return `${daysAgo} days ago`;
+  }
+}
+
+function removeSentRequest(requestId) {
+  sentRequests.value = sentRequests.value.filter(request => request.requestId !== requestId);
+}
+
+
+
 onMounted(() => {
   Scrollbar.init(document.querySelector('#scrollable-element'), {
     damping: 0.05,
@@ -88,6 +143,7 @@ onMounted(() => {
   });
 
   fetchUsers(); // Fetch all users when the component mounts
+  fetchSentRequests(); // Fetch sent requests when the component mounts
 });
 </script>
 

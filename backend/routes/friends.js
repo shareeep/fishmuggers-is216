@@ -202,4 +202,40 @@ router.get("/:userId/view/:friendId", async (req, res) => {
   }
 });
 
+// Get sent friend requests for a user
+router.get("/requests/sent/:userId", async (req, res) => {
+  const userId = req.params.userId;
+
+  try {
+    const sentRequestsSnapshot = await db.collection("friendRequests")
+      .where("senderId", "==", userId)
+      .where("status", "==", "pending")
+      .get();
+
+    const sentRequests = [];
+    sentRequestsSnapshot.forEach((doc) => {
+      sentRequests.push({ id: doc.id, ...doc.data() });
+    });
+
+    res.status(200).json(sentRequests);
+  } catch (error) {
+    console.error(`Error fetching sent friend requests for userId ${userId}:`, error);
+    res.status(500).json({ error: "Failed to fetch sent friend requests" });
+  }
+});
+
+// Delete a sent friend request
+router.delete("/request/:requestId", async (req, res) => {
+  const { requestId } = req.params;
+
+  try {
+    // Delete the friend request document
+    await db.collection("friendRequests").doc(requestId).delete();
+    res.status(200).json({ message: "Friend request canceled successfully" });
+  } catch (error) {
+    console.error("Error canceling friend request:", error);
+    res.status(500).json({ error: "Failed to cancel friend request" });
+  }
+});
+
 module.exports = router;

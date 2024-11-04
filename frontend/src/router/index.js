@@ -100,6 +100,7 @@ const router = createRouter({
           path: "friendprofile/:id",
           name: "friendProfile",
           component: FriendProfile,
+          props: true
         },
         {
           path: "/:pathMatch(.*)*", // Catch-all route for undefined paths in protected routes
