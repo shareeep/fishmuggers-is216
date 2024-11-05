@@ -288,4 +288,45 @@ router.delete("/request/:requestId", async (req, res) => {
   }
 });
 
+// Get pending friend requests for a user with mutual friends calculation
+router.get("/requests/:userId", async (req, res) => {
+  const userId = req.params.userId;
+
+  try {
+    const requestsSnapshot = await db
+      .collection("friendRequests")
+      .where("receiverId", "==", userId)
+      .where("status", "==", "pending")
+      .get();
+
+    const userDoc = await db.collection("users").doc(userId).get();
+    const userFriends = new Set(userDoc.data().friends || []); // Get user's friends
+
+    const requests = [];
+    for (const doc of requestsSnapshot.docs) {
+      const requestData = doc.data();
+      const senderId = requestData.senderId;
+
+      // Fetch sender's friends to calculate mutual friends
+      const senderDoc = await db.collection("users").doc(senderId).get();
+      const senderFriends = new Set(senderDoc.data().friends || []);
+
+      // Calculate mutual friends by finding the intersection of user's friends and sender's friends
+      const mutualFriendsCount = [...userFriends].filter(friendId => senderFriends.has(friendId)).length;
+
+      requests.push({
+        ...requestData,
+        requestId: doc.id,
+        mutualFriends: mutualFriendsCount, // Add mutual friends count
+      });
+    }
+
+    res.status(200).json(requests);
+  } catch (error) {
+    console.error(`Error fetching friend requests for userId ${userId}:`, error);
+    res.status(500).json({ error: "Failed to fetch friend requests" });
+  }
+});
+
+
 module.exports = router;

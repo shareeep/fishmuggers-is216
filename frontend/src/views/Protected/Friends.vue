@@ -68,21 +68,29 @@ function togglePopup(value) {
 async function fetchReceivedRequests() {
   try {
     const response = await axios.get(`http://localhost:3000/api/friends/requests/${userId}`);
+    const userFriends = new Set(myFriends.value.map(friend => friend.id)); // Current user's friends as a Set
+
     receivedRequests.value = response.data.map(request => {
       const sender = allUsers.value.find(user => user.id === request.senderId);
+      const senderFriends = sender?.friends || []; // Array of sender's friends
+
+      // Calculate mutual friends count by intersecting sender's friends with current user's friends
+      const mutualFriendsCount = senderFriends.filter(friendId => userFriends.has(friendId)).length;
+
       return {
-        id: request.requestId, // Ensure this is correctly set as the unique identifier
+        id: request.requestId,
         ...request,
         name: sender ? sender.name : 'Unknown',
         username: sender ? sender.username : '',
         avatar: sender ? sender.profileImage || 'default-avatar.jpg' : 'default-avatar.jpg',
-        mutualFriends: Math.floor(Math.random() * 10), // Placeholder for mutual friends
+        mutualFriends: mutualFriendsCount, // Actual mutual friends count
       };
     });
   } catch (error) {
     console.error("Error fetching received friend requests:", error);
   }
 }
+
 
 async function handleAcceptRequest(requestId) {
   console.log("Received accept-request event with ID:", requestId);
