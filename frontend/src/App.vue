@@ -23,5 +23,5 @@ onMounted(() => {
 });
 
 // Dynamically load layouts based on authentication status
-const layoutComponent = computed(() => isAuthenticated.value ? ProtectedLayout : PublicLayout);
+const layoutComponent = computed(() => isAuthenticated.value ? `ProtectedLayout` : `PublicLayout`);
 </script>
