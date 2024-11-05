@@ -25,12 +25,12 @@
           <span class="text">Calendar</span>
         </router-link>
       </li>
-      <li>
+      <!-- <li>
         <router-link to="/notifications" exact-active-class="active">
           <i class="fas fa-bell"></i>
           <span class="text">Notifications</span>
         </router-link>
-      </li>
+      </li> -->
       <li>
         <router-link to="/friends" exact-active-class="active">
           <i class="fas fa-users"></i>
