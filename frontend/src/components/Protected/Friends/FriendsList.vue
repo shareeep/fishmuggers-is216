@@ -49,7 +49,7 @@ export default {
   },
   computed: {
     limitedFriends() {
-      // Show only the first 8 friends in "My Friends"
+      console.log("Friends received in FriendsList:", this.myFriends); // Log to verify
       return this.myFriends.slice(0, 8);
     },
   },

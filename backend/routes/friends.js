@@ -17,7 +17,8 @@ router.post("/request", async (req, res) => {
 
   try {
     // Check if a friend request already exists
-    const existingRequest = await db.collection("friendRequests")
+    const existingRequest = await db
+      .collection("friendRequests")
       .where("senderId", "==", senderId)
       .where("receiverId", "==", receiverId)
       .where("status", "==", "pending")
@@ -28,9 +29,12 @@ router.post("/request", async (req, res) => {
     }
 
     // Add senderId to receiver's pendingFriends array
-    await db.collection("users").doc(receiverId).update({
-      pendingFriends: admin.firestore.FieldValue.arrayUnion(senderId)
-    });
+    await db
+      .collection("users")
+      .doc(receiverId)
+      .update({
+        pendingFriends: admin.firestore.FieldValue.arrayUnion(senderId),
+      });
 
     // Create a new friend request document
     const requestRef = db.collection("friendRequests").doc();
@@ -43,7 +47,10 @@ router.post("/request", async (req, res) => {
     };
 
     await requestRef.set(newRequest);
-    res.status(201).json({ message: "Friend request sent successfully", request: newRequest });
+    res.status(201).json({
+      message: "Friend request sent successfully",
+      request: newRequest,
+    });
   } catch (error) {
     console.error("Error sending friend request:", error);
     res.status(500).json({ error: "Failed to send friend request" });
@@ -55,6 +62,7 @@ router.put("/request/accept/:requestId", async (req, res) => {
   const requestId = req.params.requestId;
 
   try {
+    // Fetch the friend request document
     const requestRef = db.collection("friendRequests").doc(requestId);
     const requestDoc = await requestRef.get();
 
@@ -63,19 +71,24 @@ router.put("/request/accept/:requestId", async (req, res) => {
     }
 
     const { senderId, receiverId } = requestDoc.data();
+    const receiverRef = db.collection("users").doc(receiverId);
 
-    // Update friend lists
-    await db.collection("users").doc(receiverId).update({
-      friends: admin.firestore.FieldValue.arrayUnion(senderId),
-      pendingFriends: admin.firestore.FieldValue.arrayRemove(senderId)
+    // Remove senderId from receiver's pendingFriends and add to friends
+    await receiverRef.update({
+      pendingFriends: admin.firestore.FieldValue.arrayRemove(senderId),
+      friends: admin.firestore.FieldValue.arrayUnion(senderId)
     });
-    await db.collection("users").doc(senderId).update({
+
+    // Add receiverId to sender's friends list
+    const senderRef = db.collection("users").doc(senderId);
+    await senderRef.update({
       friends: admin.firestore.FieldValue.arrayUnion(receiverId)
     });
 
-    // Update friend request status
+    // Update the friend request document status to accepted
     await requestRef.update({ status: "accepted" });
-    res.status(200).json({ message: "Friend request accepted" });
+
+    res.status(200).json({ message: "Friend request accepted successfully" });
   } catch (error) {
     console.error("Error accepting friend request:", error);
     res.status(500).json({ error: "Failed to accept friend request" });
@@ -91,15 +104,20 @@ router.put("/request/reject/:requestId", async (req, res) => {
     const requestDoc = await requestRef.get();
 
     if (!requestDoc.exists || requestDoc.data().status !== "pending") {
-      return res.status(404).json({ error: "Pending friend request not found" });
+      return res
+        .status(404)
+        .json({ error: "Pending friend request not found" });
     }
 
     const { senderId, receiverId } = requestDoc.data();
 
     // Remove senderId from receiver's pendingFriends array
-    await db.collection("users").doc(receiverId).update({
-      pendingFriends: admin.firestore.FieldValue.arrayRemove(senderId)
-    });
+    await db
+      .collection("users")
+      .doc(receiverId)
+      .update({
+        pendingFriends: admin.firestore.FieldValue.arrayRemove(senderId),
+      });
 
     // Update friend request status
     await requestRef.update({ status: "rejected" });
@@ -115,7 +133,8 @@ router.get("/requests/:userId", async (req, res) => {
   const userId = req.params.userId;
 
   try {
-    const requestsSnapshot = await db.collection("friendRequests")
+    const requestsSnapshot = await db
+      .collection("friendRequests")
       .where("receiverId", "==", userId)
       .where("status", "==", "pending")
       .get();
@@ -127,7 +146,10 @@ router.get("/requests/:userId", async (req, res) => {
 
     res.status(200).json(requests);
   } catch (error) {
-    console.error(`Error fetching friend requests for userId ${userId}:`, error);
+    console.error(
+      `Error fetching friend requests for userId ${userId}:`,
+      error
+    );
     res.status(500).json({ error: "Failed to fetch friend requests" });
   }
 });
@@ -143,8 +165,22 @@ router.get("/:userId", async (req, res) => {
       return res.status(404).json({ error: "User not found" });
     }
 
-    const friends = userDoc.data().friends || [];
-    res.status(200).json(friends);
+    const friendsIds = userDoc.data().friends || []; // Get friend IDs from user's document
+    const friendsData = [];
+
+    for (const friendId of friendsIds) {
+      const friendDoc = await db.collection("users").doc(friendId).get();
+      if (friendDoc.exists) {
+        friendsData.push({
+          id: friendDoc.id,
+          name: friendDoc.data().name,
+          username: friendDoc.data().username,
+          profileImage: friendDoc.data().profileImage || "default-avatar.jpg",
+        });
+      }
+    }
+
+    res.status(200).json(friendsData); // Return an array of friend objects
   } catch (error) {
     console.error(`Error fetching friends for userId ${userId}:`, error);
     res.status(500).json({ error: "Failed to fetch friends" });
@@ -157,15 +193,22 @@ router.delete("/:userId/remove/:friendId", async (req, res) => {
 
   try {
     // Remove each other from friends array
-    await db.collection("users").doc(userId).update({
-      friends: admin.firestore.FieldValue.arrayRemove(friendId)
-    });
-    await db.collection("users").doc(friendId).update({
-      friends: admin.firestore.FieldValue.arrayRemove(userId)
-    });
+    await db
+      .collection("users")
+      .doc(userId)
+      .update({
+        friends: admin.firestore.FieldValue.arrayRemove(friendId),
+      });
+    await db
+      .collection("users")
+      .doc(friendId)
+      .update({
+        friends: admin.firestore.FieldValue.arrayRemove(userId),
+      });
 
     // Remove any existing friend request record
-    const requestsSnapshot = await db.collection("friendRequests")
+    const requestsSnapshot = await db
+      .collection("friendRequests")
       .where("status", "==", "accepted")
       .where("senderId", "in", [userId, friendId])
       .where("receiverId", "in", [userId, friendId])
@@ -197,7 +240,10 @@ router.get("/:userId/view/:friendId", async (req, res) => {
 
     res.status(200).json(friendDoc.data());
   } catch (error) {
-    console.error(`Error fetching friend details for friendId ${friendId}:`, error);
+    console.error(
+      `Error fetching friend details for friendId ${friendId}:`,
+      error
+    );
     res.status(500).json({ error: "Failed to fetch friend details" });
   }
 });
@@ -207,7 +253,8 @@ router.get("/requests/sent/:userId", async (req, res) => {
   const userId = req.params.userId;
 
   try {
-    const sentRequestsSnapshot = await db.collection("friendRequests")
+    const sentRequestsSnapshot = await db
+      .collection("friendRequests")
       .where("senderId", "==", userId)
       .where("status", "==", "pending")
       .get();
@@ -219,7 +266,10 @@ router.get("/requests/sent/:userId", async (req, res) => {
 
     res.status(200).json(sentRequests);
   } catch (error) {
-    console.error(`Error fetching sent friend requests for userId ${userId}:`, error);
+    console.error(
+      `Error fetching sent friend requests for userId ${userId}:`,
+      error
+    );
     res.status(500).json({ error: "Failed to fetch sent friend requests" });
   }
 });

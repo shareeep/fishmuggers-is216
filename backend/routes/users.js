@@ -17,17 +17,17 @@ const validateUserData = [
     .optional()
     .isEmail()
     .withMessage("Please provide a valid email address."),
-  
+
   body("username")
     .optional()
     .isLength({ min: 3 })
     .withMessage("Username must be at least 3 characters long."),
-  
+
   body("points")
     .optional()
     .isInt({ min: 0 })
     .withMessage("Points must be a non-negative integer."),
-  
+
   body("joinedEvents")
     .optional()
     .customSanitizer(async (value) => {
@@ -55,7 +55,7 @@ const validateUserData = [
       }
       return true;
     }),
-  
+
   body("hostingEvents")
     .optional()
     .customSanitizer((value) => {
@@ -70,7 +70,7 @@ const validateUserData = [
     })
     .isArray()
     .withMessage("hostingEvents must be an array of event IDs."),
-  
+
   body("pets")
     .optional()
     .customSanitizer((value) => {
@@ -85,7 +85,7 @@ const validateUserData = [
     })
     .isArray()
     .withMessage("pets must be an array of pet IDs."),
-  
+
   body("friends")
     .optional()
     .customSanitizer((value) => {
@@ -100,7 +100,7 @@ const validateUserData = [
     })
     .isArray()
     .withMessage("friends must be an array of user UIDs."),
-  
+
   body("pendingFriends")
     .optional()
     .customSanitizer((value) => {
@@ -234,8 +234,7 @@ router.put(
 
       if (email) updatedData.email = email;
       if (username) updatedData.username = username;
-      if (points !== undefined)
-        updatedData.points = parseInt(points, 10) || 0;
+      if (points !== undefined) updatedData.points = parseInt(points, 10) || 0;
       if (joinedEvents)
         updatedData.joinedEvents = Array.isArray(joinedEvents)
           ? joinedEvents
@@ -257,7 +256,9 @@ router.put(
 
       // Handle profile image upload if provided
       if (req.file) {
-        const fileName = `profileImages/${uid}_${Date.now()}_${req.file.originalname}`;
+        const fileName = `profileImages/${uid}_${Date.now()}_${
+          req.file.originalname
+        }`;
         const file = bucket.file(fileName);
 
         await file.save(req.file.buffer, {
@@ -310,7 +311,10 @@ router.get("/:userId/view/:friendId", authenticate, async (req, res) => {
 
     res.status(200).json(friendDoc.data());
   } catch (error) {
-    console.error(`Error fetching friend details for friendId ${friendId}:`, error);
+    console.error(
+      `Error fetching friend details for friendId ${friendId}:`,
+      error
+    );
     res.status(500).json({ error: "Failed to fetch friend details" });
   }
 });
@@ -351,5 +355,6 @@ router.get("/profile/:uid", authenticate, async (req, res) => {
     res.status(500).json({ message: "Internal server error." });
   }
 });
+
 
 module.exports = router;

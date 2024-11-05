@@ -12,8 +12,8 @@
             <p>{{ request.mutualFriends }} mutual friends</p>
           </div>
           <div class="actions">
-            <button class="accept-button hover:bg-[#E6C200]">Accept</button>
-            <button class="reject-button">✕</button>
+            <button @click="acceptRequest(request.id)" class="accept-button">Accept</button>
+            <button @click="rejectRequest(request.id)" class="reject-button">✕</button>
           </div>
         </div>
       </div>
@@ -25,17 +25,25 @@
 <script>
 export default {
   name: "FriendRequests",
-  data() {
-    return {
-      requests: [
-        { id: 1, name: "Jane Cooper", username: "j-coopz", mutualFriends: 3, avatar: "https://randomuser.me/api/portraits/women/1.jpg" },
-        { id: 2, name: "Daniel Matouf", username: "dani-matouf22", mutualFriends: 2, avatar: "https://randomuser.me/api/portraits/men/2.jpg" },
-        { id: 3, name: "Blake Glory", username: "blakes-of-glory", mutualFriends: 4, avatar: "https://randomuser.me/api/portraits/men/3.jpg" },
-      ],
-    };
+  props: {
+    requests: {
+      type: Array,
+      required: true
+    }
   },
+  methods: {
+    acceptRequest(requestId) {
+      console.log("Attempting to accept request with ID:", requestId); // Log requestId
+      this.$emit('accept-request', requestId);
+    },
+    rejectRequest(requestId) {
+      console.log("Attempting to reject request with ID:", requestId); // Log requestId
+      this.$emit('reject-request', requestId);
+    }
+  }
 };
 </script>
+
 <style scoped>
 /* Base Styling */
 .friend-requests {
@@ -123,7 +131,7 @@ h3 {
 .accept-button,
 .reject-button {
   padding: 5px 15px;
-  border: none; 
+  border: none;
   border-radius: 5px;
   font-weight: bold;
   cursor: pointer;
@@ -159,6 +167,4 @@ h3 {
 .reject-button:active {
   transform: scale(0.98);
 }
-
-
 </style>

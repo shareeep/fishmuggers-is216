@@ -8,10 +8,18 @@
       <h1 class="heading">Connect with Friends</h1>
       <SearchBar />
       <div style="align-items: center;">
-        <FriendRequests />
+        <FriendRequests 
+          :requests="receivedRequests" 
+          @accept-request="handleAcceptRequest" 
+          @reject-request="handleRejectRequest" 
+        />
 
         <!-- FriendsList component with popup toggle function passed down -->
-        <FriendsList @popup-toggle="togglePopup" :myFriends="myFriends" :suggestedFriends="suggestedFriends" />
+        <FriendsList 
+          @popup-toggle="togglePopup" 
+          :myFriends="myFriends" 
+          :suggestedFriends="suggestedFriends" 
+        />
 
         <RequestsSent :sentRequests="sentRequests" @updateSentRequests="removeSentRequest" />
       </div> 
@@ -46,6 +54,7 @@ const allUsers = ref([]); // All fetched users
 const myFriends = ref([]); // This will remain empty as per requirement
 const suggestedFriends = ref([]); // Suggested friends list
 const sentRequests = ref([]);
+const receivedRequests = ref([]);
 
 // Get the current user ID from Firebase Auth
 const userId = auth.currentUser ? auth.currentUser.uid : null;
@@ -56,18 +65,102 @@ function togglePopup(value) {
   showPopup.value = value;
 }
 
+async function fetchReceivedRequests() {
+  try {
+    const response = await axios.get(`http://localhost:3000/api/friends/requests/${userId}`);
+    receivedRequests.value = response.data.map(request => {
+      const sender = allUsers.value.find(user => user.id === request.senderId);
+      return {
+        id: request.requestId, // Ensure this is correctly set as the unique identifier
+        ...request,
+        name: sender ? sender.name : 'Unknown',
+        username: sender ? sender.username : '',
+        avatar: sender ? sender.profileImage || 'default-avatar.jpg' : 'default-avatar.jpg',
+        mutualFriends: Math.floor(Math.random() * 10), // Placeholder for mutual friends
+      };
+    });
+  } catch (error) {
+    console.error("Error fetching received friend requests:", error);
+  }
+}
+
+async function handleAcceptRequest(requestId) {
+  console.log("Received accept-request event with ID:", requestId);
+  try {
+    // Send request to backend to accept friend
+    await axios.put(`http://localhost:3000/api/friends/request/accept/${requestId}`);
+    
+    // Find the accepted friend in `receivedRequests`
+    const acceptedFriend = receivedRequests.value.find(request => request.id === requestId);
+    console.log("Accepted friend data:", acceptedFriend); // Log acceptedFriend details
+    
+    if (acceptedFriend) {
+      // Add accepted friend to `myFriends`
+      myFriends.value.push({
+        id: acceptedFriend.senderId, // Assuming senderId is the friend's ID
+        name: acceptedFriend.name,
+        username: acceptedFriend.username,
+        profileImage: acceptedFriend.avatar,
+      });
+
+      console.log("Updated myFriends list after accepting:", myFriends.value); // Log myFriends
+
+      // Remove from `receivedRequests`
+      receivedRequests.value = receivedRequests.value.filter(request => request.id !== requestId);
+    }
+
+    console.log("Friend request accepted successfully and friend added to myFriends");
+  } catch (error) {
+    console.error("Error accepting friend request:", error);
+  }
+}
+
+async function handleRejectRequest(requestId) {
+  console.log("Received reject-request event with ID:", requestId);
+  try {
+    await axios.put(`http://localhost:3000/api/friends/request/reject/${requestId}`);
+    receivedRequests.value = receivedRequests.value.filter(request => request.id !== requestId);
+    console.log("Friend request rejected successfully");
+  } catch (error) {
+    console.error("Error rejecting friend request:", error);
+  }
+}
+
+async function fetchMyFriends() {
+  try {
+    const response = await axios.get(`http://localhost:3000/api/friends/${userId}`);
+    console.log("Raw response from backend:", response.data); // Log raw backend response
+    
+    // Map the response to myFriends
+    myFriends.value = response.data.map(friend => ({
+      id: friend.id,
+      name: friend.name,
+      username: friend.username,
+      profileImage: friend.profileImage || 'default-avatar.jpg',
+    }));
+    console.log("Mapped myFriends:", myFriends.value); // Log mapped friends
+  } catch (error) {
+    console.error("Error fetching friends:", error);
+  }
+}
+
+
+
 // Fetch all users and add them to suggested friends
 async function fetchUsers() {
   try {
     const response = await axios.get('http://localhost:3000/api/users');
     allUsers.value = response.data;
 
-    // Set myFriends to empty and filter out the current user from suggestedFriends
-    myFriends.value = []; // Keep 'My Friends' empty
-    suggestedFriends.value = allUsers.value.filter(user => user.id !== userId);
+    // Fetch `myFriends` first to ensure the list is up-to-date
+    await fetchMyFriends();
 
-    console.log("My Friends (should be empty):", myFriends.value);
-    console.log("Suggested Friends (excluding current user):", suggestedFriends.value);
+    // Filter suggestedFriends to exclude users already in myFriends
+    suggestedFriends.value = allUsers.value.filter(user => 
+      user.id !== userId && !myFriends.value.some(friend => friend.id === user.id)
+    );
+
+    console.log("Suggested Friends (excluding current friends):", suggestedFriends.value);
   } catch (error) {
     console.error("Error fetching users:", error);
   }
@@ -144,6 +237,8 @@ onMounted(() => {
 
   fetchUsers(); // Fetch all users when the component mounts
   fetchSentRequests(); // Fetch sent requests when the component mounts
+  fetchReceivedRequests();
+  fetchMyFriends();
 });
 </script>
 

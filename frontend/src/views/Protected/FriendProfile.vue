@@ -4,9 +4,23 @@
     <img :src="user.profileImage || 'default-avatar.jpg'" alt="User Profile Image" />
     <p>{{ user.username }}</p>
 
-    <!-- Add Friend Button -->
-    <button @click="sendFriendRequest" class="add-friend-button" :disabled="requestSent">
-      {{ requestSent ? 'Request Sent' : 'Add Friend' }}
+    <!-- Conditional Buttons for Friend Status -->
+    <div v-if="isFriend">
+      <button @click="removeFriend" class="remove-friend-button">
+        Remove Friend
+      </button>
+    </div>
+    <div v-else-if="hasPendingRequest">
+      <!-- Accept and Delete buttons when there’s a pending request -->
+      <button @click="acceptFriendRequest" class="accept-friend-button">
+        Accept Request
+      </button>
+      <button @click="deleteFriendRequest" class="delete-request-button">
+        Delete Request
+      </button>
+    </div>
+    <button v-else @click="sendFriendRequest" class="add-friend-button" :disabled="requestSent">
+      {{ requestSent ? 'Friend Request Sent' : 'Add Friend' }}
     </button>
   </div>
 </template>
@@ -19,8 +33,11 @@ export default {
   props: ['id'], // The ID of the profile being viewed
   data() {
     return {
-      user: {},         // User details
-      requestSent: false, // Tracks whether a friend request has been sent
+      user: {},              // User details
+      isFriend: false,       // Tracks if the user is already a friend
+      requestSent: false,    // Tracks if a friend request has been sent by the current user
+      hasPendingRequest: false, // Tracks if there is a pending request from the viewed user
+      requestId: null,       // Stores the requestId for accepting/deleting the request
     };
   },
   async mounted() {
@@ -29,30 +46,64 @@ export default {
       const response = await axios.get(`http://localhost:3000/api/users/profile/${this.id}`);
       this.user = response.data;
 
-      // Check if a friend request has already been sent to this user
-      await this.checkFriendRequest();
+      // Reset states before checking
+      this.isFriend = false;
+      this.requestSent = false;
+      this.hasPendingRequest = false;
+      this.requestId = null;
+
+      // Check if the user is already a friend or has a pending request
+      await this.checkFriendStatus();
     } catch (error) {
       console.error("Error fetching user profile:", error.response ? error.response.data : error.message);
     }
   },
   methods: {
-    async checkFriendRequest() {
+    async checkFriendStatus() {
       try {
         const auth = getAuth();
-        const senderId = auth.currentUser?.uid;
+        const currentUserId = auth.currentUser?.uid;
 
-        if (!senderId) {
+        if (!currentUserId) {
           console.error("User is not authenticated.");
           return;
         }
 
-        // Check if a friend request already exists for this user
-        const response = await axios.get(`http://localhost:3000/api/friends/requests/${this.id}`);
-        
-        // Set `requestSent` to true if a pending request exists
-        if (response.data.some(request => request.senderId === senderId && request.status === "pending")) {
-          this.requestSent = true;
+        // Fetch the current user's friends list and check if this profile user is a friend
+        const response = await axios.get(`http://localhost:3000/api/friends/${currentUserId}`);
+        this.isFriend = response.data.some(friend => friend.id === this.id);
+
+        // If not a friend, check if there is a pending friend request
+        if (!this.isFriend) {
+          await this.checkFriendRequest();
         }
+      } catch (error) {
+        console.error("Error checking friend status:", error.response ? error.response.data : error.message);
+      }
+    },
+    async checkFriendRequest() {
+      try {
+        const auth = getAuth();
+        const currentUserId = auth.currentUser?.uid;
+
+        if (!currentUserId) {
+          console.error("User is not authenticated.");
+          return;
+        }
+
+        // Fetch all requests where the current user is involved
+        const response = await axios.get(`http://localhost:3000/api/friends/requests/${currentUserId}`);
+
+        // Check for pending requests and store `requestId`
+        response.data.forEach(request => {
+          if (request.senderId === this.id && request.receiverId === currentUserId && request.status === "pending") {
+            this.hasPendingRequest = true;
+            this.requestId = request.requestId; // Store the request ID
+          } else if (request.senderId === currentUserId && request.receiverId === this.id && request.status === "pending") {
+            this.requestSent = true;
+            this.requestId = request.requestId; // Store the request ID
+          }
+        });
       } catch (error) {
         console.error("Error checking friend request:", error.response ? error.response.data : error.message);
       }
@@ -60,8 +111,8 @@ export default {
     async sendFriendRequest() {
       try {
         const auth = getAuth();
-        const senderId = auth.currentUser?.uid; // Get the authenticated user ID
-        const receiverId = this.id; // Use the `id` prop as receiverId
+        const senderId = auth.currentUser?.uid;
+        const receiverId = this.id;
 
         if (!senderId || !receiverId) {
           console.error("Missing senderId or receiverId");
@@ -69,17 +120,75 @@ export default {
         }
 
         // Send the friend request
-        await axios.post('http://localhost:3000/api/friends/request', {
+        const response = await axios.post('http://localhost:3000/api/friends/request', {
           senderId,
           receiverId,
         });
 
-        this.requestSent = true; // Mark request as sent to disable button for this specific user
+        // Set requestSent to true to reflect "Friend Request Sent"
+        this.requestSent = true;
+        this.requestId = response.data.request.requestId; // Store the request ID
       } catch (error) {
         console.error("Error sending friend request:", error.response ? error.response.data : error.message);
         alert("Failed to send friend request. Please try again.");
       }
     },
+    async acceptFriendRequest() {
+      try {
+        if (!this.requestId) {
+          console.error("No request ID found to accept the request.");
+          return;
+        }
+
+        // Accept the friend request in the backend
+        await axios.put(`http://localhost:3000/api/friends/request/accept/${this.requestId}`);
+        
+        // Update the UI state
+        this.isFriend = true;
+        this.hasPendingRequest = false;
+      } catch (error) {
+        console.error("Error accepting friend request:", error.response ? error.response.data : error.message);
+        alert("Failed to accept friend request. Please try again.");
+      }
+    },
+    async deleteFriendRequest() {
+      try {
+        if (!this.requestId) {
+          console.error("No request ID found to delete the request.");
+          return;
+        }
+
+        // Delete the friend request in the backend
+        await axios.delete(`http://localhost:3000/api/friends/request/${this.requestId}`);
+        
+        // Update the UI state
+        this.hasPendingRequest = false;
+      } catch (error) {
+        console.error("Error deleting friend request:", error.response ? error.response.data : error.message);
+        alert("Failed to delete friend request. Please try again.");
+      }
+    },
+    async removeFriend() {
+      try {
+        const auth = getAuth();
+        const currentUserId = auth.currentUser?.uid;
+        const friendId = this.id;
+
+        if (!currentUserId || !friendId) {
+          console.error("Missing user ID or friend ID.");
+          return;
+        }
+
+        // Call the backend to remove the friend relationship
+        await axios.delete(`http://localhost:3000/api/friends/${currentUserId}/remove/${friendId}`);
+
+        // Update the state to reflect removal
+        this.isFriend = false; // Update the state to show "Add Friend" button
+      } catch (error) {
+        console.error("Error removing friend:", error.response ? error.response.data : error.message);
+        alert("Failed to remove friend. Please try again.");
+      }
+    }
   },
 };
 </script>
@@ -97,23 +206,52 @@ img {
   margin-bottom: 10px;
 }
 
-.add-friend-button {
-  background-color: #4CAF50;
-  color: white;
+.add-friend-button,
+.accept-friend-button,
+.delete-request-button,
+.remove-friend-button {
   border: none;
   padding: 10px 20px;
   font-size: 1rem;
   cursor: pointer;
   border-radius: 5px;
+  margin-top: 10px;
   transition: background-color 0.3s ease;
 }
 
-.add-friend-button:disabled {
+.add-friend-button {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.accept-friend-button {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.delete-request-button {
+  background-color: #FF6666;
+  color: white;
+}
+
+.remove-friend-button {
+  background-color: #FF6666;
+  color: white;
+}
+
+.add-friend-button:disabled,
+.accept-friend-button:disabled,
+.delete-request-button:disabled {
   background-color: #ccc;
   cursor: not-allowed;
 }
 
-.add-friend-button:hover:enabled {
+.accept-friend-button:hover {
   background-color: #45a049;
+}
+
+.delete-request-button:hover,
+.remove-friend-button:hover {
+  background-color: #FF3333;
 }
 </style>
