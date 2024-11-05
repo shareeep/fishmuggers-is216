@@ -71,6 +71,28 @@
   </nav>
 </template>
 
+<script>
+import { getAuth } from 'firebase/auth';
+
+export default {
+  methods: {
+    handleSignOut() {
+      const auth = getAuth();
+      
+      auth.signOut()
+        .then(() => {
+          console.log("Sign-out successful.");
+          // Redirect to the login page or any other route
+          this.$router.push('/login'); // Change '/login' to your desired route if needed
+        })
+        .catch((error) => {
+          console.error("Sign-out error:", error);
+        });
+    }
+  }
+}
+</script>
+
 <style>
 .navbar {
   width: 250px;
