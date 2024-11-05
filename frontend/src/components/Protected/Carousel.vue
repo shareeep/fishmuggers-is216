@@ -1,186 +1,330 @@
 <template>
+    <!-- <div class="carousel-wrapper"> -->
     <div class="carousel">
-        <h1 class="title">Events Near You</h1>
+        <!-- Profile Tabs -->
+        <!-- <div class="profile-tabs">
+        <button :class="{ active: activeTab === 'large' }" @click="switchTab('large')">Large Scale</button>
+        <button :class="{ active: activeTab === 'casual' }" @click="switchTab('casual')">Casual</button>
+      </div> -->
+        <!-- Loading Indicator -->
+        <div v-if="loading" class="loading-indicator">
+            Loading events...
+        </div>
 
-        <!-- Vertical Cards for Small Screens (1 Column) -->
-        <div class="flex flex-col md:hidden">
-            <div v-for="(event, index) in events" :key="index" class="mb-4 mx-auto">
-                <router-link :to="`/eventdetail/${event.id}`">
-                    <div class="card" style="width:300px;">
-                        <img :src="event.image" alt="Event Image" />
-                        <div class="card-body">
-                            <div class="card-left">
-                                <div class="date">{{ event.date }}</div>
-                                <div class="date-month">{{ event.year }}</div>
-                            </div>
-                            <div class="card-right">
-                                <div class="event-title">{{ event.title }}</div>
-                                <div class="event-subtitle">{{ event.time }}</div>
-                                <div class="event-subtitle">
-                                    <i class="fas fa-star star-icon"></i> {{ event.interested }} Interested
+        <!-- Error Message -->
+        <div v-if="errorMessage" class="error-message">
+            {{ errorMessage }}
+        </div>
+
+        <!-- Events Display -->
+        <div v-else>
+            <!-- Tab Content (LARGE SCALE)-->
+            <div class="tab-content">
+                <div v-if="activeTab === 'large' && showCarousel">
+                    <!-- Vertical Cards for Small Screens (1 Column) -->
+                    <div class="flex flex-col md:hidden">
+                        <div v-for="(event, index) in tabEvents" :key="index" class="mb-4 mx-auto">
+                            <router-link :to="{ name: 'eventDetail', params: { id: event.eventId } }">
+                                <div class="carousel__item">
+                                    <div class="card">
+                                        <img :src="event.eventImage || 'https://via.placeholder.com/300x150'"
+                                            alt="Event Image">
+                                        <div class="card-body">
+                                            <div class="card-left">
+                                                <div class="event-date">
+                                                    <div class="month">{{ formatEventMonth(event.date) }}</div>
+                                                    <div class="year">{{ formatEventYear(event.date) }}</div>
+                                                </div>
+                                            </div>
+                                            <div class="card-right">
+                                                <div class="event-title">{{ event.title }}</div>
+                                                <div class="event-details">
+                                                    {{ formatEventOrdinalDay(event.date) }} {{
+                                                    formatEventMonthFull(event.date) }} at
+                                                    {{ formatEventTime(event.date) }}
+                                                </div>
+                                                <div class="event-subtitle">
+                                                    <i class="fas fa-star star-icon"></i>
+                                                    {{ event.interestedUsers ? event.interestedUsers.length : 0 }}
+                                                    Interested
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
-                            </div>
+                            </router-link>
                         </div>
                     </div>
-                </router-link>
+
+                    <!-- Carousel for Medium Screens (1 Item) -->
+                    <div class="hidden md:block lg:hidden">
+                        <Carousel :itemsToShow="1" :wrapAround="true" :transition="500" class="mx-auto"
+                            style="width:600px;">
+                            <Slide v-for="(event, index) in tabEvents" :key="index" class="mb-4 mx-auto">
+                                <router-link :to="{ name: 'eventDetail', params: { id: event.eventId } }">
+                                    <div class="carousel__item">
+                                        <div class="card">
+                                            <img :src="event.eventImage || 'https://via.placeholder.com/300x150'"
+                                                alt="Event Image">
+                                            <div class="card-body">
+                                                <div class="card-left">
+                                                    <div class="event-date">
+                                                        <div class="month">{{ formatEventMonth(event.date) }}</div>
+                                                        <div class="year">{{ formatEventYear(event.date) }}</div>
+                                                    </div>
+                                                </div>
+                                                <div class="card-right">
+                                                    <div class="event-title">{{ event.title }}</div>
+                                                    <div class="event-details">
+                                                        {{ formatEventOrdinalDay(event.date) }} {{
+                                                        formatEventMonthFull(event.date) }} at
+                                                        {{ formatEventTime(event.date) }}
+                                                    </div>
+                                                    <div class="event-subtitle">
+                                                        <i class="fas fa-star star-icon"></i>
+                                                        {{ event.interestedUsers ? event.interestedUsers.length : 0 }}
+                                                        Interested
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </router-link>
+                            </Slide>
+                            <template #addons>
+                                <navigation>
+                                    <template #next>
+                                        <span id="right"> <img src="../../../assets/images/right_arrow.png"
+                                                alt="right_arrow"> </span>
+                                    </template>
+                                    <template #prev>
+                                        <span id="left">
+                                            <img src="../../../assets/images/left_arrow.png" alt="left_arrow"
+                                                width="100px" height="40px">
+                                        </span>
+                                    </template>
+                                </navigation>
+                                <!-- <Navigation /> -->
+                                <Pagination />
+                            </template>
+                        </Carousel>
+                    </div>
+
+                    <!-- Carousel for Large Screens (3 Items) -->
+                    <div v-if="showLargeCarousel" class="hidden lg:block">
+                        <Carousel :itemsToShow="3" :wrapAround="true" :transition="500" :partialVisible="false">
+                            <Slide v-for="(event, index) in tabEvents" :key="index"
+                                :class="{ active: index === currentIndex }">
+                                <router-link :to="{ name: 'eventDetail', params: { id: event.eventId } }">
+                                    <div class="carousel__item">
+                                        <div class="card">
+                                            <img :src="event.eventImage || 'https://via.placeholder.com/300x150'"
+                                                alt="Event Image">
+                                            <div class="card-body">
+                                                <div class="card-left">
+                                                    <div class="event-date">
+                                                        <div class="month">{{ formatEventMonth(event.date) }}</div>
+                                                        <div class="year">{{ formatEventYear(event.date) }}</div>
+                                                    </div>
+                                                </div>
+                                                <div class="card-right">
+                                                    <div class="event-title">{{ event.title }}</div>
+                                                    <div class="event-details">
+                                                        {{ formatEventOrdinalDay(event.date) }} {{
+                                                        formatEventMonthFull(event.date) }} at
+                                                        {{ formatEventTime(event.date) }}
+                                                    </div>
+                                                    <div class="event-subtitle">
+                                                        <i class="fas fa-star star-icon"></i>
+                                                        {{ event.interestedUsers ? event.interestedUsers.length : 0 }}
+                                                        Interested
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </router-link>
+                            </Slide>
+                            <template #addons>
+                                <navigation>
+                                    <template #next>
+                                        <span id="right"> <img src="../../../assets/images/right_arrow.png"
+                                                alt="right_arrow"> </span>
+                                    </template>
+                                    <template #prev>
+                                        <span id="left">
+                                            <img src="../../../assets/images/left_arrow.png" alt="left_arrow"
+                                                width="100px" height="40px">
+                                        </span>
+                                    </template>
+                                </navigation>
+                                <!-- <Navigation /> -->
+                                <Pagination />
+                            </template>
+                        </Carousel>
+                    </div>
+                </div>
             </div>
-        </div>
 
-        <!-- Carousel for Medium Screens (1 Item) -->
-        <div class="hidden md:block lg:hidden">
-            <Carousel :itemsToShow="1" :wrapAround="true" :transition="500" class="mx-auto" style="width:600px;">
-                <Slide v-for="(event, index) in events" :key="index">
-                    <router-link :to="`/eventdetail/${event.id}`">
-                        <div class="carousel__item mx-1 lg:mx-2">
-                            <div class="card">
-                                <img :src="event.image" alt="Event Image" />
-                                <div class="card-body">
-                                    <div class="card-left">
-                                        <div class="date">{{ event.date }}</div>
-                                        <div class="date-month">{{ event.year }}</div>
-                                    </div>
-                                    <div class="card-right">
-                                        <div class="event-title">{{ event.title }}</div>
-                                        <div class="event-subtitle">{{ event.time }}</div>
-                                        <div class="event-subtitle">
-                                            <i class="fas fa-star star-icon"></i> {{ event.interested }} Interested
+            <!-- Tab Content (CASUAL)-->
+            <div class="tab-content">
+                <div v-if="activeTab === 'casual' && showCarousel">
+                    <!-- Vertical Cards for Small Screens (1 Column) -->
+                    <div class="flex flex-col md:hidden">
+                        <div v-for="(event, index) in tabEvents" :key="index" class="mb-4 mx-auto">
+                            <router-link :to="{ name: 'eventDetail', params: { id: event.eventId } }">
+                                <div class="carousel__item">
+                                    <div class="card">
+                                        <img :src="event.eventImage || 'https://via.placeholder.com/300x150'"
+                                            alt="Event Image">
+                                        <div class="card-body">
+                                            <div class="card-left">
+                                                <div class="event-date">
+                                                    <div class="month">{{ formatEventMonth(event.date) }}</div>
+                                                    <div class="year">{{ formatEventYear(event.date) }}</div>
+                                                </div>
+                                            </div>
+                                            <div class="card-right">
+                                                <div class="event-title">{{ event.title }}</div>
+                                                <div class="event-details">
+                                                    {{ formatEventOrdinalDay(event.date) }} {{
+                                                    formatEventMonthFull(event.date) }}
+                                                    at
+                                                    {{ formatEventTime(event.date) }}
+                                                </div>
+                                                <div class="event-subtitle">
+                                                    <i class="fas fa-star star-icon"></i>
+                                                    {{ event.interestedUsers ? event.interestedUsers.length : 0 }}
+                                                    Interested
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                    </router-link>
-                </Slide>
-                <template #addons>
-                    <Navigation />
-                    <Pagination />
-                </template>
-            </Carousel>
-        </div>
-
-        <div class="hidden lg:block">
-            <Carousel :itemsToShow="3" :wrapAround="true" :transition="500" :partialVisible="false">
-                <Slide v-for="(event, index) in events" :key="index">
-                    <router-link :to="`/eventdetail/${event.id}`">
-                        <div class="carousel__item">
-                            <div class="card">
-                                <img :src="event.image" alt="Event Image">
-                                <div class="card-body">
-                                    <div class="card-left">
-                                        <div class="date">{{ event.date }}</div>
-                                        <div class="date-month">{{ event.year }}</div>
-                                    </div>
-                                    <div class="card-right">
-                                        <div class="event-title">{{ event.title }}</div>
-                                        <div class="event-subtitle">{{ event.time }}</div>
-                                        <div class="event-subtitle">
-                                            <i class="fas fa-star star-icon"></i> {{ event.interested }} Interested
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </router-link>
-                </Slide>
-                <template #addons>
-                    <Navigation />
-                    <Pagination />
-                </template>
-            </Carousel>
-        </div>
-
-        <h1 class="title">Trending</h1>
-        <!-- Vertical Cards for Small Screens (1 Column) -->
-        <div class="flex flex-col md:hidden">
-            <div v-for="(event, index) in events" :key="index" class="mb-4 mx-auto">
-                <router-link :to="`/eventdetail/${event.id}`">
-                    <div class="card" style="width:300px;">
-                        <img :src="event.image" alt="Event Image" />
-                        <div class="card-body">
-                            <div class="card-left">
-                                <div class="date">{{ event.date }}</div>
-                                <div class="date-month">{{ event.year }}</div>
-                            </div>
-                            <div class="card-right">
-                                <div class="event-title">{{ event.title }}</div>
-                                <div class="event-subtitle">{{ event.time }}</div>
-                                <div class="event-subtitle">
-                                    <i class="fas fa-star star-icon"></i> {{ event.interested }} Interested
-                                </div>
-                            </div>
+                            </router-link>
                         </div>
                     </div>
-                </router-link>
+
+                    <!-- Carousel for Medium Screens (1 Item) -->
+                    <div class="hidden md:block lg:hidden">
+                        <Carousel :itemsToShow="1" :wrapAround="true" :transition="500" class="mx-auto"
+                            style="width:600px;">
+                            <Slide v-for="(event, index) in tabEvents" :key="index">
+                                <router-link :to="{ name: 'eventDetail', params: { id: event.eventId } }">
+                                    <div class="carousel__item">
+                                        <div class="card">
+                                            <img :src="event.eventImage || 'https://via.placeholder.com/300x150'"
+                                                alt="Event Image">
+                                            <div class="card-body">
+                                                <div class="card-left">
+                                                    <div class="event-date">
+                                                        <div class="month">{{ formatEventMonth(event.date) }}</div>
+                                                        <div class="year">{{ formatEventYear(event.date) }}</div>
+                                                    </div>
+                                                </div>
+                                                <div class="card-right">
+                                                    <div class="event-title">{{ event.title }}</div>
+                                                    <div class="event-details">
+                                                        {{ formatEventOrdinalDay(event.date) }} {{
+                                                        formatEventMonthFull(event.date)
+                                                        }} at
+                                                        {{ formatEventTime(event.date) }}
+                                                    </div>
+                                                    <div class="event-subtitle">
+                                                        <i class="fas fa-star star-icon"></i>
+                                                        {{ event.interestedUsers ? event.interestedUsers.length : 0 }}
+                                                        Interested
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </router-link>
+                            </Slide>
+                            <template #addons>
+                                <navigation>
+                                    <template #next>
+                                        <span id="right"> <img src="../../../assets/images/right_arrow.png"
+                                                alt="right_arrow"> </span>
+                                    </template>
+                                    <template #prev>
+                                        <span id="left">
+                                            <img src="../../../assets/images/left_arrow.png" alt="left_arrow"
+                                                width="100px" height="40px">
+                                        </span>
+                                    </template>
+                                </navigation>
+                                <!-- <Navigation /> -->
+                                <Pagination />
+                            </template>
+                        </Carousel>
+                    </div>
+
+                    <!-- Carousel for Large Screens (3 Items) -->
+                    <div v-if="showLargeCarousel" class="hidden lg:block">
+                        <Carousel :itemsToShow="3" :wrapAround="true" :transition="500" :partialVisible="false">
+                            <Slide v-for="(event, index) in tabEvents" :key="index"
+                                :class="{ active: index === currentIndex }">
+                                <router-link :to="{ name: 'eventDetail', params: { id: event.eventId } }">
+                                    <div class="carousel__item">
+                                        <div class="card">
+                                            <img :src="event.eventImage || 'https://via.placeholder.com/300x150'"
+                                                alt="Event Image">
+                                            <div class="card-body">
+                                                <div class="card-left">
+                                                    <div class="event-date">
+                                                        <div class="month">{{ formatEventMonth(event.date) }}</div>
+                                                        <div class="year">{{ formatEventYear(event.date) }}</div>
+                                                    </div>
+                                                </div>
+                                                <div class="card-right">
+                                                    <div class="event-title">{{ event.title }}</div>
+                                                    <div class="event-details">
+                                                        {{ formatEventOrdinalDay(event.date) }} {{
+                                                        formatEventMonthFull(event.date)
+                                                        }} at
+                                                        {{ formatEventTime(event.date) }}
+                                                    </div>
+                                                    <div class="event-subtitle">
+                                                        <i class="fas fa-star star-icon"></i>
+                                                        {{ event.interestedUsers ? event.interestedUsers.length : 0 }}
+                                                        Interested
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </router-link>
+                            </Slide>
+                            <template #addons>
+                                <navigation>
+                                    <template #next>
+                                        <span id="right"> <img src="../../../assets/images/right_arrow.png"
+                                                alt="right_arrow"> </span>
+                                    </template>
+                                    <template #prev>
+                                        <span id="left">
+                                            <img src="../../../assets/images/left_arrow.png" alt="left_arrow"
+                                                width="100px" height="40px">
+                                        </span>
+                                    </template>
+                                </navigation>
+                                <!-- <Navigation /> -->
+                                <Pagination />
+                            </template>
+                        </Carousel>
+                    </div>
+                </div>
             </div>
-        </div>
-
-        <!-- Carousel for Medium Screens (1 Item) -->
-        <div class="hidden md:block lg:hidden">
-            <Carousel :itemsToShow="1" :wrapAround="true" :transition="500" class="mx-auto" style="width:600px;">
-                <Slide v-for="(event, index) in events" :key="index">
-                    <router-link :to="`/eventdetail/${event.id}`">
-                        <div class="carousel__item mx-1 lg:mx-2">
-                            <div class="card">
-                                <img :src="event.image" alt="Event Image" />
-                                <div class="card-body">
-                                    <div class="card-left">
-                                        <div class="date">{{ event.date }}</div>
-                                        <div class="date-month">{{ event.year }}</div>
-                                    </div>
-                                    <div class="card-right">
-                                        <div class="event-title">{{ event.title }}</div>
-                                        <div class="event-subtitle">{{ event.time }}</div>
-                                        <div class="event-subtitle">
-                                            <i class="fas fa-star star-icon"></i> {{ event.interested }} Interested
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </router-link>
-                </Slide>
-                <template #addons>
-                    <Navigation />
-                    <Pagination />
-                </template>
-            </Carousel>
-        </div>
-
-        <div class="hidden lg:block">
-            <Carousel :itemsToShow="3" :wrapAround="true" :transition="500" :partialVisible="false">
-                <Slide v-for="(event, index) in events" :key="index">
-                    <router-link :to="`/eventdetail/${event.id}`">
-                        <div class="carousel__item">
-                            <div class="card">
-                                <img :src="event.image" alt="Event Image">
-                                <div class="card-body">
-                                    <div class="card-left">
-                                        <div class="date">{{ event.date }}</div>
-                                        <div class="date-month">{{ event.year }}</div>
-                                    </div>
-                                    <div class="card-right">
-                                        <div class="event-title">{{ event.title }}</div>
-                                        <div class="event-subtitle">{{ event.time }}</div>
-                                        <div class="event-subtitle">
-                                            <i class="fas fa-star star-icon"></i> {{ event.interested }} Interested
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </router-link>
-                </Slide>
-                <template #addons>
-                    <Navigation />
-                    <Pagination />
-                </template>
-            </Carousel>
         </div>
     </div>
+    <!-- </div> -->
 </template>
 
+
 <script>
-import { defineComponent } from 'vue';
+import { defineComponent, ref, watch } from 'vue';
+import axios from 'axios';
 import { Carousel, Navigation, Pagination, Slide } from 'vue3-carousel';
 import 'vue3-carousel/dist/carousel.css';
 
@@ -192,113 +336,262 @@ export default defineComponent({
         Pagination,
         Slide,
     },
+    props: {
+        selectedEventType: {
+            type: String,
+            required: true,
+        },
+    },
     data() {
         return {
-            events: [
-                { id: 1, image: "https://via.placeholder.com/300x150", date: "DEC", year: "2022", title: "Event Title 1", time: "1:00pm - 3:00pm", interested: 5 },
-                { id: 2, image: "https://via.placeholder.com/300x150", date: "DEC", year: "2022", title: "Event Title 2", time: "1:00pm - 3:00pm", interested: 5 },
-                { id: 3, image: "https://via.placeholder.com/300x150", date: "DEC", year: "2022", title: "Event Title 3", time: "1:00pm - 3:00pm", interested: 5 },
-                { id: 4, image: "https://via.placeholder.com/300x150", date: "DEC", year: "2022", title: "Event Title 4", time: "1:00pm - 3:00pm", interested: 5 }
-            ],
-            trending: [
-                { id: 1, image: "https://via.placeholder.com/300x150", date: "JAN", year: "2023", title: "Trending Event 1", time: "10:00am - 12:00pm", interested: 10 },
-                { id: 2, image: "https://via.placeholder.com/300x150", date: "JAN", year: "2023", title: "Trending Event 2", time: "10:00am - 12:00pm", interested: 10 },
-                { id: 3, image: "https://via.placeholder.com/300x150", date: "JAN", year: "2023", title: "Trending Event 3", time: "10:00am - 12:00pm", interested: 10 },
-                { id: 4, image: "https://via.placeholder.com/300x150", date: "JAN", year: "2023", title: "Trending Event 4", time: "10:00am - 12:00pm", interested: 10 },
-            ]
+            loading: true,
+            errorMessage: '',
+            showLargeCarousel: false,
+            activeTab: 'large', // Initial active tab
+            showCarousel: true,
+            events: []
         };
+    },
+    computed: {
+        tabEvents() {
+            return this.events.filter(event => event.eventType === this.selectedEventType);
+
+        },
+    },
+
+
+    setup() {
+        const currentIndex = ref(0);
+
+        const updateActiveSlide = (index) => {
+            currentIndex.value = index;
+        };
+
+        return {
+            currentIndex,
+            updateActiveSlide,
+        };
+    },
+    mounted() {
+        this.fetchEvents(); // Fetch events data
+        this.setInitialCarouselView();
+        // Ensure the default tab's data is computed on load
+        console.log('Default tab set to:', this.activeTab);
+    },
+    watch: {
+        activeTab() {
+            // Hide the carousel, then trigger resize after a delay
+            this.showCarousel = false;
+            setTimeout(() => {
+                this.showCarousel = true;
+                window.dispatchEvent(new Event('resize'));
+            }, 0); // Adjust delay as needed
+        },
+    },
+    methods: {
+        switchTab(tab) {
+            this.activeTab = tab;
+            console.log('Tab switched to:', this.activeTab); // Log to check the tab
+            this.showCarousel = false;
+            setTimeout(() => {
+                this.showCarousel = true;
+                window.dispatchEvent(new Event('resize'));
+            }, 10);
+        },
+
+        async fetchEvents() {
+            try {
+                const response = await axios.get('http://localhost:3000/api/events');
+                this.events = response.data;
+                console.log('Fetched Events:', this.events); // Add this line
+            } catch (error) {
+                console.error('Error fetching events:', error);
+                this.errorMessage = 'Failed to load events.';
+            } finally {
+                this.loading = false;
+                setTimeout(() => {
+                    window.dispatchEvent(new Event('resize'));
+                }, 10);
+            }
+        },
+        formatEventDay(dateInput) {
+            const dateObj = this.convertToDate(dateInput);
+            return dateObj.toLocaleDateString('en-US', { weekday: 'long' });
+        },
+        formatEventTime(dateInput) {
+            const dateObj = this.convertToDate(dateInput);
+            const hours = dateObj.getHours();
+            const minutes = dateObj.getMinutes().toString().padStart(2, '0');
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            const formattedHours = hours % 12 || 12; // Convert to 12-hour format
+
+            return `${formattedHours}:${minutes}${ampm.toLowerCase()}`;
+        },
+        formatFullDate(dateInput) {
+            const dateObj = this.convertToDate(dateInput);
+            const day = dateObj.getDate();
+            const month = dateObj.toLocaleString('en-US', { month: 'long' });
+            const year = dateObj.getFullYear();
+
+            return `${day} ${month} ${year}`;
+        },
+        formatEventMonth(dateInput) {
+            const dateObj = this.convertToDate(dateInput);
+            return dateObj.toLocaleString('en-US', { month: 'short' }).toUpperCase();
+        },
+        formatEventMonthFull(dateInput) {
+            const dateObj = this.convertToDate(dateInput);
+            return dateObj.toLocaleString('en-US', { month: 'long' });
+        },
+        formatEventOrdinalDay(dateInput) {
+            const dateObj = this.convertToDate(dateInput);
+            const day = dateObj.getDate();
+            const suffix = day % 10 === 1 && day !== 11 ? "st" :
+                day % 10 === 2 && day !== 12 ? "nd" :
+                    day % 10 === 3 && day !== 13 ? "rd" : "th";
+            return `${day}${suffix}`;
+        },
+        formatEventYear(dateInput) {
+            const dateObj = this.convertToDate(dateInput);
+            return dateObj.getFullYear();
+        },
+        convertToDate(dateInput) {
+            if (dateInput && dateInput._seconds) {
+                // If date is a Firestore Timestamp object
+                return new Date(dateInput._seconds * 1000);
+            } else if (typeof dateInput === 'string' || typeof dateInput === 'number') {
+                // If date is a string or number
+                return new Date(dateInput);
+            } else {
+                return new Date();
+            }
+        },
+        setInitialCarouselView() {
+            const screenWidth = window.innerWidth;
+            this.showLargeCarousel = screenWidth >= 1024;
+            // this.showMediumCarousel = screenWidth >= 768 && screenWidth < 1024;
+            // this.showSmallCarousel = screenWidth < 768;
+        },
     },
 });
 </script>
+
 <style scoped>
-/* ARROW STYLES */
-.carousel__prev,
-.carousel__next {
-    box-sizing: content-box;
-    background: transparent;
-    /* Make the default background transparent */
-    border-radius: var(--vc-nav-border-radius);
-    width: var(--vc-nav-width);
-    height: var(--vc-nav-height);
+::v-deep #right img {
+    position: relative;
+    max-width: 60px;
+    /* Override with specific size */
+    max-height: 40px;
+    margin-left: -2px;
+    transform: scale(1);
+    margin-bottom: 10px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+::v-deep #left img {
+    position: relative;
+    max-width: 50px;
+    /* Override with specific size */
+    max-height: 35px;
+    margin-right: 0px;
+    transform: scale(1);
+    margin-bottom: 10px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+::v-deep #right img:hover,
+::v-deep #left img:hover {
+    filter: drop-shadow(0px 4px 8px #FFD700);
+    /* Color shadow on hover */
+}
+
+/* General Styles */
+/* .title {
+    color: rgb(46, 46, 46);
     text-align: center;
-    font-size: var(--vc-nav-height);
-    padding: 0;
-    color: var(--vc-nav-color);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: absolute;
-    border: 0;
-    cursor: pointer;
-    margin: 0 10px;
-    top: 50%;
-    transform: translateY(-50%);
-    transition: color 0.3s ease
+    font-family: 'Montserrat', sans-serif;
+    font-size: 30px;
+    font-weight: bold;
+    margin-top: 40px;
+  } */
+
+/* Loading Indicator and Error Message Styles */
+.loading-indicator,
+.error-message {
+    text-align: center;
+    font-size: 18px;
+    margin-top: 20px;
 }
 
-.carousel__prev:hover,
-.carousel__next:hover {
-    color: white;
-    /* Change arrow color on hover */
-    background-color: #FFF3B3;
-    /* Circle color when hovering */
-    border-radius: 50%;
-    /* Make it a circle */
-    width: 60px;
-    /* Slightly increase the width to accommodate the circle */
-    height: 60px;
-    /* Slightly increase the height to accommodate the circle */
-    padding: 0;
-    /* Reset padding to fit the new size */
+.error-message {
+    color: red;
 }
 
-.carousel__next--disabled,
-.carousel__prev--disabled {
-    cursor: not-allowed;
-    opacity: 0.5;
-}
-
-.carousel__prev {
-    left: 0;
-}
-
-.carousel__next {
-    right: 0;
-}
-
-.carousel--rtl .carousel__prev {
-    left: auto;
-    right: 0;
-}
-
-.carousel--rtl .carousel__next {
-    right: auto;
-    left: 0;
-}
-
-
-
-/* PAGINATION STYLES */
+/* Carousel Container */
 .carousel {
+    padding: 0;
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
+    color: #2c3e50;
+    overflow-x: hidden;
+    position: relative;
     --vc-pgn-margin: 5px;
-    /* Adjust margin as needed */
     --vc-pgn-width: 15px;
-    /* Width of the pagination dots */
     --vc-pgn-height: 15px;
-    /* Height of the pagination dots */
     --vc-pgn-border-radius: 50%;
-    /* Rounded pagination dots */
     --vc-pgn-background-color: white;
-    /* Default background color */
     --vc-pgn-active-color: gold;
-    /* Active pagination dot color */
+    /* Responsive scaling */
+    margin-top: -12px;
+
+
 }
 
+/* Carousel Item Styles */
+.carousel__item {
+    margin: 10px 15px;
+    flex: 0 0 600px;
+    max-width: 100%;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    opacity: 1;
+}
+
+.carousel__item.active {
+    opacity: 1;
+    transform: scale(1.05);
+    border: 2px solid #333;
+}
+
+/* Carousel Slide Styles */
+.carousel__slide {
+    padding: 10px 10px;
+    opacity: 0.9;
+    transform: scale(0.9);
+}
+
+
+.carousel__slide--prev,
+.carousel__slide--next {
+    opacity: 0.8;
+    transform: scale(0.95);
+}
+
+.carousel__slide--active {
+    opacity: 1;
+    transform: scale(1.2);
+}
+
+.carousel__slide--sliding {
+    transition: transform 0.5s ease, opacity 0.5s ease;
+}
+
+
+/* Pagination Styles */
 .carousel__pagination {
     display: flex;
     justify-content: center;
     list-style: none;
-    line-height: 0;
     margin: 10px 0 0;
     padding: 0;
 }
@@ -306,53 +599,44 @@ export default defineComponent({
 .carousel__pagination-button {
     display: block;
     border: 0;
-    margin: 0;
     cursor: pointer;
     padding: var(--vc-pgn-margin);
     background: transparent;
 }
 
 .carousel__pagination-button::after {
-    display: block;
     content: '';
     width: var(--vc-pgn-width);
     height: var(--vc-pgn-height);
     border-radius: var(--vc-pgn-border-radius);
     background-color: var(--vc-pgn-background-color);
-    /* Use your custom color */
 }
 
 .carousel__pagination-button--active::after {
     background-color: gold;
-    /* Use your custom active color */
 }
 
 @media(hover: hover) {
     .carousel__pagination-button:hover::after {
         background-color: gold;
-        /* Hover effect */
     }
 }
 
-/* * {
-    box-sizing: border-box;
-} */
-
-.title {
-    text-align: center;
-    font-family: 'Montserrat', sans-serif;
-    font-size: 30px;
-    font-weight: bold;
-    margin-top: 40px;
-    color: black;
-}
-
-/*  Card Styles */
+/* Card Styles */
 .card {
+    transform: scale(0.85);
     border-radius: 15px;
     overflow: hidden;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     transition: transform 0.8s ease, box-shadow 0.8s ease;
+    height: 100%;
+    width: 100%;
+    max-width: 550px;
+}
+
+.card:hover {
+    transform: scale(0.9);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
 }
 
 .card img {
@@ -360,39 +644,77 @@ export default defineComponent({
     height: auto;
 }
 
+/* Card Body Styles */
 .card-body {
     display: flex;
     padding: 20px;
     background-color: white;
 }
 
+/* Card Left Section */
 .card-left {
     flex: 1;
-    text-align: left;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
 }
 
+.month {
+    font-size: 20px;
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-bottom: -5px;
+    color: black;
+}
+
+.year {
+    font-size: 17px;
+    color: #777;
+    color: black;
+    font-weight: none;
+}
+
+/* Card Right Section */
 .card-right {
     flex: 2;
     padding-left: 20px;
 }
 
-.date {
+.date,
+.date-month {
     font-size: 16px;
     font-weight: bold;
+
 }
 
-.date-month {
+.event-details {
     font-size: 14px;
+    color: #555;
+    margin-top: 5px;
+    font-weight: bold;
 }
 
 .event-title {
-    font-size: 20px;
+    color: black;
+    font-size: 16px;
     font-weight: bold;
+    display: -webkit-box;
+    /* Required for multi-line truncation */
+    -webkit-line-clamp: 1;
+    /* Limit to 2 lines */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: normal;
+    /* Allows wrapping of text */
 }
 
 .event-subtitle {
     font-size: 14px;
     color: #777;
+    font-weight: bold;
 }
 
 .star-icon {
@@ -400,74 +722,33 @@ export default defineComponent({
     margin-right: 5px;
 }
 
-.card:hover {
-    transform: scale(1.03);
-    /* Scale up on hover */
-    overflow: hidden;
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
-    /* Increase shadow on hover */
 
+.profile-tabs {
+    display: flex;
+    justify-content: space-around;
+    border-top: 1px solid #ddd;
+    padding: 10px;
+    margin-top: 20px;
+    font-size: 16px;
 }
 
-/* CAROUSEL */
-
-.carousel {
-    padding: 0;
-    width: 1200px;
-    color: #2c3e50;
-    overflow: hidden;
+.profile-tabs button {
+    background: none;
+    border: none;
+    font-weight: bold;
+    color: #888;
+    cursor: pointer;
 }
 
-.carousel__item {
-    margin: 0 5px;
-    /* Consistent horizontal spacing */
-    flex: 0 0 280px;
-    /* Make sure items take equal width */
-    max-width: 400px;
-    /* Ensure items do not exceed this width */
+.profile-tabs .active {
+    color: black;
+    border-bottom: 2px solid black;
 }
 
-.carousel__slide {
-    padding: 25px 5px;
-}
-
-.carousel__viewport {
-    perspective: 2000px;
-}
-
-.carousel__track {
-    transform-style: preserve-3d;
-}
-
-.carousel__slide--sliding {
-    transition: transform 0.5s ease, opacity 1.0s ease;
-}
-
-.carousel__slide {
-    opacity: 0.9;
-    transform: scale(0.9);
-}
-
-.carousel__slide--active~.carousel__slide {
-    transform: scale(0.9);
-
-}
-
-.carousel__slide--prev {
-    opacity: 1;
-    transform: scale(0.95);
-
-}
-
-.carousel__slide--next {
-    opacity: 1;
-    transform: scale(0.95);
-
-}
-
-.carousel__slide--active {
-    opacity: 1;
-    transform: scale(1.1);
-
+@media (max-width: 767px) {
+    .flex.flex-col>div {
+        margin-bottom: 0px !important;
+        /* Overrides the default mb-4 class */
+    }
 }
 </style>

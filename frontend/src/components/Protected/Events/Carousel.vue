@@ -1,12 +1,11 @@
 <template>
   <!-- <div class="carousel-wrapper"> -->
   <div class="carousel">
-    <h1 class="title">Events</h1>
     <!-- Profile Tabs -->
-    <div class="profile-tabs">
-      <button :class="{ active: activeTab === 'largeScale' }" @click="switchTab('largeScale')">Large Scale</button>
+    <!-- <div class="profile-tabs">
+      <button :class="{ active: activeTab === 'large' }" @click="switchTab('large')">Large Scale</button>
       <button :class="{ active: activeTab === 'casual' }" @click="switchTab('casual')">Casual</button>
-    </div>
+    </div> -->
     <!-- Loading Indicator -->
     <div v-if="loading" class="loading-indicator">
       Loading events...
@@ -21,10 +20,10 @@
     <div v-else>
       <!-- Tab Content (LARGE SCALE)-->
       <div class="tab-content">
-        <div v-if="activeTab === 'largeScale' && showCarousel" >
+        <div v-if="activeTab === 'large' && showCarousel">
           <!-- Vertical Cards for Small Screens (1 Column) -->
           <div class="flex flex-col md:hidden">
-            <div v-for="(event, index) in events" :key="index" class="mb-4 mx-auto">
+            <div v-for="(event, index) in tabEvents" :key="index" class="mb-4 mx-auto">
               <router-link :to="{ name: 'eventDetail', params: { id: event.eventId } }">
                 <div class="carousel__item">
                   <div class="card">
@@ -57,7 +56,7 @@
           <!-- Carousel for Medium Screens (1 Item) -->
           <div class="hidden md:block lg:hidden">
             <Carousel :itemsToShow="1" :wrapAround="true" :transition="500" class="mx-auto" style="width:600px;">
-              <Slide v-for="(event, index) in events" :key="index">
+              <Slide v-for="(event, index) in tabEvents" :key="index" class="mb-4 mx-auto">
                 <router-link :to="{ name: 'eventDetail', params: { id: event.eventId } }">
                   <div class="carousel__item">
                     <div class="card">
@@ -105,7 +104,7 @@
           <!-- Carousel for Large Screens (3 Items) -->
           <div v-if="showLargeCarousel" class="hidden lg:block">
             <Carousel :itemsToShow="3" :wrapAround="true" :transition="500" :partialVisible="false">
-              <Slide v-for="(event, index) in events" :key="index" :class="{ active: index === currentIndex }">
+              <Slide v-for="(event, index) in tabEvents" :key="index" :class="{ active: index === currentIndex }">
                 <router-link :to="{ name: 'eventDetail', params: { id: event.eventId } }">
                   <div class="carousel__item">
                     <div class="card">
@@ -157,7 +156,7 @@
         <div v-if="activeTab === 'casual' && showCarousel">
           <!-- Vertical Cards for Small Screens (1 Column) -->
           <div class="flex flex-col md:hidden">
-            <div v-for="(event, index) in events" :key="index" class="mb-4 mx-auto">
+            <div v-for="(event, index) in tabEvents" :key="index" class="mb-4 mx-auto">
               <router-link :to="{ name: 'eventDetail', params: { id: event.eventId } }">
                 <div class="carousel__item">
                   <div class="card">
@@ -190,7 +189,7 @@
           <!-- Carousel for Medium Screens (1 Item) -->
           <div class="hidden md:block lg:hidden">
             <Carousel :itemsToShow="1" :wrapAround="true" :transition="500" class="mx-auto" style="width:600px;">
-              <Slide v-for="(event, index) in events" :key="index">
+              <Slide v-for="(event, index) in tabEvents" :key="index">
                 <router-link :to="{ name: 'eventDetail', params: { id: event.eventId } }">
                   <div class="carousel__item">
                     <div class="card">
@@ -238,7 +237,7 @@
           <!-- Carousel for Large Screens (3 Items) -->
           <div v-if="showLargeCarousel" class="hidden lg:block">
             <Carousel :itemsToShow="3" :wrapAround="true" :transition="500" :partialVisible="false">
-              <Slide v-for="(event, index) in events" :key="index" :class="{ active: index === currentIndex }">
+              <Slide v-for="(event, index) in tabEvents" :key="index" :class="{ active: index === currentIndex }">
                 <router-link :to="{ name: 'eventDetail', params: { id: event.eventId } }">
                   <div class="carousel__item">
                     <div class="card">
@@ -304,16 +303,29 @@ export default defineComponent({
     Pagination,
     Slide,
   },
+  props: {
+    selectedEventType: {
+      type: String,
+      required: true,
+    },
+  },
   data() {
     return {
-      events: [],
       loading: true,
       errorMessage: '',
       showLargeCarousel: false,
-      activeTab: 'largeScale', // Initial active tab
+      activeTab: 'large', // Initial active tab
       showCarousel: true,
+      events: []
     };
   },
+  computed: {
+    tabEvents() {
+      return this.events.filter(event => event.eventType === this.selectedEventType);
+
+    },
+  },
+
 
   setup() {
     const currentIndex = ref(0);
@@ -328,8 +340,10 @@ export default defineComponent({
     };
   },
   mounted() {
-    this.fetchEvents();
+    this.fetchEvents(); // Fetch events data
     this.setInitialCarouselView();
+    // Ensure the default tab's data is computed on load
+    console.log('Default tab set to:', this.activeTab);
   },
   watch: {
     activeTab() {
@@ -342,29 +356,30 @@ export default defineComponent({
     },
   },
   methods: {
-    async fetchEvents() {
-      try {
-        const response = await axios.get('http://localhost:3000/api/events');
-        // Assign the fetched events to the events array
-        this.events = response.data;
-      } catch (error) {
-        console.error('Error fetching events:', error);
-        this.errorMessage = 'Failed to load events.';
-      } finally {
-        this.loading = false;
-        // Delay and trigger a resize event
-        setTimeout(() => {
-          window.dispatchEvent(new Event('resize'));
-        }, 10); // Adjust delay as needed
-      }
-    },
     switchTab(tab) {
       this.activeTab = tab;
+      console.log('Tab switched to:', this.activeTab); // Log to check the tab
       this.showCarousel = false;
       setTimeout(() => {
         this.showCarousel = true;
         window.dispatchEvent(new Event('resize'));
       }, 10);
+    },
+
+    async fetchEvents() {
+      try {
+        const response = await axios.get('http://localhost:3000/api/events');
+        this.events = response.data;
+        console.log('Fetched Events:', this.events); // Add this line
+      } catch (error) {
+        console.error('Error fetching events:', error);
+        this.errorMessage = 'Failed to load events.';
+      } finally {
+        this.loading = false;
+        setTimeout(() => {
+          window.dispatchEvent(new Event('resize'));
+        }, 10);
+      }
     },
     formatEventDay(dateInput) {
       const dateObj = this.convertToDate(dateInput);
@@ -458,14 +473,14 @@ export default defineComponent({
 }
 
 /* General Styles */
-.title {
+/* .title {
   color: rgb(46, 46, 46);
   text-align: center;
   font-family: 'Montserrat', sans-serif;
   font-size: 30px;
   font-weight: bold;
   margin-top: 40px;
-}
+} */
 
 /* Loading Indicator and Error Message Styles */
 .loading-indicator,
