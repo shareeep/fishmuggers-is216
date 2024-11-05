@@ -11,6 +11,7 @@
       </button>
     </div>
     <div v-else-if="hasPendingRequest">
+      <!-- Accept and Delete buttons when there’s a pending request -->
       <button @click="acceptFriendRequest" class="accept-friend-button">
         Accept Request
       </button>
@@ -51,20 +52,12 @@ export default {
       this.hasPendingRequest = false;
       this.requestId = null;
 
-      // Check if the user is already a friend or has a pending request (from either side)
+      // Check if the user is already a friend or has a pending request
       await this.checkFriendStatus();
-      await this.checkIncomingRequest();  // For receiver's POV
-
-      console.log("Friend status after check:", {
-        isFriend: this.isFriend,
-        requestSent: this.requestSent,
-        hasPendingRequest: this.hasPendingRequest,
-      });
     } catch (error) {
       console.error("Error fetching user profile:", error.response ? error.response.data : error.message);
     }
   },
-
   methods: {
     async checkFriendStatus() {
       try {
@@ -88,7 +81,6 @@ export default {
         console.error("Error checking friend status:", error.response ? error.response.data : error.message);
       }
     },
-
     async checkFriendRequest() {
       try {
         const auth = getAuth();
@@ -99,58 +91,23 @@ export default {
           return;
         }
 
-        // Fetch all requests where the current user is involved as the sender
-        const response = await axios.get(`http://localhost:3000/api/friends/requests/sent/${currentUserId}`);
+        // Fetch all requests where the current user is involved
+        const response = await axios.get(`http://localhost:3000/api/friends/requests/${currentUserId}`);
 
-        // Check if a pending request exists with the viewed user
-        const existingRequest = response.data.find(
-          request => request.receiverId === this.id && request.status === "pending"
-        );
-
-        if (existingRequest) {
-          this.requestSent = true;
-          this.requestId = existingRequest.requestId; // Store request ID for any actions
-          console.log("Pending friend request found. requestSent set to true.");
-        } else {
-          this.requestSent = false;
-          console.log("No pending friend request found.");
-        }
+        // Check for pending requests and store `requestId`
+        response.data.forEach(request => {
+          if (request.senderId === this.id && request.receiverId === currentUserId && request.status === "pending") {
+            this.hasPendingRequest = true;
+            this.requestId = request.requestId; // Store the request ID
+          } else if (request.senderId === currentUserId && request.receiverId === this.id && request.status === "pending") {
+            this.requestSent = true;
+            this.requestId = request.requestId; // Store the request ID
+          }
+        });
       } catch (error) {
         console.error("Error checking friend request:", error.response ? error.response.data : error.message);
       }
     },
-
-    async checkIncomingRequest() {
-      try {
-        const auth = getAuth();
-        const currentUserId = auth.currentUser?.uid;
-
-        if (!currentUserId) {
-          console.error("User is not authenticated.");
-          return;
-        }
-
-        // Fetch all requests where the current user is the receiver
-        const response = await axios.get(`http://localhost:3000/api/friends/requests/${currentUserId}`);
-
-        // Check if there is a pending friend request from the profile user to the current user
-        const incomingRequest = response.data.find(
-          request => request.senderId === this.id && request.status === "pending"
-        );
-
-        if (incomingRequest) {
-          this.hasPendingRequest = true;
-          this.requestId = incomingRequest.requestId; // Store the request ID for accept/reject actions
-          console.log("Incoming friend request found from this user.");
-        } else {
-          this.hasPendingRequest = false;
-          console.log("No incoming friend request found from this user.");
-        }
-      } catch (error) {
-        console.error("Error checking incoming friend request:", error.response ? error.response.data : error.message);
-      }
-    },
-
     async sendFriendRequest() {
       try {
         const auth = getAuth();
@@ -171,13 +128,11 @@ export default {
         // Set requestSent to true to reflect "Friend Request Sent"
         this.requestSent = true;
         this.requestId = response.data.request.requestId; // Store the request ID
-        console.log("Friend request sent, request ID:", this.requestId);
       } catch (error) {
         console.error("Error sending friend request:", error.response ? error.response.data : error.message);
         alert("Failed to send friend request. Please try again.");
       }
     },
-
     async acceptFriendRequest() {
       try {
         if (!this.requestId) {
@@ -187,7 +142,7 @@ export default {
 
         // Accept the friend request in the backend
         await axios.put(`http://localhost:3000/api/friends/request/accept/${this.requestId}`);
-
+        
         // Update the UI state
         this.isFriend = true;
         this.hasPendingRequest = false;
@@ -196,7 +151,6 @@ export default {
         alert("Failed to accept friend request. Please try again.");
       }
     },
-
     async deleteFriendRequest() {
       try {
         if (!this.requestId) {
@@ -206,16 +160,14 @@ export default {
 
         // Delete the friend request in the backend
         await axios.delete(`http://localhost:3000/api/friends/request/${this.requestId}`);
-
+        
         // Update the UI state
         this.hasPendingRequest = false;
-        this.requestSent = false;
       } catch (error) {
         console.error("Error deleting friend request:", error.response ? error.response.data : error.message);
         alert("Failed to delete friend request. Please try again.");
       }
     },
-
     async removeFriend() {
       try {
         const auth = getAuth();
