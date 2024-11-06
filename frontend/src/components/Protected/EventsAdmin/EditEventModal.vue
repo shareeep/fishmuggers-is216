@@ -1,34 +1,56 @@
 <template>
-  <div class="modal-overlay">
-    <div class="modal-container">
+  <div
+    class="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center overflow-y-auto"
+  >
+    <div
+      class="bg-white rounded shadow-md w-full max-w-lg m-4 max-h-screen overflow-y-auto"
+    >
       <div class="p-6">
         <h2 class="text-xl font-semibold mb-4">Edit Event</h2>
         <form @submit.prevent="handleEditEvent" enctype="multipart/form-data">
           <!-- Title -->
           <div class="mb-4">
             <label class="block text-gray-700">Title:</label>
-            <input v-model="editEvent.title" type="text" required class="w-full border border-gray-300 p-2 rounded" />
+            <input
+              v-model="editEvent.title"
+              type="text"
+              required
+              class="w-full border border-gray-300 p-2 rounded"
+            />
           </div>
 
           <!-- Description -->
           <div class="mb-4">
             <label class="block text-gray-700">Description:</label>
-            <textarea v-model="editEvent.description" required class="w-full border border-gray-300 p-2 rounded"
-              rows="4"></textarea>
+            <textarea
+              v-model="editEvent.description"
+              required
+              class="w-full border border-gray-300 p-2 rounded"
+              rows="4"
+            ></textarea>
           </div>
 
           <!-- Date -->
           <div class="mb-4">
             <label class="block text-gray-700">Date and Time:</label>
-            <input v-model="editEvent.date" type="datetime-local" required
-              class="w-full border border-gray-300 p-2 rounded" />
+            <input
+              v-model="editEvent.date"
+              type="datetime-local"
+              required
+              class="w-full border border-gray-300 p-2 rounded"
+            />
           </div>
 
           <!-- Location Field -->
           <div class="mb-4">
             <label class="block text-gray-700">Location:</label>
-            <input v-model="editEvent.location" type="text" required class="w-full border border-gray-300 p-2 rounded"
-              placeholder="Enter address or use current location" />
+            <input
+              v-model="editEvent.location"
+              type="text"
+              required
+              class="w-full border border-gray-300 p-2 rounded"
+              placeholder="Enter address or use current location"
+            />
             <!-- Optionally include the "Use Current Location" button -->
           </div>
 
@@ -37,15 +59,27 @@
             <label class="block text-gray-700">Pet Types:</label>
             <div class="flex flex-wrap">
               <label class="mr-4">
-                <input type="checkbox" value="Dog" v-model="editPetTypeSelection" />
+                <input
+                  type="checkbox"
+                  value="Dog"
+                  v-model="editPetTypeSelection"
+                />
                 Dog
               </label>
               <label class="mr-4">
-                <input type="checkbox" value="Cat" v-model="editPetTypeSelection" />
+                <input
+                  type="checkbox"
+                  value="Cat"
+                  v-model="editPetTypeSelection"
+                />
                 Cat
               </label>
               <label class="mr-4">
-                <input type="checkbox" value="Bird" v-model="editPetTypeSelection" />
+                <input
+                  type="checkbox"
+                  value="Bird"
+                  v-model="editPetTypeSelection"
+                />
                 Bird
               </label>
               <!-- Add more pet types as needed -->
@@ -55,7 +89,11 @@
           <!-- Event Size -->
           <div class="mb-4">
             <label class="block text-gray-700">Event Size:</label>
-            <select v-model="editEvent.eventSize" required class="w-full border border-gray-300 p-2 rounded">
+            <select
+              v-model="editEvent.eventSize"
+              required
+              class="w-full border border-gray-300 p-2 rounded"
+            >
               <option disabled value="">Select size</option>
               <option value="50-100">50-100</option>
               <option value="100-200">100-200</option>
@@ -66,22 +104,36 @@
           <!-- Event Image -->
           <div class="mb-4">
             <label class="block text-gray-700">Event Image:</label>
-            <input type="file" @change="handleEditImageUpload" accept="image/*" class="w-full" />
+            <input
+              type="file"
+              @change="handleEditImageUpload"
+              accept="image/*"
+              class="w-full"
+            />
             <div v-if="editImagePreview || editEvent.eventImage" class="mt-2">
               <p class="text-gray-700">Image Preview:</p>
-              <img :src="editImagePreview || editEvent.eventImage" alt="Event Image Preview"
-                class="w-32 h-32 object-cover rounded" />
+              <img
+                :src="editImagePreview || editEvent.eventImage"
+                alt="Event Image Preview"
+                class="w-32 h-32 object-cover rounded"
+              />
             </div>
           </div>
 
           <!-- Submit and Cancel Buttons -->
           <div class="flex justify-end">
-            <button type="button" @click="$emit('close')"
-              class="cancel-btn mr-2">
+            <button
+              type="button"
+              @click="$emit('close')"
+              class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 mr-2"
+            >
               Cancel
             </button>
-            <button type="submit" class="edit-btn"
-              :disabled="isSubmitting">
+            <button
+              type="submit"
+              class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+              :disabled="isSubmitting"
+            >
               {{ isSubmitting ? "Updating..." : "Update Event" }}
             </button>
           </div>
@@ -103,11 +155,8 @@ import { getAuth } from "firebase/auth";
 import axios from "axios";
 
 // Props
-const props = defineProps({
-  eventData: {
-    type: Object,
-    required: true,
-  },
+defineProps({
+  eventData: Object,
 });
 
 // Emit events to parent
@@ -117,8 +166,8 @@ const auth = getAuth();
 const user = auth.currentUser;
 
 // Reactive variables
-const editEvent = ref({ ...props.eventData });
-const editPetTypeSelection = ref([...props.eventData.petType]);
+const editEvent = ref({ ...eventData });
+const editPetTypeSelection = ref([...eventData.petType]);
 const editImagePreview = ref("");
 const isSubmitting = ref(false);
 const successMessage = ref("");
@@ -126,7 +175,7 @@ const errorMessage = ref("");
 
 // Watch for changes in eventData prop
 watch(
-  () => props.eventData,
+  () => eventData,
   (newVal) => {
     editEvent.value = { ...newVal };
     editPetTypeSelection.value = [...newVal.petType];
@@ -233,80 +282,5 @@ const handleEditEvent = async () => {
 </script>
 
 <style scoped>
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(31, 41, 55, 0.75);
-  /* Equivalent to bg-gray-800 bg-opacity-75 */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow-y: auto;
-}
-
-.modal-container {
-  background-color: white;
-  border-radius: 0.375rem;
-  /* To match rounded corners */
-  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-  /* Matches shadow-md */
-  max-width: 32rem;
-  /* Equivalent to max-w-lg */
-  width: 100%;
-  margin: 1rem;
-  /* Margin for spacing */
-  max-height: 80vh;
-  /* Limit height for smaller screens */
-  overflow-y: auto;
-  /* Scroll if content exceeds modal height */
-  padding: 1.5rem;
-  -webkit-overflow-scrolling: touch;
-}
-
-.modal-container::-webkit-scrollbar {
-  display: none; /* Chrome, Safari */
-}
-
-.cancel-btn, .edit-btn {
-  padding: 8px 20px;
-  border: none;
-  border-radius: 5px;
-  font-weight: bold;
-  cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.edit-btn {
-  background-color: #FFD700;
-  color: #333;
-}
-
-.edit-btn:hover {
-  background-color: #E6C200;
-  transform: scale(1.05);
-  box-shadow: 0 4px 8px rgba(75, 0, 130, 0.2);
-}
-
-.edit-btn:active {
-  transform: scale(0.98);
-}
-
-.cancel-btn {
-  background-color: #ddd;
-  color: #333;
-}
-
-.cancel-btn:hover {
-  background-color: #bbb;
-  transform: scale(1.05);
-  box-shadow: 0 4px 8px rgba(75, 0, 130, 0.2);
-}
-
-.cancel-btn:active {
-  transform: scale(0.98);
-}
-
+/* Add any component-specific styles here */
 </style>
