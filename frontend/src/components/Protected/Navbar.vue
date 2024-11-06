@@ -163,49 +163,96 @@ i {
 /* Medium screens - center content in each li */
 @media (max-width: 991px) {
   .navbar {
-    width: 250px;
-    height: 100vh;
-    background-color: #f9f9f9;
-    padding: 20px;
+    width: 80px;
+    /* Narrower width for md screens */
   }
-  
-  .logo {
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 30px;
+
+  .logo .text,
+  .text {
+    display: none;
+    /* Hide all text for icons-only view */
   }
-  
-  ul {
-    list-style: none;
-    padding: 0;
-  }
-  
-  li {
-    margin-bottom: 20px;
-  }
-  
-  router-link {
-    text-decoration: none;
-    color: #333;
-    font-size: 18px;
+
+  .nav-links {
     display: flex;
+    flex-direction: column;
     align-items: center;
+    /* Center align all items */
   }
-  
-  i {
-    margin-right: 10px;
+
+  .nav-links li {
+    display: flex;
+    justify-content: center;
+    /* Center icon horizontally */
+    align-items: center;
+    /* Center icon vertically */
+    text-align: center;
+    width: 100%;
+    /* Full width to avoid left offset */
   }
-  
-  .profile-pic {
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
+
+  .router-link i {
+    margin-right: 0;
+    /* Remove any margin for full centering */
   }
-  
+}
+
+
+/* Small screens - navbar at bottom, icons only */
+@media (max-width: 767px) {
+  .logo {
+    display: none;
+    /* Hide the logo on small screens */
+  }
+
+  .navbar {
+    width: 100%;
+    height: 50px;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #f9f9f9;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    padding: 10px 0;
+  }
+
+  .nav-links {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    width: 100%;
+  }
+
+  .nav-links li {
+    margin-bottom: 0;
+  }
+
   .more-options {
-    position: absolute;
-    bottom: 20px;
+    position: static;
+    margin-left: 15px;
+    margin-top: 4px;
+  }
+
+  i {
+    margin-right: 15px;
+    font-size: 20px;
+    /* Optional: Adjust icon size if needed */
+  }
+
+  .fa-users,
+  .fa-bell,
+  .fa-calendar-alt,
+  .fa-search,
+  .fa-home,
+  .fa-message {
+    margin-top: 4px;
+  }
+
+  .fa-user{
+    margin-top: 3px;
   }
 }
 </style>
-  

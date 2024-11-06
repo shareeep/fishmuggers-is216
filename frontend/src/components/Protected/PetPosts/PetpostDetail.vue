@@ -26,22 +26,15 @@
 import axios from "axios";
 
 export default {
-  props: ['postId', 'userId'],
+  props: ['postId'],
   data() {
     return {
-      post: null,
-      error: null,
+      post: [],
     };
   },
   async mounted() {
-    console.log("Received postId:", this.postId);  // Log postId to verify it
-    console.log("Received userId:", this.userId);  // Log userId to verify it
-
     try {
-      const response = await axios.get(`http://localhost:3000/api/posts/${this.postId}/${this.userId}`);
-
-
-      console.log("Fetched post data:", response.data);
+      const response = await axios.get(`http://localhost:3000/api/posts/${this.postId}`);
       this.post = response.data;
     } catch (error) {
       console.error("Failed to load post:", error);
@@ -57,7 +50,6 @@ export default {
   justify-content: center;
   padding: 20px;
 }
-
 .post {
   width: 100%;
   max-width: 600px;

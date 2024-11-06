@@ -5,7 +5,7 @@
   <div class="edit-post-container">
     <h2>Edit Pet Post</h2>
     <form @submit.prevent="submitPost">
-       
+      
       <!-- User name input (for testing, can be removed if not necessary) -->
       <div class="form-group">
         <label for="name">Name:</label>
