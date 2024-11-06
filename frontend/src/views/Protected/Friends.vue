@@ -204,7 +204,7 @@ function calculateDaysAgo(timestamp) {
 }
 
 function removeSentRequest(requestId) {
-  sentRequests.value = sentRequests.value.filter(request => request.requestId !== requestId);
+    sentRequests.value = sentRequests.value.filter(request => request.id !== requestId);
 }
 
 

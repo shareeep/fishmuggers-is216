@@ -5,15 +5,16 @@
       <div class="profile-picture">
         <img :src="userData.profileImage || 'https://via.placeholder.com/150?text=Profile+Image'" alt="Profile Picture"
           class="profile-image" />
-      </div> 
+      </div>
       <div class="profile-info">
         <div class="profile-details">
           <h2 class="username">{{ userData.username }}</h2>
 
-          <button :class="['edit-btn', { 'requested': isRequested }]" @click="toggleFollow">
-            {{ isRequested ? 'Requested' : 'Follow' }}
+          <!-- Conditional button display -->
+          <button :class="['edit-btn', { 'requested': isRequested || isFriend }]"
+            @click="isFriend ? removeFriend() : toggleFollow()" :disabled="isRequested && !isFriend">
+            {{ isFriend ? 'Remove Friend' : (isRequested ? 'Friend Request Sent' : 'Follow') }}
           </button>
-
         </div>
         <div class="profile-stats">
           <span><b>{{ posts }}</b> Posts</span>
@@ -151,12 +152,14 @@ const props = defineProps({
 });
 
 // Step 2: Initialize userData based on props
+// Step 2: Initialize userData with fallback default values
 const userData = ref({
-  username: props.username,
-  profileImage: props.avatar,
+  username: props.username || "Unknown User",
+  profileImage: props.avatar || "https://via.placeholder.com/150?text=Profile+Image",
   joinedEvents: [],
   posts: []
 });
+
 
 const friends = ref(73); // Placeholder for the friends count
 const posts = ref(userData.value.posts.length);
@@ -172,24 +175,131 @@ const pets = ref([
 
 const fetchUserData = async () => {
   try {
-    const response = await axios.get(`http://localhost:3000/api/users/${props.userId}`);
+    // Get the Firebase Auth token
+    const token = await auth.currentUser.getIdToken();
+
+    // Send the token in the Authorization header
+    const response = await axios.get(`http://localhost:3000/api/users/${props.userId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    // Merge fetched data with userData
     userData.value = { ...userData.value, ...response.data };
     posts.value = response.data.posts ? response.data.posts.length : 0;
   } catch (error) {
-    console.error('Error fetching user data:', error);
+    console.error("Error fetching user data:", error);
   }
 };
 
-// Step 3: Fetch additional user data on component mount if needed
-onMounted(fetchUserData);
+const checkRequestStatus = async () => {
+  try {
+    const token = await auth.currentUser.getIdToken();
+
+    const response = await axios.get(
+      `/api/friends/requests/check-status?senderId=${auth.currentUser.uid}&receiverId=${props.userId}`, 
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    // Assuming the response returns { status: 'pending' | 'accepted' | 'rejected' | 'none' }
+    const status = response.data.status;
+
+    if (status === "accepted") {
+      isFriend.value = true;
+      isRequested.value = false;
+    } else if (status === "pending") {
+      isFriend.value = false;
+      isRequested.value = true;
+    } else {
+      isFriend.value = false;
+      isRequested.value = false;
+    }
+  } catch (error) {
+    console.error("Error checking request status:", error);
+  }
+};
+
+const isRequested = ref(false); // Track if a request is pending
+const isFriend = ref(false); // Track friendship status
+
+// Check if users are friends or if a friend request is pending
+const checkFriendStatus = async () => {
+  try {
+    const token = await auth.currentUser.getIdToken();
+
+    // Check if they are friends
+    const friendsResponse = await axios.get(`/api/friends/${auth.currentUser.uid}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    isFriend.value = friendsResponse.data.some(friend => friend.id === props.userId);
+
+    // Check if there is a pending friend request
+    if (!isFriend.value) {
+      const requestsResponse = await axios.get(`/api/friends/requests/${auth.currentUser.uid}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      // Set isRequested to true if there's a pending request from current user to this user
+      isRequested.value = requestsResponse.data.some(request => 
+        request.senderId === auth.currentUser.uid && 
+        request.receiverId === props.userId &&
+        request.status === "pending" // Ensure the request status is "pending"
+      );
+    }
+  } catch (error) {
+    console.error("Error checking friend or request status:", error);
+  }
+};
+
+async function toggleFollow() {
+  try {
+    const token = await auth.currentUser.getIdToken();
+
+    // Check if there is an existing request
+    if (isRequested.value) {
+      alert("You already have a pending friend request with this user.");
+      return; // Stop further actions if there's an existing request
+    }
+
+    if (isFriend.value) {
+      // Remove friend if already friends
+      await axios.delete(`/api/friends/${auth.currentUser.uid}/remove/${props.userId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      isFriend.value = false; // Update UI
+    } else {
+      // Send follow request if not already requested
+      const response = await axios.post(
+        "/api/friends/request",
+        { senderId: auth.currentUser.uid, receiverId: props.userId },
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      if (response.status === 201) {
+        isRequested.value = true; // Disable button after request is sent
+      }
+    }
+  } catch (error) {
+    console.error("Error in follow/unfollow action:", error.response?.data || error);
+    alert("Friend request already sent");
+  }
+};
 
 
-const isRequested = ref(false);
-
-// Toggle the follow/requested state
-function toggleFollow() {
-  isRequested.value = !isRequested.value;
-}
+const removeFriend = async () => {
+  try {
+    const token = await auth.currentUser.getIdToken();
+    await axios.delete(`/api/friends/${auth.currentUser.uid}/remove/${props.userId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    isFriend.value = false;
+  } catch (error) {
+    console.error("Error removing friend:", error.response?.data || error);
+  }
+};
+onMounted(() => {
+  fetchUserData();
+  checkFriendStatus();
+});
 
 const openModal = (index) => {
   selectedPostIndex.value = index;
@@ -215,8 +325,6 @@ const nextPost = () => {
     selectedPostIndex.value = 0;
   }
 };
-
-onMounted(fetchUserData);
 </script>
 
 <style scoped>
@@ -457,11 +565,11 @@ onMounted(fetchUserData);
   margin-bottom: 15px;
 }
 
-.no-pets-pic{
+.no-pets-pic {
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top:0;
+  margin-top: 0;
 }
 
 .no-pets-pic img,

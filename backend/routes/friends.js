@@ -260,4 +260,60 @@ router.delete("/:userId/remove/:friendId", async (req, res) => {
   }
 });
 
+// 8. Cancel a sent friend request
+router.delete("/request/:requestId", async (req, res) => {
+  const { requestId } = req.params;
+
+  try {
+    const requestRef = db.collection("friendRequests").doc(requestId);
+    const requestDoc = await requestRef.get();
+
+    if (!requestDoc.exists) {
+      return res.status(404).json({ error: "Friend request not found" });
+    }
+
+    const { senderId, receiverId, status } = requestDoc.data();
+
+    if (status !== "pending") {
+      return res.status(400).json({ error: "Only pending requests can be canceled" });
+    }
+
+    // Remove the senderId from the receiver's pendingFriends array
+    await db.collection("users").doc(receiverId).update({
+      pendingFriends: admin.firestore.FieldValue.arrayRemove(senderId),
+    });
+
+    // Delete the friend request document
+    await requestRef.delete();
+
+    res.status(200).json({ message: "Friend request canceled successfully" });
+  } catch (error) {
+    console.error("Error canceling friend request:", error);
+    res.status(500).json({ error: "Failed to cancel friend request" });
+  }
+});
+
+router.get("/requests/check-status", async (req, res) => {
+  const { senderId, receiverId } = req.query;
+
+  try {
+    const requestSnapshot = await db
+      .collection("friendRequests")
+      .where("senderId", "==", senderId)
+      .where("receiverId", "==", receiverId)
+      .limit(1)
+      .get();
+
+    if (requestSnapshot.empty) {
+      return res.status(200).json({ status: "none" });
+    }
+
+    const requestData = requestSnapshot.docs[0].data();
+    res.status(200).json({ status: requestData.status });
+  } catch (error) {
+    console.error("Error fetching request status:", error);
+    res.status(500).json({ error: "Failed to fetch request status" });
+  }
+});
+
 module.exports = router;
