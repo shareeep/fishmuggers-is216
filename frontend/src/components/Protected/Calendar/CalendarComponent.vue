@@ -49,6 +49,10 @@
           <input id="end-date" type="date" v-model="endDate" />
         </div>
       </div>
+
+      <!-- New Reset Filters Button -->
+      <button class="reset-filters-button" @click="resetFilters">Reset Filters</button>
+
       <button class="add-event-button" @click="showAddEventPopup = true">Add Custom Event</button>
     </div>
 
@@ -196,26 +200,60 @@ export default {
     return [...new Set(this.events.map(event => event.location))];
   },
   filteredEvents() {
-    return this.events.filter(event => {
-      const start = this.startDate ? new Date(this.startDate) : null;
-      const end = this.endDate ? new Date(this.endDate) : null;
+    // Combine both joined events and custom events for filtering
+    const allEvents = [
+      ...this.events.map(event => ({
+        ...event,
+        type: 'joined'
+      })),
+      ...this.customEvents.map(event => ({
+        ...event,
+        type: 'custom'
+      }))
+    ];
+
+    // Normalize the dates by setting hours, minutes, seconds, and milliseconds to zero
+    const start = this.startDate ? new Date(new Date(this.startDate).setHours(0, 0, 0, 0)) : null;
+    const end = this.endDate ? new Date(new Date(this.endDate).setHours(23, 59, 59, 999)) : null;
+
+    return allEvents.filter(event => {
+      const eventDate = new Date(event.EventDate.setHours(0, 0, 0, 0));
 
       return (
-        (!this.selectedPetType || event.petType.includes(this.selectedPetType)) &&
+        (!this.selectedPetType || event.petType?.includes(this.selectedPetType)) &&
         (!this.selectedEventSize || event.eventSize === this.selectedEventSize) &&
         (!this.selectedLocation || event.location === this.selectedLocation) &&
-        (!start || event.EventDate >= start) &&
-        (!end || event.EventDate <= end)
+        (!start || eventDate >= start) &&
+        (!end || eventDate <= end)
       );
     });
   },
+
+  // Updated eventDates and customEventDates to reflect only filtered events
   eventDates() {
-    return this.filteredEvents.map(event => event.EventDate.toDateString());
+    return this.filteredEvents
+      .filter(event => event.type === 'joined')
+      .map(event => event.EventDate.toDateString());
+  },
+
+  customEventDates() {
+    return this.filteredEvents
+      .filter(event => event.type === 'custom')
+      .map(event => event.EventDate.toDateString());
   }
 }
 ,
 
   methods: {
+    // Reset Filters Method
+    resetFilters() {
+      this.selectedPetType = '';
+      this.selectedEventSize = '';
+      this.selectedLocation = '';
+      this.startDate = '';
+      this.endDate = '';
+      this.showCustomEvents = 'yes';
+    },
     isEventDate(date, isCurrentMonth) {
       if (!isCurrentMonth || !date) return false;
       const formattedDate = new Date(this.currentYear, this.currentMonthIndex, date).toDateString();
@@ -522,6 +560,15 @@ th {
     font-weight: bolder;
     text-decoration: underline;
   }
+
+  /* CUSTOM EVENT DATE */
+  .custom-event-date {
+      background-color: #c3e4ff; /* Light blue for custom events */
+      color: #000;
+      cursor: pointer;
+  }
+  /* CUSTOM EVENT DATE */
+
   .clickable-date:hover {
     cursor: pointer;
     /* background-color: rgb(126, 165, 255); */
@@ -626,4 +673,124 @@ th {
   background-color: #e6c200;
 }
 /* END ADD CUSTOM EVENTS CSS */
+
+
+
+
+/* CUSTOM EVENTS FILTER */
+.show-custom-events {
+
+    margin-top: 8px;
+}
+
+.show-custom-events h4 {
+    font-family: 'Arial Rounded MT';
+    font-size: 1.2vw;
+    text-decoration: underline;
+}
+
+.show-custom-events label {
+    font-family: 'Arial Rounded MT';
+    font-size: 1vw;
+    margin-right: 1vw;
+    display: inline-block;
+}
+.show-custom-events input {
+  margin-left: 10px;
+  outline: none;
+  box-shadow: none;
+}
+
+/* CUSTOM EVENTS FORM CSS */
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.popup-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 12px;
+  width: 80%;
+  max-width: 400px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.popup-content h3 {
+  text-align: center;
+  font-family: "Arial Rounded MT";
+  font-size: 1.5vw;
+  margin-bottom: 20px;
+}
+
+.popup-content label {
+  display: block;
+  font-family: "Arial Rounded MT";
+  font-size: 1.1vw;
+  margin-top: 10px;
+}
+
+.popup-content input, .popup-content textarea {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  font-family: "Arial Rounded MT";
+  font-size: 1vw;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.popup-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.popup-buttons button {
+  background-color: #ffd700;
+  border: 1px solid black;
+  color: black;
+  font-family: "Arial Rounded MT";
+  font-size: 1vw;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.popup-buttons button:hover {
+  background-color: #e6c200;
+}
+/* CUSTOM EVENTS FORM CSS */
+
+
+/* New Reset Filters Button Style */
+.reset-filters-button {
+    background-color: #ffd700;
+    border: 1px solid black;
+    color: black;
+    font-size: 1.3vw;
+    font-family: "Arial Rounded MT";
+    padding: 8px 0px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin: 5px auto;
+    display: block;
+    width: 90%;
+    text-align: center;
+    transition: background-color 0.3s;
+  }
+
+  .reset-filters-button:hover {
+    background-color: #e6c200;
+  }
+  /* New Reset Filters Button Style */
 </style>  
