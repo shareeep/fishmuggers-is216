@@ -1,22 +1,22 @@
 <template>
   <div class="friend-requests">
-    <h3>Friend Requests ({{ requests.length }})</h3>
-    <div class="request-list">
-      <div v-for="(request, index) in requests" :key="request.id" class="request-item"
-        :style="{ animationDelay: `${index * 0.2}s` }">
-        <img :src="request.avatar" alt="User Avatar" />
-        <div class="info-container">
-          <div class="details">
-            <h4>{{ request.username }}</h4>
-            <p>Mutual Friends: {{ request.mutualFriends }}</p>
+      <h3>Friend Requests ({{ requests.length }})</h3>
+      <div class="request-list">
+          <div v-for="(request, index) in requests" :key="request.id" class="request-item"
+              :style="{ animationDelay: `${index * 0.2}s` }">
+              <img :src="request.avatar" alt="User Avatar" />
+              <div class="info-container">
+                  <div class="details">
+                      <h4>{{ request.username }}</h4>
+                      <p>Mutual Friends: {{ request.mutualFriends }}</p>
+                  </div>
+                  <div class="actions">
+                      <button @click="acceptRequest(request.id)" class="accept-button">Accept</button>
+                      <button @click="rejectRequest(request.id)" class="reject-button">✕</button>
+                  </div>
+              </div>
           </div>
-          <div class="actions">
-            <button @click="acceptRequest(request.id)" class="accept-button">Accept</button>
-            <button @click="rejectRequest(request.id)" class="reject-button">✕</button>
-          </div>
-        </div>
       </div>
-    </div>
   </div>
 </template>
 
@@ -25,20 +25,20 @@
 export default {
   name: "FriendRequests",
   props: {
-    requests: {
-      type: Array,
-      required: true
-    }
+      requests: {
+          type: Array,
+          required: true
+      }
   },
   methods: {
-    acceptRequest(requestId) {
-      console.log("Attempting to accept request with ID:", requestId); // Log requestId
-      this.$emit('accept-request', requestId);
-    },
-    rejectRequest(requestId) {
-      console.log("Attempting to reject request with ID:", requestId); // Log requestId
-      this.$emit('reject-request', requestId);
-    }
+      acceptRequest(requestId) {
+          console.log("Attempting to accept request with ID:", requestId); // Log requestId
+          this.$emit('accept-request', requestId);
+      },
+      rejectRequest(requestId) {
+          console.log("Attempting to reject request with ID:", requestId); // Log requestId
+          this.$emit('reject-request', requestId);
+      }
   }
 };
 </script>
@@ -82,8 +82,8 @@ h3 {
 
 @keyframes popFadeIn {
   to {
-    opacity: 1;
-    transform: scale(1);
+      opacity: 1;
+      transform: scale(1);
   }
 }
 

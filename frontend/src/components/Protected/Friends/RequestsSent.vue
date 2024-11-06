@@ -1,31 +1,28 @@
 <template>
   <div class="requests-sent">
-    <h3>Requests Sent ({{ sentRequests.length }})</h3>
-    <div class="request-list">
-      <div v-for="(request, index) in sentRequests" :key="request.id" class="request-item" :style="{ animationDelay: `${index * 0.2}s` }">
-        <img :src="request.avatar" alt="User Avatar" />
-        <div class="info-container">
-          <div class="details">
-            <h4>{{ request.name }}</h4>
-            <p>{{ request.username }}</p>
-            <p>{{ request.daysAgo }}</p>
+      <h3>Requests Sent ({{ sentRequests.length }})</h3>
+      <div class="request-list">
+          <div v-for="(request, index) in sentRequests" :key="request.id" class="request-item"
+              :style="{ animationDelay: `${index * 0.2}s` }">
+              <img :src="request.avatar" alt="User Avatar" />
+              <div class="info-container">
+                  <div class="details">
+                      <h4>{{ request.name }}</h4>
+                      <p>{{ request.username }}</p>
+                      <p>{{ request.daysAgo }}</p>
+                  </div>
+                  <div class="actions">
+                      <!-- Your existing cancel button -->
+                      <button @click="openConfirmationModal(request.id)" class="cancel-button">✕ Cancel</button>
+                  </div>
+              </div>
           </div>
-          <div class="actions">
-            <!-- Your existing cancel button -->
-            <button @click="openConfirmationModal(request.id)" class="cancel-button">✕ Cancel</button>
-          </div>
-        </div>
       </div>
-    </div>
 
-    <!-- Confirmation Modal -->
-    <ConfirmationModal
-      v-if="showModal"
-      title="Cancel Friend Request"
-      message="Are you sure you want to cancel this friend request?"
-      @confirm="cancelRequest"
-      @close="closeModal"
-    />
+      <!-- Confirmation Modal -->
+      <ConfirmationModal v-if="showModal" title="Cancel Friend Request"
+          message="Are you sure you want to cancel this friend request?" @confirm="cancelRequest"
+          @close="closeModal" />
   </div>
 </template>
 
@@ -36,19 +33,45 @@ import axios from 'axios';
 export default {
   name: "RequestsSent",
   props: {
-    sentRequests: {
-      type: Array,
-      required: true,
-    },
+      sentRequests: {
+          type: Array,
+          required: true,
+      },
   },
   components: {
-    ConfirmationModal,
+      ConfirmationModal,
   },
   data() {
-    return {
-      showModal: false,
-      requestIdToCancel: null,
-    };
+      return {
+          showModal: false,
+          requestIdToCancel: null,
+      };
+  },
+  methods: {
+      openConfirmationModal(requestId) {
+          // Store the ID of the request we want to cancel and show the modal
+          this.requestIdToCancel = requestId;
+          this.showModal = true;
+      },
+      closeModal() {
+          // Close the modal and reset the request ID
+          this.showModal = false;
+          this.requestIdToCancel = null;
+      },
+      async cancelRequest() {
+          try {
+              // Call the API to delete the friend request
+              await axios.delete(`http://localhost:3000/api/friends/request/${this.requestIdToCancel}`);
+
+              // Remove the canceled request from sentRequests by emitting an event
+              this.$emit('updateSentRequests', this.requestIdToCancel);
+          } catch (error) {
+              console.error("Error canceling friend request:", error);
+              alert("Failed to cancel friend request. Please try again.");
+          } finally {
+              this.closeModal();
+          }
+      },
   },
   methods: {
     openConfirmationModal(requestId) {
@@ -82,8 +105,8 @@ export default {
 <style scoped>
 @keyframes popFadeIn {
   to {
-    opacity: 1;
-    transform: scale(1);
+      opacity: 1;
+      transform: scale(1);
   }
 }
 

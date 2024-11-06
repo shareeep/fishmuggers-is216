@@ -1,34 +1,34 @@
 <template>
   <div class="friends-list">
-    <div class="header">
-      <h3>My Friends</h3>
-      <!-- Button to open the popup -->
-      <button @click="$emit('popup-toggle', true)" class="see-all">View All</button>
-    </div>
-
-    <div class="friends-scroll">
-      <!-- Display only the first 8 friends -->
-      <div v-for="friend in limitedFriends" :key="friend.id" class="friend-item">
-        <router-link :to="{ name: 'friendProfile', params: { id: friend.id } }">
-          <img :src="friend.profileImage || 'default-avatar.jpg'" alt="Friend Profile Image" />
-          <p class="friend-username">{{ friend.username }}</p>
-        </router-link>
+      <div class="header">
+          <h3>My Friends</h3>
+          <!-- Button to open the popup -->
+          <button @click="$emit('popup-toggle', true)" class="see-all">View All</button>
       </div>
-    </div>
 
-    <div class="header">
-      <h3>Suggested Friends</h3>
-    </div>
-
-    <div class="friends-scroll">
-      <!-- Display all suggested friends -->
-      <div v-for="friend in suggestedFriends" :key="friend.id" class="friend-item">
-        <router-link :to="{ name: 'friendProfile', params: { id: friend.id } }">
-          <img :src="friend.profileImage || 'default-avatar.jpg'" alt="Suggested Friend Profile Image" />
-          <p class="friend-username">{{ friend.username }}</p>
-        </router-link>
+      <div class="friends-scroll">
+          <!-- Display only the first 8 friends -->
+          <div v-for="friend in limitedFriends" :key="friend.id" class="friend-item">
+              <router-link :to="{ name: 'friendProfile', params: { id: friend.id } }">
+                  <img :src="friend.profileImage || 'default-avatar.jpg'" alt="Friend Profile Image" />
+                  <p class="friend-username">{{ friend.username }}</p>
+              </router-link>
+          </div>
       </div>
-    </div>
+
+      <div class="header">
+          <h3>Suggested Friends</h3>
+      </div>
+
+      <div class="friends-scroll">
+          <!-- Display all suggested friends -->
+          <div v-for="friend in suggestedFriends" :key="friend.id" class="friend-item">
+              <router-link :to="{ name: 'friendProfile', params: { id: friend.id } }">
+                  <img :src="friend.profileImage || 'default-avatar.jpg'" alt="Suggested Friend Profile Image" />
+                  <p class="friend-username">{{ friend.username }}</p>
+              </router-link>
+          </div>
+      </div>
   </div>
 </template>
 
@@ -36,19 +36,19 @@
 export default {
   name: "FriendsList",
   props: {
-    myFriends: {
-      type: Array,
-      default: () => [],
-    },
-    suggestedFriends: {
-      type: Array,
-      default: () => [],
-    },
+      myFriends: {
+          type: Array,
+          default: () => [],
+      },
+      suggestedFriends: {
+          type: Array,
+          default: () => [],
+      },
   },
   computed: {
-    limitedFriends() {
-      return this.myFriends.slice(0, 8);
-    },
+      limitedFriends() {
+          return this.myFriends.slice(0, 8);
+      },
   },
 };
 </script>
@@ -132,33 +132,33 @@ h3 {
 
 @media (max-width: 1024px) {
   .friends-scroll {
-    max-width: 600px;
-    margin: 0 auto;
-    justify-content: center;
+      max-width: 600px;
+      margin: 0 auto;
+      justify-content: center;
   }
 }
 
 @media (max-width: 768px) {
   .friends-scroll {
-    max-width: 600px;
-    justify-content: center;
-    text-align: center;
+      max-width: 600px;
+      justify-content: center;
+      text-align: center;
   }
 }
 
 @media (max-width: 640px) {
   .friends-scroll {
-    max-width: 600px;
-    justify-content: center;
-    text-align: center;
+      max-width: 600px;
+      justify-content: center;
+      text-align: center;
   }
 }
 
 @media (max-width: 480px) {
   .friends-scroll {
-    max-width: 600px;
-    justify-content: center;
-    text-align: center;
+      max-width: 600px;
+      justify-content: center;
+      text-align: center;
   }
 }
 </style>

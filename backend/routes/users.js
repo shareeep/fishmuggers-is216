@@ -7,12 +7,18 @@ const { body, validationResult } = require("express-validator");
 
 // Helper function to validate user data on update
 const validateUserData = [
-  body("email").optional().isEmail().withMessage("Please provide a valid email address."),
+  body("email")
+    .optional()
+    .isEmail()
+    .withMessage("Please provide a valid email address."),
   body("username")
     .optional()
     .isLength({ min: 3 })
     .withMessage("Username must be at least 3 characters long."),
-  body("points").optional().isInt({ min: 0 }).withMessage("Points must be a non-negative integer."),
+  body("points")
+    .optional()
+    .isInt({ min: 0 })
+    .withMessage("Points must be a non-negative integer."),
   body("joinedEvents")
     .optional()
     .customSanitizer((value) => JSON.parse(value || "[]"))
@@ -52,7 +58,10 @@ router.get("/checkUsername", authenticate, async (req, res) => {
 
   try {
     const usersRef = db.collection("users");
-    const querySnapshot = await usersRef.where("username", "==", username).limit(1).get();
+    const querySnapshot = await usersRef
+      .where("username", "==", username)
+      .limit(1)
+      .get();
 
     if (querySnapshot.empty) {
       return res.status(200).json({ isTaken: false });
@@ -118,9 +127,15 @@ router.put(
 
     try {
       if (username) {
-        const usernameQuery = await db.collection("users").where("username", "==", username).limit(1).get();
+        const usernameQuery = await db
+          .collection("users")
+          .where("username", "==", username)
+          .limit(1)
+          .get();
         if (!usernameQuery.empty && usernameQuery.docs[0].data().uid !== uid) {
-          return res.status(400).json({ message: "Username is already taken." });
+          return res
+            .status(400)
+            .json({ message: "Username is already taken." });
         }
       }
 
@@ -136,10 +151,14 @@ router.put(
       };
 
       if (req.file) {
-        const fileName = `profileImages/${uid}_${Date.now()}_${req.file.originalname}`;
+        const fileName = `profileImages/${uid}_${Date.now()}_${
+          req.file.originalname
+        }`;
         const file = bucket.file(fileName);
 
-        await file.save(req.file.buffer, { metadata: { contentType: req.file.mimetype } });
+        await file.save(req.file.buffer, {
+          metadata: { contentType: req.file.mimetype },
+        });
         await file.makePublic();
 
         const publicUrl = `https://storage.googleapis.com/${bucket.name}/${fileName}`;
