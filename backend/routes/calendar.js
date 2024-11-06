@@ -137,6 +137,27 @@ router.delete('/delete-event', async (req, res) => {
     }
 });
 
+// Fetch user profile information
+router.get('/users/:uid', async (req, res) => {
+    const { uid } = req.params;
+    try {
+        const userDoc = await db.collection('users').doc(uid).get();
+        if (!userDoc.exists) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        const userData = userDoc.data();
+        res.json({
+            profileImage: userData.profileImage,
+            username: userData.username,
+            email: userData.email
+        });
+    } catch (error) {
+        console.error("Error fetching user profile:", error);
+        res.status(500).json({ error: 'Failed to fetch user profile' });
+    }
+});
+
 
 
 module.exports = router;

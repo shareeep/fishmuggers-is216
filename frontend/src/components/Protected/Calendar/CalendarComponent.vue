@@ -2,7 +2,7 @@
   <div class="calendar-container">
     <div class="side-panel">
       <div class="calendar-img">
-        <img src="https://firebasestorage.googleapis.com/v0/b/fishmugger-is216.appspot.com/o/profileImages%2F1.jpg?alt=media&token=2752a088-3d5f-4080-9b0a-c1e73718c34c" alt="" />
+        <img :src="profileImage" alt="User Profile" />
       </div>
       <div class="current-day">
         <h2>{{ currentDay }}</h2>
@@ -164,7 +164,8 @@ export default {
         title: '',
         description: '',
         datetime: '',
-        location: ''
+        location: '',
+        profileImage: '',
       },
       showAddEventPopup: false,
       //NEW CUSTOM EVENT FORM
@@ -175,7 +176,22 @@ async mounted() {
     try {
         const user = auth.currentUser;
         if (user) {
+            const token = await user.getIdToken();
             const uid = user.uid;
+
+            // Fetch profile image
+            const userResponse = await fetch(`http://localhost:3000/api/users/${uid}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}` // Add the token to the request
+                }
+            });
+
+            if (userResponse.ok) {
+                const userData = await userResponse.json();
+                this.profileImage = userData.profileImage;
+            } else {
+                console.error("Failed to fetch user profile:", await userResponse.text());
+            }
 
             // Fetch joined events
             const eventsResponse = await fetch(`http://localhost:3000/api/calendar/joined-events/${uid}`);
@@ -490,6 +506,7 @@ async mounted() {
     position: relative;
     margin:auto;
     margin-top: 10px;
+    margin-bottom: 10px;
 }
 
 .calendar-img img {
