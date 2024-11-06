@@ -26,7 +26,6 @@
       <div v-for="friend in suggestedFriends" :key="friend.id" class="friend-item">
         <router-link :to="{ name: 'friendProfile', params: { id: friend.id } }">
           <img :src="friend.profileImage || 'default-avatar.jpg'" alt="Suggested Friend Profile Image" />
-          <p class="friend-name">{{ friend.name }}</p>
           <p class="friend-username">{{ friend.username }}</p>
         </router-link>
       </div>

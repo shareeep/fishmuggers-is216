@@ -206,5 +206,6 @@ i {
     position: absolute;
     bottom: 20px;
   }
-  </style>
+}
+</style>
   

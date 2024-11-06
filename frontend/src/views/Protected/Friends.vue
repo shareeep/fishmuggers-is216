@@ -68,17 +68,14 @@ function togglePopup(value) {
 async function fetchReceivedRequests() {
   try {
     const response = await axios.get(`http://localhost:3000/api/friends/requests/${userId}`);
-    receivedRequests.value = response.data.map(request => {
-      const sender = allUsers.value.find(user => user.id === request.senderId);
-      return {
-        id: request.requestId, // Ensure this is correctly set as the unique identifier
-        ...request,
-        name: sender ? sender.name : 'Unknown',
-        username: sender ? sender.username : '',
-        avatar: sender ? sender.profileImage || 'default-avatar.jpg' : 'default-avatar.jpg',
-        mutualFriends: Math.floor(Math.random() * 10), // Placeholder for mutual friends
-      };
-    });
+    receivedRequests.value = response.data.map(request => ({
+      id: request.requestId,
+      senderId: request.senderId,
+      name: request.name,
+      username: request.username,
+      avatar: request.avatar || 'default-avatar.jpg',
+      mutualFriends: request.mutualFriends, // This now includes mutual friend count from the backend
+    }));
   } catch (error) {
     console.error("Error fetching received friend requests:", error);
   }

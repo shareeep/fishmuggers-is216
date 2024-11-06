@@ -7,9 +7,8 @@
         <img :src="request.avatar" alt="User Avatar" />
         <div class="info-container">
           <div class="details">
-            <h4>{{ request.name }}</h4>
-            <p>{{ request.username }}</p>
-            <p>{{ request.mutualFriends }} mutual friends</p>
+            <h4>{{ request.username }}</h4>
+            <p>Mutual Friends: {{ request.mutualFriends }}</p>
           </div>
           <div class="actions">
             <button @click="acceptRequest(request.id)" class="accept-button">Accept</button>

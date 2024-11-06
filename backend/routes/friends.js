@@ -138,14 +138,19 @@ router.get("/requests/:userId", async (req, res) => {
       const senderId = requestData.senderId;
 
       const senderDoc = await db.collection("users").doc(senderId).get();
-      const senderFriends = new Set(senderDoc.data().friends || []);
+      const senderData = senderDoc.data() || {};
+      const senderFriends = new Set(senderData.friends || []);
 
       const mutualFriendsCount = [...userFriends].filter(friendId => senderFriends.has(friendId)).length;
 
+      // Add sender's details to the request data
       requests.push({
         ...requestData,
         requestId: doc.id,
         mutualFriends: mutualFriendsCount,
+        name: senderData.name || 'Unknown',  // Sender's name
+        username: senderData.username || '',  // Sender's username
+        avatar: senderData.profileImage || 'default-avatar.jpg',  // Sender's avatar
       });
     }
 
