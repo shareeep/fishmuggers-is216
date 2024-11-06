@@ -126,7 +126,6 @@ async function handleRejectRequest(requestId) {
 async function fetchMyFriends() {
   try {
     const response = await axios.get(`http://localhost:3000/api/friends/${userId}`);
-    console.log("Raw response from backend:", response.data); // Log raw backend response
     
     // Map the response to myFriends
     myFriends.value = response.data.map(friend => ({
