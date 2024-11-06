@@ -31,51 +31,41 @@
 
         <!-- Share Popup Component -->
         <!-- Update the :shareContent to use the correct URL dynamically -->
-        <HomeSharePopup
+        <!-- <HomeSharePopup
           v-if="post.showPopup"
           :friends="friends"
           :shareContent="`http://localhost:5173/posts/${post.postId}`"
           :postId="post.postId"
           :userId="userId"
           @close="post.showPopup = false"
-        />
+        /> -->
 
       </div>
     </div>
   </div>
-</template>
 
+</template>
 
 <script>
 import axios from "axios";
 import { getAuth } from "firebase/auth"; // Use getAuth directly here
-import HomeSharePopup from './PetpostShare.vue';
+// import HomeSharePopup from './PetpostShare.vue';
 
 export default {
-  components: {
-    HomeSharePopup,
-  },
+  // components: {
+  //   HomeSharePopup,
+  // },
   data() {
     return {
       activeMenu: null,
       posts: [],
-      friends: [],
-      userId: null,
     };
   },
   methods: {
     async fetchPosts() {
-      const auth = getAuth();
-      const userId = auth.currentUser ? auth.currentUser.uid : null;
-      
       try {
         const response = await axios.get("http://localhost:3000/api/posts/feed");
-        this.posts = response.data.map(post => ({
-          ...post,
-          hasLiked: post.likes && post.likes.includes(userId),
-          showPopup: false, // Initialize showPopup as false for each post
-        }));
-        this.userId = userId;
+        this.posts = response.data;
       } catch (error) {
         console.error("Failed to load posts:", error);
         alert("Failed to load posts.");
@@ -88,7 +78,7 @@ export default {
       }
       
       // Only update showPopup for the selected post
-      post.showPopup = true;
+      this.$emit("open-share-popup", post.postId, post.userId);
     },
     closeSharePopup(post) {
       post.showPopup = false;
@@ -102,15 +92,48 @@ export default {
     deletePost(postId) {
       this.posts = this.posts.filter(post => post.postId !== postId);
     },
+    async likePost(post) {
+      const userId = auth.currentUser.uid;
+      const hasLiked = post.likes && post.likes.includes(userId);
+
+      // Optimistically update the like count on the frontend
+      if (hasLiked) {
+        post.likes = post.likes.filter(id => id !== userId);
+      } else {
+        post.likes = post.likes ? [...post.likes, userId] : [userId];
+      }
+
+      try {
+        // Send the request to update likes in the backend
+        const token = await auth.currentUser.getIdToken();
+        await axios.post(
+          `http://localhost:3000/api/posts/${post.postId}/like`,
+          { userId },
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+      } catch (error) {
+        console.error("Error toggling like:", error);
+        alert("Failed to toggle like. Please try again.");
+
+        // Rollback the optimistic update in case of an error
+        if (hasLiked) {
+          post.likes.push(userId);
+        } else {
+          post.likes = post.likes.filter(id => id !== userId);
+        }
+      }
+    },
   },
   mounted() {
-    const auth = getAuth();
-    this.userId = auth.currentUser ? auth.currentUser.uid : null;
     this.fetchPosts();
+
   },
 };
 </script>
-
 
 
 
@@ -131,7 +154,7 @@ export default {
   margin-bottom: 20px;
   background-color: #fff;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-  scroll-snap-align: center;
+  scroll-snap-align:center;
   scroll-behavior: smooth;
 }
 
@@ -217,35 +240,4 @@ export default {
 }
 
 
-
-.like-button {
-  display: flex;
-  align-items: center;
-  font-size: 1rem;
-  font-weight: bold;
-  color: black;
-  background: none;
-  border: none;
-  cursor: pointer;
-}
-
-.like-button:hover {
-  transform: scale(1.05);
-}
-
-.like-button:active {
-  transform: scale(0.98);
-}
-
-.thumbs-up-icon {
-  color: grey;
-  /* Outline color */
-  transition: color 0.2s ease;
-  cursor: pointer;
-}
-
-.fas.fa-thumbs-up {
-  color: black;
-  /* Filled color */
-}
 </style>
