@@ -2,20 +2,33 @@
   <div class="home-container">
     <Navbar />
     <main id="scrollable-element">
-      <Petpost />
+      <Petpost @open-share-popup="handleOpenSharePopup" />
     </main>
     <router-link to="/addpost">
       <button class="floating-btn">🐾</button>
     </router-link>
+    <HomeSharePopup v-if="post.showPopup" :friends="friends"
+      :shareContent="`http://localhost:5173/posts/${post.postId}/${post.userId}`" :postId="post.postId" :userId="post.userId"
+      @close="post.showPopup = false" />
   </div>
-</template> 
+</template>
 
 <script setup>
 import { ref, onMounted } from 'vue';
+import { getAuth } from 'firebase/auth';
 import Navbar from '@/components/Protected/Navbar.vue';
 import Petpost from '@/components/Protected/PetPosts/Petpost.vue';
 import Scrollbar from 'smooth-scrollbar';
 import OverscrollPlugin from 'smooth-scrollbar/plugins/overscroll';
+import HomeSharePopup from '@/components/Protected/PetPosts/PetpostShare.vue';
+
+const auth = getAuth(); // Initialize auth
+const post = ref({ showPopup: false, postId: null, userId: null }); // Track which post's popup is open
+
+function handleOpenSharePopup(postId) {
+  const userId = auth.currentUser ? auth.currentUser.uid : null;
+  post.value = { showPopup: true, postId, userId }; // Make sure userId is defined here
+}
 
 Scrollbar.use(OverscrollPlugin);
 
@@ -64,14 +77,14 @@ main {
   flex-grow: 1;
   display: flex;
   flex-direction: column;
-  gap: 5px; 
+  gap: 5px;
   background-color: #FCEFB4;
   height: 100vh;
   overflow: hidden;
   padding: 20px;
   box-sizing: border-box;
 }
- 
+
 .floating-btn {
   position: fixed !important;
   bottom: 20px;
@@ -92,14 +105,14 @@ main {
 }
 
 .floating-btn:hover {
-    background-color: #e6c200;
-    transform: scale(1.05);
-    box-shadow: 0 4px 8px rgba(75, 0, 130, 0.2);
+  background-color: #e6c200;
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(75, 0, 130, 0.2);
 }
 
 
 .floating-btn:active {
-    transform: scale(0.98);
+  transform: scale(0.98);
 
 
 }
@@ -142,18 +155,18 @@ main {
     margin-left: 0;
     margin-top: 0;
     padding: 15px;
-    height: calc(100vh - 50px); /* Account for navbar height on mobile */
+    height: calc(100vh - 50px);
+    /* Account for navbar height on mobile */
     overflow-y: auto;
   }
 
   .floating-btn {
-    bottom: 60px; /* Place above mobile navbar */
+    bottom: 60px;
+    /* Place above mobile navbar */
     right: 20px;
     width: 50px;
     height: 50px;
     font-size: 30px;
   }
 }
-
-
 </style>

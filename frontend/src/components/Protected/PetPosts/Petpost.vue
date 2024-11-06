@@ -31,14 +31,14 @@
 
         <!-- Share Popup Component -->
         <!-- Update the :shareContent to use the correct URL dynamically -->
-        <HomeSharePopup
+        <!-- <HomeSharePopup
           v-if="post.showPopup"
           :friends="friends"
           :shareContent="`http://localhost:5173/posts/${post.postId}`"
           :postId="post.postId"
           :userId="userId"
           @close="post.showPopup = false"
-        />
+        /> -->
 
       </div>
     </div>
@@ -49,12 +49,12 @@
 <script>
 import axios from "axios";
 import { getAuth } from "firebase/auth"; // Use getAuth directly here
-import HomeSharePopup from './PetpostShare.vue';
+// import HomeSharePopup from './PetpostShare.vue';
 
 export default {
-  components: {
-    HomeSharePopup,
-  },
+  // components: {
+  //   HomeSharePopup,
+  // },
   data() {
     return {
       activeMenu: null,
@@ -88,7 +88,7 @@ export default {
       }
       
       // Only update showPopup for the selected post
-      post.showPopup = true;
+      this.$emit("open-share-popup", post.postId, post.userId);
     },
     closeSharePopup(post) {
       post.showPopup = false;

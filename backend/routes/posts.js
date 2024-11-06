@@ -109,8 +109,6 @@ router.get("/feed", async (req, res) => {
 });
 
 
-
-
 router.post("/:postId/like", authenticate, async (req, res) => {
   const { postId } = req.params;
   const { userId } = req.body;

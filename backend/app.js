@@ -37,6 +37,7 @@ const calendarRoutes = require("./routes/calendar"); // Import calendar routes
 // Use Routes
 app.use("/api/events", eventsRoutes);
 app.use("/api/posts", postsRoutes);
+console.log("Posts routes registered");
 app.use("/api/users", usersRoutes); // Mount users routes
 app.use("/api/messages", messagesRoutes); // Mount messages routes
 app.use("/api/pets", petsRoutes);

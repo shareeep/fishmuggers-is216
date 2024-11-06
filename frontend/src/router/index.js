@@ -38,7 +38,7 @@ const router = createRouter({
           component: Home,
         },
         {
-          path: '/posts/:postId',
+          path: '/posts/:postId/:userId',
           name: 'petPostDetail',
           component: PetPostDetail,
           props: true,
