@@ -1,18 +1,22 @@
 <template>
+ 
   <div class="profile-update">
     <h2 class="text-2xl font-bold mb-6 text-center">Update Profile</h2>
-
+    
     <!-- Current Profile Information -->
     <div class="current-info mb-6 p-4 bg-gray-100 rounded-md">
       <h3 class="text-lg font-semibold mb-2">Current Profile Information</h3>
       <div class="flex items-center mb-2">
-        <img :src="userData.profileImage || 'https://via.placeholder.com/300?text=Profile+Image'"
-          alt="Current Profile Image" class="w-16 h-16 rounded-full mr-4" />
+        <img 
+          :src="userData.profileImage || 'https://via.placeholder.com/300?text=Profile+Image'" 
+          alt="Current Profile Image" 
+          class="w-16 h-16 rounded-full mr-4"
+        />
         <div>
           <p><strong>Email:</strong> {{ userData.email }}</p>
           <p><strong>Username:</strong> {{ userData.username }}</p>
           <p><strong>Points:</strong> {{ userData.points }}</p>
-          <p><strong>Joined Events:</strong>
+          <p><strong>Joined Events:</strong> 
             <span v-if="userData.joinedEvents.length">
               <span v-for="(event, index) in userData.joinedEvents" :key="index">
                 {{ event }}<span v-if="index < userData.joinedEvents.length - 1">, </span>
@@ -29,22 +33,36 @@
       <!-- Email Field -->
       <div class="mb-4">
         <label class="block text-gray-700">Email:</label>
-        <input v-model="email" type="email" required class="border border-gray-300 rounded-md py-2 px-4 w-full" />
+        <input 
+          v-model="email" 
+          type="email" 
+          required 
+          class="border border-gray-300 rounded-md py-2 px-4 w-full"
+        />
       </div>
 
       <!-- Username Field -->
       <div class="mb-4">
         <label class="block text-gray-700">Username:</label>
-        <input v-model="username" type="text" required class="border border-gray-300 rounded-md py-2 px-4 w-full"
-          @blur="checkUsername" />
+        <input 
+          v-model="username" 
+          type="text" 
+          required 
+          class="border border-gray-300 rounded-md py-2 px-4 w-full"
+          @blur="checkUsername"
+        />
         <p v-if="usernameError" class="text-red-500 text-sm mb-4">{{ usernameError }}</p>
       </div>
 
       <!-- Profile Image Field -->
       <div class="mb-4">
         <label class="block text-gray-700">Profile Image:</label>
-        <input type="file" @change="handleFileUpload" accept="image/*"
-          class="border border-gray-300 rounded-md py-2 px-4 w-full" />
+        <input 
+          type="file" 
+          @change="handleFileUpload" 
+          accept="image/*"
+          class="border border-gray-300 rounded-md py-2 px-4 w-full"
+        />
         <!-- New Image Preview -->
         <div v-if="newProfileImageUrl" class="mt-4">
           <p class="text-gray-700 mb-2">New Profile Image Preview:</p>
@@ -55,16 +73,24 @@
       <!-- Points Field -->
       <div class="mb-4">
         <label class="block text-gray-700">Points:</label>
-        <input v-model.number="points" type="number" min="0" class="border border-gray-300 rounded-md py-2 px-4 w-full"
-          readonly />
+        <input 
+          v-model.number="points" 
+          type="number" 
+          min="0"
+          class="border border-gray-300 rounded-md py-2 px-4 w-full" 
+          readonly
+        />
       </div>
 
       <!-- Joined Events Field -->
       <div class="mb-4">
         <label class="block text-gray-700">Joined Events:</label>
         <div class="flex flex-wrap">
-          <div v-for="(event, index) in joinedEvents" :key="index"
-            class="flex items-center mr-2 mb-2 bg-blue-100 text-blue-700 px-3 py-1 rounded-full">
+          <div 
+            v-for="(event, index) in joinedEvents" 
+            :key="index" 
+            class="flex items-center mr-2 mb-2 bg-blue-100 text-blue-700 px-3 py-1 rounded-full"
+          >
             {{ event }}
             <button type="button" @click="removeEvent(index)" class="ml-2 text-red-500 hover:text-red-700">
               &times;
@@ -73,8 +99,12 @@
         </div>
         <!-- Add New Event -->
         <div class="flex mt-2">
-          <input v-model="newEvent" type="text" placeholder="Add new event ID"
-            class="border border-gray-300 rounded-md py-2 px-4 w-full mr-2" />
+          <input  
+            v-model="newEvent" 
+            type="text" 
+            placeholder="Add new event ID" 
+            class="border border-gray-300 rounded-md py-2 px-4 w-full mr-2"
+          />
           <button type="button" @click="addEvent" class="edit-btn">Add</button>
         </div>
       </div>
@@ -91,6 +121,7 @@
   </div>
 </template>
 
+ 
 <script setup>
 import { ref, onMounted } from 'vue';
 import axios from 'axios'; // Ensure axios is installed: npm install axios
@@ -157,7 +188,7 @@ const checkUsername = async () => {
   if (!validateUsername(desiredUsername)) {
     return;
   }
-
+  
   try {
     const taken = await isUsernameTaken(desiredUsername);
     if (taken && desiredUsername !== userData.value.username) { // Allow if username is unchanged
@@ -199,20 +230,20 @@ const removeEvent = (index) => {
 const handleProfileUpdate = async () => {
   errorMessage.value = '';
   successMessage.value = '';
-
+  
   const currentUser = auth.currentUser;
   if (!currentUser) {
     errorMessage.value = 'User not authenticated.';
     return;
   }
-
+  
   const desiredUsername = username.value.trim();
-
+  
   // Validate username format
   if (!validateUsername(desiredUsername)) {
     return;
   }
-
+  
   // Check if username is taken (if changed)
   try {
     isSubmitting.value = true;
@@ -228,7 +259,7 @@ const handleProfileUpdate = async () => {
     isSubmitting.value = false;
     return;
   }
-
+  
   try {
     // Prepare form data
     const formData = new FormData();
@@ -249,7 +280,7 @@ const handleProfileUpdate = async () => {
     });
 
     successMessage.value = 'Profile updated successfully!';
-
+    
     // Optionally, refresh the user data
     fetchUserData();
   } catch (error) {
@@ -306,12 +337,6 @@ onMounted(() => {
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-@media (max-width: 767px) {
-  .profile-update {
-    max-width: 400px;
-  }
-}
-
 .current-info img {
   object-fit: cover;
 }
@@ -345,7 +370,6 @@ onMounted(() => {
 }
 
 .edit-btn:hover {
-  background-color: #E6C200;
   transform: scale(1.05);
   box-shadow: 0 4px 8px rgba(75, 0, 130, 0.2);
 }
@@ -359,4 +383,5 @@ onMounted(() => {
   cursor: not-allowed;
   opacity: 0.7;
 }
+
 </style>

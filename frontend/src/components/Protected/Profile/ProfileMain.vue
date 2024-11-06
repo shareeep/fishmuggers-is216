@@ -8,15 +8,15 @@
       </div>
       <div class="profile-info">
         <div class="profile-details">
-          <h2 class="username">{{ props.userData.username }}</h2>
+          <h2 class="username">{{ userData.username }}</h2>
           <router-link to="/editprofile">
             <button class="edit-btn">Edit profile</button>
           </router-link>
         </div>
         <div class="profile-stats">
-          <span><b>{{ props.userData.posts.length }}</b> Posts</span>
-          <span><b>{{ props.userData.joinedEvents.length }}</b> Events Joined</span>
-          <span><b>{{ props.userData.posts.length }}</b> Friends</span>
+          <span><b>{{ posts }}</b> Posts</span>
+          <span><b>{{ userData.joinedEvents.length }}</b> Events Joined</span>
+          <span><b>{{ friends }}</b> Friends</span>
         </div>
       </div>
     </div>
@@ -25,7 +25,7 @@
     <div class="profile-tabs">
       <button :class="{ active: activeTab === 'posts' }" @click="activeTab = 'posts'">Posts</button>
       <button :class="{ active: activeTab === 'eventsJoined' }" @click="activeTab = 'eventsJoined'">Events
-        Joined/Created</button>
+        Joined</button>
       <button :class="{ active: activeTab === 'pets' }" @click="activeTab = 'pets'">Pets</button>
     </div>
 
@@ -41,7 +41,7 @@
           </router-link>
         </div>
         <div v-else class="posts-grid">
-          <div v-for="(post, index) in props.userData.posts" :key="post.id" class="post-item" @click="openPostModal(post)">
+          <div v-for="(post, index) in userData.posts" :key="post.id" class="post-item" @click="openModal(index)">
             <img :src="post.image" alt="User Post" class="post-image" />
             <div class="overlay">
               <i class="fas fa-thumbs-up"></i>
@@ -51,27 +51,53 @@
         </div>
       </div>
 
+      <!-- Modal -->
+      <div v-if="isModalOpen" class="post-modal" @click.self="closeModal">
+        <div class="modal-content">
+          <!-- Left Column: Post Image -->
+          <div class="modal-left">
+            <img :src="userData.posts[selectedPostIndex].image" alt="Selected Post" class="modal-image" />
+          </div>
 
-      <div v-if="activeTab === 'eventsJoined'">
-        <!-- Buttons for toggling views -->
-        <div class="toggle-buttons">
-          <button :class="{ active: eventsView === 'createdEvents' }" @click="eventsView = 'createdEvents'">
-            Created Events
-          </button>
-          <button :class="{ active: eventsView === 'joinedEvents' }" @click="eventsView = 'joinedEvents'">
-            Joined Events
-          </button>
-        </div>
+          <!-- Right Column: User Info, Caption, and Likes -->
+          <div class="modal-right">
+            <!-- User Info Header -->
+            <div class="post-header">
+              <div class="user-info">
+                <img :src="userData.profileImage || 'https://via.placeholder.com/50?text=Avatar'" alt="User Avatar"
+                  class="avatar" />
+                <h3 class="user-name">{{ userData.username }}</h3>
+              </div>
 
-        <!-- Display CreatedEvents or JoinedEvents component based on eventsView -->
-        <div v-if="eventsView === 'createdEvents'">
-          <CreatedEvents :events="events" @edit-event="handleEditEvent" @delete-event="deleteEvent" />
-        </div>
-        <div v-if="eventsView === 'joinedEvents'">
-          <JoinedEvents :events="events" />
+            </div>
+
+            <!-- Post Caption and Likes -->
+            <div class="post-footer">
+              <div class="caption-container">
+                <img :src="userData.profileImage || 'https://via.placeholder.com/50?text=Avatar'" alt="User Avatar"
+                  class="avatar-caption" />
+                <span class="caption-text">
+                  <span class="user-name-caption">{{ userData.username }}</span>
+                  {{ userData.posts[selectedPostIndex].caption }}
+                </span>
+              </div>
+
+              <div class="likes-container">
+
+                <p class="likes-caption">{{ userData.posts[selectedPostIndex].likes }} Likes</p>
+                <button @click="likePost(post)" class="like-button"><i class="fas fa-thumbs-up"
+                    style="color:black;"></i>Like</button>
+              </div>
+            </div>
+          </div>
+          <!-- Navigation and Close Icons -->
+          <i class="fas fa-chevron-left nav-arrow" @click="selectedPostIndex > 0 && prevPost()"
+            :class="{ disabled: selectedPostIndex === 0 }" />
+          <i class="fas fa-chevron-right nav-arrow" @click="selectedPostIndex < userData.posts.length - 1 && nextPost()"
+            :class="{ disabled: selectedPostIndex === userData.posts.length - 1 }" />
+          <i class="fas fa-times close-modal" @click="closeModal"></i>
         </div>
       </div>
-
 
       <!-- PETS -->
       <div v-if="activeTab === 'pets'">
@@ -80,7 +106,7 @@
         </router-link>
         <div class="pets-wrapper">
           <div class="pets-grid">
-            <div v-for="(pet, index) in props.pets" :key="index" class="pet-card"
+            <div v-for="(pet, index) in pets" :key="index" class="pet-card"
               :style="{ animationDelay: `${index * 0.2}s` }">
               <img :src="pet.image" alt="Pet Image" class="pet-avatar" />
               <div class="info-container">
@@ -104,40 +130,36 @@
 </template>
 
 <script setup>
-import { ref, onMounted, defineEmits, defineProps } from 'vue';
+import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import { getAuth } from 'firebase/auth';
 import { useRouter } from 'vue-router';
-import CreatedEvents from "@/components/Protected/EventsAdmin/CreatedEventsList.vue";
-import JoinedEvents from "@/components/Protected/EventsAdmin/JoinedEventsList.vue";
 
-const props = defineProps({
-  userData: Object,
-  pets: Array
-});
-
-const emit = defineEmits(['edit-event', 'open-post']); // Add 'open-post' event
-const events = ref([]);
-
-// Initialize Firebase Auth and Router
 const auth = getAuth();
 const router = useRouter();
 
 
-const fetchEvents = async () => {
-  try {
-    const response = await axios.get("http://localhost:3000/api/events");
-    events.value = response.data;
-    console.log("Fetched Events:", events.value); // Add this line
-  } catch (error) {
-    console.error("Error fetching events:", error);
-    errorMessage.value = "Failed to fetch events.";
-  }
-};
+const userData = ref({
+  username: 'ihatewad2',
+  profileImage: '',
+  joinedEvents: [],
+  posts: [  // Adding sample post data
+    { id: 1, image: 'https://www.tracyvets.com/files/Parakeets.jpeg', likes: 194000, caption: "First post caption" },
+    { id: 2, image: 'https://www.uk.pedigree.com/sites/g/files/fnmzdf5531/files/2023-06/pexels-sarah-chai-7282710-list.jpg', likes: 6290, caption: "woof woof " },
+    { id: 3, image: 'https://media.4-paws.org/a/e/6/f/ae6fefbd6d12cfc50d51ebb7da9d7cbdb322d006/VIER%20PFOTEN_2020-10-07_00138-2890x2000-1920x1329.jpg', likes: 1020, caption: "Lorem, ipsum dolor sit amet consectetur adipisicing elit. Blanditiis quos iste ratione labore ea ex aliquid eaque? Enim obcaecati nisi corporis unde libero porro, incidunt accusantium repudiandae placeat, totam a." },
+  ],
+});
 
-
-const eventsView = ref('createdEvents');
+const posts = ref(userData.value.posts.length);
+const friends = ref(73);
 const activeTab = ref('posts');
+const selectedPostIndex = ref(0);
+const isModalOpen = ref(false);
+
+const pets = ref([
+  { name: 'Woofie', type: 'Dog', breed: 'Golden Retriever', age: 3, image: 'https://via.placeholder.com/150?text=Dog' },
+  { name: 'Meowers', type: 'Cat', breed: 'Siamese', age: 2, image: 'https://via.placeholder.com/150?text=Cat' }
+]);
 
 const fetchUserData = async () => {
   const currentUser = auth.currentUser;
@@ -155,18 +177,13 @@ const fetchUserData = async () => {
 };
 
 
-const handleEditEvent = (event) => {
-  // Emit event to Profile.vue to open modal
-  emit('edit-event', event);
+const openModal = (index) => {
+  selectedPostIndex.value = index;
+  isModalOpen.value = true;
 };
 
-// Sample deleteEvent function
-const deleteEvent = (eventId) => {
-  console.log("Delete Event:", eventId);
-};
-
-const openPostModal = (post) => {
-  emit('open-post', post);
+const closeModal = () => {
+  isModalOpen.value = false;
 };
 
 const prevPost = () => {
@@ -184,9 +201,7 @@ const nextPost = () => {
     selectedPostIndex.value = 0;
   }
 };
-onMounted(() => {
-  fetchEvents();
-});
+
 onMounted(fetchUserData);
 </script>
 
@@ -242,7 +257,6 @@ onMounted(fetchUserData);
 }
 
 .edit-btn:hover {
-  background-color: #E6C200;
   transform: scale(1.05);
   box-shadow: 0 4px 8px rgba(75, 0, 130, 0.2);
 }
@@ -298,7 +312,7 @@ onMounted(fetchUserData);
 /* Pets grid layout */
 .pets-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   gap: 16px;
   margin-top: 20px;
 }
@@ -350,7 +364,6 @@ onMounted(fetchUserData);
   transform: scale(1.05);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
-
 .details h4 {
   font-weight: bold;
   color: #333;
@@ -503,13 +516,13 @@ onMounted(fetchUserData);
 }
 
 .post-modal {
-  display: flex;
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   background-color: rgba(0, 0, 0, 0.7);
+  display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
@@ -519,7 +532,7 @@ onMounted(fetchUserData);
   display: flex;
   background: #fff;
   border-radius: 10px;
-  max-height: 90vh;
+  height: 500px;
   overflow: hidden;
   padding: 0;
   width: auto;
@@ -549,25 +562,6 @@ onMounted(fetchUserData);
   justify-content: flex-start;
   max-width: 400px;
   padding: 20px;
-}
-
-.toggle-buttons {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-}
-
-.toggle-buttons button {
-  padding: 10px;
-  background-color: #f0f0f0;
-  cursor: pointer;
-  font-weight: bold;
-  border-radius: 10px;
-}
-
-.toggle-buttons .active {
-  background-color: #333;
-  color: white;
 }
 
 .post-header {
