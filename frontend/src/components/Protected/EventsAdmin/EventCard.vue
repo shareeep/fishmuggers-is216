@@ -1,12 +1,8 @@
 <template>
-  <div class="event-card mb-6">
-    <div class="flex">
-      <img
-        :src="event.eventImage || 'https://via.placeholder.com/800x400'"
-        alt="Event Image"
-        class="w-48 h-32 object-cover rounded"
-      />
-      <div class="ml-4 flex-1">
+  <div class="event-card mb-6" @click="handleClick">
+    <div class="event-content">
+      <img :src="event.eventImage || 'https://via.placeholder.com/800x400'" alt="Event Image" class="event-image" />
+      <div class="event-details">
         <h3 class="text-lg font-bold">{{ event.title }}</h3>
         <p class="text-gray-600">{{ event.description }}</p>
         <p><strong>Date:</strong> {{ formatDate(event.date) }}</p>
@@ -14,31 +10,18 @@
         <p><strong>Pet Types:</strong> {{ formatPetTypes(event.petType) }}</p>
         <p><strong>Event Size:</strong> {{ event.eventSize }}</p>
         <div class="flex items-center mt-2">
-          <img
-            :src="event.host.profilePic || 'https://via.placeholder.com/50'"
-            alt="Host Profile"
-            class="w-8 h-8 rounded-full mr-2"
-          />
+          <img :src="event.host.profilePic || 'https://via.placeholder.com/50'" alt="Host Profile" class="host-avatar" />
           <span>{{ event.host.username }}</span>
         </div>
         <p class="mt-2">
           <strong>Interested Users:</strong> {{ event.interestedUsers.length }}
         </p>
-      </div>
-
-      <!-- Action Buttons -->
-      <div class="ml-auto">
-        <div v-if="isEventHost">
-          <button
-            @click="$emit('edit-event', event)"
-            class="bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600 mr-2"
-          >
+        <div class="action-buttons" v-if="showActions || isEventHost">
+          <!-- Stop propagation on these buttons to prevent navigation -->
+          <button @click.stop="$emit('edit-event', event)" class="edit-btn mr-3">
             Edit
           </button>
-          <button
-            @click="$emit('delete-event', event.eventId)"
-            class="bg-red-500 text-white px-2 py-1 rounded hover:bg-red-600"
-          >
+          <button @click.stop="$emit('delete-event', event.eventId)" class="delete-btn">
             Delete
           </button>
         </div>
@@ -48,25 +31,30 @@
 </template>
 
 <script setup>
-import { computed } from "vue";
+import { computed, defineProps, defineEmits } from "vue";
 import { getAuth } from "firebase/auth";
 
 // Props
-defineProps({
+const props = defineProps({
   event: Object,
+  showActions: Boolean,
 });
+
+const emit = defineEmits();
 
 const auth = getAuth();
 const currentUser = computed(() => auth.currentUser);
-const emit = defineEmits(["edit-event", "delete-event"]);
 
+const handleClick = () => {
+  emit('open-detail', props.event);
+};
 
 // Computed property to check if current user is the event host
 const isEventHost = computed(() => {
   return (
     currentUser.value &&
-    event.host &&
-    event.host.uid === currentUser.value.uid
+    props.event.host &&
+    props.event.host.uid === currentUser.value.uid
   );
 });
 
@@ -86,6 +74,99 @@ const formatPetTypes = (petType) => {
 };
 </script>
 
+
 <style scoped>
-/* Add any component-specific styles here */
+.event-card {
+  text-align: left;
+  border-radius: 15px;
+  padding: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color: white;
+}
+
+.event-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.event-image {
+  width: auto;
+  height: auto;
+  max-height: 300px;
+  border-radius: 8px;
+}
+
+.event-details {
+  flex: 1;
+}
+
+/* Host avatar styling */
+.host-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 8px;
+}
+
+/* Action button styling */
+.edit-btn,
+.delete-btn {
+  padding: 5px 15px;
+  border: none;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.edit-btn {
+  background-color: #FFD700;
+  color: #333;
+}
+
+.edit-btn:hover {
+  background-color: #E6C200;
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(75, 0, 130, 0.2);
+}
+
+.delete-btn {
+  background-color: #ff7b7b;
+  color: #333;
+}
+
+.delete-btn:hover {
+  background-color: #d06c6c;
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(75, 0, 130, 0.2);
+}
+
+/* Responsive layout */
+@media (min-width: 768px) {
+  .event-content {
+    flex-direction: row;
+  }
+
+  .event-image {
+    width: 192px;
+    height: 128px;
+  }
+}
+
+@media (max-width: 768px) {
+  .event-card {
+    padding: 8px;
+  }
+
+  .text-lg {
+    font-size: 1rem;
+  }
+
+  .edit-btn,
+  .delete-btn {
+    padding: 4px 10px;
+    font-size: 0.9rem;
+  }
+}
 </style>

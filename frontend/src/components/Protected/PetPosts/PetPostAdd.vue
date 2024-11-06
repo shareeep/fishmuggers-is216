@@ -1,7 +1,5 @@
 <template>
-  <router-link to="/" class="back-button"> 
-    <img src="../../../assets/images/back_arrow.png" alt="back" width="40px" />
-  </router-link>
+
   <div class="add-post-container">
     <h2>Add a New Pet Post</h2>
     <form @submit.prevent="submitPost">
@@ -109,6 +107,7 @@ h2 {
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
 }
 
+
 .form-group {
   margin-bottom: 15px;
 }
@@ -142,7 +141,7 @@ input[type="file"] {
 
 .submit-btn {
   background-color: gold;
-  color: white;
+  color: black;
   border: none;
   padding: 10px 20px;
   border-radius: 5px;
