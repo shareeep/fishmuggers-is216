@@ -1,25 +1,34 @@
 <template>
   <div class="friends-list">
-    <div class="header">
-      <h3>My Friends</h3>
-      <!-- Button to open the popup -->
-      <button @click="$emit('popup-toggle', true)" class="see-all">View All</button>
-    </div>
- 
-    <div class="friends-scroll">
-      <!-- Display only the first 8 friends -->
-      <div v-for="friend in limitedFriends" :key="friend.id" class="friend-item">
-        <router-link :to="{
-          name: 'friendProfile',
-          params: { id: friend.id },
-          query: { username: friend.username, avatar: friend.avatar }
-        }">
-          <img :src="friend.avatar" alt="Friend Avatar" />
-          <p class="friend-name">{{ friend.name }}</p>
-          <p class="friend-username">{{ friend.username }}</p>
-        </router-link>
+      <div class="header">
+          <h3>My Friends</h3>
+          <!-- Button to open the popup -->
+          <button @click="$emit('popup-toggle', true)" class="see-all">View All</button>
       </div>
-    </div>
+
+      <div class="friends-scroll">
+          <!-- Display only the first 8 friends -->
+          <div v-for="friend in limitedFriends" :key="friend.id" class="friend-item">
+              <router-link :to="{ name: 'friendProfile', params: { id: friend.id } }">
+                  <img :src="friend.profileImage || 'default-avatar.jpg'" alt="Friend Profile Image" />
+                  <p class="friend-username">{{ friend.username }}</p>
+              </router-link>
+          </div>
+      </div>
+
+      <div class="header">
+          <h3>Suggested Friends</h3>
+      </div>
+
+      <div class="friends-scroll">
+          <!-- Display all suggested friends -->
+          <div v-for="friend in suggestedFriends" :key="friend.id" class="friend-item">
+              <router-link :to="{ name: 'friendProfile', params: { id: friend.id } }">
+                  <img :src="friend.profileImage || 'default-avatar.jpg'" alt="Suggested Friend Profile Image" />
+                  <p class="friend-username">{{ friend.username }}</p>
+              </router-link>
+          </div>
+      </div>
   </div>
 </template>
 
@@ -27,13 +36,19 @@
 export default {
   name: "FriendsList",
   props: {
-    friends: Array,
+      myFriends: {
+          type: Array,
+          default: () => [],
+      },
+      suggestedFriends: {
+          type: Array,
+          default: () => [],
+      },
   },
   computed: {
-    limitedFriends() {
-      // Show only the first 8 friends
-      return this.friends.slice(0, 8);
-    },
+      limitedFriends() {
+          return this.myFriends.slice(0, 8);
+      },
   },
 };
 </script>
@@ -54,14 +69,13 @@ export default {
 h3 {
   font-weight: bold;
   color: #333;
-
 }
 
 .friends-scroll {
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
-  overflow-x:visible;
+  overflow-x: hidden;
   padding: 10px 0;
 }
 
@@ -72,12 +86,10 @@ h3 {
   text-align: center;
   transition: transform 0.3s ease;
   flex-basis: 100px;
-  /* Base size for each friend item */
 }
 
 .friend-item:hover {
   transform: scale(1.05);
-  /* Slight zoom on hover */
 }
 
 .friend-item img {
@@ -120,61 +132,33 @@ h3 {
 
 @media (max-width: 1024px) {
   .friends-scroll {
-    max-width: 600px;
-    /* Adjust the width as desired */
-    margin: 0 auto;
-    /* Center the friends-scroll */
-    /* justify-content: center; */
-    justify-content: center;
-
+      max-width: 600px;
+      margin: 0 auto;
+      justify-content: center;
   }
 }
 
 @media (max-width: 768px) {
   .friends-scroll {
-    max-width: 600px;
-    justify-content: center;
-    text-align: center;
-  }
-
-  .friend-name {
-    text-align: center;
-  }
-
-  .friend-username {
-    text-align: center;
+      max-width: 600px;
+      justify-content: center;
+      text-align: center;
   }
 }
 
 @media (max-width: 640px) {
   .friends-scroll {
-    max-width: 600px;
-    justify-content: center;
-    text-align: center;
-  }
-
-  .friend-name {
-    text-align: center;
-  }
-
-  .friend-username {
-    text-align: center;
+      max-width: 600px;
+      justify-content: center;
+      text-align: center;
   }
 }
 
 @media (max-width: 480px) {
   .friends-scroll {
-    max-width: 600px;
-    justify-content: center;
-    text-align: center;
-  }
-
-  .friend-name {
-    text-align: center;
-  }
-
-  .friend-username {
-    text-align: center;
+      max-width: 600px;
+      justify-content: center;
+      text-align: center;
   }
 }
 </style>

@@ -16,7 +16,7 @@
                         <p class="friend-username">{{ friend.username }}</p>
                     </div>
                     <!-- "See Profile" button -->
-                    <button class="see-profile-button" @click="viewProfile(friend)">See Profile</button>
+                    <button class="see-profile-button" @click="viewProfile(friend.id)">See Profile</button>
                 </div>
             </div>
         </div>
@@ -47,10 +47,10 @@ export default {
         }
     },
     methods: {
-        viewProfile(friend) {
-            this.$router.push({ name: "friendProfile", params: { id: friend.id }, query: { username: friend.username, avatar: friend.avatar } });
-        },
+    viewProfile(friendId) {
+      this.$router.push({ name: "friendProfile", params: { id: friendId } });
     },
+  },
 };
 </script>
 
@@ -72,6 +72,7 @@ export default {
     display: flex;
     flex-direction: column;
     background-color: #fff;
+    width: 400px;
     width: 500px;
     height: 500px;
     padding: 20px;
@@ -159,37 +160,23 @@ input[type="search"]:focus {
 
 /* See Profile button styling */
 .see-profile-button {
-    padding: 5px 15px;
-    font-size: 1rem;
-    font-weight: bold;
-    color: #5A45D6;
-    /* Deep purple color */
-    background-color: #f5f0ff;
-    /* Light purple background */
-    border: 2px solid #7B61FF;
-    /* Slightly darker purple border */
-    border-radius: 30px;
-    /* Rounded corners */
-    cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  padding: 5px 15px;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #5A45D6; /* Deep purple color */
+  background-color: #f5f0ff; /* Light purple background */
+  border: 2px solid #7B61FF; /* Slightly darker purple border */
+  border-radius: 30px; /* Rounded corners */
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .see-profile-button:hover {
-    transform: scale(1.05);
-    box-shadow: 0 4px 8px rgba(75, 0, 130, 0.2);
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(75, 0, 130, 0.2);
 }
 
 .see-profile-button:active {
-    transform: scale(0.98);
-}
-
-.friends-list::-webkit-scrollbar {
-    display: none;
-}
-
-@media (max-width: 768px) {
-    .popup-content {
-        width:400px;
-    }
+  transform: scale(0.98);
 }
 </style>
