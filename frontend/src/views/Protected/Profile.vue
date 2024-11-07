@@ -2,23 +2,49 @@
   <div class="home-container">
     <Navbar />
     <main id="scrollable-element">
-      <ProfileMain :userData="userData" :pets="pets" @edit-event="openEditEventModal" @event-updated="fetchEvents"
-        @open-post="openPostModal" />
+      <ProfileMain 
+        :userData="userData" 
+        :pets="pets" 
+        :isOwnProfile="isOwnProfile" 
+        :createdEvents="createdEvents"
+        :joinedEvents="joinedEvents"
+        @edit-event="openEditEventModal" 
+        @event-updated="fetchEvents" 
+        @open-post="openModal" 
+      />
     </main>
-    <EditEventModal v-if="showEditModal" :eventData="editEventData" @close="closeEditEventModal"
-      @event-updated="handleEventUpdated" />
-    <PostModal v-if="showPostModal" :post="selectedPost" :userData="userData" :selectedPostIndex="selectedPostIndex"
-      :totalPosts="userData.posts.length" @close="closePostModal" @prev="goToPrevPost" @next="goToNextPost" />
+    <EditEventModal 
+      v-if="showEditModal" 
+      :eventData="editEventData" 
+      @close="closeEditEventModal"
+      @event-updated="handleEventUpdated" 
+    />
+    <PostModal 
+      v-if="showPostModal" 
+      :post="selectedPost" 
+      :userData="userData" 
+      :selectedPostIndex="selectedPostIndex"
+      :totalPosts="userData.posts.length" 
+      @close="closePostModal" 
+      @prev="goToPrevPost" 
+      @next="goToNextPost" 
+      @like-toggle="handleLikeToggle"
+    />
   </div> 
 </template>
 
-
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch } from 'vue';
+import { useRoute } from 'vue-router';
+import axios from 'axios';
+import { getAuth } from 'firebase/auth';
 import Navbar from '@/components/Protected/Navbar.vue';
 import ProfileMain from '@/components/Protected/Profile/ProfileMain.vue';
 import EditEventModal from '@/components/Protected/EventsAdmin/EditEventModal.vue';
 import PostModal from '@/components/Protected/Profile/PostModal.vue';
+
+const route = useRoute();
+const auth = getAuth();
 
 const showEditModal = ref(false);
 const editEventData = ref(null);
@@ -27,23 +53,62 @@ const selectedPost = ref(null);
 const selectedPostIndex = ref(0);
 
 const userData = ref({
-  id: 1,
-  friends: 73,
-  username: 'username',
   profileImage: '',
+  username: '',
+  posts: [],
   joinedEvents: [],
-  posts: [
-    { id: 1, image: 'https://www.tracyvets.com/files/Parakeets.jpeg', likes: 194000, caption: 'First post caption',isLiked: false },
-    { id: 2, image: 'https://www.uk.pedigree.com/sites/g/files/fnmzdf5531/files/2023-06/pexels-sarah-chai-7282710-list.jpg', likes: 6290, caption: 'woof woof',isLiked: false },
-    { id: 3, image: 'https://media.4-paws.org/a/e/6/f/ae6fefbd6d12cfc50d51ebb7da9d7cbdb322d006/VIER%20PFOTEN_2020-10-07_00138-2890x2000-1920x1329.jpg', likes: 1020, caption: 'Lorem ipsum dolor sit, amet consectetur adipisicing elit. Sed consectetur fuga molestias rem rerum, placeat, iusto repellat eius natus veritatis nostrum libero, blanditiis autem molestiae aperiam similique quis officiis eum?',isLiked: false },
-  ]
+  friends: [],
 });
+const pets = ref([]);
+const isOwnProfile = ref(false);
+const loading = ref(true);
+const createdEvents = ref([]);
+const joinedEvents = ref([]);
 
-const pets = ref([
-  { name: 'Woofie', type: 'Dog', breed: 'Golden Retriever', age: 3, image: 'https://via.placeholder.com/150?text=Dog' },
-  { name: 'Meowers', type: 'Cat', breed: 'Siamese', age: 2, image: 'https://via.placeholder.com/150?text=Cat' }
-]);
+const fetchUserProfile = async () => {
+  loading.value = true;
+  const uid = route.params.uid || auth.currentUser?.uid;
+  if (!uid) return;
 
+  isOwnProfile.value = (uid === auth.currentUser?.uid);
+
+  try {
+    // Fetch user data
+    const userResponse = await axios.get(`/api/users/${uid}`);
+    userData.value = userResponse.data;
+
+    // Fetch user's posts
+    const postsResponse = await axios.get(`/api/posts/user/${uid}/posts`);
+    userData.value.posts = postsResponse.data;
+
+    // Fetch user's pets
+    const petsResponse = await axios.get(`/api/pets/user/${uid}`);
+    pets.value = petsResponse.data;
+
+    // Fetch created and joined events
+    const createdEventsResponse = await axios.get(`/api/events/created/${uid}`);
+    createdEvents.value = createdEventsResponse.data;
+
+    const joinedEventsResponse = await axios.get(`/api/events/joined/${uid}`);
+    joinedEvents.value = joinedEventsResponse.data;
+
+  } catch (error) {
+    console.error("Error fetching user data or events:", error);
+  } finally {
+    loading.value = false;
+  }
+};
+
+watch(
+  () => route.params.uid,
+  async (newUid, oldUid) => {
+    if (newUid !== oldUid) {
+      await fetchUserProfile();
+    }
+  }
+);
+
+onMounted(fetchUserProfile);
 
 const openEditEventModal = (event) => {
   editEventData.value = event;
@@ -55,10 +120,10 @@ const closeEditEventModal = () => {
   editEventData.value = null;
 };
 
-// Set selected post and index when opening the post modal
-const openPostModal = (post) => {
+// Handle the 'open-post' event from ProfileMain.vue
+const openModal = (post) => {
   selectedPost.value = post;
-  selectedPostIndex.value = userData.value.posts.findIndex((p) => p.id === post.id);  // Set the index here
+  selectedPostIndex.value = userData.value.posts.findIndex((p) => p.postId === post.postId);
   showPostModal.value = true;
 };
 
@@ -67,27 +132,70 @@ const closePostModal = () => {
   selectedPost.value = null;
 };
 
-// Handle navigation to the previous post
 const goToPrevPost = () => {
   if (selectedPostIndex.value > 0) {
     selectedPostIndex.value--;
-  } else {
-    selectedPostIndex.value = userData.value.posts.length - 1; // Wrap to last post
+    selectedPost.value = userData.value.posts[selectedPostIndex.value];
   }
-  selectedPost.value = userData.value.posts[selectedPostIndex.value];
 };
 
-// Handle navigation to the next post
 const goToNextPost = () => {
   if (selectedPostIndex.value < userData.value.posts.length - 1) {
     selectedPostIndex.value++;
-  } else {
-    selectedPostIndex.value = 0; // Wrap to first post
+    selectedPost.value = userData.value.posts[selectedPostIndex.value];
   }
-  selectedPost.value = userData.value.posts[selectedPostIndex.value];
 };
 
-// Scrolling
+const handleLikeToggle = async ({ postId, isLiked }) => {
+  try {
+    // Ensure the user is authenticated
+    if (!auth.currentUser) {
+      alert("You need to be logged in to like posts.");
+      return;
+    }
+
+    const token = await auth.currentUser.getIdToken();
+    const userId = auth.currentUser.uid;
+
+    console.log("Token:", token); // Debugging
+    console.log("User ID:", userId); // Debugging
+
+    // Send like/unlike request to the backend with userId
+    const response = await axios.post(
+      `/api/posts/${postId}/like`,
+      { like: isLiked, userId: userId }, // Included userId
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    if (response.status === 200) {
+      // Find the post in userData.posts
+      const postIndex = userData.value.posts.findIndex(post => post.postId === postId);
+      if (postIndex !== -1) {
+        if (isLiked) {
+          // Add current user's ID to the likes array
+          userData.value.posts[postIndex].likes.push(userId);
+        } else {
+          // Remove current user's ID from the likes array
+          const index = userData.value.posts[postIndex].likes.indexOf(userId);
+          if (index !== -1) {
+            userData.value.posts[postIndex].likes.splice(index, 1);
+          }
+        }
+        // Update isLiked status
+        userData.value.posts[postIndex].isLiked = isLiked;
+        // Update the selectedPost if it's the one being viewed
+        if (selectedPost.value && selectedPost.value.postId === postId) {
+          selectedPost.value = userData.value.posts[postIndex];
+        }
+      }
+    }
+  } catch (error) {
+    console.error("Error toggling like:", error.response?.data || error);
+    alert(error.response?.data?.error || "Unable to toggle like. Please try again.");
+  }
+};
+
+// Scrollbar setup remains unchanged
 import Scrollbar from 'smooth-scrollbar';
 import OverscrollPlugin from 'smooth-scrollbar/plugins/overscroll';
 Scrollbar.use(OverscrollPlugin);
@@ -107,13 +215,13 @@ onMounted(() => {
     },
   });
 
-  // Hide the scrollbar track by setting its opacity to 0
   scrollbar.track.xAxis.element.style.opacity = '0';
   scrollbar.track.yAxis.element.style.opacity = '0';
 });
 </script>
 
 <style scoped>
+
 #scrollable-element {
   width: 100%;
   height: 100%;

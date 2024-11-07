@@ -39,7 +39,7 @@
 
       <!-- Profile Image -->
       <div class="mb-4">
-        <label class="block text-gray-700">Profile Image:</label>
+        <label class="block text-gray-700">Photo:</label>
         <input type="file" @change="handleNewPetFileUpload" accept="image/*"
           class="border border-gray-300 rounded-md py-2 px-4 w-full" />
         <!-- Image Preview -->

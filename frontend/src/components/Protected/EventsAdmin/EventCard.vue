@@ -1,71 +1,92 @@
 <template>
-  <div class="event-card mb-6" @click="handleClick">
+  <div class="event-card mb-6">
     <div class="event-content">
-      <img :src="event.eventImage || 'https://via.placeholder.com/800x400'" alt="Event Image" class="event-image" />
+      <img
+        :src="event.eventImage || 'https://via.placeholder.com/800x400'"
+        alt="Event Image"
+        class="event-image"
+      />
       <div class="event-details">
         <h3 class="text-lg font-bold">{{ event.title }}</h3>
-        <p class="text-gray-600">{{ event.description }}</p>
-        <p><strong>Date:</strong> {{ formatDate(event.date) }}</p>
+        <p><strong>Date:</strong> {{ formatEventDate(event.date) }}</p>
+        <p><strong>Time:</strong> {{ formatEventTime(event.date) }}</p>
         <p><strong>Location:</strong> {{ event.location }}</p>
-        <p><strong>Pet Types:</strong> {{ formatPetTypes(event.petType) }}</p>
-        <p><strong>Event Size:</strong> {{ event.eventSize }}</p>
-        <div class="flex items-center mt-2">
-          <img :src="event.host.profilePic || 'https://via.placeholder.com/50'" alt="Host Profile" class="host-avatar" />
-          <span>{{ event.host.username }}</span>
-        </div>
-        <p class="mt-2">
-          <strong>Interested Users:</strong> {{ event.interestedUsers.length }}
-        </p>
-        <div class="action-buttons" v-if="showActions || isEventHost">
-          <!-- Stop propagation on these buttons to prevent navigation -->
-          <button @click.stop="$emit('edit-event', event)" class="edit-btn mr-3">
-            Edit
-          </button>
-          <button @click.stop="$emit('delete-event', event.eventId)" class="delete-btn">
-            Delete
-          </button>
-        </div>
+        <p> <strong>Interested Users:</strong> {{ event.interestedUsers.length }}</p>
+      </div>
+<div class="action-buttons" v-if="showActions || isEventHost">
+  <!-- Stop propagation on these buttons to prevent navigation -->
+  <button v-if="isOwnProfile || isEventHost" @click.stop="$emit('edit-event', event)" class="edit-btn mr-3">
+    Edit
+  </button>
+  <button v-if="isOwnProfile || isEventHost" @click.stop="$emit('delete-event', event.eventId)" class="delete-btn">
+    Delete
+  </button>
+</div>
       </div>
     </div>
-  </div>
 </template>
 
 <script setup>
 import { computed, defineProps, defineEmits } from "vue";
 import { getAuth } from "firebase/auth";
 
-// Props
+// Define Props
 const props = defineProps({
   event: Object,
   showActions: Boolean,
 });
 
-const emit = defineEmits();
+// Define Emits
+const emit = defineEmits(['edit-event', 'delete-event', 'open-detail']);
 
+// Initialize Firebase Auth
 const auth = getAuth();
 const currentUser = computed(() => auth.currentUser);
 
+// Handle Click on Event Card
 const handleClick = () => {
   emit('open-detail', props.event);
 };
 
-// Computed property to check if current user is the event host
+// Computed Property to Check if Current User is the Event Host
 const isEventHost = computed(() => {
-  return (
-    currentUser.value &&
-    props.event.host &&
-    props.event.host.uid === currentUser.value.uid
-  );
+  console.log("Event Host ID:", props.event.host); // Debugging line
+  console.log("Current User ID:", currentUser.value?.uid); // Debugging line
+  return currentUser.value && props.event.host === currentUser.value.uid;
 });
 
-// Helper methods
-const formatDate = (dateStr) => {
-  if (!dateStr) return "N/A";
-  const date = new Date(dateStr);
-  if (isNaN(date.getTime())) return "Invalid Date";
-  return date.toLocaleString();
+
+// Helper Methods
+
+// Function to Convert Various Date Inputs to Date Object
+const convertToDate = (dateInput) => {
+  if (dateInput && dateInput._seconds) {
+    return new Date(dateInput._seconds * 1000);
+  } else if (typeof dateInput === 'string' || typeof dateInput === 'number') {
+    return new Date(dateInput);
+  } else {
+    return new Date();
+  }
 };
 
+// Function to Format Event Date
+const formatEventDate = (dateInput) => {
+  const dateObj = convertToDate(dateInput);
+  return dateObj.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
+};
+
+// Function to Format Event Time
+const formatEventTime = (dateInput) => {
+  const dateObj = convertToDate(dateInput);
+  const hours = dateObj.getHours();
+  const minutes = dateObj.getMinutes().toString().padStart(2, '0');
+  const ampm = hours >= 12 ? 'PM' : 'AM';
+  const formattedHours = hours % 12 || 12;
+
+  return `${formattedHours}:${minutes} ${ampm}`;
+};
+
+// Function to Format Pet Types
 const formatPetTypes = (petType) => {
   if (Array.isArray(petType)) {
     return petType.join(", ");
@@ -73,8 +94,6 @@ const formatPetTypes = (petType) => {
   return "N/A";
 };
 </script>
-
-
 <style scoped>
 .event-card {
   text-align: left;
@@ -82,34 +101,67 @@ const formatPetTypes = (petType) => {
   padding: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   background-color: white;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.event-card:hover,
+.event-card:focus {
+  transform: scale(1.02);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
 }
 
 .event-content {
   display: flex;
-  flex-direction: column;
+  flex-direction: column; /* Keep as column for all viewports */
   gap: 1rem;
 }
 
 .event-image {
-  width: auto;
+  width: 100%;
   height: auto;
   max-height: 300px;
   border-radius: 8px;
+  object-fit: cover;
 }
 
 .event-details {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
-/* Host avatar styling */
+h3.text-lg {
+  font-size: 1.25rem;
+  font-weight: bold;
+  margin: 0;
+  color: #333;
+}
+
+.text-gray-600 {
+  color: #4A5568;
+}
+
+.flex.items-center {
+  display: flex;
+  align-items: center;
+}
+
 .host-avatar {
   width: 40px;
   height: 40px;
   border-radius: 50%;
   margin-right: 8px;
+  object-fit: cover;
 }
 
-/* Action button styling */
+.action-buttons {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
 .edit-btn,
 .delete-btn {
   padding: 5px 15px;
@@ -125,48 +177,37 @@ const formatPetTypes = (petType) => {
   color: #333;
 }
 
-.edit-btn:hover {
-  background-color: #E6C200;
-  transform: scale(1.05);
-  box-shadow: 0 4px 8px rgba(75, 0, 130, 0.2);
-}
-
 .delete-btn {
   background-color: #ff7b7b;
   color: #333;
 }
 
+.edit-btn:hover,
 .delete-btn:hover {
-  background-color: #d06c6c;
   transform: scale(1.05);
   box-shadow: 0 4px 8px rgba(75, 0, 130, 0.2);
 }
 
-/* Responsive layout */
-@media (min-width: 768px) {
-  .event-content {
-    flex-direction: row;
-  }
-
-  .event-image {
-    width: 192px;
-    height: 128px;
-  }
+.edit-btn:hover {
+  background-color: #E6C200;
 }
 
-@media (max-width: 768px) {
-  .event-card {
-    padding: 8px;
-  }
+.delete-btn:hover {
+  background-color: #d06c6c;
+}
 
-  .text-lg {
-    font-size: 1rem;
-  }
+.edit-btn:active,
+.delete-btn:active {
+  transform: scale(0.98);
+}
 
-  .edit-btn,
-  .delete-btn {
-    padding: 4px 10px;
-    font-size: 0.9rem;
-  }
+/* Removed the media query to maintain column layout across all viewports */
+
+/* Ensure images do not exceed their container */
+.event-image,
+.host-avatar,
+.avatar-caption {
+  max-width: 100%;
+  height: auto;
 }
 </style>

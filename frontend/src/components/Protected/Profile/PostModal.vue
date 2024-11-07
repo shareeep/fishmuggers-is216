@@ -29,10 +29,10 @@
                     </div>
 
                     <div class="likes-container">
-                        <p class="likes-caption">{{ post.likes }} Likes</p>
-                        <button @click="toggleLike(post)" class="like-button">
+                        <p class="likes-caption">{{ post.likes.length }} Likes</p>
+                        <button @click="toggleLike" class="like-button">
                             <i
-                                :class="post.isLiked ? 'fas fa-thumbs-up thumbs-up-icon' : 'far fa-thumbs-up thumbs-up-icon'"></i>
+                                :class="isLiked ? 'fas fa-thumbs-up thumbs-up-icon' : 'far fa-thumbs-up thumbs-up-icon'"></i>
                             Like
                         </button>
                     </div>
@@ -48,7 +48,8 @@
 </template>
 
 <script setup>
-import { computed, defineProps, defineEmits, ref } from 'vue';
+import { computed, defineProps, defineEmits } from 'vue';
+import { getAuth } from 'firebase/auth';
 
 const props = defineProps({
     post: Object,
@@ -57,9 +58,18 @@ const props = defineProps({
     totalPosts: Number,
 });
 
-const emit = defineEmits(['close', 'prev', 'next']);
+const emit = defineEmits(['close', 'prev', 'next', 'like-toggle']);
 
-const isLiked = ref(false);
+// Get current user's ID
+const auth = getAuth();
+const currentUser = auth.currentUser;
+const currentUserId = currentUser ? currentUser.uid : null;
+
+// Computed property to check if current user has liked the post
+const isLiked = computed(() => {
+    if (!currentUserId) return false;
+    return props.post.likes.includes(currentUserId);
+});
 
 const closeModal = () => {
     emit('close');
@@ -73,12 +83,13 @@ const nextPost = () => {
     if (!isLastPost.value) emit('next');
 };
 
-const toggleLike = (post) => {
-    // Toggle like state for the specific post
-    post.isLiked = !post.isLiked;
-    post.isLiked ? post.likes++ : post.likes--; // Increment or decrement likes
+const toggleLike = () => {
+  if (!currentUserId) {
+    alert("You need to be logged in to like posts.");
+    return;
+  }
+  emit('like-toggle', { postId: props.post.postId, isLiked: !isLiked.value });
 };
-
 
 // Computed properties to check if on the first or last post
 const isFirstPost = computed(() => props.selectedPostIndex === 0);
@@ -198,7 +209,6 @@ const isLastPost = computed(() => props.selectedPostIndex === props.totalPosts -
     text-align: left;
 }
 
-
 .likes-container {
     display: flex;
     flex-direction: column;
@@ -210,14 +220,11 @@ const isLastPost = computed(() => props.selectedPostIndex === props.totalPosts -
     margin-top: auto;
 }
 
-
 .likes-caption {
     font-size: 1rem;
     font-weight: bold;
     color: #666;
 }
-
-
 
 .like-button {
     display: flex;
@@ -240,14 +247,12 @@ const isLastPost = computed(() => props.selectedPostIndex === props.totalPosts -
 
 .thumbs-up-icon {
     color: grey;
-    /* Outline color */
     transition: color 0.2s ease;
     cursor: pointer;
 }
 
 .fas.fa-thumbs-up {
     color: black;
-    /* Filled color */
 }
 
 .nav-arrow {
@@ -287,7 +292,6 @@ const isLastPost = computed(() => props.selectedPostIndex === props.totalPosts -
 }
 
 /* Responsive adjustments */
-/* Responsive adjustments for screens above 600px */
 @media (min-width: 767px) {
     .modal-content {
         flex-direction: row;
@@ -329,8 +333,6 @@ const isLastPost = computed(() => props.selectedPostIndex === props.totalPosts -
         font-size: 2.5rem;
     }
 }
-
-
 
 @media (max-width: 767px) {
     .modal-content {

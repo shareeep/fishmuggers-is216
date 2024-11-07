@@ -27,13 +27,13 @@
     <!-- Profile Tabs -->
     <div class="profile-tabs">
       <button :class="{ active: activeTab === 'posts' }" @click="activeTab = 'posts'">Posts</button>
-      <button :class="{ active: activeTab === 'eventsJoined' }" @click="activeTab = 'eventsJoined'">Events
-        Joined</button>
+      <button :class="{ active: activeTab === 'eventsJoined' }" @click="activeTab = 'eventsJoined'">Events</button>
       <button :class="{ active: activeTab === 'pets' }" @click="activeTab = 'pets'">Pets</button>
     </div>
 
     <!-- Tab Content -->
     <div class="tab-content">
+      <!-- Posts Tab -->
       <div v-if="activeTab === 'posts'">
         <div v-if="posts === 0" class="no-posts">
           <i class="no-posts-pic"><img src="../../../assets/images/camera.png" alt=""></i>
@@ -44,20 +44,19 @@
             <img :src="post.image" alt="User Post" class="post-image" />
             <div class="overlay">
               <i class="fas fa-thumbs-up"></i>
-              <span class="likes-count">{{ post.likes }}</span>
+               <span class="likes-count">{{ post.likes.length }}</span>
             </div>
           </div>
         </div>
       </div>
 
       <!-- Modal -->
-      <div v-if="isModalOpen" class="post-modal" @click.self="closeModal">
+      <div v-if="isModalOpen && userData.posts[selectedPostIndex]" class="post-modal" @click.self="closeModal">
         <div class="modal-content">
 
           <div class="modal-left">
             <img :src="userData.posts[selectedPostIndex].image" alt="Selected Post" class="modal-image" />
           </div>
-
 
           <div class="modal-right">
 
@@ -67,9 +66,7 @@
                   class="avatar" />
                 <h3 class="user-name">{{ userData.username }}</h3>
               </div>
-
             </div>
-
 
             <div class="post-footer">
               <div class="caption-container">
@@ -82,14 +79,15 @@
               </div>
 
               <div class="likes-container">
-
-                <p class="likes-caption">{{ userData.posts[selectedPostIndex].likes }} Likes</p>
-                <button @click="likePost(post)" class="like-button"><i class="fas fa-thumbs-up"
-                    style="color:black;"></i>Like</button>
+                <p class="likes-caption">{{ userData.posts[selectedPostIndex].likes.length }} Likes</p>
+                <button @click="likePost(userData.posts[selectedPostIndex])" class="like-button">
+                  <i class="fas fa-thumbs-up" style="color:black;"></i>Like
+                </button>
               </div>
             </div>
           </div>
 
+          <!-- Navigation Arrows and Close Button -->
           <i class="fas fa-chevron-left nav-arrow" @click="selectedPostIndex > 0 && prevPost()"
             :class="{ disabled: selectedPostIndex === 0 }" />
           <i class="fas fa-chevron-right nav-arrow" @click="selectedPostIndex < userData.posts.length - 1 && nextPost()"
@@ -98,27 +96,61 @@
         </div>
       </div>
 
-      <!-- PETS -->
-      <div v-if="activeTab === 'pets'">
-        <div class="pets-wrapper">
-          <div v-if="pets.length > 0" class="pets-grid">
-            <div v-for="(pet, index) in pets" :key="index" class="pet-card"
-              :style="{ animationDelay: `${index * 0.2}s` }">
-              <img :src="pet.image" alt="Pet Image" class="pet-avatar" />
-              <div class="info-container">
-                <div class="details">
-                  <h4>{{ pet.name }}</h4>
-                  <p>Type: {{ pet.type }}</p>
-                  <p>Breed: {{ pet.breed }}</p>
-                  <p>Age: {{ pet.age }} years</p>
-                </div>
-              </div>
-            </div>
+<!-- PETS -->
+<div v-if="activeTab === 'pets'">
+  <!-- Conditionally render Manage Pets button if viewing own profile -->
+  <router-link v-if="isOwnProfile" to="/manage-pets">
+    <button class="edit-btn">Manage Pets</button>
+  </router-link>
+  
+  <div class="pets-wrapper">
+    <!-- Check if there are pets to display -->
+    <div v-if="pets.length > 0" class="pets-grid">
+      <div v-for="(pet, index) in pets" :key="index" class="pet-card"
+        :style="{ animationDelay: `${index * 0.2}s` }">
+        <img 
+          :src="pet.profileImage || 'https://via.placeholder.com/150?text=No+Image'" 
+          alt="Pet Image" 
+          class="pet-avatar" 
+        />
+        <div class="info-container">
+          <div class="details">
+            <h4>{{ pet.name }}</h4>
+            <p>Type: {{ pet.type }}</p>
+            <p>Breed: {{ pet.breed }}</p>
+            <p>Age: {{ pet.age }} years</p>
           </div>
-          <div v-else class="no-pets">
-            <i class="no-pets-pic"><img src="../../../assets/images/no-events.png" alt=""></i>
-            <h3>No pets yet</h3>
-          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Display message if no pets are available -->
+    <div v-else class="no-pets">
+      <i class="no-pets-pic"><img src="../../../assets/images/no-events.png" alt=""></i>
+      <h3>No pets yet</h3>
+    </div>
+  </div>
+</div>
+
+      <!-- EVENTS JOINED -->
+      <div v-if="activeTab === 'eventsJoined'">
+        <!-- Buttons for toggling views -->
+        <div class="toggle-buttons">
+          <button :class="{ active: eventsView === 'createdEvents' }" @click="eventsView = 'createdEvents'">
+            Created Events
+          </button>
+          <button :class="{ active: eventsView === 'joinedEvents' }" @click="eventsView = 'joinedEvents'">
+            Joined Events
+          </button>
+        </div>
+
+        <!-- Display CreatedEvents or JoinedEvents based on eventsView -->
+        <div v-if="eventsView === 'createdEvents'">
+          <CreatedEventsList :events="userData.createdEvents" @edit-event="handleEditEvent" @delete-event="deleteEvent" />
+        </div>
+        <div v-if="eventsView === 'joinedEvents'">
+          <JoinedEventsList 
+            :events="userData.joinedEvents" 
+          />
         </div>
       </div>
 
@@ -131,11 +163,13 @@ import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import { getAuth } from 'firebase/auth';
 import { useRouter } from 'vue-router';
+import JoinedEventsList from '../EventsAdmin/JoinedEventsList.vue';
+import CreatedEventsList from '../EventsAdmin/CreatedEventsList.vue';
 
 const auth = getAuth();
 const router = useRouter();
 
-// Step 1: Define props to accept data from FriendProfile.vue
+// Define props to accept data from FriendProfile.vue
 const props = defineProps({
   userId: {
     type: [String, Number],
@@ -148,20 +182,23 @@ const props = defineProps({
   avatar: {
     type: String,
     default: 'https://via.placeholder.com/150?text=Profile+Image'
+  },
+  isOwnProfile: {
+    type: Boolean,
+    default: true
   }
 });
 
-// Step 2: Initialize userData based on props
-// Step 2: Initialize userData with fallback default values
+// Initialize userData with fallback default values
 const userData = ref({
   username: props.username || "Unknown User",
   profileImage: props.avatar || "https://via.placeholder.com/150?text=Profile+Image",
   joinedEvents: [],
+  createdEvents: [], // Added to handle created events
   posts: []
 });
 
-
-const friends = ref(73); // Placeholder for the friends count
+const friends = ref(0); // Placeholder for the friends count
 const posts = ref(userData.value.posts.length);
 const activeTab = ref('posts');
 const selectedPostIndex = ref(0);
@@ -169,57 +206,56 @@ const isModalOpen = ref(false);
 
 // Placeholder for the pets 
 const pets = ref([
+  // Example pet data
   // { name: 'Woofie', type: 'Dog', breed: 'Golden Retriever', age: 3, image: 'https://via.placeholder.com/150?text=Dog' },
   // { name: 'Meowers', type: 'Cat', breed: 'Siamese', age: 2, image: 'https://via.placeholder.com/150?text=Cat' }
 ]);
 
+// Additional events view state
+const eventsView = ref('createdEvents');
+
+// Fetch user data from the backend
 const fetchUserData = async () => {
   try {
-    // Get the Firebase Auth token
     const token = await auth.currentUser.getIdToken();
+    const headers = { Authorization: `Bearer ${token}` };
 
-    // Send the token in the Authorization header
-    const response = await axios.get(`http://localhost:3000/api/users/${props.userId}`, {
-      headers: {
-        Authorization: `Bearer ${token}`
-      }
-    });
+    const [
+      userResponse,
+      postsResponse,
+      createdEventsResponse,
+      joinedEventsResponse,
+      petsResponse,
+    ] = await Promise.all([
+      axios.get(`/api/users/${props.userId}`, { headers }),
+      axios.get(`/api/posts/user/${props.userId}/posts`, { headers }),
+      axios.get(`/api/events/created/${props.userId}`, { headers }),
+      axios.get(`/api/events/joined/${props.userId}`, { headers }),
+      axios.get(`/api/pets/user/${props.userId}`, { headers }),
+    ]);
 
-    // Merge fetched data with userData
-    userData.value = { ...userData.value, ...response.data };
-    posts.value = response.data.posts ? response.data.posts.length : 0;
+    userData.value = {
+      ...userData.value,
+      ...userResponse.data,
+    };
+    userData.value.posts = postsResponse.data || [];
+    posts.value = userData.value.posts.length;
+    userData.value.createdEvents = createdEventsResponse.data || [];
+    userData.value.joinedEvents = joinedEventsResponse.data || [];
+    pets.value = petsResponse.data || [];
+
+    // Debugging logs
+    console.log("User Data:", userData.value);
+    console.log("Posts:", userData.value.posts);
+    console.log("Created Events:", userData.value.createdEvents);
+    console.log("Joined Events:", userData.value.joinedEvents);
+    console.log("Pets:", pets.value);
   } catch (error) {
     console.error("Error fetching user data:", error);
   }
 };
 
-const checkRequestStatus = async () => {
-  try {
-    const token = await auth.currentUser.getIdToken();
-
-    const response = await axios.get(
-      `/api/friends/requests/check-status?senderId=${auth.currentUser.uid}&receiverId=${props.userId}`, 
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
-
-    // Assuming the response returns { status: 'pending' | 'accepted' | 'rejected' | 'none' }
-    const status = response.data.status;
-
-    if (status === "accepted") {
-      isFriend.value = true;
-      isRequested.value = false;
-    } else if (status === "pending") {
-      isFriend.value = false;
-      isRequested.value = true;
-    } else {
-      isFriend.value = false;
-      isRequested.value = false;
-    }
-  } catch (error) {
-    console.error("Error checking request status:", error);
-  }
-};
-
+// Friend request and friendship status
 const isRequested = ref(false); // Track if a request is pending
 const isFriend = ref(false); // Track friendship status
 
@@ -251,6 +287,7 @@ const checkFriendStatus = async () => {
   }
 };
 
+// Toggle follow (send friend request or remove friend)
 async function toggleFollow() {
   try {
     const token = await auth.currentUser.getIdToken();
@@ -284,7 +321,7 @@ async function toggleFollow() {
   }
 };
 
-
+// Remove friend method
 const removeFriend = async () => {
   try {
     const token = await auth.currentUser.getIdToken();
@@ -296,14 +333,27 @@ const removeFriend = async () => {
     console.error("Error removing friend:", error.response?.data || error);
   }
 };
-onMounted(() => {
-  fetchUserData();
-  checkFriendStatus();
-});
 
+// Handle event edit (if applicable)
+const handleEditEvent = (event) => {
+  // Implement your edit event logic here
+};
+
+// Handle event deletion (if applicable)
+const deleteEvent = (eventId) => {
+  // Implement your delete event logic here
+};
+
+// Modal handling for posts
 const openModal = (index) => {
-  selectedPostIndex.value = index;
-  isModalOpen.value = true;
+  console.log(`Post clicked. Index: ${index}`); // Debugging Line
+  if (userData.value.posts[index]) {
+    selectedPostIndex.value = index;
+    isModalOpen.value = true;
+    console.log(`Modal opened for post index: ${index}`); // Debugging Line
+  } else {
+    console.error(`Post at index ${index} does not exist.`);
+  }
 };
 
 const closeModal = () => {
@@ -325,9 +375,70 @@ const nextPost = () => {
     selectedPostIndex.value = 0;
   }
 };
+
+// Like Post Method
+const likePost = async (post) => {
+  try {
+    const token = await auth.currentUser.getIdToken();
+
+    // API endpoint for liking a post (adjust as per your backend)
+    const response = await axios.post(
+      `/api/posts/${post.id}/like`,
+      {},
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    if (response.status === 200) {
+      // Increment the local likes count
+      post.likes += 1;
+      console.log(`Post ${post.id} liked. Total likes: ${post.likes}`);
+    }
+  } catch (error) {
+    console.error("Error liking post:", error.response?.data || error);
+    alert("Unable to like the post. Please try again.");
+  }
+};
+
+// Fetch data on component mount
+onMounted(() => {
+  fetchUserData();
+  checkFriendStatus();
+});
 </script>
 
 <style scoped>
+/* Your existing styles */
+
+/* Additional styles for debugging modal visibility */
+.post-modal {
+  display: flex;
+  /* Ensure modal is visible */
+}
+
+/* Optional: Add cursor styles for better UX */
+.post-item {
+  cursor: pointer;
+}
+
+/* Toggle Buttons Styling */
+.toggle-buttons {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.toggle-buttons button {
+  padding: 10px;
+  background-color: #f0f0f0;
+  cursor: pointer;
+  font-weight: bold;
+  border-radius: 10px;
+}
+
+.toggle-buttons .active {
+  background-color: #333;
+  color: white;
+}
 .profile-page {
   max-width: 800px;
   margin: 0 auto;

@@ -53,7 +53,7 @@
         <label class="block text-gray-700">Latitude:</label>
         <input
           v-model="event.locationData[0]"
-          type="number"
+          type="float"
           required
           class="w-full border border-gray-300 p-2 rounded"
           placeholder="Enter latitude"
@@ -65,7 +65,7 @@
         <label class="block text-gray-700">Longitude:</label>
         <input
           v-model="event.locationData[1]"
-          type="number"
+          type="float"
           required
           class="w-full border border-gray-300 p-2 rounded"
           placeholder="Enter longitude"
@@ -77,9 +77,9 @@
         >
           Use Current Location
         </button>
-        <p>
-          ^ Only Fills in Lat & Long, for leaflet js reference
-        </p>
+            <p class="text-sm text-gray-500">
+              ^ Only fills in Latitude & Longitude, for Leaflet.js reference
+            </p>
       </div>
 
       <!-- Pet Types -->
@@ -101,6 +101,21 @@
           <!-- Add more pet types as needed -->
         </div>
       </div>
+
+      <!-- Event Type -->
+<div class="mb-4">
+  <label class="block text-gray-700">Event Type:</label>
+  <div class="flex items-center">
+    <label class="mr-4">
+      <input type="radio" value="casual" v-model="event.eventType" required />
+      Casual
+    </label>
+    <label>
+      <input type="radio" value="large" v-model="event.eventType" required />
+      Large-Scale
+    </label>
+  </div>
+</div>
 
       <!-- Event Size -->
       <div class="mb-4">
@@ -154,7 +169,6 @@
     </form>
   </div>
 </template>
-
 <script setup>
 import { ref } from "vue";
 import { getAuth } from "firebase/auth";
@@ -171,9 +185,10 @@ const event = ref({
   description: "",
   date: "",
   location: "",
-  locationData: [],
+  locationData: [null, null], // Initialize with two elements for latitude and longitude
   petType: [],
   eventSize: "",
+  eventType: "", // Ensuring `eventType` is initialized
   eventImage: null,
 });
 
@@ -197,7 +212,7 @@ const getCurrentLocation = () => {
       const latitude = position.coords.latitude;
       const longitude = position.coords.longitude;
 
-      // Update event locationData with [latitude, longitude]
+      // Update event.locationData with [latitude, longitude]
       event.value.locationData = [latitude, longitude];
 
       // Optionally, reverse geocode to get the address
@@ -262,7 +277,8 @@ const handleCreateEvent = async () => {
     !event.value.location ||
     event.value.petType.length === 0 ||
     !event.value.eventSize ||
-    event.value.locationData.length !== 2 // Ensure locationData has both latitude and longitude
+    event.value.locationData.length !== 2 ||
+    event.value.locationData.some(coord => coord === null)
   ) {
     errorMessage.value = "Please fill in all required fields.";
     return;
@@ -271,18 +287,33 @@ const handleCreateEvent = async () => {
   try {
     isSubmitting.value = true;
 
-    // Prepare form data
-    const formData = new FormData();
-    formData.append("title", event.value.title);
-    formData.append("description", event.value.description);
-    formData.append("date", event.value.date);
-    formData.append("location", event.value.location);
-    formData.append("locationData", JSON.stringify(event.value.locationData)); // Send as JSON string
-    event.value.petType.forEach((type) => formData.append("petType", type));
-    formData.append("eventSize", event.value.eventSize);
-    if (event.value.eventImage) {
-      formData.append("eventImage", event.value.eventImage);
+    // Convert latitude and longitude to floats and validate
+    const lat = parseFloat(event.value.locationData[0]);
+    const lon = parseFloat(event.value.locationData[1]);
+
+    if (isNaN(lat) || isNaN(lon)) {
+      errorMessage.value = "Please enter valid latitude and longitude values.";
+      return;
     }
+
+    // Assign locationData as floats
+    event.value.locationData = [lat, lon];
+
+    // Prepare form data
+// Prepare form data
+const formData = new FormData();
+formData.append("title", event.value.title);
+formData.append("description", event.value.description);
+formData.append("date", event.value.date);
+formData.append("location", event.value.location);
+formData.append("latitude", lat); // Send latitude separately
+formData.append("longitude", lon); // Send longitude separately
+event.value.petType.forEach((type) => formData.append("petType", type));
+formData.append("eventType", event.value.eventType);
+formData.append("eventSize", event.value.eventSize);
+if (event.value.eventImage) {
+  formData.append("eventImage", event.value.eventImage);
+}
 
     // Send POST request to create event
     await axios.post("http://localhost:3000/api/events", formData, {
@@ -299,9 +330,10 @@ const handleCreateEvent = async () => {
       description: "",
       date: "",
       location: "",
-      locationData: [],
+      locationData: [null, null], // Reset to initial state
       petType: [],
       eventSize: "",
+      eventType: "",
       eventImage: null,
     };
     petTypeSelection.value = []; // Reset pet type selection
@@ -331,6 +363,7 @@ const handleCreateEvent = async () => {
   }
 };
 </script>
+
 
 <style scoped>
 /* Add any component-specific styles here */

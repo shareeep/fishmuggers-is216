@@ -208,4 +208,23 @@ router.delete('/:petId', authenticate, async (req, res) => {
   }
 });
 
+// GET /api/pets/user/:uid - Get all pets for a user
+router.get("/user/:uid", async (req, res) => {
+  const { uid } = req.params;
+
+  try {
+    const petsSnapshot = await db.collection("pets")
+      .where("ownerId", "==", uid)
+      .get();
+
+    const pets = petsSnapshot.docs.map(doc => doc.data());
+
+    res.status(200).json(pets);
+  } catch (error) {
+    console.error("Error fetching pets for user:", error);
+    res.status(500).json({ message: "Internal server error." });
+  }
+});
+
+
 module.exports = router;

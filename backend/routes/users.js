@@ -81,9 +81,10 @@ router.get("/checkUsername", authenticate, async (req, res) => {
 router.get("/:uid", authenticate, async (req, res) => {
   const { uid } = req.params;
 
-  if (req.user.uid !== uid) {
-    return res.status(403).json({ message: "Forbidden. Access denied." });
-  }
+  // disabled to allow friends to view profiles
+  // if (req.user.uid !== uid) { 
+  //   return res.status(403).json({ message: "Forbidden. Access denied." });
+  // }
 
   try {
     const userDoc = await db.collection("users").doc(uid).get();

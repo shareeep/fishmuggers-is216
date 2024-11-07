@@ -170,6 +170,33 @@ router.post("/:postId/share", authenticate, async (req, res) => {
   }
 });
 
+// Route to fetch all posts by a specific user ID
+router.get("/user/:uid/posts", async (req, res) => {
+  const { uid } = req.params;
+
+  if (!uid) {
+    return res.status(400).json({ error: "User ID is required" });
+  }
+
+  try {
+    const postsSnapshot = await db.collection("posts")
+      .where("userId", "==", uid)
+      .orderBy("createdAt", "desc")
+      .get();
+
+    const posts = postsSnapshot.docs.map(doc => ({
+      postId: doc.id,
+      ...doc.data(),
+    }));
+
+    res.status(200).json(posts);
+  } catch (error) {
+    console.error("Error retrieving posts for user:", error);
+    res.status(500).json({ error: "Failed to retrieve posts for user" });
+  }
+});
+
+
 
 // Route to fetch a single post by its ID
 router.get("/single/:postId", async (req, res) => {
