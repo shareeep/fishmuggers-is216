@@ -78,15 +78,90 @@ export default {
 /* Basic styling similar to your feed */
 .post-detail-container {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 auto;
+  max-width: 600px;
   padding: 20px;
 }
+
 .post {
   width: 100%;
-  max-width: 600px;
   border: 1px solid #dbdbdb;
   border-radius: 10px;
+  margin-bottom: 20px;
   background-color: #fff;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  scroll-snap-align: center;
+  scroll-behavior: smooth;
+}
+
+.post-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   padding: 10px;
+  position: relative;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.user-name {
+  font-size: 16px;
+  margin: 0;
+}
+
+.post-image {
+  width: 100%;
+  height: auto;
+}
+
+.post-footer {
+  padding: 10px;
+}
+
+.likes {
+  font-weight: bold;
+}
+
+.like-button {
+  display: flex;
+  align-items: center;
+  font-size: 1rem;
+  font-weight: bold;
+  color: black;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.like-button:hover {
+  transform: scale(1.05);
+}
+
+.like-button:active {
+  transform: scale(0.98);
+}
+
+.thumbs-up-icon {
+  color: grey;
+  /* Outline color */
+  transition: color 0.2s ease;
+  cursor: pointer;
+}
+
+.fas.fa-thumbs-up {
+  color: black;
+  /* Filled color */
 }
 </style>
