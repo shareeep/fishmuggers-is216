@@ -82,14 +82,18 @@
 
       <!-- PETS -->
       <div v-if="activeTab === 'pets'">
-        <router-link to="/addpets">
-          <button class="edit-btn">Add Pets</button>
+        <router-link to="/manage-pets">
+          <button class="edit-btn">Manage Pets</button>
         </router-link>
         <div class="pets-wrapper">
           <div class="pets-grid">
             <div v-for="(pet, index) in props.pets" :key="index" class="pet-card"
               :style="{ animationDelay: `${index * 0.2}s` }">
-              <img :src="pet.image" alt="Pet Image" class="pet-avatar" />
+              <img 
+  :src="pet.profileImage || 'https://via.placeholder.com/150?text=No+Image'" 
+  alt="Pet Image" 
+  class="pet-avatar" 
+/>
               <div class="info-container">
                 <div class="details">
                   <h4>{{ pet.name }}</h4>
@@ -97,10 +101,6 @@
                   <p>Breed: {{ pet.breed }}</p>
                   <p>Age: {{ pet.age }} years</p>
                 </div>
-<div class="actions" v-if="isOwnProfile">
-  <button class="edit-button">Edit</button>
-  <button class="remove-button">Remove</button>
-</div>
               </div>
             </div>
           </div>

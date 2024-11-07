@@ -90,8 +90,8 @@ const router = createRouter({
           component: ProfileUpdate,
         },
         {
-          path: "addpets",
-          name: "PetsProfile",
+          path: "manage-pets", // Updated path
+          name: "ManagePets", // Updated route name
           component: PetsProfile,
         },
         {
