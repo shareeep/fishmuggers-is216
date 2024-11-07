@@ -77,9 +77,9 @@
         >
           Use Current Location
         </button>
-        <p>
-          ^ Only Fills in Lat & Long, for leaflet js reference
-        </p>
+            <p class="text-sm text-gray-500">
+              ^ Only fills in Latitude & Longitude, for Leaflet.js reference
+            </p>
       </div>
 
       <!-- Pet Types -->

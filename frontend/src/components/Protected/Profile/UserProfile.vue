@@ -27,13 +27,13 @@
     <!-- Profile Tabs -->
     <div class="profile-tabs">
       <button :class="{ active: activeTab === 'posts' }" @click="activeTab = 'posts'">Posts</button>
-      <button :class="{ active: activeTab === 'eventsJoined' }" @click="activeTab = 'eventsJoined'">Events
-        Joined</button>
+      <button :class="{ active: activeTab === 'eventsJoined' }" @click="activeTab = 'eventsJoined'">Events Joined</button>
       <button :class="{ active: activeTab === 'pets' }" @click="activeTab = 'pets'">Pets</button>
     </div>
 
     <!-- Tab Content -->
     <div class="tab-content">
+      <!-- Posts Tab -->
       <div v-if="activeTab === 'posts'">
         <div v-if="posts === 0" class="no-posts">
           <i class="no-posts-pic"><img src="../../../assets/images/camera.png" alt=""></i>
@@ -58,7 +58,6 @@
             <img :src="userData.posts[selectedPostIndex].image" alt="Selected Post" class="modal-image" />
           </div>
 
-
           <div class="modal-right">
 
             <div class="post-header">
@@ -67,9 +66,7 @@
                   class="avatar" />
                 <h3 class="user-name">{{ userData.username }}</h3>
               </div>
-
             </div>
-
 
             <div class="post-footer">
               <div class="caption-container">
@@ -82,10 +79,10 @@
               </div>
 
               <div class="likes-container">
-
                 <p class="likes-caption">{{ userData.posts[selectedPostIndex].likes }} Likes</p>
-                <button @click="likePost(post)" class="like-button"><i class="fas fa-thumbs-up"
-                    style="color:black;"></i>Like</button>
+                <button @click="likePost(post)" class="like-button">
+                  <i class="fas fa-thumbs-up" style="color:black;"></i>Like
+                </button>
               </div>
             </div>
           </div>
@@ -122,25 +119,28 @@
         </div>
       </div>
 
+      <!-- EVENTS JOINED -->
       <div v-if="activeTab === 'eventsJoined'">
-   <!-- Buttons for toggling views -->
-   <div class="toggle-buttons">
-      <button :class="{ active: eventsView === 'createdEvents' }" @click="eventsView = 'createdEvents'">
-         Created Events
-      </button>
-      <button :class="{ active: eventsView === 'joinedEvents' }" @click="eventsView = 'joinedEvents'">
-         Joined Events
-      </button>
-   </div>
+        <!-- Buttons for toggling views -->
+        <div class="toggle-buttons">
+          <button :class="{ active: eventsView === 'createdEvents' }" @click="eventsView = 'createdEvents'">
+            Created Events
+          </button>
+          <button :class="{ active: eventsView === 'joinedEvents' }" @click="eventsView = 'joinedEvents'">
+            Joined Events
+          </button>
+        </div>
 
-   <!-- Display CreatedEvents or JoinedEvents based on eventsView -->
-   <div v-if="eventsView === 'createdEvents'">
-      <CreatedEventsList :events="props.createdEvents" @edit-event="handleEditEvent" @delete-event="deleteEvent" />
-   </div>
-   <div v-if="eventsView === 'joinedEvents'">
-      <JoinedEventsList :events="props.joinedEvents" />
-   </div>
-</div>
+        <!-- Display CreatedEvents or JoinedEvents based on eventsView -->
+        <div v-if="eventsView === 'createdEvents'">
+          <CreatedEventsList :events="userData.createdEvents" @edit-event="handleEditEvent" @delete-event="deleteEvent" />
+        </div>
+        <div v-if="eventsView === 'joinedEvents'">
+          <JoinedEventsList 
+            :events="userData.joinedEvents" 
+          />
+        </div>
+      </div>
 
     </div>
   </div>
@@ -157,7 +157,7 @@ import CreatedEventsList from '../EventsAdmin/CreatedEventsList.vue';
 const auth = getAuth();
 const router = useRouter();
 
-// Step 1: Define props to accept data from FriendProfile.vue
+// Define props to accept data from FriendProfile.vue
 const props = defineProps({
   userId: {
     type: [String, Number],
@@ -173,15 +173,14 @@ const props = defineProps({
   }
 });
 
-// Step 2: Initialize userData based on props
-// Step 2: Initialize userData with fallback default values
+// Initialize userData with fallback default values
 const userData = ref({
   username: props.username || "Unknown User",
   profileImage: props.avatar || "https://via.placeholder.com/150?text=Profile+Image",
   joinedEvents: [],
+  createdEvents: [], // Added to handle created events
   posts: []
 });
-
 
 const friends = ref(73); // Placeholder for the friends count
 const posts = ref(userData.value.posts.length);
@@ -191,10 +190,15 @@ const isModalOpen = ref(false);
 
 // Placeholder for the pets 
 const pets = ref([
+  // Example pet data
   // { name: 'Woofie', type: 'Dog', breed: 'Golden Retriever', age: 3, image: 'https://via.placeholder.com/150?text=Dog' },
   // { name: 'Meowers', type: 'Cat', breed: 'Siamese', age: 2, image: 'https://via.placeholder.com/150?text=Cat' }
 ]);
 
+// Additional events view state
+const eventsView = ref('joinedEvents');
+
+// Fetch user data from the backend
 const fetchUserData = async () => {
   try {
     // Get the Firebase Auth token
@@ -208,40 +212,21 @@ const fetchUserData = async () => {
     });
 
     // Merge fetched data with userData
-    userData.value = { ...userData.value, ...response.data };
-    posts.value = response.data.posts ? response.data.posts.length : 0;
+    userData.value = { 
+      ...userData.value, 
+      ...response.data,
+      createdEvents: response.data.createdEvents || [],
+      joinedEvents: response.data.joinedEvents || [],
+      posts: response.data.posts || []
+    };
+    posts.value = userData.value.posts.length;
   } catch (error) {
     console.error("Error fetching user data:", error);
+    // Optionally, handle the error (e.g., redirect to an error page)
   }
 };
 
-const checkRequestStatus = async () => {
-  try {
-    const token = await auth.currentUser.getIdToken();
-
-    const response = await axios.get(
-      `/api/friends/requests/check-status?senderId=${auth.currentUser.uid}&receiverId=${props.userId}`, 
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
-
-    // Assuming the response returns { status: 'pending' | 'accepted' | 'rejected' | 'none' }
-    const status = response.data.status;
-
-    if (status === "accepted") {
-      isFriend.value = true;
-      isRequested.value = false;
-    } else if (status === "pending") {
-      isFriend.value = false;
-      isRequested.value = true;
-    } else {
-      isFriend.value = false;
-      isRequested.value = false;
-    }
-  } catch (error) {
-    console.error("Error checking request status:", error);
-  }
-};
-
+// Friend request and friendship status
 const isRequested = ref(false); // Track if a request is pending
 const isFriend = ref(false); // Track friendship status
 
@@ -273,6 +258,7 @@ const checkFriendStatus = async () => {
   }
 };
 
+// Toggle follow (send friend request or remove friend)
 async function toggleFollow() {
   try {
     const token = await auth.currentUser.getIdToken();
@@ -304,9 +290,9 @@ async function toggleFollow() {
     console.error("Error in follow/unfollow action:", error.response?.data || error);
     alert("Friend request already sent");
   }
-};
+}
 
-
+// Remove friend method
 const removeFriend = async () => {
   try {
     const token = await auth.currentUser.getIdToken();
@@ -318,11 +304,18 @@ const removeFriend = async () => {
     console.error("Error removing friend:", error.response?.data || error);
   }
 };
-onMounted(() => {
-  fetchUserData();
-  checkFriendStatus();
-});
 
+// Handle event edit (if applicable)
+const handleEditEvent = (event) => {
+  // Implement your edit event logic here
+};
+
+// Handle event deletion (if applicable)
+const deleteEvent = (eventId) => {
+  // Implement your delete event logic here
+};
+
+// Modal handling for posts
 const openModal = (index) => {
   selectedPostIndex.value = index;
   isModalOpen.value = true;
@@ -347,9 +340,43 @@ const nextPost = () => {
     selectedPostIndex.value = 0;
   }
 };
+
+// Fetch data on component mount
+onMounted(() => {
+  fetchUserData();
+  checkFriendStatus();
+});
 </script>
 
 <style scoped>
+
+
+/* Toggle Buttons Styling */
+.toggle-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.toggle-buttons button {
+  padding: 8px 16px;
+  border: none;
+  border-bottom: 2px solid transparent;
+  background: none;
+  cursor: pointer;
+  font-weight: bold;
+  transition: border-bottom-color 0.3s ease;
+}
+
+.toggle-buttons button.active {
+  border-bottom-color: #333;
+  color: #333;
+}
+
+.toggle-buttons button:hover {
+  color: #555;
+}
 
 .profile-page {
   max-width: 800px;

@@ -68,13 +68,11 @@
             :events="createdEvents" 
             @edit-event="handleEditEvent" 
             @delete-event="handleDeleteEvent" 
-            @open-detail="openEventDetail" 
           />
         </div>
         <div v-if="eventsView === 'joinedEvents'">
           <JoinedEventsList 
             :events="joinedEvents" 
-            @open-detail="openEventDetail" 
           />
         </div>
       </div>

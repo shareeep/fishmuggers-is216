@@ -20,7 +20,6 @@
           :showActions="true" 
           @edit-event="$emit('edit-event', event)"
           @delete-event="handleDeleteEvent"
-          @open-detail="openEventDetail" 
         />
       </div>
     </div>
@@ -128,13 +127,13 @@ h2 {
 /* Responsive grid layout */
 @media (min-width: 640px) {
   .event-cards-grid {
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
   }
 }
 
 @media (min-width: 1024px) {
   .event-cards-grid {
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr;
   }
 }
 

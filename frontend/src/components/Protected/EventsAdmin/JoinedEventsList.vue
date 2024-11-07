@@ -1,29 +1,41 @@
+<!-- JoinedEventsList.vue -->
 <template>
   <div class="joined-events-section">
+    <!-- Join Event Button -->
     <router-link to="/events">
       <button class="edit-btn">Join Event</button>
     </router-link>
+    
+    <!-- Events List -->
     <div class="events-list p-6 bg-white rounded shadow-md">
       <h2 class="text-xl font-semibold mb-4">Joined Events</h2>
+      
+      <!-- Check if there are events -->
       <div v-if="events.length">
         <div class="event-cards-grid">
-          <EventCard 
+          <!-- Make each EventCard clickable by wrapping it in a router-link -->
+          <router-link 
             v-for="event in events" 
             :key="event.eventId" 
-            :event="event" 
-            @open-detail="openEventDetail"  
-            :showActions="false"
-          />
+            :to="`/eventdetail/${event.eventId}`" 
+            class="event-card-link"
+          >
+            <EventCard 
+              :event="event" 
+              :showActions="false" 
+            />
+          </router-link>
         </div>
       </div>
+      
+      <!-- Message when no events are available -->
       <p v-else class="text-gray-700">No events available.</p>
     </div>
   </div>
 </template>
 
 <script setup>
-import { defineProps, defineEmits } from "vue";
-import { useRouter } from "vue-router";
+import { defineProps } from "vue";
 import EventCard from "./EventCard.vue";
 
 // Define props to accept events from parent
@@ -33,22 +45,11 @@ const props = defineProps({
     required: true
   }
 });
-
-// Define emits to communicate with parent
-const emit = defineEmits(['open-detail']);
-
-// Setup router
-const router = useRouter();
-
-// Handle navigation to event detail page
-const openEventDetail = (event) => {
-  emit('open-detail', event);
-};
 </script>
 
 <style scoped>
 /* Parent component styling */
-.joined-events-section {
+.events-list {
   max-width: 1200px;
   margin: 0 auto;
   width: 100%;
@@ -86,8 +87,73 @@ h2 {
   grid-template-columns: 1fr;
 }
 
-/* Ensure grid items have sufficient width */
-.event-cards-grid > * {
+/* Responsive grid layout */
+@media (min-width: 640px) {
+  .event-cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .event-cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Make the entire event card clickable */
+.event-card {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease-in-out;
+  overflow: hidden;
+}
+
+.event-card:hover {
+  transform: scale(1.02);
+  cursor: pointer;
+}
+
+
+.event-card-link:active {
+  transform: scale(0.98);
+}
+
+/* Event card content adjustments */
+.event-card {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  border: 1px solid #e5e5e5;
+  border-radius: 8px;
+  /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); */
+  transition: transform 0.2s ease-in-out;
+  background-color: #fff; /* Ensure background is white */
+}
+
+.event-card img {
   width: 100%;
+  height: auto;
+  border-radius: 5px;
+  object-fit: cover;
+}
+
+.event-card h3,
+.event-card p {
+  margin: 0.5rem 0;
+}
+
+/* Message styling */
+.success-message {
+  color: green;
+  margin-bottom: 1rem;
+}
+
+.error-message {
+  color: red;
+  margin-bottom: 1rem;
 }
 </style>
