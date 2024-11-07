@@ -122,6 +122,26 @@
         </div>
       </div>
 
+      <div v-if="activeTab === 'eventsJoined'">
+   <!-- Buttons for toggling views -->
+   <div class="toggle-buttons">
+      <button :class="{ active: eventsView === 'createdEvents' }" @click="eventsView = 'createdEvents'">
+         Created Events
+      </button>
+      <button :class="{ active: eventsView === 'joinedEvents' }" @click="eventsView = 'joinedEvents'">
+         Joined Events
+      </button>
+   </div>
+
+   <!-- Display CreatedEvents or JoinedEvents based on eventsView -->
+   <div v-if="eventsView === 'createdEvents'">
+      <CreatedEvents :events="props.createdEvents" @edit-event="handleEditEvent" @delete-event="deleteEvent" />
+   </div>
+   <div v-if="eventsView === 'joinedEvents'">
+      <JoinedEvents :events="props.joinedEvents" />
+   </div>
+</div>
+
     </div>
   </div>
 </template>

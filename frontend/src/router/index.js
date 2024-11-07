@@ -15,7 +15,6 @@ import Profile from '../views/Protected/Profile.vue';
 import ProfileUpdate from '@/views/Protected/ProfileUpdate.vue';
 import PetsProfile from '@/views/Protected/PetsProfile.vue';
 import Chats from '@/views/Protected/Chats.vue';
-import EventsShar from '@/views/Protected/EventsAdmin.vue';
 import FriendProfile from '@/views/Protected/FriendProfile.vue';
 import sample from '@/views/Protected/Sample.vue'
 
@@ -44,18 +43,18 @@ const router = createRouter({
           props: true,
         },
         {
-          path: 'addpost',
-          name: 'petPostAdd',
+          path: "addpost",
+          name: "petPostAdd",
           component: PetPostAdd,
         },
         {
-          path: 'editpost',
-          name: 'petPostEdit',
+          path: "editpost",
+          name: "petPostEdit",
           component: PetPostEdit,
         },
         {
-          path: 'events',
-          name: 'Events',
+          path: "events",
+          name: "Events",
           component: Events,
         },
         {
@@ -80,9 +79,10 @@ const router = createRouter({
           component: Friends,
         },
         {
-          path: "profile",
+          path: "profile/:uid?", // `uid` is optional here
           name: "Profile",
           component: Profile,
+          props: true, // Pass the `uid` as a prop to the Profile component
         },
         {
           path: "editprofile",
@@ -105,7 +105,7 @@ const router = createRouter({
           component: EventsAdmin,
         },
         {
-          path: '/friendprofile/:id',
+          path: "/friendprofile/:id",
           name: "friendProfile",
           component: FriendProfile,
           props: true,

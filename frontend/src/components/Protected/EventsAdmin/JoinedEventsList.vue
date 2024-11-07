@@ -5,8 +5,13 @@
     <div class="events-list p-6 bg-white rounded shadow-md">
         <h2 class="text-xl font-semibold mb-4">Joined Events</h2>
         <div v-if="events.length">
-            <div v-for="event in events" :key="event.eventId">
-                <EventCard :event="event" @open-detail="openEventDetail"  />
+            <div class="event-cards-grid">
+                <EventCard 
+                  v-for="event in events" 
+                  :key="event.eventId" 
+                  :event="event" 
+                  @open-detail="openEventDetail"  
+                />
             </div>
         </div>
         <p v-else class="text-gray-700">No events available.</p>
@@ -18,16 +23,24 @@ import { defineProps, defineEmits } from "vue";
 import { useRouter } from "vue-router";
 import EventCard from "./EventCard.vue";
 
-const router = useRouter();
-defineProps({
-    events: Array,
+// Define props to accept events from parent
+const props = defineProps({
+    events: {
+        type: Array,
+        required: true
+    }
 });
 
-const openEventDetail = (event) => {
-  console.log("Opening event detail for:", event); // Debugging line
-  router.push({ name: "eventDetail", params: { id: event.eventId } });
-};
+// Define emits to communicate with parent
+const emit = defineEmits(['open-detail']);
 
+// Setup router
+const router = useRouter();
+
+// Handle navigation to event detail page
+const openEventDetail = (event) => {
+  emit('open-detail', event);
+};
 </script>
 
 <style scoped>

@@ -4,13 +4,22 @@
   </router-link>
   <div class="events-list p-6 bg-white rounded shadow-md">
     <h2 class="text-xl font-semibold mb-4">Created Events</h2>
+    <!-- Display success and error messages -->
+    <div v-if="successMessage" class="success-message">
+      {{ successMessage }}
+    </div>
+    <div v-if="errorMessage" class="error-message">
+      {{ errorMessage }}
+    </div>
     <div v-if="events.length">
-      <div v-for="event in events" :key="event.eventId">
+      <div class="event-cards-grid">
         <EventCard 
+          v-for="event in events" 
+          :key="event.eventId" 
           :event="event" 
           :showActions="true" 
           @edit-event="$emit('edit-event', event)"
-          @delete-event="deleteEvent"
+          @delete-event="handleDeleteEvent"
           @open-detail="openEventDetail" 
         />
       </div>
@@ -19,51 +28,49 @@
   </div>
 </template>
 
+
 <script setup>
-import { ref, computed, onMounted } from "vue";
+import { defineProps, defineEmits, ref } from "vue";
 import { getAuth } from "firebase/auth";
 import axios from "axios";
 import EventCard from "./EventCard.vue";
 import { useRouter } from "vue-router";
 
-// Firebase auth setup
-const auth = getAuth();
-const router = useRouter();
-const currentUser = computed(() => auth.currentUser);
-
-// Reactive data properties
-const events = ref([]);
-const errorMessage = ref(""); // Initialize error message
-const successMessage = ref(""); // Initialize success message
-
-// Fetch events from API
-const fetchEvents = async () => {
-  try {
-    const response = await axios.get("http://localhost:3000/api/events");
-    events.value = response.data;
-    console.log("Fetched Events:", events.value);
-  } catch (error) {
-    console.error("Error fetching events:", error);
-    errorMessage.value = "Failed to fetch events.";
+// Define props to accept events from parent
+const props = defineProps({
+  events: {
+    type: Array,
+    required: true
   }
-};
+});
 
-// Delete an event
-const deleteEvent = async (eventId) => {
+// Define emits to communicate with parent
+const emit = defineEmits(['edit-event', 'delete-event', 'open-detail']);
+
+// Setup router
+const router = useRouter();
+
+// Reactive properties for messages
+const errorMessage = ref("");
+const successMessage = ref("");
+
+// Handle deletion of an event
+const handleDeleteEvent = async (eventId) => {
   if (!confirm("Are you sure you want to delete this event?")) return;
 
-  const user = currentUser.value;
+  const auth = getAuth();
+  const user = auth.currentUser;
   if (!user) {
     errorMessage.value = "User not authenticated.";
     return;
   }
 
   try {
-    await axios.delete(`http://localhost:3000/api/events/${eventId}`, {
+    await axios.delete(`/api/events/${eventId}`, {
       headers: { Authorization: `Bearer ${await user.getIdToken()}` },
     });
     successMessage.value = "Event deleted successfully!";
-    await fetchEvents(); // Refresh the event list after deletion
+    emit('delete-event', eventId); // Notify parent to refresh events
   } catch (error) {
     console.error("Error deleting event:", error);
     errorMessage.value = error.response?.data?.error || "Failed to delete event.";
@@ -72,12 +79,8 @@ const deleteEvent = async (eventId) => {
 
 // Handle navigation to event detail page
 const openEventDetail = (event) => {
-  console.log("Opening event detail for:", event); // Debugging line
-  router.push({ name: "eventDetail", params: { id: event.eventId } });
+  emit('open-detail', event);
 };
-
-// Fetch events on component mount
-onMounted(fetchEvents);
 </script>
 
 
@@ -162,5 +165,16 @@ h2 {
   width: 100%;
   height: auto;
   border-radius: 5px;
+}
+
+/* Message styling */
+.success-message {
+  color: green;
+  margin-bottom: 1rem;
+}
+
+.error-message {
+  color: red;
+  margin-bottom: 1rem;
 }
 </style>

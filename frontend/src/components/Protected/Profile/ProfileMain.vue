@@ -1,5 +1,5 @@
 <template>
-  <div class="profile-page">
+  <div class="profile-page" v-if="userData">
     <!-- Profile Header -->
     <div class="profile-header">
       <div class="profile-picture">
@@ -9,23 +9,22 @@
       <div class="profile-info">
         <div class="profile-details">
           <h2 class="username">{{ props.userData.username }}</h2>
-          <router-link to="/editprofile">
-            <button class="edit-btn">Edit profile</button>
-          </router-link>
+<router-link v-if="isOwnProfile" to="/editprofile">
+  <button class="edit-btn">Edit profile</button>
+</router-link>
         </div>
-        <div class="profile-stats">
-          <span><b>{{ props.userData.posts.length }}</b> Posts</span>
-          <span><b>{{ props.userData.joinedEvents.length }}</b> Events Joined</span>
-          <span><b>{{ props.userData.posts.length }}</b> Friends</span>
-        </div>
+<div class="profile-stats">
+  <span><b>{{ userData?.posts?.length || 0 }}</b> Posts</span>
+  <span><b>{{ userData?.joinedEvents?.length || 0 }}</b> Events Joined</span>
+  <span><b>{{ userData?.friends?.length || 0 }}</b> Friends</span>
+</div>
       </div>
     </div>
 
     <!-- Profile Tabs -->
     <div class="profile-tabs">
       <button :class="{ active: activeTab === 'posts' }" @click="activeTab = 'posts'">Posts</button>
-      <button :class="{ active: activeTab === 'eventsJoined' }" @click="activeTab = 'eventsJoined'">Events
-        Joined/Created</button>
+      <button :class="{ active: activeTab === 'eventsJoined' }" @click="activeTab = 'eventsJoined'">Events Joined/Created</button>
       <button :class="{ active: activeTab === 'pets' }" @click="activeTab = 'pets'">Pets</button>
     </div>
 
@@ -63,12 +62,20 @@
           </button>
         </div>
 
-        <!-- Display CreatedEvents or JoinedEvents component based on eventsView -->
+        <!-- Display CreatedEvents or JoinedEvents based on eventsView -->
         <div v-if="eventsView === 'createdEvents'">
-          <CreatedEvents :events="events" @edit-event="handleEditEvent" @delete-event="deleteEvent" />
+          <CreatedEventsList 
+            :events="createdEvents" 
+            @edit-event="handleEditEvent" 
+            @delete-event="handleDeleteEvent" 
+            @open-detail="openEventDetail" 
+          />
         </div>
         <div v-if="eventsView === 'joinedEvents'">
-          <JoinedEvents :events="events" />
+          <JoinedEventsList 
+            :events="joinedEvents" 
+            @open-detail="openEventDetail" 
+          />
         </div>
       </div>
 
@@ -90,10 +97,10 @@
                   <p>Breed: {{ pet.breed }}</p>
                   <p>Age: {{ pet.age }} years</p>
                 </div>
-                <div class="actions">
-                  <button class="edit-button">Edit</button>
-                  <button class="remove-button">Remove</button>
-                </div>
+<div class="actions" v-if="isOwnProfile">
+  <button class="edit-button">Edit</button>
+  <button class="remove-button">Remove</button>
+</div>
               </div>
             </div>
           </div>
@@ -101,6 +108,7 @@
       </div>
     </div>
   </div>
+  <div v-else class="loading-placeholder">Loading...</div>
 </template>
 
 <script setup>
@@ -108,86 +116,39 @@ import { ref, onMounted, defineEmits, defineProps } from 'vue';
 import axios from 'axios';
 import { getAuth } from 'firebase/auth';
 import { useRouter } from 'vue-router';
-import CreatedEvents from "@/components/Protected/EventsAdmin/CreatedEventsList.vue";
-import JoinedEvents from "@/components/Protected/EventsAdmin/JoinedEventsList.vue";
+import CreatedEventsList from "@/components/Protected/EventsAdmin/CreatedEventsList.vue";
+import JoinedEventsList from "@/components/Protected/EventsAdmin/JoinedEventsList.vue";
 
+// Define props
 const props = defineProps({
   userData: Object,
-  pets: Array
+  pets: Array,
+  isOwnProfile: Boolean,
+  createdEvents: Array,
+  joinedEvents: Array
 });
 
-const emit = defineEmits(['edit-event', 'open-post']); // Add 'open-post' event
-const events = ref([]);
+// Define emits
+const emit = defineEmits(['edit-event', 'delete-event', 'open-detail']);
 
-// Initialize Firebase Auth and Router
-const auth = getAuth();
-const router = useRouter();
-
-
-const fetchEvents = async () => {
-  try {
-    const response = await axios.get("http://localhost:3000/api/events");
-    events.value = response.data;
-    console.log("Fetched Events:", events.value); // Add this line
-  } catch (error) {
-    console.error("Error fetching events:", error);
-    errorMessage.value = "Failed to fetch events.";
-  }
-};
-
-
+// Define reactive properties
 const eventsView = ref('createdEvents');
 const activeTab = ref('posts');
 
-const fetchUserData = async () => {
-  const currentUser = auth.currentUser;
-  if (!currentUser) return;
-
-  try {
-    const response = await axios.get(`http://localhost:3000/api/users/${currentUser.uid}`, {
-      headers: { 'Authorization': `Bearer ${await currentUser.getIdToken()}` }
-    });
-    userData.value = response.data;
-    posts.value = response.data.posts ? response.data.posts.length : 0;
-  } catch (error) {
-    console.error('Error fetching user data:', error);
-  }
-};
-
-
+// Handle edit event from CreatedEventsList.vue
 const handleEditEvent = (event) => {
-  // Emit event to Profile.vue to open modal
   emit('edit-event', event);
 };
 
-// Sample deleteEvent function
-const deleteEvent = (eventId) => {
-  console.log("Delete Event:", eventId);
+// Handle delete event from CreatedEventsList.vue
+const handleDeleteEvent = (eventId) => {
+  emit('delete-event', eventId);
 };
 
-const openPostModal = (post) => {
-  emit('open-post', post);
+// Handle opening event detail
+const openEventDetail = (event) => {
+  emit('open-detail', event);
 };
-
-const prevPost = () => {
-  if (selectedPostIndex.value > 0) {
-    selectedPostIndex.value--;
-  } else {
-    selectedPostIndex.value = userData.value.posts.length - 1;
-  }
-};
-
-const nextPost = () => {
-  if (selectedPostIndex.value < userData.value.posts.length - 1) {
-    selectedPostIndex.value++;
-  } else {
-    selectedPostIndex.value = 0;
-  }
-};
-onMounted(() => {
-  fetchEvents();
-});
-onMounted(fetchUserData);
 </script>
 
 <style scoped>

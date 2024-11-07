@@ -678,4 +678,57 @@ router.get("/:uid/friends", authenticate, async (req, res) => {
 });
 
 
+// Route to fetch all events joined by a specific user
+router.get("/joined/:uid", authenticate, async (req, res) => {
+  const { uid } = req.params;
+
+  if (!uid) {
+    return res.status(400).json({ error: "User ID is required" });
+  }
+
+  try {
+    const joinedEventsSnapshot = await db.collection("events")
+      .where("interestedUsers", "array-contains", uid)
+      .orderBy("createdAt", "desc")
+      .get();
+
+    const joinedEvents = joinedEventsSnapshot.docs.map(doc => ({
+      eventId: doc.id,
+      ...doc.data(),
+    }));
+
+    res.status(200).json(joinedEvents);
+  } catch (error) {
+    console.error("Error fetching joined events:", error);
+    res.status(500).json({ error: "Failed to retrieve joined events" });
+  }
+});
+
+// Route to fetch all events created by a specific user (public access)
+router.get("/created/:uid", async (req, res) => {
+  const { uid } = req.params;
+
+  if (!uid) {
+    return res.status(400).json({ error: "User ID is required" });
+  }
+
+  try {
+    const createdEventsSnapshot = await db.collection("events")
+      .where("host", "==", uid)
+      .orderBy("createdAt", "desc")
+      .get();
+
+    const createdEvents = createdEventsSnapshot.docs.map(doc => ({
+      eventId: doc.id,
+      ...doc.data(),
+    }));
+
+    res.status(200).json(createdEvents);
+  } catch (error) {
+    console.error("Error fetching created events:", error);
+    res.status(500).json({ error: "Failed to retrieve created events" });
+  }
+});
+
+
 module.exports = router;
