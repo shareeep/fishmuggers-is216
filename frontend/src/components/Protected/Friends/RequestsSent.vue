@@ -2,79 +2,39 @@
   <div class="requests-sent">
     <h3>Requests Sent ({{ sentRequests.length }})</h3>
     <div class="request-list">
-      <div v-for="(request, index) in sentRequests" :key="request.id" class="request-item" :style="{ animationDelay: `${index * 0.2}s` }">
+      <router-link v-for="(request, index) in sentRequests" :key="request.id" :to="{
+        name: 'friendProfile',
+        params: { id: request.id },
+        query: { username: request.username, avatar: request.avatar }
+      }" class="request-item" :style="{ animationDelay: `${index * 0.2}s` }">
         <img :src="request.avatar" alt="User Avatar" />
         <div class="info-container">
           <div class="details">
             <h4>{{ request.name }}</h4>
             <p>{{ request.username }}</p>
-            <p>{{ request.daysAgo }}</p>
+            <p>{{ request.daysAgo }} days ago</p>
           </div>
           <div class="actions">
-            <!-- Your existing cancel button -->
-            <button @click="openConfirmationModal(request.id)" class="cancel-button">✕ Cancel</button>
+            <button class="cancel-button">✕ Cancel</button>
           </div>
         </div>
-      </div>
+      </router-link>
     </div>
-
-    <!-- Confirmation Modal -->
-    <ConfirmationModal
-      v-if="showModal"
-      title="Cancel Friend Request"
-      message="Are you sure you want to cancel this friend request?"
-      @confirm="cancelRequest"
-      @close="closeModal"
-    />
   </div>
 </template>
 
-<script>
-import ConfirmationModal from './ConfirmationModal.vue';
-import axios from 'axios';
 
+<script>
 export default {
   name: "RequestsSent",
-  props: {
-    sentRequests: {
-      type: Array,
-      required: true,
-    },
-  },
-  components: {
-    ConfirmationModal,
-  },
   data() {
     return {
-      showModal: false,
-      requestIdToCancel: null,
+      sentRequests: [
+        { id: 1, name: "Glen Archer", username: "gee-arch-r", avatar: "https://randomuser.me/api/portraits/men/5.jpg", daysAgo: 2 },
+        { id: 2, name: "Dani Smith", username: "deesmiffy", avatar: "https://randomuser.me/api/portraits/women/8.jpg", daysAgo: 21 },
+        { id: 3, name: "Robby Fox", username: "robby-fox", avatar: "https://randomuser.me/api/portraits/men/12.jpg", daysAgo: 30 },
+      ],
     };
-  },
-  methods: {
-    openConfirmationModal(requestId) {
-      // Store the ID of the request we want to cancel and show the modal
-      this.requestIdToCancel = requestId;
-      this.showModal = true;
-    },
-    closeModal() {
-      // Close the modal and reset the request ID
-      this.showModal = false;
-      this.requestIdToCancel = null;
-    },
-    async cancelRequest() {
-      try {
-        // Call the API to delete the friend request
-        await axios.delete(`http://localhost:3000/api/friends/request/${this.requestIdToCancel}`);
-
-        // Remove the canceled request from sentRequests by emitting an event
-        this.$emit('updateSentRequests', this.requestIdToCancel);
-      } catch (error) {
-        console.error("Error canceling friend request:", error);
-        alert("Failed to cancel friend request. Please try again.");
-      } finally {
-        this.closeModal();
-      }
-    },
   },
 };
 </script>
@@ -96,27 +56,45 @@ h3 {
   font-weight: bold;
   color: #333;
   margin-bottom: 10px;
+
 }
 
 .request-list {
   display: flex;
   gap: 20px;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: start;
+
 }
 
+/* Request Item */
 .request-item {
   display: flex;
   align-items: center;
   padding: 15px;
-  background-color: #fff;
   border-radius: 15px;
+  background-color: #ffffff;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  min-width: 300px;
-  width: 325px;
+  width: 300px;
+  /* Fixed width for all items */
   opacity: 0;
-  transform: scale(0.9);
+  transform: scale(1);
   animation: popFadeIn 0.4s forwards;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Only scale the request-item on hover for the entire component */
+.request-item:hover {
+  transform: scale(1.02) !important;
+  box-shadow: 0 4px 8px rgba(75, 0, 130, 0.2);
+}
+
+@keyframes popFadeIn {
+  to {
+    opacity: 1;
+    /* transform: scale(1); */
+  }
 }
 
 .request-item img {
@@ -163,15 +141,40 @@ h3 {
   border-radius: 5px;
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+
 }
 
 .cancel-button:hover {
   background-color: #bbb;
+}
+
+.cancel-button:hover {
   transform: scale(1.05);
   box-shadow: 0 4px 8px rgba(75, 0, 130, 0.2);
 }
 
 .cancel-button:active {
   transform: scale(0.98);
+}
+
+/* Responsive Layout Adjustments */
+@media (max-width: 1270px) {
+  .request-list {
+    justify-content: center;
+  }
+}
+
+@media (max-width: 1024px) {
+  .request-list {
+    grid-template-columns: repeat(2, 1fr);
+    /* 2 items per row on medium screens */
+  }
+}
+
+@media (max-width: 768px) {
+  .request-list {
+    grid-template-columns: 1fr;
+    /* 1 item per row on small screens */
+  }
 }
 </style>
