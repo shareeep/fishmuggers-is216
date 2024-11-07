@@ -239,8 +239,15 @@ onMounted(() => {
 }
 
 .start-chat-btn {
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
   background-color: #FFD700;
   color: #333;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .start-chat-btn:hover {

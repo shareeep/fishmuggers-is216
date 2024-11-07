@@ -9,15 +9,26 @@
             </div>
 
             <div class="friends-list">
-                <div v-for="friend in filteredFriends" :key="friend.id" class="friend-item">
-                    <img :src="friend.avatar" alt="Friend Avatar" class="avatar" />
-                    <div class="friend-info">
-                        <p class="friend-name">{{ friend.name }}</p>
-                        <p class="friend-username">{{ friend.username }}</p>
+                <!-- Check if there are any friends left to display -->
+                <div v-if="filteredFriends.length > 0">
+                    <div v-for="friend in filteredFriends" :key="friend.id" class="friend-item">
+                        <img :src="friend.avatar" alt="Friend Avatar" class="avatar" />
+                        <div class="friend-info">
+                            <p class="friend-name">{{ friend.name }}</p>
+                            <p class="friend-username">{{ friend.username }}</p>
+                        </div>
+                        <button class="see-profile-button" @click="startChat(friend)"
+                            :disabled="loadingFriendId === friend.id">
+                            {{ loadingFriendId === friend.id ? "Starting Chat..." : "Chat" }}
+                        </button>
                     </div>
-                    <button class="see-profile-button" @click="startChat(friend)"
-                        :disabled="loadingFriendId === friend.id">
-                        {{ loadingFriendId === friend.id ? "Starting Chat..." : "Chat" }}
+                </div>
+
+                <!-- Show button to find more friends if no friends are left in the list -->
+                <div v-else class="no-friends-message">
+                    <p>No friends to chat with yet!</p>
+                    <button @click="goToFriendsPage">
+                        Find more friends
                     </button>
                 </div>
             </div>
@@ -32,6 +43,10 @@ export default {
         friends: {
             type: Array,
             required: true
+        },
+        activeChats: { // Array of friend IDs with existing chats
+            type: Array,
+            required: true
         }
     },
     data() {
@@ -44,8 +59,9 @@ export default {
         filteredFriends() {
             const query = this.searchQuery.toLowerCase();
             return this.friends.filter(friend =>
-                friend.name.toLowerCase().startsWith(query) ||
-                friend.username.toLowerCase().startsWith(query)
+                (friend.name.toLowerCase().startsWith(query) ||
+                    friend.username.toLowerCase().startsWith(query)) &&
+                !this.activeChats.includes(friend.id) // Exclude friends with active chats by ID comparison
             );
         }
     },
@@ -59,6 +75,9 @@ export default {
                 // Reset loading state only after all chat start processes complete
                 this.loadingFriendId = null;
             }
+        },
+        goToFriendsPage() {
+            this.$router.push("/friends");
         }
     }
 };
@@ -67,9 +86,39 @@ export default {
 
 
 
-
 <style scoped>
 /* Same styling as provided */
+.no-friends-message {
+    text-align: center;
+    margin-top: 20px;
+    font-weight: bold;
+}
+
+.no-friends-message button {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    padding: 10px 20px;
+    font-size: 16px;
+    font-weight: bold;
+    background-color: #FFD700;
+    color: #333;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    /* Smooth transition */
+}
+
+.no-friends-message button:hover {
+    transform: scale(1.03);
+    box-shadow: 0 4px 8px rgba(75, 0, 130, 0.2);
+    background-color: #E6C200;
+}
+
+.no-friends-message button:active {
+    transform: scale(0.98);
+}
+
 .popup-overlay {
     position: fixed;
     top: 0;

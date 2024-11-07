@@ -3,11 +3,11 @@
     <Navbar />
     <main>
       <!-- Pass the `showFindChatPopup` function as a prop to Allchats -->
-      <Allchats :showFindChatPopup="showFindChatPopup" :friends="friends" />
+      <Allchats :showFindChatPopup="showFindChatPopup" :friends="friends" @deleteChat="deleteChat" />
     </main>
     <!-- Show FindChatPopup when isFindChatPopupVisible is true -->
-    <FindChatPopup v-if="isFindChatPopupVisible" :friends="friends" @close="isFindChatPopupVisible = false"
-      @startChat="startChatWithFriend" />
+    <FindChatPopup v-if="isFindChatPopupVisible" :friends="friends" :activeChats="activeChatFriends"
+      @close="isFindChatPopupVisible = false" @startChat="startChatWithFriend" />
   </div>
 </template>
 
@@ -22,7 +22,9 @@ import FindChatPopup from '@/components/Protected/Chats/FindChatPopup.vue';
 
 const isFindChatPopupVisible = ref(false);
 const friends = ref([]);
+const activeChatFriends = ref([]); // Array for friends with active chats
 const selectedFriend = ref(null);
+
 // Function to show the FindChatPopup
 const showFindChatPopup = () => {
   isFindChatPopupVisible.value = true;
@@ -38,14 +40,49 @@ const fetchFriends = async () => {
       return;
     }
 
-    const response = await axios.get(`http://localhost:3000/api/events/${userUid}/friends`);
-    friends.value = response.data;
+    // Fetch friends list
+    const friendsResponse = await axios.get(`http://localhost:3000/api/events/${userUid}/friends`);
+    friends.value = friendsResponse.data;
+
+    // Fetch existing chats and extract friend IDs
+    const chatsResponse = await axios.get(`http://localhost:3000/api/messages/user/${userUid}`);
+    activeChatFriends.value = chatsResponse.data.map(chat =>
+      chat.senderUid === userUid ? chat.receiverUid : chat.senderUid
+    );
   } catch (error) {
-    console.error("Failed to fetch friends:", error);
+    console.error("Failed to fetch friends or chats:", error);
   }
 };
 
-// In Chats.vue, assuming you have the friend's `friendUid` and your `userUid`:
+const deleteChat = async (friend) => {
+  try {
+    const userUid = getAuth().currentUser.uid;
+
+    // Make a request to delete the chat
+    await axios({
+      method: "delete",
+      url: `http://localhost:3000/api/messages/delete`,
+      data: {
+        userUid: userUid,
+        friendUid: friend.senderUid, // Adjust according to the correct friend ID field
+      },
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+
+    // Update friends list to remove deleted chat
+    friends.value = friends.value.filter(f => f.senderUid !== friend.senderUid);
+    if (selectedFriend.value && selectedFriend.value.senderUid === friend.senderUid) {
+      selectedFriend.value = null; // Clear selected friend if they were deleted
+    }
+
+  } catch (error) {
+    console.error("Failed to delete chat:", error);
+  }
+};
+
+
 
 const startChatWithFriend = async (friend) => {
   isFindChatPopupVisible.value = false; // Close the popup immediately
@@ -79,11 +116,11 @@ const startChatWithFriend = async (friend) => {
   }
 };
 
-
 onMounted(() => {
   fetchFriends();
 });
 </script>
+
 
 
 <style scoped>

@@ -100,7 +100,7 @@ onUnmounted(() => {
 // Emit an event to delete the selected chat
 const confirmDelete = (friend) => {
   if (confirm(`Are you sure you want to delete the chat with ${friend.name}?`)) {
-    emit('deleteChat', friend);
+    emit('deleteChat', friend); // Send friend info to parent for deletion
     activeDropdown.value = null; // Close dropdown after deleting
   }
 };
