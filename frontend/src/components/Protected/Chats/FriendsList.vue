@@ -18,16 +18,16 @@
         <span class="time">{{ formatTimeOrDate(friend.latest) }}</span>
 
         <!-- Three dots button for showing dropdown -->
-        <button @click.stop="toggleDropdown(index)" class="delete-chat-button" title="Options">
+        <!-- <button @click.stop="toggleDropdown(index)" class="delete-chat-button" title="Options">
           •••
-        </button>
+        </button> -->
 
         <!-- Dropdown menu -->
-        <div v-if="activeDropdown === index" class="dropdown-menu">
+        <!-- <div v-if="activeDropdown === index" class="dropdown-menu">
           <button @click.stop="confirmDelete(friend)" class="dropdown-item">
             <i class="fas fa-trash-alt"></i> Delete Chat
           </button>
-        </div>
+        </div> -->
       </div>
     </div>
 
@@ -63,7 +63,7 @@ const filteredFriends = computed(() =>
 );
 
 // Emit the selected friend back to the parent component
-const emit = defineEmits(['friendSelected', 'showFindFriendsPopup', 'deleteChat']);
+const emit = defineEmits(['friendSelected', 'showFindFriendsPopup']);
 
 const selectFriend = (friend) => {
   console.log("Selected friend ID:", friend.id); // Debug selected friend
@@ -76,34 +76,34 @@ const findMoreFriends = () => {
 };
 
 // Toggle the dropdown menu visibility
-const toggleDropdown = (index) => {
-  activeDropdown.value = activeDropdown.value === index ? null : index;
-};
+// const toggleDropdown = (index) => {
+//   activeDropdown.value = activeDropdown.value === index ? null : index;
+// };
 
 // Close dropdown if clicked outside
-const handleClickOutside = (event) => {
-  const dropdown = document.querySelector('.dropdown-menu');
-  if (dropdown && !dropdown.contains(event.target)) {
-    activeDropdown.value = null;
-  }
-};
+// const handleClickOutside = (event) => {
+//   const dropdown = document.querySelector('.dropdown-menu');
+//   if (dropdown && !dropdown.contains(event.target)) {
+//     activeDropdown.value = null;
+//   }
+// };
 
 // Add event listener to close dropdown when clicking outside
-onMounted(() => {
-  document.addEventListener('click', handleClickOutside);
-});
+// onMounted(() => {
+//   document.addEventListener('click', handleClickOutside);
+// });
 
-onUnmounted(() => {
-  document.removeEventListener('click', handleClickOutside);
-});
+// onUnmounted(() => {
+//   document.removeEventListener('click', handleClickOutside);
+// });
 
 // Emit an event to delete the selected chat
-const confirmDelete = (friend) => {
-  if (confirm(`Are you sure you want to delete the chat with ${friend.name}?`)) {
-    emit('deleteChat', friend); // Send friend info to parent for deletion
-    activeDropdown.value = null; // Close dropdown after deleting
-  }
-};
+// const confirmDelete = (friend) => {
+//   if (confirm(`Are you sure you want to delete the chat with ${friend.name}?`)) {
+//     emit('deleteChat', friend); 
+//     activeDropdown.value = null; 
+//   }
+// };
 
 // Helper function to format the time or date
 const formatTimeOrDate = (timestamp) => {
@@ -128,7 +128,7 @@ const formatTimeOrDate = (timestamp) => {
   /* Background for selected friend */
 }
 
-.delete-chat-button {
+/* .delete-chat-button {
   position: absolute;
   top: 5px;
   right: 5px;
@@ -142,7 +142,7 @@ const formatTimeOrDate = (timestamp) => {
 
 .delete-chat-button:hover {
   color: black;
-}
+} */
 
 /* Dropdown menu styling */
 .dropdown-menu {
