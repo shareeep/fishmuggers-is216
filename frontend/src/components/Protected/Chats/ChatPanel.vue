@@ -161,10 +161,11 @@ onMounted(() => {
   background-color: #FFE047; /* Yellow background */
   padding: 8px;
   border-radius: 10px;
+  word-break: break-word;
   max-width: 75%;
   margin-left: auto; /* Ensures the message aligns to the right */
   color: black; /* Black text color */
-  text-align: right; /* Aligns text to the right */
+  text-align: left; /* Aligns text to the right */
 }
 
 .message-them {

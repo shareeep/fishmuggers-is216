@@ -2,22 +2,12 @@
   <div class="friends-list">
     <!-- Search bar -->
     <div class="search-bar">
-      <input
-        type="text"
-        v-model="searchQuery"
-        placeholder="Search"
-        class="search-input"
-      />
+      <input type="text" v-model="searchQuery" placeholder="Search" class="search-input" />
     </div>
 
     <!-- List of friends/chats -->
     <div class="friends">
-      <div
-        v-for="(friend, index) in filteredFriends"
-        :key="index"
-        class="friend-item"
-        @click="selectFriend(friend)"
-      >
+      <div v-for="(friend, index) in filteredFriends" :key="index" class="friend-item" @click="selectFriend(friend)">
         <img :src="friend.avatar" alt="Avatar" class="avatar" />
         <div class="friend-info">
           <h3>{{ friend.name }}</h3>
@@ -42,12 +32,12 @@ const props = defineProps({
 
 const searchQuery = ref('');
 
-// Computed property to filter friends based on the search query
 const filteredFriends = computed(() =>
   props.friends.filter(friend =>
-    friend.name.toLowerCase().includes(searchQuery.value.toLowerCase())
+    friend.name.toLowerCase().startsWith(searchQuery.value.toLowerCase())
   )
 );
+
 
 // Emit the selected friend back to the parent component
 const emit = defineEmits(['friendSelected']);
@@ -73,14 +63,15 @@ const formatTimeOrDate = (timestamp) => {
   }
 };
 </script>
-  
-  <style scoped>
+
+<style scoped>
 .friends-list {
   display: flex;
   flex-direction: column;
   background-color: #fff;
   height: 100vh;
-  width: 300px; /* Fixed width on larger screens */
+  width: 300px;
+  /* Fixed width on larger screens */
   min-width: 300px;
   max-width: 300px;
   border-right: 1px solid #ddd;
@@ -89,7 +80,8 @@ const formatTimeOrDate = (timestamp) => {
 /* When the screen width is smaller than 768px, adjust the layout */
 @media (max-width: 768px) {
   .friends-list {
-    width: 100px; /* Shrink to 100px */
+    width: 100px;
+    /* Shrink to 100px */
     min-width: 100px;
     max-width: 100px;
   }
@@ -103,18 +95,21 @@ const formatTimeOrDate = (timestamp) => {
 
   /* Adjust the avatar to be centered and occupy the entire width */
   .avatar {
-    margin: 0 auto; /* Center the avatar */
-    
+    margin: 0 auto;
+    /* Center the avatar */
+
     width: 50px;
     height: 50px;
   }
 
   .friends {
-    padding: 0; /* Remove padding for better alignment */
+    padding: 0;
+    /* Remove padding for better alignment */
   }
 
   .friend-item {
-    justify-content: center; /* Center the avatar in the list */
+    justify-content: center;
+    /* Center the avatar in the list */
     display: flex;
     padding: 0 auto;
     flex-direction: column;
@@ -122,64 +117,69 @@ const formatTimeOrDate = (timestamp) => {
   }
 }
 
-  
-  .search-bar {
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
-    background-color: #f9f9f9;
-  }
-  
-  .search-input {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-  }
-  
-  .friends {
-    flex: 1;
-    overflow-y: auto; /* Enable scrolling for the friends list */
-    padding: 10px;
-  }
-  
-  .friend-item {
-    display: flex;
-    align-items: center;
-    padding: 10px;
-    margin-bottom: 10px;
-    cursor: pointer;
-    transition: background-color 0.2s ease;
-  }
-  
-  .friend-item:hover {
-    background-color: #f0f0f0;
-  }
-  
-  .avatar {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    margin-right: 15px;
-  }
-  
-  .friend-info {
-    flex-grow: 1;
-  }
-  
-  .friend-info h3 {
-    margin: 0;
-    font-size: 16px;
-    font-weight: 500;
-  }
-  
-  .friend-info p {
-    margin: 0;
-    color: #888;
-  }
-  
-  .time {
-    font-size: 12px;
-    color: #888;
-  }
-  </style>
-  
+
+.search-bar {
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+  background-color: #f9f9f9;
+}
+
+.search-input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.friends {
+  flex: 1;
+  overflow-y: auto;
+  /* Enable scrolling for the friends list */
+  padding: 10px;
+}
+
+.friend-item {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.friend-item:hover {
+  background-color: #f0f0f0;
+}
+
+.avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 15px;
+}
+
+.friend-info {
+  flex-grow: 1;
+}
+
+.friend-info h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.friend-info p {
+  margin: 0;
+  color: #888;
+  max-width: 150px;
+  /* Adjust as needed */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.time {
+  font-size: 12px;
+  color: #888;
+}
+</style>
