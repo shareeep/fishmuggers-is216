@@ -33,60 +33,62 @@ export default {
 <style scoped>
 /* Search Bar */
 input[type="search"] {
-    background-color: white;
-    /* White fill */
-    border: 2px solid #FFD700;
-    /* Gray border */
-    border-radius: 15px;
-    /* Rounded corners */
-    width: 400px;
-    /* Set the width of the search bar */
-    color: black;
-    transition: border-color 0.3s, box-shadow 0.3s;
+  background-color: white;
+  /* White fill */
+  border: 2px solid #FFD700;
+  /* Gray border */
+  border-radius: 15px;
+  /* Rounded corners */
+  width: 400px;
+  /* Set the width of the search bar */
+  color: black;
+  transition: border-color 0.3s, box-shadow 0.3s;
 }
 
 input[type="search"]:focus {
-    border-color: #FAE588;
-    /* Change border color on focus (blue) */
-    box-shadow: 0 0 0 2px #FFD700;
-    /* Blue focus outline */
-    color: black;
+  border-color: #FAE588;
+  /* Change border color on focus (blue) */
+  box-shadow: 0 0 0 2px #FFD700;
+  /* Blue focus outline */
+  color: black;
 }
 
 button {
-    border-radius: 12px;
-    cursor: pointer;
+  border-radius: 12px;
+  cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 button:hover {
-    background-color: #e6c200;
-    transform: scale(1.05);
-    box-shadow: 0 4px 8px rgba(75, 0, 130, 0.2);
+  background-color: #e6c200;
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(75, 0, 130, 0.2);
 }
 
 
 button:active {
-    transform: scale(0.98);
+  transform: scale(0.98);
 
 }
 
 @media (min-width: 1024px) {
   input[type="search"] {
-    width: 400px !important; /* Adjust width as needed */
+    width: 400px !important;
+    /* Adjust width as needed */
   }
 }
 
 @media (min-width: 640px) {
   input[type="search"] {
-    width: 270px; /* Adjust width as needed */
+    width: 270px;
+    /* Adjust width as needed */
   }
 }
 
 @media (min-width: 480px) {
   input[type="search"] {
-    width: 270px; /* Adjust width as needed */
+    width: 270px;
+    /* Adjust width as needed */
   }
 }
-
 </style>

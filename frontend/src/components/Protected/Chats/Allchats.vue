@@ -1,49 +1,50 @@
 <template>
   <div class="chat-container">
-    <!-- Pass the sorted friends and the selectFriend method to FriendsList -->
-    <friendsList :friends="sortedFriends" @friendSelected="selectFriend" />
-    
-    <!-- Pass the selected friend and fetchFriends method to the ChatPanel component -->
-    <chatPanel :selectedFriend="selectedFriend" :fetchFriends="fetchFriends" />
+    <FriendsList :friends="sortedFriends" :selectedFriend="selectedFriend" @friendSelected="selectFriend"
+      @showFindFriendsPopup="showFindChatPopup" />
+
+    <chatPanel :selectedFriend="selectedFriend" :fetchFriends="fetchFriends" :showFindChatPopup="showFindChatPopup" />
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue';
-import friendsList from '@/components/Protected/Chats/FriendsList.vue';
-import chatPanel from '@/components/Protected/Chats/ChatPanel.vue';
-import axios from 'axios'; // For HTTP requests
-import { auth } from '../../../../firebase'; // Import auth from firebase.js, not getAuth directly
-import { onAuthStateChanged } from 'firebase/auth'; // Firebase Auth import
+import { ref, computed, onMounted, onBeforeUnmount, defineProps } from 'vue';
+import FriendsList from '@/components/Protected/Chats/FriendsList.vue';
+import ChatPanel from '@/components/Protected/Chats/ChatPanel.vue';
+import axios from 'axios';
+import { auth } from '../../../../firebase';
+import { onAuthStateChanged } from 'firebase/auth';
+
+const props = defineProps({
+  showFindChatPopup: {
+    type: Function,
+    required: true
+  }
+});
 
 const selectedFriend = ref(null);
-const friends = ref([]); // Initialize empty friends array
-const userUid = ref(null); // Store the Firebase UID
-let pollingInterval = null; // Store interval ID for polling
+const friends = ref([]);
+const userUid = ref(null);
+let pollingInterval = null;
 
-// Method to handle friend selection
 const selectFriend = (friend) => {
-  selectedFriend.value = friend;
+  selectedFriend.value = friend; // Update selected friend
+  console.log("Selected Friend Updated:", selectedFriend.value); // Log for debugging
 };
 
-// Fetch friends and messages from the backend
 const fetchFriends = async () => {
   try {
     if (userUid.value) {
       const response = await axios.get(`http://localhost:3000/api/messages/user/${userUid.value}`);
-      const updatedFriends = response.data;
-
-      friends.value = updatedFriends;
-
-      // If there is a previously selected friend, update it to the new version from the updated friends array
+      friends.value = response.data;
+      // console.log("Fetched friends:", friends.value);
       if (selectedFriend.value) {
-        const updatedFriend = updatedFriends.find(friend => friend.senderUid === selectedFriend.value.senderUid);
+        const updatedFriend = friends.value.find(friend => friend.senderUid === selectedFriend.value.senderUid);
         if (updatedFriend) {
           selectedFriend.value = updatedFriend;
         }
-      } else if (updatedFriends.length > 0) {
-        // Automatically select the first friend if none is selected
-        selectedFriend.value = updatedFriends[0];
+      } else if (friends.value.length > 0) {
+        selectedFriend.value = friends.value[0];
       }
     }
   } catch (error) {
@@ -51,36 +52,33 @@ const fetchFriends = async () => {
   }
 };
 
-// Computed property to sort friends based on the latest message timestamp
 const sortedFriends = computed(() => {
   return [...friends.value].sort((a, b) => new Date(b.latest) - new Date(a.latest));
 });
 
-// Function to start polling for new messages
 const startPolling = () => {
-  pollingInterval = setInterval(fetchFriends, 5000); // Poll every 5 seconds
+  pollingInterval = setInterval(fetchFriends, 5000);
 };
 
-// Stop polling when the component is destroyed
 onBeforeUnmount(() => {
   if (pollingInterval) {
     clearInterval(pollingInterval);
   }
 });
 
-// Listen for changes to the Firebase Auth state (get the UID)
 onMounted(() => {
   onAuthStateChanged(auth, (user) => {
     if (user) {
-      userUid.value = user.uid; // Set the user UID
-      fetchFriends(); // Fetch the friends once the UID is available
-      startPolling(); // Start polling for new messages
+      userUid.value = user.uid;
+      fetchFriends();
+      startPolling();
     } else {
       console.error('User not authenticated');
     }
   });
 });
 </script>
+
 
 
 <style scoped>

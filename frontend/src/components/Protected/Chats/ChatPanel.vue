@@ -9,13 +9,14 @@
         <!-- Render message HTML using v-html for clickable links -->
         <p v-html="formatMessage(message.text)" :class="message.sentByYou ? 'message-you' : 'message-them'"></p>
       </div>
+    
     </div>
     <div class="chat-input">
       <input type="text" v-model="newMessage" placeholder="Type a message..." @keyup.enter="sendMessage" />
     </div>
   </div>
   <div class="no-chat-selected" v-else>
-    <h1>Loading</h1>
+    <button @click='showFindChatPopup' class="start-chat-btn">Start Chatting!</button>
   </div>
 </template>
 
@@ -30,6 +31,10 @@ const props = defineProps({
     required: false
   },
   fetchFriends: {
+    type: Function,
+    required: true
+  },
+  showFindChatPopup: {
     type: Function,
     required: true
   }
@@ -60,7 +65,8 @@ const sendMessage = async () => {
       scrollToBottom();
     } catch (error) {
       console.error('Error sending message:', error);
-    }
+    } 
+    
   }
 };
 
@@ -110,17 +116,22 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* Same styling as before */
-</style>
-
-<style scoped>
+.sending-message {
+  font-size: 0.9rem;
+  color: gray;
+  text-align: center;
+  padding: 5px;
+}
 .chat-panel {
   display: flex;
   flex-direction: column;
-  flex-grow: 1; /* Ensures the chat panel takes up the remaining space */
+  flex-grow: 1;
+  /* Ensures the chat panel takes up the remaining space */
   background-color: #f9f9f9;
-  height: 100vh; /* Full height */
-  width: 100%; /* Full width */
+  height: 100vh;
+  /* Full height */
+  width: 100%;
+  /* Full width */
 }
 
 .chat-header {
@@ -144,39 +155,52 @@ onMounted(() => {
   background-color: #fff;
   overflow-y: auto;
   background-image: url('../../../assets/images/chat_background.png');
-  background-size: 100% 100%; /* Ensure the background image fills the container */
-  background-position: center; /* Center the image */
-  background-repeat: no-repeat; /* Prevents the background from repeating */
+  background-size: 100% 100%;
+  /* Ensure the background image fills the container */
+  background-position: center;
+  /* Center the image */
+  background-repeat: no-repeat;
+  /* Prevents the background from repeating */
 }
 
 .message {
   display: flex;
-  width: 100%; /* Ensure the message takes the full width of the container */
+  width: 100%;
+  /* Ensure the message takes the full width of the container */
   margin-bottom: 10px;
 }
 
 .message-you {
-  justify-content: flex-end; /* Aligns your messages to the right */
-  align-items: flex-end; /* Aligns the text at the bottom */
-  background-color: #FFE047; /* Yellow background */
+  justify-content: flex-end;
+  /* Aligns your messages to the right */
+  align-items: flex-end;
+  /* Aligns the text at the bottom */
+  background-color: #FFE047;
+  /* Yellow background */
   padding: 8px;
   border-radius: 10px;
   word-break: break-word;
   max-width: 75%;
-  margin-left: auto; /* Ensures the message aligns to the right */
-  color: black; /* Black text color */
-  text-align: left; /* Aligns text to the right */
+  margin-left: auto;
+  /* Ensures the message aligns to the right */
+  color: black;
+  /* Black text color */
+  text-align: left;
+  /* Aligns text to the right */
 }
 
 .message-them {
   justify-content: flex-start;
-  align-items: flex-start; /* Aligns the text at the top */
+  align-items: flex-start;
+  /* Aligns the text at the top */
   background-color: #ececec;
   padding: 8px;
   border-radius: 10px;
   max-width: 75%;
-  margin-right: auto; /* Ensures the message aligns to the left */
-  color: #000; /* Black text color */
+  margin-right: auto;
+  /* Ensures the message aligns to the left */
+  color: #000;
+  /* Black text color */
 }
 
 .chat-input {
@@ -195,29 +219,55 @@ onMounted(() => {
 
 .no-chat-selected {
   display: flex;
-  justify-content: center; /* Center horizontally */
-  align-items: center; /* Center vertically */
-  height: 100vh; /* Take up the full viewport height */
-  width: 100%; /* Take up the full width */
+  justify-content: center;
+  /* Center horizontally */
+  align-items: center;
+  /* Center vertically */
+  height: 100vh;
+  /* Take up the full viewport height */
+  width: 100%;
+  /* Take up the full width */
   background-image: url('../../../assets/images/chat_background.png');
-  background-size: 100% 100%; /* Ensure the background image fills the container */
-  background-position: center; /* Center the image */
-  background-repeat: no-repeat; /* Prevents the background from repeating */
-  text-align: center; /* Center the text */
+  background-size: 100% 100%;
+  /* Ensure the background image fills the container */
+  background-position: center;
+  /* Center the image */
+  background-repeat: no-repeat;
+  /* Prevents the background from repeating */
+  text-align: center;
+  /* Center the text */
+}
+
+.start-chat-btn {
+  background-color: #FFD700;
+  color: #333;
+}
+
+.start-chat-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(75, 0, 130, 0.2);
+  background-color: #E6C200;
+}
+
+.start-chat-btn:active {
+  transform: scale(0.98);
 }
 
 /* Media Query for Small Screens (max-width: 767px) */
 @media (max-width: 767px) {
   .chat-panel {
-    height: calc(100vh - 50px); /* Subtract bottom navbar height */
+    height: calc(100vh - 50px);
+    /* Subtract bottom navbar height */
   }
 
   .chat-messages {
-    padding-bottom: 60px; /* Additional padding for chat input area */
+    padding-bottom: 60px;
+    /* Additional padding for chat input area */
   }
 
   .chat-input {
-    padding-bottom: 10px; /* Extra padding to lift input above navbar */
+    padding-bottom: 10px;
+    /* Extra padding to lift input above navbar */
   }
 }
 </style>
