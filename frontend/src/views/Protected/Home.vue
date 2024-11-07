@@ -12,7 +12,7 @@
     <HomeSharePopup
       v-if="currentPost && showPopup"
       :friends="friends"
-      :shareContent="`http://localhost:5173/posts/${currentPost.postId}`"
+      :shareContent="`../posts/${currentPost.postId}`"
       :postId="currentPost.postId"
       :userId="userId"
       @close="closeSharePopup"

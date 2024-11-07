@@ -171,5 +171,50 @@ router.post("/:postId/share", authenticate, async (req, res) => {
 });
 
 
+// Route to fetch a single post by its ID
+router.get("/single/:postId", async (req, res) => {
+  const { postId } = req.params;
+
+  try {
+    console.log("Fetching post with ID:", postId);
+    
+    // Fetch post from Firestore
+    const postDoc = await db.collection("posts").doc(postId).get();
+    
+    if (!postDoc.exists) {
+      console.log("Post not found");
+      return res.status(404).json({ error: "Post not found" });
+    }
+    
+    const postData = postDoc.data();
+    
+    // Fetch user details for the post
+    const userSnapshot = await db.collection("users").doc(postData.userId).get();
+    
+    if (!userSnapshot.exists) {
+      console.log("User not found");
+      return res.status(404).json({ error: "User not found" });
+    }
+    
+    const userData = userSnapshot.data();
+    const post = {
+      postId: postDoc.id,
+      ...postData,
+      user: {
+        uid: postData.userId,
+        name: userData.username || "Unknown User",
+        avatar: userData.profileImage || "https://via.placeholder.com/50",
+      },
+    };
+    
+    console.log("Post retrieved successfully");
+    res.status(200).json(post);
+  } catch (error) {
+    console.error("Error fetching post:", error);
+    res.status(500).json({ error: "Failed to retrieve post" });
+  }
+});
+
+
 
 module.exports = router;

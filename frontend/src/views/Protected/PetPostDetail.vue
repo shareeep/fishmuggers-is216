@@ -15,6 +15,7 @@ import axios from 'axios';
 import Navbar from '@/components/Protected/Navbar.vue';
 import PetpostDetail from '@/components/Protected/PetPosts/PetpostDetail.vue';
 
+
 const route = useRoute();
 const postId = route.params.postId;  
 </script>

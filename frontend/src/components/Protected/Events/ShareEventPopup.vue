@@ -66,7 +66,7 @@ export default {
       try {
         console.log(this.event)
         
-        const messageText = `Join me at <a href="${window.location.origin}/eventdetail/${this.event.eventId}" target="_blank">${this.event.title}</a>`;
+        const messageText = `Join me at <a href="../eventdetail/${this.event.eventId}" target="_blank">${this.event.title}</a>`;
         
         await axios.post('http://localhost:3000/api/messages/send', {
           senderUid,

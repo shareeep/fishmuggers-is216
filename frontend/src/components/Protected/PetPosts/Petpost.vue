@@ -95,6 +95,35 @@ export default {
     deletePost(postId) {
       this.posts = this.posts.filter(post => post.postId !== postId);
     },
+
+    async likePost(post) {
+      const auth = getAuth();
+      const userId = auth.currentUser ? auth.currentUser.uid : null;
+
+      if (!userId) {
+        alert("Please log in to like posts.");
+        return;
+      }
+
+      try {
+        // Send the like request to the backend
+        const response = await axios.post(`http://localhost:3000/api/posts/${post.postId}/like`, { userId });
+
+        // If the post was liked successfully, update the local post state
+        if (response.status === 200) {
+          post.hasLiked = !post.hasLiked; // Toggle like state
+          if (post.hasLiked) {
+            post.likes.push(userId); // Add userId to likes if liked
+          } else {
+            post.likes = post.likes.filter(id => id !== userId); // Remove userId from likes if unliked
+          }
+        }
+      } catch (error) {
+        console.error("Failed to like post:", error);
+        alert("Failed to like post.");
+      }
+    },
+
   },
   mounted() {
     const auth = getAuth();
