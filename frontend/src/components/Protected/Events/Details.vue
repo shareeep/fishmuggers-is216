@@ -167,17 +167,6 @@ onMounted(async () => {
 </script>
 
 <style scoped>
-.back-button {
-  position: absolute;
-  /* Adjust to appear beside the Navbar */
-  z-index: 10;
-  padding: 5px;
-  transition: transform 0.2s ease;
-}
-
-.back-button:hover {
-  transform: scale(1.1);
-}
 /* Loading Indicator Style */
 .loading-indicator {
   text-align: center;

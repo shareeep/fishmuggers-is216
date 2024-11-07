@@ -8,22 +8,32 @@
       <h1 class="heading">Connect with Friends</h1>
       <SearchBar />
       <div style="align-items: center;">
-        <FriendRequests />
+        <FriendRequests 
+          :requests="receivedRequests" 
+          @accept-request="handleAcceptRequest" 
+          @reject-request="handleRejectRequest" 
+        />
 
         <!-- FriendsList component with popup toggle function passed down -->
-        <FriendsList @popup-toggle="togglePopup" :friends="friends" />
+        <FriendsList 
+          @popup-toggle="togglePopup" 
+          :myFriends="myFriends" 
+          :suggestedFriends="suggestedFriends" 
+        />
 
-        <RequestsSent />
+        <RequestsSent :sentRequests="sentRequests" @updateSentRequests="removeSentRequest" />
       </div> 
     </main>
 
     <!-- AllFriendsPopup component, visible only when showPopup is true -->
-    <AllFriendsPopup v-if="showPopup" :friends="friends" @close="togglePopup(false)" />
+    <AllFriendsPopup v-if="showPopup" :friends="suggestedFriends" @close="togglePopup(false)" />
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue';
+import { getAuth } from "firebase/auth";
+import axios from 'axios';
 import Navbar from '@/components/Protected/Navbar.vue';
 import SearchBar from '@/components/Protected/Friends/Searchbar.vue';
 import FriendRequests from '@/components/Protected/Friends/FriendRequests.vue';
@@ -38,21 +48,17 @@ import OverscrollPlugin from 'smooth-scrollbar/plugins/overscroll';
 Scrollbar.use(OverscrollPlugin);
 
 const showPopup = ref(false);
-const friends = ref([
-  { id: 1, name: "Jerome", username: "jerome-with-a-j", avatar: "https://randomuser.me/api/portraits/men/10.jpg" },
-  { id: 2, name: "Becky Gianani", username: "becky-gee", avatar: "https://randomuser.me/api/portraits/women/12.jpg" },
-  { id: 3, name: "Lauren Moore", username: "lauren-moore", avatar: "https://randomuser.me/api/portraits/women/18.jpg" },
-  { id: 4, name: "Brad Garner", username: "bradgarner", avatar: "https://randomuser.me/api/portraits/men/17.jpg" },
-  { id: 5, name: "Zafira Bee", username: "zafira-bee", avatar: "https://randomuser.me/api/portraits/men/14.jpg" },
-  { id: 6, name: "Tim Double-U", username: "tim-double-u", avatar: "https://randomuser.me/api/portraits/men/19.jpg" },
-  { id: 7, name: "Georgia Plué", username: "gee-plue", avatar: "https://randomuser.me/api/portraits/women/20.jpg" },
-  { id: 8, name: "Alex Johnson", username: "alex-j", avatar: "https://randomuser.me/api/portraits/men/23.jpg" },
-  { id: 9, name: "Samantha Rose", username: "sam-rose", avatar: "https://randomuser.me/api/portraits/women/25.jpg" },
-  { id: 10, name: "Chris Lee", username: "chris-lee", avatar: "https://randomuser.me/api/portraits/men/29.jpg" },
-  { id: 11, name: "Emily Nguyen", username: "em-nguyen", avatar: "https://randomuser.me/api/portraits/women/33.jpg" },
-  { id: 12, name: "Michael Tan", username: "mike-tan", avatar: "https://randomuser.me/api/portraits/men/35.jpg" },
-  // ... Add other friends here
-]);
+const friends = ref([]); // Initialize friends as an empty array
+const auth = getAuth();
+const allUsers = ref([]); // All fetched users
+const myFriends = ref([]); // This will remain empty as per requirement
+const suggestedFriends = ref([]); // Suggested friends list
+const sentRequests = ref([]);
+const receivedRequests = ref([]);
+
+// Get the current user ID from Firebase Auth
+const userId = auth.currentUser ? auth.currentUser.uid : null;
+console.log("Current user ID:", userId);
 
 // Function to toggle popup visibility
 function togglePopup(value) {
@@ -211,7 +217,7 @@ function removeSentRequest(requestId) {
 
 
 onMounted(() => {
-  const scrollbar = Scrollbar.init(document.querySelector('#scrollable-element'), {
+  Scrollbar.init(document.querySelector('#scrollable-element'), {
     damping: 0.05,
     renderByPixels: true,
     alwaysShowTracks: false,
@@ -223,11 +229,12 @@ onMounted(() => {
         maxOverscroll: 70,
       },
     },
-  }); 
+  });
 
-  // Hide the scrollbar track by setting its opacity to 0
-  scrollbar.track.xAxis.element.style.opacity = '0';
-  scrollbar.track.yAxis.element.style.opacity = '0';
+  fetchUsers(); // Fetch all users when the component mounts
+  fetchSentRequests(); // Fetch sent requests when the component mounts
+  fetchReceivedRequests();
+  fetchMyFriends();
 });
 </script>
 
@@ -242,26 +249,29 @@ onMounted(() => {
   width: 250px;
   height: 100vh;
   position: fixed;
+  top: 0;
+  left: 0;
+  background-color: #ffffff;
+  z-index: 1;
 }
 
-main { 
-  align-items: center;
+main {
+  align-items: center; /* Center horizontally */
   margin-left: 250px;
   flex-grow: 1;
+  padding: 5%;
   display: flex;
   flex-direction: column;
   gap: 5px;
   background-color: #FCEFB4;
   height: 100vh;
-  overflow: scroll;
-  padding: 20px;
-  box-sizing: border-box;
+  overflow: hidden;
 }
 
 #scrollable-element {
   width: 100%;
   height: 100%;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 
 .heading {
@@ -272,50 +282,4 @@ main {
   text-align: center;
 }
 
-/* Responsive Adjustments */
-@media (max-width: 991px) {
-  .navbar {
-    width: 80px;
-    position: fixed
-  }
-
-  main {
-    margin-left: 80px;
-    padding: 15px;
-  }
-}
-
-@media (max-width: 767px) {
-  .home-container {
-    flex-direction: column;
-  }
-
-  .navbar {
-    width: 100%;
-    height: 50px;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    background-color: #f9f9f9;
-    z-index: 10;
-  }
-
-  main {
-    margin-left: 0;
-    margin-top: 0;
-    padding: 15px;
-    padding-bottom:45px;
-    height: calc(100vh - 50px);
-    overflow-y: auto;
-  }
-
-  .friends-container {
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .heading {
-    font-size: 1.5rem;
-  }
-}
 </style>

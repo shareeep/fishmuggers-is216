@@ -6,8 +6,9 @@
     </div>
     <div class="chat-messages" ref="messageContainer" @scroll="handleScroll">
       <div v-for="(message, index) in selectedFriend.messages" :key="index" class="message">
-        <!-- Render message HTML using v-html for clickable links -->
-        <p v-html="formatMessage(message.text)" :class="message.sentByYou ? 'message-you' : 'message-them'"></p>
+        <p :class="message.sentByYou ? 'message-you' : 'message-them'">
+          {{ message.text }}
+        </p>
       </div>
     </div>
     <div class="chat-input">
@@ -20,9 +21,9 @@
 </template>
 
 <script setup>
-import { ref, onMounted, nextTick, watch, defineProps } from 'vue';
-import axios from 'axios';
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { ref, onMounted, nextTick, watch } from 'vue';
+import axios from 'axios'; // Import axios for HTTP requests
+import { getAuth, onAuthStateChanged } from "firebase/auth"; // Import Firebase Auth
 
 const props = defineProps({
   selectedFriend: {
@@ -36,38 +37,40 @@ const props = defineProps({
 });
 
 const newMessage = ref('');
-const userUid = ref(null);
-const messageContainer = ref(null);
-const isUserScrolledUp = ref(false);
+const userUid = ref(null); // Store the Firebase UID
+const messageContainer = ref(null); // Reference for the message container
+const isUserScrolledUp = ref(false); // To track if the user has manually scrolled up
 
 // Send message logic with POST request to backend
 const sendMessage = async () => {
   if (newMessage.value.trim() !== '' && props.selectedFriend && userUid.value) {
     try {
+      // Make a POST request to save the message in the backend
       await axios.post('http://localhost:3000/api/messages/send', {
-        senderUid: userUid.value,
-        receiverUid: props.selectedFriend.senderUid,
+        senderUid: userUid.value, // Use the Firebase Auth UID as senderUid
+        receiverUid: props.selectedFriend.senderUid, // The receiver is the selected friend
         messageText: newMessage.value
       });
 
+      // If message is successfully sent to the backend, push it to the UI
       props.selectedFriend.messages.push({
         text: newMessage.value,
         sentByYou: true
       });
 
+      // Clear the input after sending
       newMessage.value = '';
+
+      // Call fetchFriends to update the friends and message lists
       await props.fetchFriends();
+
+      // Scroll to the bottom after sending the message
       scrollToBottom();
+
     } catch (error) {
       console.error('Error sending message:', error);
     }
   }
-};
-
-// Function to format messages for clickable links
-const formatMessage = (messageText) => {
-  // Sanitize or modify if necessary to avoid XSS, otherwise trust the message content
-  return messageText;
 };
 
 // Watch for changes in selectedFriend's messages and scroll to bottom if needed
@@ -82,7 +85,7 @@ const handleScroll = () => {
   const container = messageContainer.value;
   if (container) {
     const scrollDifference = container.scrollHeight - container.scrollTop - container.clientHeight;
-    isUserScrolledUp.value = scrollDifference > 10;
+    isUserScrolledUp.value = scrollDifference > 10; // If user scrolled up by 10px or more
   }
 };
 
@@ -91,7 +94,7 @@ const scrollToBottom = () => {
   if (!isUserScrolledUp.value) {
     const container = messageContainer.value;
     nextTick(() => {
-      container.scrollTop = container.scrollHeight;
+      container.scrollTop = container.scrollHeight; // Scroll to the bottom
     });
   }
 };
@@ -101,13 +104,14 @@ onMounted(() => {
   const auth = getAuth();
   onAuthStateChanged(auth, (user) => {
     if (user) {
-      userUid.value = user.uid;
+      userUid.value = user.uid; // Set the user UID from Firebase
     } else {
       console.error('User not authenticated');
     }
   });
 });
 </script>
+
 
 <style scoped>
 /* Same styling as before */
@@ -203,20 +207,5 @@ onMounted(() => {
   background-position: center; /* Center the image */
   background-repeat: no-repeat; /* Prevents the background from repeating */
   text-align: center; /* Center the text */
-}
-
-/* Media Query for Small Screens (max-width: 767px) */
-@media (max-width: 767px) {
-  .chat-panel {
-    height: calc(100vh - 50px); /* Subtract bottom navbar height */
-  }
-
-  .chat-messages {
-    padding-bottom: 60px; /* Additional padding for chat input area */
-  }
-
-  .chat-input {
-    padding-bottom: 10px; /* Extra padding to lift input above navbar */
-  }
 }
 </style>

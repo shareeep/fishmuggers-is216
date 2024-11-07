@@ -360,10 +360,10 @@ input[type="select"]{
 
 .create-event-form{
   display: flex;
-  max-width:800px;
   flex-direction: column;
+  max-width: 1000px;
   margin: 0 auto;
-  padding: 40px;
+  padding: 20px;
   background-color: #fff;
   border-radius: 10px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
