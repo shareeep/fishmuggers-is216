@@ -1,7 +1,4 @@
 <template>
-  <router-link to="/eventsadmin">
-    <button class="edit-btn">Create Event</button>
-  </router-link>
   <div class="events-list p-6 bg-white rounded shadow-md">
     <h2 class="text-xl font-semibold mb-4">Created Events</h2>
     <!-- Display success and error messages -->
@@ -13,14 +10,20 @@
     </div>
     <div v-if="events.length">
       <div class="event-cards-grid">
-        <EventCard 
-          v-for="event in events" 
-          :key="event.eventId" 
-          :event="event" 
-          :showActions="true" 
-          @edit-event="$emit('edit-event', event)"
-          @delete-event="handleDeleteEvent"
-        />
+  <router-link 
+    v-for="event in events" 
+    :key="event.eventId" 
+    :to="`/eventdetail/${event.eventId}`" 
+    class="event-card-link"
+  >
+    <EventCard 
+      :event="event" 
+      :showActions="true" 
+      :isOwnProfile="isOwnProfile"
+      @edit-event="$emit('edit-event', event)"
+      @delete-event="handleDeleteEvent"
+    />
+  </router-link>
       </div>
     </div>
     <p v-else class="text-gray-700">No events available.</p>
@@ -40,6 +43,10 @@ const props = defineProps({
   events: {
     type: Array,
     required: true
+  },
+  isOwnProfile: {
+    type: Boolean,
+    default: false
   }
 });
 

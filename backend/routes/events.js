@@ -687,12 +687,12 @@ router.get("/:uid/friends", authenticate, async (req, res) => {
 });
 
 // Route to fetch all events joined by a specific user
-router.get("/joined/:uid", authenticate, async (req, res) => {
+router.get("/joined/:uid", async (req, res) => {
   const { uid } = req.params;
 
-  if (!uid) {
-    return res.status(400).json({ error: "User ID is required" });
-  }
+  // if (!uid) {
+  //   return res.status(400).json({ error: "User ID is required" });
+  // }
 
   try {
     const joinedEventsSnapshot = await db

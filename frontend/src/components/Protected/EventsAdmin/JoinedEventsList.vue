@@ -1,15 +1,10 @@
-<!-- JoinedEventsList.vue -->
 <template>
   <div class="joined-events-section">
-    <!-- Join Event Button -->
-    <router-link to="/events">
-      <button class="edit-btn">Join Event</button>
-    </router-link>
-    
+    <!-- Join Event Button: Only show if viewing own profile -->
     <!-- Events List -->
     <div class="events-list p-6 bg-white rounded shadow-md">
       <h2 class="text-xl font-semibold mb-4">Joined Events</h2>
-      
+
       <!-- Check if there are events -->
       <div v-if="events.length">
         <div class="event-cards-grid">
@@ -35,17 +30,45 @@
 </template>
 
 <script setup>
-import { defineProps } from "vue";
-import EventCard from "./EventCard.vue";
+import { defineProps, ref, onMounted } from 'vue';
+import { getAuth } from 'firebase/auth';
+import EventCard from './EventCard.vue';
 
-// Define props to accept events from parent
+// Define props to accept events and the profile ID from the parent
 const props = defineProps({
   events: {
     type: Array,
     required: true
+  },
+  profileUserId: {
+    type: String,
+    default: null // Allow for undefined by setting a default
+  }
+});
+
+// Reactive properties
+const isOwnProfile = ref(false); // Dynamically determined
+const currentUserId = ref(null); // Store current user ID
+
+// Fetch the current authenticated user and set isOwnProfile
+onMounted(() => {
+  const auth = getAuth();
+  const currentUser = auth.currentUser;
+
+  if (currentUser) {
+    currentUserId.value = currentUser.uid; // Store current user ID
+
+    // Use currentUserId as fallback if profileUserId is undefined
+    const effectiveUserId = props.profileUserId || currentUserId.value;
+    isOwnProfile.value = currentUserId.value === effectiveUserId;
+
+    console.log('Current User ID:', currentUserId.value); // Debugging
+    console.log('Profile User ID:', effectiveUserId); // Debugging (fallback applied if needed)
+    console.log('Is Own Profile:', isOwnProfile.value); // Check if set correctly
   }
 });
 </script>
+
 
 <style scoped>
 /* Parent component styling */

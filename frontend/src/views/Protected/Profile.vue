@@ -10,15 +10,29 @@
         :joinedEvents="joinedEvents"
         @edit-event="openEditEventModal" 
         @event-updated="fetchEvents" 
-        @open-post="openPostModal" 
+        @open-post="openModal" 
       />
     </main>
-    <EditEventModal v-if="showEditModal" :eventData="editEventData" @close="closeEditEventModal"
-      @event-updated="handleEventUpdated" />
-    <PostModal v-if="showPostModal" :post="selectedPost" :userData="userData" :selectedPostIndex="selectedPostIndex"
-      :totalPosts="userData.posts.length" @close="closePostModal" @prev="goToPrevPost" @next="goToNextPost" />
+    <EditEventModal 
+      v-if="showEditModal" 
+      :eventData="editEventData" 
+      @close="closeEditEventModal"
+      @event-updated="handleEventUpdated" 
+    />
+    <PostModal 
+      v-if="showPostModal" 
+      :post="selectedPost" 
+      :userData="userData" 
+      :selectedPostIndex="selectedPostIndex"
+      :totalPosts="userData.posts.length" 
+      @close="closePostModal" 
+      @prev="goToPrevPost" 
+      @next="goToNextPost" 
+      @like-toggle="handleLikeToggle"
+    />
   </div> 
 </template>
+
 <script setup>
 import { ref, onMounted, watch } from 'vue';
 import { useRoute } from 'vue-router';
@@ -106,7 +120,8 @@ const closeEditEventModal = () => {
   editEventData.value = null;
 };
 
-const openPostModal = (post) => {
+// Handle the 'open-post' event from ProfileMain.vue
+const openModal = (post) => {
   selectedPost.value = post;
   selectedPostIndex.value = userData.value.posts.findIndex((p) => p.postId === post.postId);
   showPostModal.value = true;
@@ -120,22 +135,67 @@ const closePostModal = () => {
 const goToPrevPost = () => {
   if (selectedPostIndex.value > 0) {
     selectedPostIndex.value--;
-  } else {
-    selectedPostIndex.value = userData.value.posts.length - 1;
+    selectedPost.value = userData.value.posts[selectedPostIndex.value];
   }
-  selectedPost.value = userData.value.posts[selectedPostIndex.value];
 };
 
 const goToNextPost = () => {
   if (selectedPostIndex.value < userData.value.posts.length - 1) {
     selectedPostIndex.value++;
-  } else {
-    selectedPostIndex.value = 0;
+    selectedPost.value = userData.value.posts[selectedPostIndex.value];
   }
-  selectedPost.value = userData.value.posts[selectedPostIndex.value];
 };
 
-// Scrollbar setup (same as before)
+const handleLikeToggle = async ({ postId, isLiked }) => {
+  try {
+    // Ensure the user is authenticated
+    if (!auth.currentUser) {
+      alert("You need to be logged in to like posts.");
+      return;
+    }
+
+    const token = await auth.currentUser.getIdToken();
+    const userId = auth.currentUser.uid;
+
+    console.log("Token:", token); // Debugging
+    console.log("User ID:", userId); // Debugging
+
+    // Send like/unlike request to the backend with userId
+    const response = await axios.post(
+      `/api/posts/${postId}/like`,
+      { like: isLiked, userId: userId }, // Included userId
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+
+    if (response.status === 200) {
+      // Find the post in userData.posts
+      const postIndex = userData.value.posts.findIndex(post => post.postId === postId);
+      if (postIndex !== -1) {
+        if (isLiked) {
+          // Add current user's ID to the likes array
+          userData.value.posts[postIndex].likes.push(userId);
+        } else {
+          // Remove current user's ID from the likes array
+          const index = userData.value.posts[postIndex].likes.indexOf(userId);
+          if (index !== -1) {
+            userData.value.posts[postIndex].likes.splice(index, 1);
+          }
+        }
+        // Update isLiked status
+        userData.value.posts[postIndex].isLiked = isLiked;
+        // Update the selectedPost if it's the one being viewed
+        if (selectedPost.value && selectedPost.value.postId === postId) {
+          selectedPost.value = userData.value.posts[postIndex];
+        }
+      }
+    }
+  } catch (error) {
+    console.error("Error toggling like:", error.response?.data || error);
+    alert(error.response?.data?.error || "Unable to toggle like. Please try again.");
+  }
+};
+
+// Scrollbar setup remains unchanged
 import Scrollbar from 'smooth-scrollbar';
 import OverscrollPlugin from 'smooth-scrollbar/plugins/overscroll';
 Scrollbar.use(OverscrollPlugin);
@@ -161,6 +221,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
+
 #scrollable-element {
   width: 100%;
   height: 100%;

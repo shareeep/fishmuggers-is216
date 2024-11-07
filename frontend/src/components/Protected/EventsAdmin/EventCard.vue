@@ -13,15 +13,15 @@
         <p><strong>Location:</strong> {{ event.location }}</p>
         <p> <strong>Interested Users:</strong> {{ event.interestedUsers.length }}</p>
       </div>
-        <div class="action-buttons" v-if="showActions || isEventHost">
-          <!-- Stop propagation on these buttons to prevent navigation -->
-          <button @click.stop="$emit('edit-event', event)" class="edit-btn mr-3">
-            Edit
-          </button>
-          <button @click.stop="$emit('delete-event', event.eventId)" class="delete-btn">
-            Delete
-          </button>
-        </div>
+<div class="action-buttons" v-if="showActions || isEventHost">
+  <!-- Stop propagation on these buttons to prevent navigation -->
+  <button v-if="isOwnProfile || isEventHost" @click.stop="$emit('edit-event', event)" class="edit-btn mr-3">
+    Edit
+  </button>
+  <button v-if="isOwnProfile || isEventHost" @click.stop="$emit('delete-event', event.eventId)" class="delete-btn">
+    Delete
+  </button>
+</div>
       </div>
     </div>
 </template>
@@ -50,12 +50,11 @@ const handleClick = () => {
 
 // Computed Property to Check if Current User is the Event Host
 const isEventHost = computed(() => {
-  return (
-    currentUser.value &&
-    props.event.host &&
-    props.event.host.uid === currentUser.value.uid
-  );
+  console.log("Event Host ID:", props.event.host); // Debugging line
+  console.log("Current User ID:", currentUser.value?.uid); // Debugging line
+  return currentUser.value && props.event.host === currentUser.value.uid;
 });
+
 
 // Helper Methods
 

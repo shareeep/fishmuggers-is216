@@ -24,34 +24,35 @@
     <!-- Profile Tabs -->
     <div class="profile-tabs">
       <button :class="{ active: activeTab === 'posts' }" @click="activeTab = 'posts'">Posts</button>
-      <button :class="{ active: activeTab === 'eventsJoined' }" @click="activeTab = 'eventsJoined'">Events Joined/Created</button>
+      <button :class="{ active: activeTab === 'eventsJoined' }" @click="activeTab = 'eventsJoined'">Events</button>
       <button :class="{ active: activeTab === 'pets' }" @click="activeTab = 'pets'">Pets</button>
     </div>
 
     <!-- Tab Content -->
     <div class="tab-content">
-      <div v-if="activeTab === 'posts'">
-        <div v-if="posts === 0" class="no-posts">
-          <i class="no-posts-pic"><img src="../../../assets/images/camera.png" alt=""></i>
-          <h3>Share Photos</h3>
-          <p>When you share photos, they will appear on your profile.</p>
-          <router-link to="/addpost">
-            <p class="share-first-photo">Share your first photo</p>
-          </router-link>
-        </div>
-        <div v-else class="posts-grid">
-          <div v-for="(post, index) in props.userData.posts" :key="post.id" class="post-item" @click="openPostModal(post)">
-            <img :src="post.image" alt="User Post" class="post-image" />
-            <div class="overlay">
-              <i class="fas fa-thumbs-up"></i>
-              <span class="likes-count">{{ post.likes }}</span>
-            </div>
-          </div>
-        </div>
+<div v-if="activeTab === 'posts'">
+  <div v-if="posts.length === 0" class="no-posts">
+    <i class="no-posts-pic"><img src="../../../assets/images/camera.png" alt=""></i>
+    <h3>Share Photos</h3>
+    <p>When you share photos, they will appear on your profile.</p>
+    <router-link to="/addpost">
+      <p class="share-first-photo">Share your first photo</p>
+    </router-link>
+  </div>
+  <div v-else class="posts-grid">
+    <div v-for="(post, index) in posts" :key="post.id" class="post-item" @click="openModal(post)">
+      <img :src="post.image" alt="User Post" class="post-image" />
+      <div class="post-overlay">
+        <i class="fas fa-thumbs-up"></i>
+        <span class="likes-count">{{ post.likes?.length || 0 }}</span>
       </div>
-
+    </div>
+  </div>
+</div>
 
       <div v-if="activeTab === 'eventsJoined'">
+
+
         <!-- Buttons for toggling views -->
         <div class="toggle-buttons">
           <button :class="{ active: eventsView === 'createdEvents' }" @click="eventsView = 'createdEvents'">
@@ -64,13 +65,22 @@
 
         <!-- Display CreatedEvents or JoinedEvents based on eventsView -->
         <div v-if="eventsView === 'createdEvents'">
+    <router-link v-if="isOwnProfile" to="/eventsadmin">
+    <button class="edit-btn">Create Event</button>
+  </router-link>
+          
           <CreatedEventsList 
             :events="createdEvents" 
             @edit-event="handleEditEvent" 
             @delete-event="handleDeleteEvent" 
           />
         </div>
+
+        
         <div v-if="eventsView === 'joinedEvents'">
+              <router-link v-if="isOwnProfile" to="/events">
+      <button class="edit-btn">Join Event</button>
+    </router-link>
           <JoinedEventsList 
             :events="joinedEvents" 
           />
@@ -79,38 +89,47 @@
 
 
       <!-- PETS -->
-      <div v-if="activeTab === 'pets'">
-        <router-link to="/manage-pets">
-          <button class="edit-btn">Manage Pets</button>
-        </router-link>
-        <div class="pets-wrapper">
-          <div class="pets-grid">
-            <div v-for="(pet, index) in props.pets" :key="index" class="pet-card"
-              :style="{ animationDelay: `${index * 0.2}s` }">
-              <img 
-  :src="pet.profileImage || 'https://via.placeholder.com/150?text=No+Image'" 
-  alt="Pet Image" 
-  class="pet-avatar" 
-/>
-              <div class="info-container">
-                <div class="details">
-                  <h4>{{ pet.name }}</h4>
-                  <p>Type: {{ pet.type }}</p>
-                  <p>Breed: {{ pet.breed }}</p>
-                  <p>Age: {{ pet.age }} years</p>
-                </div>
-              </div>
-            </div>
+<div v-if="activeTab === 'pets'">
+  <router-link to="/manage-pets">
+    <button class="edit-btn">Manage Pets</button>
+  </router-link>
+  <div class="pets-wrapper">
+    <!-- Check if there are pets to display -->
+    <div v-if="props.pets.length > 0" class="pets-grid">
+      <div v-for="(pet, index) in props.pets" :key="index" class="pet-card"
+        :style="{ animationDelay: `${index * 0.2}s` }">
+        <img 
+          :src="pet.profileImage || 'https://via.placeholder.com/150?text=No+Image'" 
+          alt="Pet Image" 
+          class="pet-avatar" 
+        />
+        <div class="info-container">
+          <div class="details">
+            <h4>{{ pet.name }}</h4>
+            <p>Type: {{ pet.type }}</p>
+            <p>Breed: {{ pet.breed }}</p>
+            <p>Age: {{ pet.age }} years</p>
           </div>
         </div>
       </div>
+    </div>
+    <!-- Display message if no pets are available -->
+    <div v-else class="no-pets">
+      <i class="no-pets-pic"><img src="../../../assets/images/no-events.png" alt="No Pets Image"></i>
+      <h3>No pets yet</h3>
+      <p>Add your pets so others can see them too!</p>
+    </div>
+  </div>
+</div>
+
+
     </div>
   </div>
   <div v-else class="loading-placeholder">Loading...</div>
 </template>
 
 <script setup>
-import { ref, onMounted, defineEmits, defineProps } from 'vue';
+import { ref, onMounted, defineEmits, defineProps, watch } from 'vue';
 import axios from 'axios';
 import { getAuth } from 'firebase/auth';
 import { useRouter } from 'vue-router';
@@ -123,11 +142,35 @@ const props = defineProps({
   pets: Array,
   isOwnProfile: Boolean,
   createdEvents: Array,
-  joinedEvents: Array
+  joinedEvents: Array,
 });
 
+const posts = ref([]);
+onMounted(() => {
+  if (props.userData && props.userData.userId) {
+    fetchPosts(props.userData.userId);
+  }
+});
+
+// Optionally, add a watcher to re-fetch posts if userData changes
+watch(() => props.userData, (newData) => {
+  if (newData && newData.userId) {
+    fetchPosts(newData.userId);
+  }
+});
+
+const fetchPosts = async (userId) => {
+  try {
+    const response = await axios.get(`/api/posts/user/${userId}/posts`);
+    posts.value = response.data || []; // Ensure posts is always an array
+    console.log("Fetched Posts:", posts.value); // Debugging log
+  } catch (error) {
+    console.error("Error fetching posts:", error);
+  }
+};
+
 // Define emits
-const emit = defineEmits(['edit-event', 'delete-event', 'open-detail']);
+const emit = defineEmits(['edit-event', 'delete-event', 'open-post']);
 
 // Define reactive properties
 const eventsView = ref('createdEvents');
@@ -143,13 +186,15 @@ const handleDeleteEvent = (eventId) => {
   emit('delete-event', eventId);
 };
 
-// Handle opening event detail
-const openEventDetail = (event) => {
-  emit('open-detail', event);
+const openModal = (post) => {
+  emit('open-post', post);
 };
+
 </script>
 
 <style scoped>
+
+
 .profile-page {
   max-width: 800px;
   margin: 0 auto;
@@ -184,13 +229,17 @@ const openEventDetail = (event) => {
   text-align: left;
 }
 
+
+
 .username {
   font-size: 20px;
   font-weight: bold;
 }
 
 .edit-btn {
-  padding: 5px 15px;
+  display: block; /* Makes the button take up the full width */
+  width: 100%; /* Ensures it spans the full width of its container */
+  padding: 10px 15px; /* Increases the padding for a larger button */
   border: none;
   border-radius: 5px;
   font-weight: bold;
@@ -198,11 +247,12 @@ const openEventDetail = (event) => {
   background-color: #FFD700;
   color: #333;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  margin-bottom: 15px; /* Adds space below the button */
 }
 
 .edit-btn:hover {
   background-color: #E6C200;
-  transform: scale(1.05);
+  transform: scale(1.02);
   box-shadow: 0 4px 8px rgba(75, 0, 130, 0.2);
 }
 
@@ -399,6 +449,56 @@ const openEventDetail = (event) => {
   color: #777;
 }
 
+.no-posts,
+.no-pets {
+  text-align: center;
+  color: #555;
+  padding: 40px 20px;
+}
+
+.no-posts-pic {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.no-pets-pic {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 0;
+}
+
+.no-pets-pic img,
+.no-posts-pic img {
+  width: 150px;
+  height: auto;
+  /* Maintain aspect ratio */
+}
+
+.no-pets h3,
+.no-posts h3 {
+  font-weight: bold;
+  font-size: 24px;
+  margin-bottom: 5px;
+}
+
+.no-posts p {
+  font-size: 14px;
+  color: #777;
+}
+
+.share-first-photo {
+  color: #0095f6;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 14px;
+  margin-top: 10px;
+  text-decoration: underline;
+}
+
+
 .share-first-photo {
   color: #0095f6;
   cursor: pointer;
@@ -421,6 +521,7 @@ const openEventDetail = (event) => {
   /* 1:1 Aspect Ratio */
   position: relative;
   overflow: hidden;
+  z-index: 1;
 }
 
 .post-image {
@@ -430,9 +531,11 @@ const openEventDetail = (event) => {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  z-index: 1;
 }
 
-.overlay {
+
+.post-overlay {
   position: absolute;
   top: 0;
   left: 0;
@@ -444,7 +547,14 @@ const openEventDetail = (event) => {
   align-items: center;
   opacity: 0;
   transition: opacity 0.3s ease;
+  z-index: 1001; /* Ensure it's above the image */
 }
+
+.post-item:hover .post-overlay {
+  opacity: 1;
+  cursor: pointer;
+}
+
 
 .post-item:hover .overlay {
   opacity: 1;
