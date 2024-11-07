@@ -43,40 +43,39 @@ export default {
     }
   },
   methods: {
-  async likePost(post) {
-    const auth = getAuth();
-    const userId = auth.currentUser ? auth.currentUser.uid : null;
+    async likePost(post) {
+      const auth = getAuth();
+      const userId = auth.currentUser ? auth.currentUser.uid : null;
 
-    if (!userId) {
-      alert("Please log in to like posts.");
-      return;
-    }
-
-    try {
-      // Send the like request to the backend
-      const response = await axios.post(`http://localhost:3000/api/posts/${post.postId}/like`, { userId });
-
-      // If the post was liked successfully, update the local post state
-      if (response.status === 200) {
-        post.hasLiked = !post.hasLiked; // Toggle like state
-        if (post.hasLiked) {
-          post.likes.push(userId); // Add userId to likes if liked
-        } else {
-          post.likes = post.likes.filter(id => id !== userId); // Remove userId from likes if unliked
-        }
+      if (!userId) {
+        alert("Please log in to like posts.");
+        return;
       }
-    } catch (error) {
-      console.error("Failed to like post:", error);
-      alert("Failed to like post.");
-    }
-  },
-}
+
+      try {
+        // Send the like request to the backend
+        const response = await axios.post(`http://localhost:3000/api/posts/${post.postId}/like`, { userId });
+
+        // If the post was liked successfully, update the local post state
+        if (response.status === 200) {
+          post.hasLiked = !post.hasLiked; // Toggle like state
+          if (post.hasLiked) {
+            post.likes.push(userId); // Add userId to likes if liked
+          } else {
+            post.likes = post.likes.filter(id => id !== userId); // Remove userId from likes if unliked
+          }
+        }
+      } catch (error) {
+        console.error("Failed to like post:", error);
+        alert("Failed to like post.");
+      }
+    },
+  }
 };
 </script>
 
 <style scoped>
-/* Basic styling similar to your feed */
-.post-detail-container {
+.feed-container {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -87,6 +86,8 @@ export default {
 
 .post {
   width: 100%;
+  /* max-width: 500px; */
+  /* Set a max-width to keep a consistent layout */
   border: 1px solid #dbdbdb;
   border-radius: 10px;
   margin-bottom: 20px;
@@ -123,7 +124,10 @@ export default {
 
 .post-image {
   width: 100%;
-  height: auto;
+  height: 450px;
+  /* Set a fixed height for images */
+  /* object-fit: cover; */
+  /* Ensures image covers the area while maintaining aspect ratio */
 }
 
 .post-footer {
@@ -133,6 +137,51 @@ export default {
 .likes {
   font-weight: bold;
 }
+
+.menu-container {
+  position: relative;
+  align-items: center;
+}
+
+.menu-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 0;
+}
+
+.menu {
+  position: absolute;
+  top: 30px;
+  right: 0;
+  background-color: white;
+  border: 1px solid #dbdbdb;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+  z-index: 1000;
+}
+
+.menu button {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  background-color: transparent;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  border-bottom: 1px solid #dbdbdb;
+}
+
+.menu button:last-child {
+  border-bottom: none;
+}
+
+.menu button:hover {
+  background-color: #f4f4f4;
+}
+
+
 
 .like-button {
   display: flex;
