@@ -31,14 +31,14 @@
 
         <!-- Share Popup Component -->
         <!-- Update the :shareContent to use the correct URL dynamically -->
-        <HomeSharePopup
+        <!-- <HomeSharePopup
           v-if="post.showPopup"
           :friends="friends"
           :shareContent="`http://localhost:5173/posts/${post.postId}`"
           :postId="post.postId"
           :userId="userId"
           @close="post.showPopup = false"
-        />
+        /> -->
 
       </div>
     </div>
@@ -49,12 +49,9 @@
 <script>
 import axios from "axios";
 import { getAuth } from "firebase/auth"; // Use getAuth directly here
-import HomeSharePopup from './PetpostShare.vue';
+// import HomeSharePopup from './PetpostShare.vue';
 
 export default {
-  components: {
-    HomeSharePopup,
-  },
   data() {
     return {
       activeMenu: null,
@@ -67,13 +64,13 @@ export default {
     async fetchPosts() {
       const auth = getAuth();
       const userId = auth.currentUser ? auth.currentUser.uid : null;
-      
+
       try {
         const response = await axios.get("http://localhost:3000/api/posts/feed");
         this.posts = response.data.map(post => ({
           ...post,
           hasLiked: post.likes && post.likes.includes(userId),
-          showPopup: false, // Initialize showPopup as false for each post
+          showPopup: false,
         }));
         this.userId = userId;
       } catch (error) {
@@ -86,12 +83,8 @@ export default {
         alert("Please log in to share posts.");
         return;
       }
-      
-      // Only update showPopup for the selected post
-      post.showPopup = true;
-    },
-    closeSharePopup(post) {
-      post.showPopup = false;
+      // Emit the post data to trigger popup in Home.vue
+      this.$emit('trigger-share-popup', post);
     },
     toggleMenu(postId) {
       this.activeMenu = this.activeMenu === postId ? null : postId;
@@ -110,6 +103,8 @@ export default {
   },
 };
 </script>
+
+
 
 
 
