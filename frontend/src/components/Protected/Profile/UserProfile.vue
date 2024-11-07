@@ -79,7 +79,7 @@
               </div>
 
               <div class="likes-container">
-                <p class="likes-caption">{{ userData.posts[selectedPostIndex].likes }} Likes</p>
+                <p class="likes-caption">{{ userData.posts[selectedPostIndex].likes.length }} Likes</p>
                 <button @click="likePost(userData.posts[selectedPostIndex])" class="like-button">
                   <i class="fas fa-thumbs-up" style="color:black;"></i>Like
                 </button>
