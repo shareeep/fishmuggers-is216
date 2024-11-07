@@ -34,6 +34,7 @@ export default {
   },
   async mounted() {
     try {
+      console.log('post id:'+this.postId);
       const response = await axios.get(`http://localhost:3000/api/posts/${this.postId}`);
       this.post = response.data;
     } catch (error) {

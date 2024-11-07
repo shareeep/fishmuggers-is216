@@ -2,15 +2,21 @@
   <div class="home-container"> <!-- Use a wrapper for flex layout -->
     <Navbar />
     <main> <!-- Wrap content in a main tag -->
-      <PetpostDetail />
+      <PetpostDetail :postId="postId" />
     </main>
   </div>
 </template>
 
 <script setup>
 // Any Home page-specific logic
+import { useRoute } from 'vue-router';
+import { onMounted, ref } from 'vue';
+import axios from 'axios';
 import Navbar from '@/components/Protected/Navbar.vue';
 import PetpostDetail from '@/components/Protected/PetPosts/PetpostDetail.vue';
+
+const route = useRoute();
+const postId = route.params.postId;  
 </script>
 
 <style scoped>
