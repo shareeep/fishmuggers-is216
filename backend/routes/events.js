@@ -38,28 +38,17 @@ const validateEventData = [
     .isString()
     .withMessage("Location must be a string."),
 
-  body("locationData")
+  body("latitude")
     .notEmpty()
-    .withMessage("Location data is required.")
-    .custom((value) => {
-      let locationData;
-      try {
-        locationData = JSON.parse(value);
-      } catch (error) {
-        throw new Error("locationData must be a valid JSON array.");
-      }
-      if (
-        !Array.isArray(locationData) ||
-        locationData.length !== 2 ||
-        typeof locationData[0] !== "number" ||
-        typeof locationData[1] !== "number"
-      ) {
-        throw new Error(
-          "locationData must be an array of [latitude, longitude]."
-        );
-      }
-      return true;
-    }),
+    .withMessage("Latitude is required.")
+    .isFloat({ min: -90, max: 90 })
+    .withMessage("Latitude must be a valid number between -90 and 90."),
+
+  body("longitude")
+    .notEmpty()
+    .withMessage("Longitude is required.")
+    .isFloat({ min: -180, max: 180 })
+    .withMessage("Longitude must be a valid number between -180 and 180."),
 
   body("petType")
     .customSanitizer((value) => {
@@ -77,7 +66,13 @@ const validateEventData = [
     .withMessage("Event Size is required.")
     .isInt({ min: 1 })
     .withMessage("Event Size must be a number greater than 0."),
-  
+
+  body("eventType")
+    .notEmpty()
+    .withMessage("Event Type is required.")
+    .isIn(["casual", "large"])
+    .withMessage("Event Type must be 'casual' or 'large'."),
+
   // Optional: Validate image URL if provided as a string
   body("eventImage")
     .optional()
@@ -217,7 +212,8 @@ router.get("/:id", authenticate, async (req, res) => {
       host: {
         uid: eventData.host,
         username: hostDetails.username || "Unknown",
-        profilePic: hostDetails.profileImage || "https://via.placeholder.com/50",
+        profilePic:
+          hostDetails.profileImage || "https://via.placeholder.com/50",
       },
       isUserInterested, // Include this flag for the frontend
     };
@@ -249,19 +245,25 @@ router.post(
       description,
       date,
       location,
-      locationData,
+      latitude,
+      longitude,
       petType,
       eventSize,
+      eventType,
     } = req.body;
 
     // Parse eventSize to integer
     eventSize = parseInt(eventSize, 10);
 
-    // Parse locationData
-    locationData = JSON.parse(locationData);
+    // Parse latitude and longitude to floats
+    latitude = parseFloat(latitude);
+    longitude = parseFloat(longitude);
 
     // Ensure petType is always an array
     petType = Array.isArray(petType) ? petType : [petType];
+
+    // Construct locationData array
+    const locationData = [latitude, longitude];
 
     try {
       // Handle image upload if provided
@@ -297,9 +299,10 @@ router.post(
         description,
         date: admin.firestore.Timestamp.fromDate(new Date(date)), // Firestore Timestamp for date
         location,
-        locationData: JSON.parse(locationData),
-        petType: Array.isArray(petType) ? petType : [petType],
+        locationData, // Use the constructed array
+        petType,
         eventSize, // Store event size as an integer
+        eventType, // Include eventType
         eventImage: imageUrl,
         interestedUsers: [], // Initialize as empty array
         createdAt: admin.firestore.FieldValue.serverTimestamp(),
@@ -373,19 +376,25 @@ router.put(
       description,
       date,
       location,
-      locationData,
+      latitude,
+      longitude,
       petType,
       eventSize,
+      eventType,
     } = req.body;
 
     // Parse eventSize to integer
     eventSize = parseInt(eventSize, 10);
 
-    // Parse locationData
-    locationData = JSON.parse(locationData);
+    // Parse latitude and longitude to floats
+    latitude = parseFloat(latitude);
+    longitude = parseFloat(longitude);
 
     // Ensure petType is always an array
     petType = Array.isArray(petType) ? petType : [petType];
+
+    // Construct locationData array
+    const locationData = [latitude, longitude];
 
     // Validate incoming data
     const errors = validationResult(req);
@@ -438,9 +447,10 @@ router.put(
         description,
         date: admin.firestore.Timestamp.fromDate(new Date(date)), // Ensure date is stored as a Firestore Timestamp
         location,
-        locationData,
+        locationData, // Use the constructed array
         petType,
         eventSize,
+        eventType,
         eventImage: imageUrl,
         updatedAt: admin.firestore.FieldValue.serverTimestamp(), // Update the updatedAt timestamp
       };
@@ -537,6 +547,7 @@ router.delete("/:id", authenticate, async (req, res) => {
     res.status(500).json({ error: "Failed to delete event" });
   }
 });
+
 // @route   POST /api/events/:id/interested
 // @desc    Add a user to interestedUsers array and add eventId to user's joinedEvents
 // @access  Private
@@ -630,8 +641,6 @@ router.delete("/:id/interested", authenticate, async (req, res) => {
   }
 });
 
-
-
 // @route   GET /api/events/:uid/friends
 // @desc    Get a list of friends for a user by UID
 // @access  Private (Requires Authentication)
@@ -677,7 +686,6 @@ router.get("/:uid/friends", authenticate, async (req, res) => {
   }
 });
 
-
 // Route to fetch all events joined by a specific user
 router.get("/joined/:uid", authenticate, async (req, res) => {
   const { uid } = req.params;
@@ -687,12 +695,13 @@ router.get("/joined/:uid", authenticate, async (req, res) => {
   }
 
   try {
-    const joinedEventsSnapshot = await db.collection("events")
+    const joinedEventsSnapshot = await db
+      .collection("events")
       .where("interestedUsers", "array-contains", uid)
       .orderBy("createdAt", "desc")
       .get();
 
-    const joinedEvents = joinedEventsSnapshot.docs.map(doc => ({
+    const joinedEvents = joinedEventsSnapshot.docs.map((doc) => ({
       eventId: doc.id,
       ...doc.data(),
     }));
@@ -713,12 +722,13 @@ router.get("/created/:uid", async (req, res) => {
   }
 
   try {
-    const createdEventsSnapshot = await db.collection("events")
+    const createdEventsSnapshot = await db
+      .collection("events")
       .where("host", "==", uid)
       .orderBy("createdAt", "desc")
       .get();
 
-    const createdEvents = createdEventsSnapshot.docs.map(doc => ({
+    const createdEvents = createdEventsSnapshot.docs.map((doc) => ({
       eventId: doc.id,
       ...doc.data(),
     }));
@@ -729,6 +739,5 @@ router.get("/created/:uid", async (req, res) => {
     res.status(500).json({ error: "Failed to retrieve created events" });
   }
 });
-
 
 module.exports = router;

@@ -135,10 +135,10 @@
 
    <!-- Display CreatedEvents or JoinedEvents based on eventsView -->
    <div v-if="eventsView === 'createdEvents'">
-      <CreatedEvents :events="props.createdEvents" @edit-event="handleEditEvent" @delete-event="deleteEvent" />
+      <CreatedEventsList :events="props.createdEvents" @edit-event="handleEditEvent" @delete-event="deleteEvent" />
    </div>
    <div v-if="eventsView === 'joinedEvents'">
-      <JoinedEvents :events="props.joinedEvents" />
+      <JoinedEventsList :events="props.joinedEvents" />
    </div>
 </div>
 
@@ -151,6 +151,8 @@ import { ref, onMounted } from 'vue';
 import axios from 'axios';
 import { getAuth } from 'firebase/auth';
 import { useRouter } from 'vue-router';
+import JoinedEventsList from '../EventsAdmin/JoinedEventsList.vue';
+import CreatedEventsList from '../EventsAdmin/CreatedEventsList.vue';
 
 const auth = getAuth();
 const router = useRouter();
@@ -348,6 +350,7 @@ const nextPost = () => {
 </script>
 
 <style scoped>
+
 .profile-page {
   max-width: 800px;
   margin: 0 auto;
