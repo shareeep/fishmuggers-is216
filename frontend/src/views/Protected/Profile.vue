@@ -2,35 +2,23 @@
   <div class="home-container">
     <Navbar />
     <main id="scrollable-element">
-      <ProfileMain 
-        :userData="userData" 
-        :pets="pets" 
-        :isOwnProfile="isOwnProfile" 
-        :createdEvents="createdEvents"
-        :joinedEvents="joinedEvents"
-        @edit-event="openEditEventModal" 
-        @event-updated="fetchEvents" 
-        @open-post="openModal" 
-      />
+      <ProfileMain :userData="userData" :pets="pets" :isOwnProfile="isOwnProfile" :createdEvents="createdEvents"
+        :joinedEvents="joinedEvents" @edit-event="openEditEventModal" @event-updated="fetchEvents"
+        @open-post="openModal" @edit-pet="openEditPetModal" @delete-pet="deletePet" />
+
     </main>
-    <EditEventModal 
-      v-if="showEditModal" 
-      :eventData="editEventData" 
-      @close="closeEditEventModal"
-      @event-updated="handleEventUpdated" 
-    />
-    <PostModal 
-      v-if="showPostModal" 
-      :post="selectedPost" 
-      :userData="userData" 
-      :selectedPostIndex="selectedPostIndex"
-      :totalPosts="userData.posts.length" 
-      @close="closePostModal" 
-      @prev="goToPrevPost" 
-      @next="goToNextPost" 
-      @like-toggle="handleLikeToggle"
-    />
-  </div> 
+    <EditEventModal v-if="showEditModal" :eventData="editEventData" @close="closeEditEventModal"
+      @event-updated="handleEventUpdated" />
+
+    <EditPetModal v-if="showEditPetModal" :pet="currentEditPet" @close="closeEditPetModal"
+      @update-pet="handlePetUpdate" />
+
+
+
+    <PostModal v-if="showPostModal" :post="selectedPost" :userData="userData" :selectedPostIndex="selectedPostIndex"
+      :totalPosts="userData.posts.length" @close="closePostModal" @prev="goToPrevPost" @next="goToNextPost"
+      @like-toggle="handleLikeToggle" />
+  </div>
 </template>
 
 <script setup>
@@ -41,11 +29,15 @@ import { getAuth } from 'firebase/auth';
 import Navbar from '@/components/Protected/Navbar.vue';
 import ProfileMain from '@/components/Protected/Profile/ProfileMain.vue';
 import EditEventModal from '@/components/Protected/EventsAdmin/EditEventModal.vue';
+import EditPetModal from '@/components/Protected/Profile/EditPetModal.vue';
+
 import PostModal from '@/components/Protected/Profile/PostModal.vue';
 
 const route = useRoute();
 const auth = getAuth();
 
+const showEditPetModal = ref(false); // Modal visibility control
+const currentEditPet = ref(null); // To store the selected pet to edit
 const showEditModal = ref(false);
 const editEventData = ref(null);
 const showPostModal = ref(false);
@@ -146,6 +138,64 @@ const goToNextPost = () => {
   }
 };
 
+const openEditPetModal = (pet) => {
+  if (pet && pet.petId) {
+    console.log("Opening EditPetModal for pet with ID:", pet.petId); // Debugging
+    currentEditPet.value = pet;  // Set the pet to be edited
+    showEditPetModal.value = true; // Open the modal
+  } else {
+    console.error("Pet ID is missing or invalid:", pet); // Error if ID is undefined
+  }
+};
+
+
+const closeEditPetModal = () => {
+  showEditPetModal.value = false;
+  currentEditPet.value = null;
+};
+
+const deletePet = async (petId) => {
+  if (!confirm('Are you sure you want to delete this pet?')) {
+    return;
+  }
+
+  try {
+    await axios.delete(`/api/pets/${petId}`);
+    await fetchPets(); // Refresh pets list after deletion
+  } catch (error) {
+    console.error('Error deleting pet:', error);
+    alert('Failed to delete pet. Please try again.');
+  }
+};
+
+
+const fetchPets = async () => {
+  const currentUser = auth.currentUser;
+  if (!currentUser) {
+    return;
+  }
+
+  try {
+    const response = await axios.get(`/api/users/${currentUser.uid}`);
+    const userPets = response.data.pets || [];
+
+    // Fetch pet details
+    const petPromises = userPets.map(async (petId) => {
+      const petResponse = await axios.get(`/api/pets/${petId}`);
+      return { id: petId, ...petResponse.data };
+    });
+
+    pets.value = await Promise.all(petPromises);
+  } catch (error) {
+    console.error('Error fetching pets:', error);
+  }
+};
+// Function to handle the pet update event from EditPetModal
+const handlePetUpdate = async () => {
+  await fetchPets(); // Refresh the pets list from the backend
+};
+
+
 const handleLikeToggle = async ({ postId, isLiked }) => {
   try {
     // Ensure the user is authenticated
@@ -221,7 +271,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-
 #scrollable-element {
   width: 100%;
   height: 100%;

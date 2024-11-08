@@ -1,7 +1,7 @@
 <template>
   <div class="home-container"> <!-- Use a wrapper for flex layout -->
     <Navbar />
-    <router-link to="/events" class="back-button">
+    <router-link to="" class="back-button" @click.prevent="goBack">
       <img src="../../assets/images/back_arrow.png" alt="back" width="40px" />
     </router-link>
     <main id="scrollable-element">
@@ -21,12 +21,19 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
+import { useRouter } from 'vue-router'; // Import useRouter to access router instance
 import Navbar from '@/components/Protected/Navbar.vue';
 import EventCreationForm from "@/components/Protected/EventsAdmin/EventCreationForm.vue";
 import EventsList from "@/components/Protected/EventsAdmin/CreatedEventsList.vue";
 import EditEventModal from "@/components/Protected/EventsAdmin/EditEventModal.vue";
 import Scrollbar from 'smooth-scrollbar';
 import OverscrollPlugin from 'smooth-scrollbar/plugins/overscroll';
+
+const router = useRouter(); // Get the router instance
+// Function to go back to the previous page
+function goBack() {
+  router.go(-1); // Go back to the previous page in the browser history
+}
 
 Scrollbar.use(OverscrollPlugin);
 

@@ -1,5 +1,7 @@
 <template>
   <div class="post-detail-container">
+   
+
     <div v-if="post" class="post">
       <div class="post-header">
         <div class="user-info" v-if="post.user">
@@ -27,7 +29,8 @@ import axios from "axios";
 import { getAuth } from "firebase/auth"; // Use getAuth directly here
 
 export default {
-  props: ['postId'],
+  props: ['postId'], // Accept referrer as a prop
+
   data() {
     return {
       post: null, // Initialize post as null
@@ -70,12 +73,14 @@ export default {
         alert("Failed to like post.");
       }
     },
+   
   }
 };
 </script>
 
 <style scoped>
 .feed-container {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;

@@ -9,15 +9,15 @@
       <div class="profile-info">
         <div class="profile-details">
           <h2 class="username">{{ props.userData.username }}</h2>
-<router-link v-if="isOwnProfile" to="/editprofile">
-  <button class="edit-btn">Edit profile</button>
-</router-link>
+          <router-link v-if="isOwnProfile" to="/editprofile">
+            <button class="edit-btn">Edit profile</button>
+          </router-link>
         </div>
-<div class="profile-stats">
-  <span><b>{{ userData?.posts?.length || 0 }}</b> Posts</span>
-  <span><b>{{ userData?.joinedEvents?.length || 0 }}</b> Events Joined</span>
-  <span><b>{{ userData?.friends?.length || 0 }}</b> Friends</span>
-</div>
+        <div class="profile-stats">
+          <span><b>{{ userData?.posts?.length || 0 }}</b> Posts</span>
+          <span><b>{{ userData?.joinedEvents?.length || 0 }}</b> Events Joined</span>
+          <span><b>{{ userData?.friends?.length || 0 }}</b> Friends</span>
+        </div>
       </div>
     </div>
 
@@ -30,25 +30,25 @@
 
     <!-- Tab Content -->
     <div class="tab-content">
-<div v-if="activeTab === 'posts'">
-  <div v-if="posts.length === 0" class="no-posts">
-    <i class="no-posts-pic"><img src="../../../assets/images/camera.png" alt=""></i>
-    <h3>Share Photos</h3>
-    <p>When you share photos, they will appear on your profile.</p>
-    <router-link to="/addpost">
-      <p class="share-first-photo">Share your first photo</p>
-    </router-link>
-  </div>
-  <div v-else class="posts-grid">
-    <div v-for="(post, index) in posts" :key="post.id" class="post-item" @click="openModal(post)">
-      <img :src="post.image" alt="User Post" class="post-image" />
-      <div class="post-overlay">
-        <i class="fas fa-thumbs-up"></i>
-        <span class="likes-count">{{ post.likes?.length || 0 }}</span>
+      <div v-if="activeTab === 'posts'">
+        <div v-if="posts.length === 0" class="no-posts">
+          <i class="no-posts-pic"><img src="../../../assets/images/camera.png" alt=""></i>
+          <h3>Share Photos</h3>
+          <p>When you share photos, they will appear on your profile.</p>
+          <router-link to="/addpost">
+            <p class="share-first-photo">Share your first photo</p>
+          </router-link>
+        </div>
+        <div v-else class="posts-grid">
+          <div v-for="(post, index) in posts" :key="post.id" class="post-item" @click="openModal(post)">
+            <img :src="post.image" alt="User Post" class="post-image" />
+            <div class="post-overlay">
+              <i class="fas fa-thumbs-up"></i>
+              <span class="likes-count">{{ post.likes?.length || 0 }}</span>
+            </div>
+          </div>
+        </div>
       </div>
-    </div>
-  </div>
-</div>
 
       <div v-if="activeTab === 'eventsJoined'">
 
@@ -65,62 +65,62 @@
 
         <!-- Display CreatedEvents or JoinedEvents based on eventsView -->
         <div v-if="eventsView === 'createdEvents'">
-    <router-link v-if="isOwnProfile" to="/eventsadmin">
-    <button class="edit-btn">Create Event</button>
-  </router-link>
-          
-          <CreatedEventsList 
-            :events="createdEvents" 
-            @edit-event="handleEditEvent" 
-            @delete-event="handleDeleteEvent" 
-          />
+          <router-link v-if="isOwnProfile" to="/eventsadmin">
+            <button class="edit-btn">Create Event</button>
+          </router-link>
+
+          <CreatedEventsList :events="createdEvents" @edit-event="handleEditEvent" @delete-event="handleDeleteEvent" />
         </div>
 
-        
+
         <div v-if="eventsView === 'joinedEvents'">
-              <router-link v-if="isOwnProfile" to="/events">
-      <button class="edit-btn">Join Event</button>
-    </router-link>
-          <JoinedEventsList 
-            :events="joinedEvents" 
-          />
+          <router-link v-if="isOwnProfile" to="/events">
+            <button class="edit-btn">Join Event</button>
+          </router-link>
+          <JoinedEventsList :events="joinedEvents" />
         </div>
       </div>
 
 
       <!-- PETS -->
-<div v-if="activeTab === 'pets'">
-  <router-link to="/manage-pets">
-    <button class="edit-btn">Manage Pets</button>
-  </router-link>
-  <div class="pets-wrapper">
-    <!-- Check if there are pets to display -->
-    <div v-if="props.pets.length > 0" class="pets-grid">
-      <div v-for="(pet, index) in props.pets" :key="index" class="pet-card"
-        :style="{ animationDelay: `${index * 0.2}s` }">
-        <img 
-          :src="pet.profileImage || 'https://via.placeholder.com/150?text=No+Image'" 
-          alt="Pet Image" 
-          class="pet-avatar" 
-        />
-        <div class="info-container">
-          <div class="details">
-            <h4>{{ pet.name }}</h4>
-            <p>Type: {{ pet.type }}</p>
-            <p>Breed: {{ pet.breed }}</p>
-            <p>Age: {{ pet.age }} years</p>
+      <div v-if="activeTab === 'pets'">
+        <router-link to="/manage-pets">
+          <button class="edit-btn">Add Pets</button>
+        </router-link>
+        <div class="pets-wrapper">
+          <!-- Check if there are pets to display -->
+          <div v-if="props.pets.length > 0" class="pets-grid">
+            <div v-for="(pet, index) in props.pets" :key="index" class="pet-card"
+              :style="{ animationDelay: `${index * 0.2}s` }">
+
+              <img :src="pet.profileImage || 'https://via.placeholder.com/150?text=No+Image'" alt="Pet Image"
+                class="pet-avatar" />
+
+              <div class="info-container">
+                <div class="details">
+                  <h4>{{ pet.name }}</h4>
+                  <p>Type: {{ pet.type }}</p>
+                  <p>Breed: {{ pet.breed }}</p>
+                  <p>Age: {{ pet.age }} years</p>
+                </div>
+
+                <!-- Add Edit and Delete buttons below the details -->
+                <div class="action-buttons">
+                  <button @click.stop="$emit('edit-pet', pet)" class="edit-btn">Edit</button>
+                  <button @click.stop="$emit('delete-pet', pet.petId)" class="remove-button">Delete</button>
+                </div>
+              </div>
+            </div>
+
+          </div>
+          <!-- Display message if no pets are available -->
+          <div v-else class="no-pets">
+            <i class="no-pets-pic"><img src="../../../assets/images/no-events.png" alt="No Pets Image"></i>
+            <h3>No pets yet</h3>
+            <p>Add your pets so others can see them too!</p>
           </div>
         </div>
       </div>
-    </div>
-    <!-- Display message if no pets are available -->
-    <div v-else class="no-pets">
-      <i class="no-pets-pic"><img src="../../../assets/images/no-events.png" alt="No Pets Image"></i>
-      <h3>No pets yet</h3>
-      <p>Add your pets so others can see them too!</p>
-    </div>
-  </div>
-</div>
 
 
     </div>
@@ -170,7 +170,7 @@ const fetchPosts = async (userId) => {
 };
 
 // Define emits
-const emit = defineEmits(['edit-event', 'delete-event', 'open-post']);
+const emit = defineEmits(['edit-event', 'delete-event', 'open-post','edit-pet']);
 
 // Define reactive properties
 const eventsView = ref('createdEvents');
@@ -193,8 +193,6 @@ const openModal = (post) => {
 </script>
 
 <style scoped>
-
-
 .profile-page {
   max-width: 800px;
   margin: 0 auto;
@@ -376,7 +374,7 @@ const openModal = (post) => {
 }
 
 /* Actions */
-.actions {
+.action-buttons{
   display: flex;
   justify-content: center;
   gap: 10px;
@@ -387,11 +385,16 @@ const openModal = (post) => {
 .edit-button,
 .remove-button {
   padding: 5px 15px;
+  height:100%;
   border: none;
   border-radius: 5px;
   font-weight: bold;
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  width: 80px; /* Set a fixed width for consistency */
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .edit-button {
@@ -551,7 +554,8 @@ const openModal = (post) => {
   align-items: center;
   opacity: 0;
   transition: opacity 0.3s ease;
-  z-index: 1001; /* Ensure it's above the image */
+  z-index: 1001;
+  /* Ensure it's above the image */
 }
 
 .post-item:hover .post-overlay {

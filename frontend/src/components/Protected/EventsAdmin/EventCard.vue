@@ -1,11 +1,7 @@
 <template>
   <div class="event-card mb-6">
     <div class="event-content">
-      <img
-        :src="event.eventImage || 'https://via.placeholder.com/800x400'"
-        alt="Event Image"
-        class="event-image"
-      />
+      <img :src="event.eventImage || 'https://via.placeholder.com/800x400'" alt="Event Image" class="event-image" />
       <div class="event-details">
         <h3 class="text-lg font-bold">{{ event.title }}</h3>
         <p><strong>Date:</strong> {{ formatEventDate(event.date) }}</p>
@@ -13,17 +9,18 @@
         <p><strong>Location:</strong> {{ event.location }}</p>
         <p> <strong>Interested Users:</strong> {{ event.interestedUsers.length }}</p>
       </div>
-<div class="action-buttons" v-if="showActions || isEventHost">
-  <!-- Stop propagation on these buttons to prevent navigation -->
-  <button v-if="isOwnProfile || isEventHost" @click.stop="$emit('edit-event', event)" class="edit-btn mr-3">
-    Edit
-  </button>
-  <button v-if="isOwnProfile || isEventHost" @click.stop="$emit('delete-event', event.eventId)" class="delete-btn">
-    Delete
-  </button>
-</div>
+      <div class="action-buttons" v-if="showActions || isEventHost">
+        <!-- Stop propagation on these buttons to prevent navigation -->
+        <button v-if="isOwnProfile || isEventHost" @click.stop="$emit('edit-event', event)" class="edit-btn">
+          Edit
+        </button>
+        <button v-if="isOwnProfile || isEventHost" @click.stop="$emit('delete-event', event.eventId)"
+          class="delete-btn">
+          Delete
+        </button>
       </div>
     </div>
+  </div>
 </template>
 
 <script setup>
@@ -113,7 +110,8 @@ const formatPetTypes = (petType) => {
 
 .event-content {
   display: flex;
-  flex-direction: column; /* Keep as column for all viewports */
+  flex-direction: column;
+  /* Keep as column for all viewports */
   gap: 1rem;
 }
 
@@ -158,7 +156,7 @@ h3.text-lg {
 
 .action-buttons {
   display: flex;
-  gap: 0.5rem;
+  gap: 15px;
   margin-top: 0.5rem;
 }
 

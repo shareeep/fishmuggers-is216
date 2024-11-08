@@ -134,7 +134,7 @@ h3 {
 
 /* Button Styles */
 .accept-button,
-.reject-button {
+.reject-button { 
   padding: 5px 15px;
   border: none;
   border-radius: 5px;

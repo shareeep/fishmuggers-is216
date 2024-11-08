@@ -1,7 +1,7 @@
 <template>
   <div class="home-container"> <!-- Use a wrapper for flex layout -->
     <Navbar />
-    <router-link to="/" class="back-button">
+    <router-link to="" class="back-button" @click.prevent="goBack">
       <img src="../../assets/images/back_arrow.png" alt="back" width="40px" />
     </router-link>
     <main> <!-- Wrap content in a main tag -->
@@ -12,8 +12,17 @@
 
 <script setup>
 // Any Home page-specific logic
+import { useRouter } from 'vue-router'; // Import useRouter to access router instance
+
 import Navbar from '@/components/Protected/Navbar.vue';
 import PetpostAdd from '@/components/Protected/PetPosts/PetPostAdd.vue';
+
+const router = useRouter(); // Get the router instance
+
+// Function to go back to the previous page
+function goBack() {
+  router.go(-1); // Go back to the previous page in the browser history
+}
 </script>
 
 <style scoped>

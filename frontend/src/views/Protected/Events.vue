@@ -52,6 +52,7 @@ onMounted(() => {
     },
   });
   scrollbar.track.xAxis.element.style.opacity = '0';
+  scrollbar.track.xAxis.element.style.display = 'none';
   scrollbar.track.yAxis.element.style.opacity = '0';
 });
 
@@ -91,6 +92,13 @@ function setEventType(type) {
 
 
 <style scoped>
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden; /* Disable horizontal scroll on the entire page */
+}
 .title {
   color: rgb(46, 46, 46);
   text-align: center;
@@ -134,7 +142,7 @@ function setEventType(type) {
   width: 100%;
   height: 100%;
   overflow-y: scroll !important;
-  overflow-x: hidden;
+  overflow-x: hidden !important;
 }
 
 .home-container {
@@ -254,7 +262,6 @@ main {
 .content-container {
   max-width: 1400px;
   /* Set a maximum width for the centered content */
-  width: 100%;
   /* Take full width up to the max-width */
   margin: 0 auto;
   /* Center content-container */
@@ -266,5 +273,7 @@ main {
   position: relative;
   z-index: 1000;
 }
+
+
 </style>
 

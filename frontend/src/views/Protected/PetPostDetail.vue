@@ -2,6 +2,9 @@
   <div class="home-container"> <!-- Use a wrapper for flex layout -->
     <Navbar />
     <main> <!-- Wrap content in a main tag -->
+      <router-link to="/chats" class="back-button">
+        <img src="../../assets/images/back_arrow.png" alt="back" width="40px" />
+      </router-link>
       <PetpostDetail :postId="postId" />
     </main>
   </div>
@@ -9,18 +12,35 @@
 
 <script setup>
 // Any Home page-specific logic
-import { useRoute } from 'vue-router';
+import { useRoute } from 'vue-router';  // Import useRouter
 import { onMounted, ref } from 'vue';
 import axios from 'axios';
 import Navbar from '@/components/Protected/Navbar.vue';
 import PetpostDetail from '@/components/Protected/PetPosts/PetpostDetail.vue';
 
-
 const route = useRoute();
-const postId = route.params.postId;  
+const postId = route.params.postId;
+
 </script>
 
 <style scoped>
+/* Back Button Styling */
+.back-button {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 10;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 5px;
+  transition: transform 0.2s ease;
+}
+
+.back-button:hover {
+  transform: scale(1.1);
+}
+
 .home-container {
   display: flex;
   height: 100vh;

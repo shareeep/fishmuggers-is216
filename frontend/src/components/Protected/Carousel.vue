@@ -544,8 +544,6 @@ export default defineComponent({
     --vc-pgn-active-color: gold;
     /* Responsive scaling */
     margin-top: -12px;
-
-
 }
 
 /* Carousel Item Styles */
