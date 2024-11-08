@@ -212,7 +212,7 @@ input[type="text"]:focus {
   background-color: #fff;
   overflow-y: auto;
   background-image: url('../../../assets/images/chat_background.png');
-  background-size: 100% 100%;
+  background-size: cover; 
   /* Ensure the background image fills the container */
   background-position: center;
   /* Center the image */
