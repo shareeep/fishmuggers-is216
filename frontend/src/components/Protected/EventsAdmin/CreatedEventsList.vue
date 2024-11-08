@@ -10,26 +10,15 @@
     </div>
     <div v-if="events.length">
       <div class="event-cards-grid">
-  <router-link 
-    v-for="event in events" 
-    :key="event.eventId" 
-    :to="`/eventdetail/${event.eventId}`" 
-    class="event-card-link"
-  >
-    <EventCard 
-      :event="event" 
-      :showActions="true" 
-      :isOwnProfile="isOwnProfile"
-      @edit-event="$emit('edit-event', event)"
-      @delete-event="handleDeleteEvent"
-    />
-  </router-link>
+        <div v-for="event in events" :key="event.eventId" class="event-card-link" @click="openEventDetail(event)">
+          <EventCard :event="event" :showActions="true" :isOwnProfile="isOwnProfile"
+            @edit-event="$emit('edit-event', event)" @delete-event="handleDeleteEvent" />
+        </div>
       </div>
     </div>
     <p v-else class="text-gray-700">No events available.</p>
   </div>
 </template>
-
 
 <script setup>
 import { defineProps, defineEmits, ref } from "vue";
@@ -85,10 +74,9 @@ const handleDeleteEvent = async (eventId) => {
 
 // Handle navigation to event detail page
 const openEventDetail = (event) => {
-  emit('open-detail', event);
+  router.push(`/eventdetail/${event.eventId}`);
 };
 </script>
-
 
 
 <style scoped>

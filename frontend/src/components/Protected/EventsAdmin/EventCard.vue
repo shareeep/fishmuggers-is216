@@ -1,5 +1,5 @@
 <template>
-  <div class="event-card mb-6">
+  <div class="event-card mb-6" @click="handleClick"> 
     <div class="event-content">
       <img :src="event.eventImage || 'https://via.placeholder.com/800x400'" alt="Event Image" class="event-image" />
       <div class="event-details">

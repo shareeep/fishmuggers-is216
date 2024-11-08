@@ -69,7 +69,7 @@
             <button class="edit-btn">Create Event</button>
           </router-link>
 
-          <CreatedEventsList :events="createdEvents" @edit-event="handleEditEvent" @delete-event="handleDeleteEvent" />
+          <CreatedEventsList :events="createdEvents" @edit-event="handleEditEvent" @delete-event="handleDeleteEvent" @event-updated="fetchEvents" />
         </div>
 
 
@@ -189,6 +189,8 @@ const handleDeleteEvent = (eventId) => {
 const openModal = (post) => {
   emit('open-post', post);
 };
+
+
 
 </script>
 

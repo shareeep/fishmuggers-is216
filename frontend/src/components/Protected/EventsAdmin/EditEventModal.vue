@@ -2,82 +2,50 @@
   <div class="modal-overlay">
     <div class="modal-container">
       <div class="create-event-form">
+        <button class="close-button" @click="$emit('close')">✕</button>
         <h2>Edit Event</h2>
         <form @submit.prevent="handleEditEvent" enctype="multipart/form-data">
           <!-- Title -->
           <div class="mb-4">
             <label class="block text-gray-700">Title:</label>
-            <input
-              v-model="editEvent.title"
-              type="text"
-              required
-              class="w-full border border-gray-300 p-2 rounded"
-            />
+            <input v-model="editEvent.title" type="text" required class="w-full border border-gray-300 p-2 rounded" />
           </div>
 
           <!-- Description -->
           <div class="mb-4">
             <label class="block text-gray-700">Description:</label>
-            <textarea
-              v-model="editEvent.description"
-              required
-              class="w-full border border-gray-300 p-2 rounded"
-              rows="4"
-            ></textarea>
+            <textarea v-model="editEvent.description" required class="w-full border border-gray-300 p-2 rounded"
+              rows="4"></textarea>
           </div>
 
           <!-- Date -->
           <div class="mb-4">
             <label class="block text-gray-700">Date and Time:</label>
-            <input
-              v-model="editEvent.date"
-              type="datetime-local"
-              required
-              class="w-full border border-gray-300 p-2 rounded"
-            />
+            <input v-model="editEvent.date" type="datetime-local" required
+              class="w-full border border-gray-300 p-2 rounded" />
           </div>
 
           <!-- Location Field -->
           <div class="mb-4">
             <label class="block text-gray-700">Location:</label>
-            <input
-              v-model="editEvent.location"
-              type="text"
-              required
-              class="w-full border border-gray-300 p-2 rounded"
-              placeholder="Enter Address in Plain Text"
-            />
+            <input v-model="editEvent.location" type="text" required class="w-full border border-gray-300 p-2 rounded"
+              placeholder="Enter Address in Plain Text" />
           </div>
 
           <!-- Latitude Input -->
           <div class="mb-4">
             <label class="block text-gray-700">Latitude:</label>
-            <input
-              v-model="editEvent.latitude"
-              type="number"
-              step="any"
-              required
-              class="w-full border border-gray-300 p-2 rounded"
-              placeholder="Enter latitude"
-            />
+            <input v-model="editEvent.latitude" type="number" step="any" required
+              class="w-full border border-gray-300 p-2 rounded" placeholder="Enter latitude" />
           </div>
 
           <!-- Longitude Input -->
           <div class="mb-4">
             <label class="block text-gray-700">Longitude:</label>
-            <input
-              v-model="editEvent.longitude"
-              type="number"
-              step="any"
-              required
-              class="w-full border border-gray-300 p-2 rounded"
-              placeholder="Enter longitude"
-            />
-            <button
-              type="button"
-              @click="getCurrentLocation"
-              class="rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center me-3 text-black bg-[#FFD700] hover:bg-[#E6C200] font-bold text-sm my-3"
-            >
+            <input v-model="editEvent.longitude" type="number" step="any" required
+              class="w-full border border-gray-300 p-2 rounded" placeholder="Enter longitude" />
+            <button type="button" @click="getCurrentLocation"
+              class="rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center me-3 text-black bg-[#FFD700] hover:bg-[#E6C200] font-bold text-sm my-3">
               Use Current Location
             </button>
             <p class="text-sm text-gray-500">
@@ -123,11 +91,7 @@
           <!-- Event Size -->
           <div class="mb-4">
             <label class="block text-gray-700">Event Size:</label>
-            <select
-              v-model="editEvent.eventSize"
-              required
-              class="w-full border border-gray-300 p-2 rounded"
-            >
+            <select v-model="editEvent.eventSize" required class="w-full border border-gray-300 p-2 rounded">
               <option disabled value="">Select maximum attendees</option>
               <option :value="5">5</option>
               <option :value="10">10</option>
@@ -140,36 +104,20 @@
           <!-- Event Image -->
           <div class="mb-4">
             <label class="block text-gray-700">Event Image:</label>
-            <input
-              type="file"
-              @change="handleImageUpload"
-              accept="image/*"
-              class="w-full"
-            />
+            <input type="file" @change="handleImageUpload" accept="image/*" class="w-full" />
             <div v-if="imagePreview || existingImage" class="mt-2">
               <p class="text-gray-700">Image Preview:</p>
-              <img
-                :src="imagePreview || existingImage"
-                alt="Event Image Preview"
-                class="w-32 h-32 object-cover rounded"
-              />
+              <img :src="imagePreview || existingImage" alt="Event Image Preview"
+                class="w-32 h-32 object-cover rounded" />
             </div>
           </div>
 
           <!-- Submit and Cancel Buttons -->
           <div class="flex justify-end">
-            <button
-              type="button"
-              @click="$emit('close')"
-              class="cancel-btn mr-2"
-            >
+            <button type="button" @click="$emit('close')" class="cancel-btn mr-2">
               Cancel
             </button>
-            <button
-              type="submit"
-              class="edit-btn"
-              :disabled="isSubmitting"
-            >
+            <button type="submit" class="edit-btn" :disabled="isSubmitting">
               {{ isSubmitting ? "Updating..." : "Update Event" }}
             </button>
           </div>
@@ -190,6 +138,23 @@ import { ref, watch } from "vue";
 import { getAuth } from "firebase/auth";
 import axios from "axios";
 
+// Helper function to convert Firestore timestamp to a formatted date string
+function formatFirestoreTimestamp(timestamp) {
+  if (!timestamp || typeof timestamp._seconds === 'undefined') return "";
+
+  // Convert Firestore timestamp to a JavaScript Date object
+  const date = new Date(timestamp._seconds * 1000);
+
+  // Format the date for datetime-local input
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+
+  return `${year}-${month}-${day}T${hours}:${minutes}`;
+}
+
 // Props
 const props = defineProps({
   eventData: {
@@ -197,7 +162,7 @@ const props = defineProps({
     required: true,
   },
 });
-
+console.log(props.eventData);
 // Emit events to parent
 const emit = defineEmits(["close", "event-updated"]);
 
@@ -209,6 +174,7 @@ const editEvent = ref({
   ...props.eventData,
   latitude: props.eventData.locationData[0] || "",
   longitude: props.eventData.locationData[1] || "",
+  date: formatFirestoreTimestamp(props.eventData.date),
 });
 const editPetTypeSelection = ref([...props.eventData.petType]);
 const imagePreview = ref("");
@@ -223,8 +189,11 @@ watch(
   (newVal) => {
     editEvent.value = {
       ...newVal,
+
       latitude: newVal.locationData[0] || "",
       longitude: newVal.locationData[1] || "",
+      date: formatFirestoreTimestamp(newVal.date),
+
     };
     editPetTypeSelection.value = [...newVal.petType];
     imagePreview.value = "";
@@ -232,6 +201,8 @@ watch(
   },
   { immediate: true }
 );
+
+console.log(editEvent.value.date);
 
 // Function to get the user's current location
 const getCurrentLocation = () => {
@@ -334,6 +305,7 @@ const handleEditEvent = async () => {
     formData.append("title", editEvent.value.title);
     formData.append("description", editEvent.value.description);
     formData.append("date", editEvent.value.date);
+    console.log(editEvent.value.date);
     formData.append("location", editEvent.value.location);
     formData.append("latitude", lat);
     formData.append("longitude", lon);
@@ -360,7 +332,7 @@ const handleEditEvent = async () => {
     // Emit event to parent to refresh events list
     emit("event-updated");
     // Optionally, close the modal after successful update
-    // emit("close");
+    emit("close");
   } catch (error) {
     console.error("Error updating event:", error);
     if (error.response && error.response.data) {
@@ -382,9 +354,20 @@ const handleEditEvent = async () => {
     isSubmitting.value = false;
   }
 };
+
 </script>
 
 <style scoped>
+.close-button {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  font-size: 1.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -400,6 +383,7 @@ const handleEditEvent = async () => {
 }
 
 .modal-container {
+  position: relative;
   background-color: white;
   border-radius: 0.375rem;
   /* To match rounded corners */
@@ -419,7 +403,8 @@ const handleEditEvent = async () => {
 }
 
 .modal-container::-webkit-scrollbar {
-  display: none; /* Chrome, Safari */
+  display: none;
+  /* Chrome, Safari */
 }
 
 .cancel-btn,

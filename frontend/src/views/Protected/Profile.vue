@@ -4,7 +4,7 @@
     <main id="scrollable-element">
       <ProfileMain :userData="userData" :pets="pets" :isOwnProfile="isOwnProfile" :createdEvents="createdEvents"
         :joinedEvents="joinedEvents" @edit-event="openEditEventModal" @event-updated="fetchEvents"
-        @open-post="openModal" @edit-pet="openEditPetModal" @delete-pet="deletePet" />
+        @open-post="openModal" @edit-pet="openEditPetModal" @delete-pet="deletePet" @delete-event="handleEventDeleted"/>
 
     </main>
     <EditEventModal v-if="showEditModal" :eventData="editEventData" @close="closeEditEventModal"
@@ -244,6 +244,29 @@ const handleLikeToggle = async ({ postId, isLiked }) => {
     alert(error.response?.data?.error || "Unable to toggle like. Please try again.");
   }
 };
+
+const handleEventUpdated = async () => {
+  await fetchEvents(); // Refresh the list of events from the backend
+};
+
+const handleEventDeleted = async () => {
+  await fetchEvents(); // Refresh the list of events from the backend
+};
+
+
+
+const fetchEvents = async () => {
+  const uid = route.params.uid || auth.currentUser?.uid;
+  if (!uid) return;
+
+  try {
+    const response = await axios.get(`/api/events/created/${uid}`);
+    createdEvents.value = response.data;
+  } catch (error) {
+    console.error("Error fetching events:", error);
+  }
+};
+
 
 // Scrollbar setup remains unchanged
 import Scrollbar from 'smooth-scrollbar';
