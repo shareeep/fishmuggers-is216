@@ -87,10 +87,10 @@
               <template #addons>
                 <navigation>
                   <template #next>
-                    <span id="right"> <img src="../../../assets/images/right_arrow.png" alt="right_arrow"> </span>
+                    <span id="rightsm"> <img src="../../../assets/images/right_arrow.png" alt="right_arrow"> </span>
                   </template>
                   <template #prev>
-                    <span id="left">
+                    <span id="leftsm">
                       <img src="../../../assets/images/left_arrow.png" alt="left_arrow" width="100px" height="40px">
                     </span>
                   </template>
@@ -444,6 +444,34 @@ export default defineComponent({
 </script>
 
 <style scoped>
+::v-deep #rightsm img {
+  position: relative;
+  max-width: 60px;
+  /* Override with specific size */
+  max-height: 40px;
+  margin-left: 84px;
+  transform: scale(1);
+  margin-bottom: 10px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+::v-deep #leftsm img {
+  position: relative;
+  max-width: 50px;
+  /* Override with specific size */
+  max-height: 35px;
+  margin-right: 82px;
+  transform: scale(1);
+  margin-bottom: 10px;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+::v-deep #rightsm img:hover,
+::v-deep #leftsm img:hover {
+  filter: drop-shadow(0px 4px 8px #FFD700);
+  /* Color shadow on hover */
+}
+
 ::v-deep #right img {
   position: relative;
   max-width: 60px;
@@ -501,7 +529,7 @@ export default defineComponent({
   max-width: 1400px;
   margin: 0 auto;
   color: #2c3e50;
-  overflow-x: hidden;
+  overflow-x: visible;
   position: relative;
   --vc-pgn-margin: 5px;
   --vc-pgn-width: 15px;
@@ -602,7 +630,7 @@ export default defineComponent({
 }
 
 .card:hover {
-  transform: scale(0.9);
+  transform: scale(0.87);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
 }
 
