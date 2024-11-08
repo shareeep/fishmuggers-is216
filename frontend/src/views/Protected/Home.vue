@@ -17,7 +17,7 @@
       :userId="userId"
       @close="closeSharePopup"
     />
-  </div>
+  </div> 
 </template>
 
 <script setup>
@@ -50,7 +50,8 @@ function closeSharePopup() {
   showPopup.value = false;
 }
 
-Scrollbar.use(OverscrollPlugin);
+Scrollbar.use(OverscrollPlugin);  // To store the scrollbar instance
+
 
 onMounted(() => {
   const auth = getAuth();
@@ -80,6 +81,8 @@ onMounted(() => {
 #scrollable-element {
   width: 100%;
   height: 100%;
+  overflow-y: scroll;
+
 }
 
 .home-container {

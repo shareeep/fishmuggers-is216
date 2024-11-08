@@ -1,9 +1,18 @@
 <template>
   <div class="chat-container">
-    <FriendsList :friends="sortedFriends" :selectedFriend="selectedFriend" @friendSelected="selectFriend"
-      @showFindFriendsPopup="showFindChatPopup" />
+    <FriendsList 
+      :friends="sortedFriends" 
+      :selectedFriend="selectedFriend" 
+      @friendSelected="selectFriend"
+      @showFindFriendsPopup="showFindChatPopup"
+      @switchToMessages="switchToMessagesMode" 
+    />
 
-    <chatPanel :selectedFriend="selectedFriend" :fetchFriends="fetchFriends" :showFindChatPopup="showFindChatPopup" />
+    <ChatPanel 
+      :selectedFriend="selectedFriend" 
+      :fetchFriends="fetchFriends" 
+      :showFindChatPopup="showFindChatPopup" 
+    />
   </div>
 </template>
 
@@ -28,8 +37,8 @@ const userUid = ref(null);
 let pollingInterval = null;
 
 const selectFriend = (friend) => {
-  selectedFriend.value = friend; // Update selected friend
-  console.log("Selected Friend Updated:", selectedFriend.value); // Log for debugging
+  selectedFriend.value = friend;
+  console.log("Selected Friend Updated:", selectedFriend.value);
 };
 
 const fetchFriends = async () => {
@@ -37,7 +46,6 @@ const fetchFriends = async () => {
     if (userUid.value) {
       const response = await axios.get(`http://localhost:3000/api/messages/user/${userUid.value}`);
       friends.value = response.data;
-      // console.log("Fetched friends:", friends.value);
       if (selectedFriend.value) {
         const updatedFriend = friends.value.find(friend => friend.senderUid === selectedFriend.value.senderUid);
         if (updatedFriend) {
@@ -77,13 +85,43 @@ onMounted(() => {
     }
   });
 });
+
+// Mobile mode switching
+const switchToMessagesMode = () => {
+  const gridElement = document.querySelector(".chat-container");
+  gridElement.classList.add("messages-mode");
+  gridElement.classList.remove("conversations-mode");
+};
+
+// const switchToConversationsMode = () => {
+//   const gridElement = document.querySelector(".chat-container");
+//   gridElement.classList.add("conversations-mode");
+//   gridElement.classList.remove("messages-mode");
+// };
 </script>
-
-
 
 <style scoped>
 .chat-container {
-  display: flex;
+  display: grid;
+  grid-template-columns: 290px 1fr;
+  grid-template-rows: auto 1fr;
   height: 100vh;
+  overflow-x: hidden;
+  transform: translateX(0); 
+}
+
+@media (max-width: 600px) {
+  .chat-container {
+    gap: 0;
+    grid-template-columns: 100vw 100vw;
+    transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
+  .conversations-mode {
+    transform: translateX(0);
+  }
+
+  .messages-mode {
+    transform: translateX(-100vw);
+  }
 }
 </style>

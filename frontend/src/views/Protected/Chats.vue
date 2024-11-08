@@ -135,14 +135,17 @@ onMounted(() => {
 
 /* Navbar styling for desktop and larger screens */
 .navbar {
+  position: fixed;
   width: 250px;
   /* Sidebar width */
   height: 100vh;
   /* Full height */
+  z-index: 10;
 }
 
 /* Main content area */
 main {
+  margin-left: 250px;
   flex-grow: 1;
   /* Take remaining space */
   overflow-y: auto;
@@ -154,6 +157,10 @@ main {
   .navbar {
     width: 80px;
     /* Narrower sidebar for md screens */
+  }
+
+  main {
+    margin-left: 80px;
   }
 }
 
@@ -176,6 +183,7 @@ main {
   }
 
   main {
+    margin-left: 0px;
     flex-grow: 1;
     overflow-y: auto;
     /* Allow main to scroll if content overflows */

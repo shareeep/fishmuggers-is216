@@ -1,6 +1,9 @@
 <template>
   <div class="chat-panel" v-if="selectedFriend">
+    <!-- Back Button -->
     <div class="chat-header">
+      <button class="back-button" @click="switchToConversationsMode"><img src="../../../assets/images/back_arrow.png"
+          alt="back"></button>
       <img :src="selectedFriend.avatar" alt="Avatar" class="chat-avatar" />
       <h3>{{ selectedFriend.name }}</h3>
     </div>
@@ -9,10 +12,18 @@
         <!-- Render message HTML using v-html for clickable links -->
         <p v-html="formatMessage(message.text)" :class="message.sentByYou ? 'message-you' : 'message-them'"></p>
       </div>
-    
+
     </div>
     <div class="chat-input">
-      <input type="text" v-model="newMessage" placeholder="Type a message..." @keyup.enter="sendMessage" />
+      <div class="input-container">
+        <input type="text" v-model="newMessage" placeholder="Type a message..." @keyup.enter="sendMessage" />
+        <button @click="sendMessage" class="send-button">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+            <path d="M2 21l3-9-3-9 18 9-18 9z" />
+          </svg>
+        </button>
+      </div>
+
     </div>
   </div>
   <div class="no-chat-selected" v-else>
@@ -45,6 +56,13 @@ const userUid = ref(null);
 const messageContainer = ref(null);
 const isUserScrolledUp = ref(false);
 
+// Function to switch back to conversations mode
+const switchToConversationsMode = () => {
+  const gridElement = document.querySelector(".chat-container");
+  gridElement.classList.add("conversations-mode");
+  gridElement.classList.remove("messages-mode");
+};
+
 // Send message logic with POST request to backend
 const sendMessage = async () => {
   if (newMessage.value.trim() !== '' && props.selectedFriend && userUid.value) {
@@ -65,8 +83,8 @@ const sendMessage = async () => {
       scrollToBottom();
     } catch (error) {
       console.error('Error sending message:', error);
-    } 
-    
+    }
+
   }
 };
 
@@ -116,14 +134,53 @@ onMounted(() => {
 </script>
 
 <style scoped>
+input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #FFD700;
+    border-radius: 25px;
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+input[type="text"]:focus {
+    border-color: #FAE588;
+    box-shadow: 0 0 0 2px #FFD700;
+    color: black;
+}
+
+.back-button {
+  display: none;
+  background: none;
+  border: none;
+  margin-right: 10px;
+}
+
+.back-button img {
+  width: 25px;
+  height: 25px;
+}
+
+.back-button img:hover {
+  transform: scale(1.05);
+}
+
+@media (max-width: 600px) {
+  .back-button {
+    display: inline-block;
+    position: relative;
+  }
+}
+
 .sending-message {
   font-size: 0.9rem;
   color: gray;
   text-align: center;
   padding: 5px;
 }
+
 .chat-panel {
   display: flex;
+  overflow-y: auto;
   flex-direction: column;
   flex-grow: 1;
   /* Ensures the chat panel takes up the remaining space */
@@ -161,6 +218,7 @@ onMounted(() => {
   /* Center the image */
   background-repeat: no-repeat;
   /* Prevents the background from repeating */
+  scroll-behavior: smooth;
 }
 
 .message {
@@ -209,12 +267,49 @@ onMounted(() => {
   background-color: white;
 }
 
+.input-container {
+  position: relative;
+  width: 100%;
+}
+
 .chat-input input {
   width: 100%;
-  padding: 10px;
+  padding: 10px 40px 10px 15px;
+  /* Add padding-right to make space for the button */
   border: 1px solid #ddd;
-  border-radius: 5px;
+  border-radius: 25px;
   font-size: 14px;
+}
+
+.send-button {
+  position: absolute;
+  right: 10px;
+  /* Adjust this value to fit your design */
+  top: 50%;
+  transform: translateY(-50%);
+  color: #7B61FF;
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+.send-button svg {
+  fill: currentColor;  /* This ensures the SVG inherits the color from the button */
+  transition: fill 0.2s ease;  /* Smooth color transition */
+}
+
+.send-button:active svg {
+  fill: #533bca;  /* Change color of the SVG on press */
+}
+
+.send-button i {
+  font-size: 16px;
+}
+
+@media (max-width: 767px) {
+  .chat-input {
+    margin-bottom: 40px;
+  }
 }
 
 .no-chat-selected {
@@ -258,23 +353,5 @@ onMounted(() => {
 
 .start-chat-btn:active {
   transform: scale(0.98);
-}
-
-/* Media Query for Small Screens (max-width: 767px) */
-@media (max-width: 767px) {
-  .chat-panel {
-    height: calc(100vh - 50px);
-    /* Subtract bottom navbar height */
-  }
-
-  .chat-messages {
-    padding-bottom: 60px;
-    /* Additional padding for chat input area */
-  }
-
-  .chat-input {
-    padding-bottom: 10px;
-    /* Extra padding to lift input above navbar */
-  }
 }
 </style>

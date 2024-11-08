@@ -63,11 +63,13 @@ const filteredFriends = computed(() =>
 );
 
 // Emit the selected friend back to the parent component
-const emit = defineEmits(['friendSelected', 'showFindFriendsPopup']);
+const emit = defineEmits(['friendSelected', 'showFindFriendsPopup', 'switchToMessages']);
 
 const selectFriend = (friend) => {
   console.log("Selected friend ID:", friend.id); // Debug selected friend
   emit("friendSelected", friend);
+  emit("switchToMessages");  // Trigger switchToMessagesMode in Allchats.vue
+
 };
 
 // Emit an event to show the "find friends" popup
@@ -128,6 +130,13 @@ const formatTimeOrDate = (timestamp) => {
   /* Background for selected friend */
 }
 
+@media (max-width:600px) {
+  .friend-item.selected {
+    background-color: white;
+    /* Background for selected friend */
+  }
+}
+
 /* .delete-chat-button {
   position: absolute;
   top: 5px;
@@ -144,90 +153,15 @@ const formatTimeOrDate = (timestamp) => {
   color: black;
 } */
 
-/* Dropdown menu styling */
-.dropdown-menu {
-  position: absolute;
-  top: 30px;
-  right: 5px;
-  background-color: white;
-  color: #f28b82;
-  padding: 10px;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-}
-
-.dropdown-item {
-  display: flex;
-  align-items: center;
-  background: none;
-  border: none;
-  color: #f28b82;
-  font-weight: bold;
-  cursor: pointer;
-}
-
-.dropdown-item i {
-  margin-right: 8px;
-  font-size: 18px;
-}
-
-.dropdown-item:hover {
-  color: #ff4d4d;
-}
 
 .friends-list {
   display: flex;
+  overflow-y: auto;
+  grid-row: 1 / -1;
   flex-direction: column;
   background-color: #fff;
   height: 100vh;
-  width: 300px;
-  /* Fixed width on larger screens */
-  min-width: 300px;
-  max-width: 300px;
   border-right: 1px solid #ddd;
-}
-
-/* When the screen width is smaller than 768px, adjust the layout */
-@media (max-width: 768px) {
-  .friends-list {
-    width: 100px;
-    /* Shrink to 100px */
-    min-width: 100px;
-    max-width: 100px;
-  }
-
-  /* Hide everything except the avatar */
-  .friend-info,
-  .time,
-  .search-bar {
-    display: none;
-  }
-
-  /* Adjust the avatar to be centered and occupy the entire width */
-  .avatar {
-    margin: 0 auto;
-    /* Center the avatar */
-
-    width: 50px;
-    height: 50px;
-  }
-
-  .friends {
-    padding: 0;
-    /* Remove padding for better alignment */
-  }
-
-  .friend-item {
-    justify-content: center;
-    /* Center the avatar in the list */
-    display: flex;
-    padding: 0 auto;
-    flex-direction: column;
-    align-items: center;
-  }
 }
 
 
@@ -294,7 +228,11 @@ const formatTimeOrDate = (timestamp) => {
 }
 
 .time {
-  margin-top: 10px;
+  position: absolute;
+  top: 10px;
+  /* Distance from the top */
+  right: 10px;
+  /* Distance from the right */
   font-size: 12px;
   color: #888;
 }
@@ -327,5 +265,11 @@ const formatTimeOrDate = (timestamp) => {
 
 .find-more-friends button:active {
   transform: scale(0.98);
+}
+
+@media (max-width:767px) {
+  .find-more-friends button {
+    margin-bottom: 60px;
+  }
 }
 </style>
