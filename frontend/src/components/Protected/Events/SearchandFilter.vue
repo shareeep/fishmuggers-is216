@@ -686,7 +686,7 @@
 </template>
 
 <script>
-import { Loader } from "@googlemaps/js-api-loader";
+import googleMapsLoader from "../../../../googleMapsLoader.js";
 
 export default {
     emits: ['filters-applied', 'filtersReset'],
@@ -791,18 +791,14 @@ export default {
             delete this.initialValues.dateRange;
         },
         fetchLocationSuggestions() {
-            if (this.searchedLoc.trim() === '') {
+            if (this.searchedLoc.trim() === "") {
                 this.locationSuggestions = [];
                 this.showSuggestions = false; // Hide suggestions if input is empty
                 return;
             }
 
-            const loader = new Loader({
-                apiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
-                libraries: ["places"],
-            });
-
-            loader.load().then(() => {
+            // Load Google Maps API only once
+            googleMapsLoader.load().then(() => {
                 const service = new google.maps.places.AutocompleteService();
                 service.getPlacePredictions(
                     {
@@ -812,13 +808,12 @@ export default {
                     },
                     (predictions, status) => {
                         if (status === google.maps.places.PlacesServiceStatus.OK && predictions) {
-                            // Apply additional filtering to show only suggestions that start with the input
                             const lowercaseInput = this.searchedLoc.toLowerCase();
                             this.locationSuggestions = predictions
-                                .filter(prediction =>
+                                .filter((prediction) =>
                                     prediction.description.toLowerCase().startsWith(lowercaseInput)
                                 )
-                                .map(prediction => ({
+                                .map((prediction) => ({
                                     id: prediction.place_id,
                                     name: prediction.description,
                                 }));
@@ -829,8 +824,11 @@ export default {
                         }
                     }
                 );
+            }).catch((error) => {
+                console.error("Error loading Google Maps API:", error);
             });
         },
+
         selectLocation(suggestion) {
             this.selectedLocation = suggestion.name;
             this.searchedLoc = suggestion.name;
@@ -838,12 +836,7 @@ export default {
             this.getPlaceDetails(suggestion.id);
         },
         getPlaceDetails(placeId) {
-            const loader = new Loader({
-                apiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY,
-                libraries: ["places"],
-            });
-
-            loader.load().then(() => {
+            googleMapsLoader.load().then(() => {
                 const service = new google.maps.places.PlacesService(document.createElement("div"));
                 service.getDetails({ placeId: placeId }, (place, status) => {
                     if (status === google.maps.places.PlacesServiceStatus.OK) {

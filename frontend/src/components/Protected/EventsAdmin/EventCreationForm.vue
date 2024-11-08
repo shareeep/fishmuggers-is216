@@ -127,7 +127,7 @@
 import { ref, watch } from "vue";
 import { getAuth } from "firebase/auth";
 import axios from "axios";
-import { Loader } from "@googlemaps/js-api-loader";
+import googleMapsLoader from "../../../../googleMapsLoader.js";
 
 
 const auth = getAuth();
@@ -155,14 +155,6 @@ const isGettingLocation = ref(false);
 const successMessage = ref("");
 const errorMessage = ref("");
 
-const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
-
-// Initialize the Google Maps API loader
-const loader = new Loader({
-  apiKey: GOOGLE_MAPS_API_KEY,
-  version: "weekly",
-  libraries: ["places"], // Include additional libraries if needed
-});
 
 // Watch the location input field
 watch(
@@ -179,7 +171,7 @@ watch(
 const fetchCoordinates = async (address) => {
   try {
     // Load the Google Maps API
-    await loader.load();
+    await googleMapsLoader.load();
 
     // Initialize the Geocoder
     const geocoder = new google.maps.Geocoder();
