@@ -247,4 +247,8 @@ button {
 .update-btn:active {
     transform: scale(0.98);
 }
+
+.modal-content::-webkit-scrollbar {
+  display: none;
+}
 </style>
