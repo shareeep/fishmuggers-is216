@@ -1,85 +1,53 @@
 <template>
-  
+
   <div class="create-event-form">
     <h2>Create a New Event</h2>
     <form @submit.prevent="handleCreateEvent" enctype="multipart/form-data">
       <!-- Title -->
       <div class="mb-4">
         <label class="block text-gray-700">Title:</label>
-        <input
-          v-model="event.title"
-          type="text"
-          required 
-          class="w-full border border-gray-300 p-2 rounded"
-        />
+        <input v-model="event.title" type="text" required class="w-full border border-gray-300 p-2 rounded" />
       </div>
 
       <!-- Description -->
       <div class="mb-4">
         <label class="block text-gray-700">Description:</label>
-        <textarea
-          v-model="event.description"
-          required
-          class="w-full border border-gray-300 p-2 rounded"
-          rows="4"
-        ></textarea>
+        <textarea v-model="event.description" required class="w-full border border-gray-300 p-2 rounded"
+          rows="4"></textarea>
       </div>
 
       <!-- Date -->
       <div class="mb-4">
         <label class="block text-gray-700">Date and Time:</label>
-        <input
-          v-model="event.date"
-          type="datetime-local"
-          required
-          class="w-full border border-gray-300 p-2 rounded"
-        />
+        <input v-model="event.date" type="datetime-local" required class="w-full border border-gray-300 p-2 rounded" />
       </div>
 
       <!-- Location Field -->
       <div class="mb-4">
         <label class="block text-gray-700">Location:</label>
-        <input
-          v-model="event.location"
-          type="text"
-          required
-          class="w-full border border-gray-300 p-2 rounded"
-          placeholder="Enter Address in Plain Text"
-        />
+        <input v-model="event.location" type="text" required class="w-full border border-gray-300 p-2 rounded"
+          placeholder="Please enter the exact address..." />
       </div>
 
       <!-- Latitude Input -->
       <div class="mb-4">
         <label class="block text-gray-700">Latitude:</label>
-        <input
-          v-model="event.locationData[0]"
-          type="float"
-          required
-          class="w-full border border-gray-300 p-2 rounded"
-          placeholder="Enter latitude"
-        />
+        <input v-model="event.locationData[0]" type="float" required class="w-full border border-gray-300 p-2 rounded"
+          placeholder="Enter latitude" />
       </div>
 
       <!-- Longitude Input -->
       <div class="mb-4">
         <label class="block text-gray-700">Longitude:</label>
-        <input
-          v-model="event.locationData[1]"
-          type="float"
-          required
-          class="w-full border border-gray-300 p-2 rounded"
-          placeholder="Enter longitude"
-        />
-        <button
-          type="button"
-          @click="getCurrentLocation"
-          class="rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center me-3 text-black  bg-[#FFD700] hover:bg-[#E6C200] font-bold text-sm my-3"
-        >
+        <input v-model="event.locationData[1]" type="float" required class="w-full border border-gray-300 p-2 rounded"
+          placeholder="Enter longitude" />
+        <button type="button" @click="getCurrentLocation"
+          class="rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center me-3 text-black  bg-[#FFD700] hover:bg-[#E6C200] font-bold text-sm my-3">
           Use Current Location
         </button>
-            <p class="text-sm text-gray-500">
-              ^ Only fills in Latitude & Longitude, for Leaflet.js reference
-            </p>
+        <!-- <p class="text-sm text-gray-500"> -->
+          <!-- ^ Only fills in Latitude & Longitude, for Leaflet.js reference -->
+        <!-- </p> -->
       </div>
 
       <!-- Pet Types -->
@@ -103,27 +71,24 @@
       </div>
 
       <!-- Event Type -->
-<div class="mb-4">
-  <label class="block text-gray-700">Event Type:</label>
-  <div class="flex items-center">
-    <label class="mr-4">
-      <input type="radio" value="casual" v-model="event.eventType" required />
-      Casual
-    </label>
-    <label>
-      <input type="radio" value="large" v-model="event.eventType" required />
-      Large-Scale
-    </label>
-  </div>
-</div>
+      <div class="mb-4">
+        <label class="block text-gray-700">Event Type:</label>
+        <div class="flex items-center">
+          <label class="mr-4">
+            <input type="radio" value="casual" v-model="event.eventType" required />
+            Casual
+          </label>
+          <label>
+            <input type="radio" value="large" v-model="event.eventType" required />
+            Large-Scale
+          </label>
+        </div>
+      </div>
 
       <!-- Event Size -->
       <div class="mb-4">
         <label class="block text-gray-700">Event Size:</label>
-        <select
-          v-model="event.eventSize"
-          required
-          class="w-full border border-gray-300 p-2 rounded">
+        <select v-model="event.eventSize" required class="w-full border border-gray-300 p-2 rounded">
           <option disabled value="">Select maximum attendees</option>
           <option :value="5">5</option>
           <option :value="10">10</option>
@@ -136,28 +101,17 @@
       <!-- Event Image -->
       <div class="mb-4">
         <label class="block text-gray-700">Event Image:</label>
-        <input
-          type="file"
-          @change="handleImageUpload"
-          accept="image/*"
-          class="w-full"
-        />
+        <input type="file" @change="handleImageUpload" accept="image/*" class="w-full" />
         <div v-if="imagePreview" class="mt-2">
           <p class="text-gray-700">Image Preview:</p>
-          <img
-            :src="imagePreview"
-            alt="Event Image Preview"
-            class="w-32 h-32 object-cover rounded"
-          />
+          <img :src="imagePreview" alt="Event Image Preview" class="w-32 h-32 object-cover rounded" />
         </div>
       </div>
 
       <!-- Submit Button -->
-      <button
-        type="submit"
+      <button type="submit"
         class="rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center me-3 text-black  bg-[#FFD700] hover:bg-[#E6C200] font-bold text-sm my-3"
-        :disabled="isSubmitting"
-      >
+        :disabled="isSubmitting">
         {{ isSubmitting ? "Creating..." : "Create Event" }}
       </button>
 
@@ -170,9 +124,11 @@
   </div>
 </template>
 <script setup>
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { getAuth } from "firebase/auth";
 import axios from "axios";
+import { Loader } from "@googlemaps/js-api-loader";
+
 
 const auth = getAuth();
 const user = auth.currentUser;
@@ -198,6 +154,49 @@ const isSubmitting = ref(false);
 const isGettingLocation = ref(false);
 const successMessage = ref("");
 const errorMessage = ref("");
+
+const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+
+// Initialize the Google Maps API loader
+const loader = new Loader({
+  apiKey: GOOGLE_MAPS_API_KEY,
+  version: "weekly",
+  libraries: ["places"], // Include additional libraries if needed
+});
+
+// Watch the location input field
+watch(
+  () => event.value.location,
+  async (newLocation) => {
+    if (newLocation) {
+      await fetchCoordinates(newLocation);
+    }
+  }
+);
+
+
+// Function to fetch coordinates using Google Maps Geocoding API
+const fetchCoordinates = async (address) => {
+  try {
+    // Load the Google Maps API
+    await loader.load();
+
+    // Initialize the Geocoder
+    const geocoder = new google.maps.Geocoder();
+
+    // Perform geocoding
+    geocoder.geocode({ address }, (results, status) => {
+      if (status === "OK" && results[0]) {
+        const location = results[0].geometry.location;
+        event.value.locationData = [location.lat(), location.lng()];
+      } else {
+        console.error("Geocode was not successful for the following reason: " + status);
+      }
+    });
+  } catch (error) {
+    console.error("Error loading Google Maps API or fetching coordinates:", error);
+  }
+};
 
 // Function to get the user's current location
 const getCurrentLocation = () => {
@@ -300,20 +299,19 @@ const handleCreateEvent = async () => {
     event.value.locationData = [lat, lon];
 
     // Prepare form data
-// Prepare form data
-const formData = new FormData();
-formData.append("title", event.value.title);
-formData.append("description", event.value.description);
-formData.append("date", event.value.date);
-formData.append("location", event.value.location);
-formData.append("latitude", lat); // Send latitude separately
-formData.append("longitude", lon); // Send longitude separately
-event.value.petType.forEach((type) => formData.append("petType", type));
-formData.append("eventType", event.value.eventType);
-formData.append("eventSize", event.value.eventSize);
-if (event.value.eventImage) {
-  formData.append("eventImage", event.value.eventImage);
-}
+    const formData = new FormData();
+    formData.append("title", event.value.title);
+    formData.append("description", event.value.description);
+    formData.append("date", event.value.date);
+    formData.append("location", event.value.location);
+    formData.append("latitude", lat); // Send latitude separately
+    formData.append("longitude", lon); // Send longitude separately
+    event.value.petType.forEach((type) => formData.append("petType", type));
+    formData.append("eventType", event.value.eventType);
+    formData.append("eventSize", event.value.eventSize);
+    if (event.value.eventImage) {
+      formData.append("eventImage", event.value.eventImage);
+    }
 
     // Send POST request to create event
     await axios.post("http://localhost:3000/api/events", formData, {
@@ -375,15 +373,14 @@ h2 {
 }
 
 label {
-  color:black;
+  color: black;
   display: block;
   margin-bottom: 5px;
 }
 
 input[type="text"],
 input[type="url"],
-input[type="file"] 
-input[type="select"]{
+input[type="file"] input[type="select"] {
   width: 100%;
   padding: 10px;
   border: 1px solid #dbdbdb;
@@ -391,18 +388,16 @@ input[type="select"]{
   box-sizing: border-box;
 }
 
-.create-event-form{
+.create-event-form {
   display: flex;
-  max-width:800px;
+  max-width: 800px;
   flex-direction: column;
   margin: 0 auto;
   padding: 40px;
   background-color: #fff;
   border-radius: 10px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-  margin-bottom:10px;
-  margin-top:-33px;
+  margin-bottom: 10px;
+  margin-top: -33px;
 }
-
-
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <div class="modal-overlay">
+  <div class="modal-overlay" @click.self="$emit('close')">
     <div class="modal-container">
       <div class="create-event-form">
         <button class="close-button" @click="$emit('close')">✕</button>
