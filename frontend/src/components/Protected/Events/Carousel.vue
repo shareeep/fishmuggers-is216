@@ -1,5 +1,5 @@
 <template>
-  <!-- <div class="carousel-wrapper"> -->
+
   <div class="carousel">
     <!-- Profile Tabs -->
     <!-- <div class="profile-tabs">
@@ -285,7 +285,7 @@
       </div>
     </div>
   </div>
-  <!-- </div> -->
+
 </template>
 
 
@@ -444,6 +444,20 @@ export default defineComponent({
 </script>
 
 <style scoped>
+body {
+  overflow-x: hidden;
+  /* Prevent horizontal scrolling on the whole page */
+}
+
+
+::v-deep #rightsm img,
+::v-deep #leftsm img,
+::v-deep #right img,
+::v-deep #left img {
+  z-index: 10;
+  /* Increase to bring above other content */
+}
+
 ::v-deep #rightsm img {
   position: relative;
   max-width: 60px;
@@ -500,16 +514,6 @@ export default defineComponent({
   /* Color shadow on hover */
 }
 
-/* General Styles */
-/* .title {
-  color: rgb(46, 46, 46);
-  text-align: center;
-  font-family: 'Montserrat', sans-serif;
-  font-size: 30px;
-  font-weight: bold;
-  margin-top: 40px;
-} */
-
 /* Loading Indicator and Error Message Styles */
 .loading-indicator,
 .error-message {
@@ -522,6 +526,7 @@ export default defineComponent({
   color: red;
 }
 
+
 /* Carousel Container */
 .carousel {
   padding: 0;
@@ -529,7 +534,7 @@ export default defineComponent({
   max-width: 1400px;
   margin: 0 auto;
   color: #2c3e50;
-  overflow-x: visible;
+  overflow: visible;
   position: relative;
   --vc-pgn-margin: 5px;
   --vc-pgn-width: 15px;
@@ -539,10 +544,20 @@ export default defineComponent({
   --vc-pgn-active-color: gold;
   /* Responsive scaling */
   margin-top: -12px;
-
-
+}
+@media (min-width: 768px) {
+  /* Medium screen and up (md) */
+  .carousel {
+    overflow: visible; /* Allow visible overflow on medium screens */
+  }
 }
 
+@media (min-width: 1024px) {
+  /* Large screen and up (lg) */
+  .carousel {
+    overflow: hidden; /* Hide overflow on large screens */
+  }
+}
 /* Carousel Item Styles */
 .carousel__item {
   margin: 10px 15px;

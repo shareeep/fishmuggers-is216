@@ -158,6 +158,7 @@ html, body {
   position: fixed;
 }
 
+
 main { 
   align-items: center;
   margin-left: 250px;
@@ -257,7 +258,7 @@ main {
   }
 }
 
-
+ 
 /* Center the content-container */
 .content-container {
   max-width: 1400px;
