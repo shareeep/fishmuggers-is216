@@ -22,6 +22,7 @@
 
 
 <script>
+
 export default {
   name: "FriendRequests",
   props: {
@@ -59,9 +60,9 @@ h3 {
 /* Request List */
 .request-list {
   display: flex;
-  gap: 20px;
+  gap: 15px;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: flex-start;
   /* Center items when wrapping */
 }
 
@@ -74,7 +75,7 @@ h3 {
   background-color: #ffffff;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   min-width: 300px;
-  width: 325px;
+  width: 250px;
   opacity: 0;
   transform: scale(0.9);
   animation: popFadeIn 0.4s forwards;
@@ -84,6 +85,11 @@ h3 {
   to {
       opacity: 1;
       transform: scale(1);
+  }
+}
+@media (max-width: 1005px) {
+  .request-list {
+    justify-content: center; /* 2 items per row for medium screens */
   }
 }
 

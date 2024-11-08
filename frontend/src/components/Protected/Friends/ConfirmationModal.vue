@@ -75,28 +75,41 @@ p {
 }
 
 .confirm-button {
-    background-color: #4CAF50;
-    color: white;
+    background-color: #FFD700;
+    color: black;
     padding: 8px 16px;
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
 }
 
 .cancel-button {
-    background-color: #ccc;
+    background-color: #ddd;
     color: #333;
     padding: 8px 16px;
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
 }
 
 .confirm-button:hover {
-    background-color: #45a049;
+    background-color: #E6C200;
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(75, 0, 130, 0.2);
 }
 
 .cancel-button:hover {
     background-color: #bbb;
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(75, 0, 130, 0.2);
+}
+
+.confirm-button:active,
+.cancel-button:active {
+  transform: scale(0.98);
 }
 </style>

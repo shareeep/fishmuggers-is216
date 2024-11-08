@@ -46,6 +46,7 @@ export default {
       requestIdToCancel: null,
     };
   },
+  
   methods: {
     openConfirmationModal(requestId) {
       // Store the ID of the request we want to cancel and show the modal
@@ -98,23 +99,27 @@ h3 {
   display: flex;
   gap: 20px;
   flex-wrap: wrap;
-  justify-content: center;
+  justify-content: flex-start;
 }
 
 .request-item {
   display: flex;
   align-items: center;
   padding: 15px;
-  background-color: #fff;
   border-radius: 15px;
+  background-color: #ffffff;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   min-width: 300px;
-  width: 325px;
+  width: 250px;
   opacity: 0;
   transform: scale(0.9);
   animation: popFadeIn 0.4s forwards;
 }
-
+@media (max-width: 1005px) {
+  .request-list {
+    justify-content: center; /* 2 items per row for medium screens */
+  }
+}
 .request-item img {
   width: 85px;
   height: 85px;
@@ -145,7 +150,7 @@ h3 {
 }
 
 .actions {
-  display: flex;
+  display: flex; 
   justify-content: flex-start;
   gap: 10px;
   margin-top: 5px;
