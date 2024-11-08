@@ -237,17 +237,21 @@ const openModal = (post) => {
 }
 
 .edit-btn {
-  display: block; /* Makes the button take up the full width */
-  width: 100%; /* Ensures it spans the full width of its container */
-  padding: 10px 15px; /* Increases the padding for a larger button */
+  padding: 5px 15px;
   border: none;
   border-radius: 5px;
   font-weight: bold;
   cursor: pointer;
   background-color: #FFD700;
   color: #333;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  transform: scale(1);
+  cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
-  margin-bottom: 15px; /* Adds space below the button */
+  margin-bottom: 15px;
+  /* Adds space below the button */
 }
 
 .edit-btn:hover {
