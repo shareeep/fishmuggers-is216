@@ -46,7 +46,7 @@
           Use Current Location
         </button>
         <!-- <p class="text-sm text-gray-500"> -->
-          <!-- ^ Only fills in Latitude & Longitude, for Leaflet.js reference -->
+        <!-- ^ Only fills in Latitude & Longitude, for Leaflet.js reference -->
         <!-- </p> -->
       </div>
 
@@ -199,20 +199,37 @@ const getCurrentLocation = () => {
 
   isGettingLocation.value = true;
   navigator.geolocation.getCurrentPosition(
-    (position) => {
+    async (position) => {
       const latitude = position.coords.latitude;
       const longitude = position.coords.longitude;
 
       // Update event.locationData with [latitude, longitude]
       event.value.locationData = [latitude, longitude];
 
-      // Optionally, reverse geocode to get the address
-      event.value.location = `Lat: ${latitude.toFixed(
-        5
-      )}, Lon: ${longitude.toFixed(5)}`;
+      try {
+        // Load the Google Maps API
+        await googleMapsLoader.load();
 
-      successMessage.value = "Location detected successfully!";
-      isGettingLocation.value = false;
+        // Initialize the Geocoder
+        const geocoder = new google.maps.Geocoder();
+
+        // Perform reverse geocoding
+        geocoder.geocode({ location: { lat: latitude, lng: longitude } }, (results, status) => {
+          if (status === "OK" && results[0]) {
+            // Use the formatted address from the first result
+            event.value.location = results[0].formatted_address;
+          } else {
+            console.error("Reverse geocode was not successful for the following reason: " + status);
+            event.value.location = `Lat: ${latitude.toFixed(5)}, Lon: ${longitude.toFixed(5)}`;
+          }
+          successMessage.value = "Location detected successfully!";
+          isGettingLocation.value = false;
+        });
+      } catch (error) {
+        console.error("Error loading Google Maps API or performing reverse geocoding:", error);
+        event.value.location = `Lat: ${latitude.toFixed(5)}, Lon: ${longitude.toFixed(5)}`;
+        isGettingLocation.value = false;
+      }
     },
     (error) => {
       switch (error.code) {
@@ -233,7 +250,6 @@ const getCurrentLocation = () => {
     }
   );
 };
-
 // Function to handle image upload and preview
 const handleImageUpload = (eventObj) => {
   const file = eventObj.target.files[0];
