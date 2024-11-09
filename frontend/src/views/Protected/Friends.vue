@@ -6,7 +6,11 @@
     <main id="scrollable-element">
       <div style="margin-top:40px;">
         <h1 class="heading">Connect with Friends</h1>
-        <SearchBar />
+        <SearchBar :fetchedUsers="filteredFriends" @search-query="filterFriends" />
+
+        <SearchedUsers v-if="searchQuery.length > 0" :users="filteredFriends" />
+
+
       </div>
 
       <div v-if="loading" class="loading-container">
@@ -41,6 +45,8 @@ import FriendRequests from '@/components/Protected/Friends/FriendRequests.vue';
 import FriendsList from '@/components/Protected/Friends/FriendsList.vue';
 import RequestsSent from '@/components/Protected/Friends/RequestsSent.vue';
 import AllFriendsPopup from '@/components/Protected/Friends/AllFriendsPopup.vue';
+import SearchedUsers from '@/components/Protected/Friends/SearchedUsers.vue';
+
 
 import Scrollbar from 'smooth-scrollbar';
 import OverscrollPlugin from 'smooth-scrollbar/plugins/overscroll';
@@ -57,6 +63,7 @@ const suggestedFriends = ref([]); // Suggested friends list
 const sentRequests = ref([]);
 const receivedRequests = ref([]);
 const loading = ref(true); // Initialize loading as true
+
 
 // Get the current user ID from Firebase Auth
 const userId = auth.currentUser ? auth.currentUser.uid : null;
@@ -76,6 +83,24 @@ async function fetchData() {
   } catch (error) {
     console.error("Error loading data:", error);
     loading.value = false; // Ensure loading stops in case of error
+  }
+}
+const searchQuery = ref(""); // Track search input dynamically
+
+// Filtered list of friends based on search input
+const filteredFriends = ref([]);
+
+function filterFriends(query) {
+  searchQuery.value = query;  // Update searchQuery directly
+  
+  // Clear results if query is empty or only one character
+  if (query.trim() === "" || query.length <= 0) {
+    filteredFriends.value = [];
+  } else {
+    // Filter through allUsers for matching results
+    filteredFriends.value = allUsers.value
+      .filter(user => user.username && user.username.toLowerCase().startsWith(query.toLowerCase()))
+      .slice(0, 8); // Limit results to the first 8 matches
   }
 }
 

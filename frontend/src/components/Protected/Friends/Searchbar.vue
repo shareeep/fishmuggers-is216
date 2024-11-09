@@ -10,7 +10,7 @@
         </svg>
       </div>
       <input type="search" id="default-search" v-model="searchQuery" @keyup.enter="applySearch"
-        @input="handleSearchInput"
+        @input="emitSearchQuery"
         class="block w-full pl-10 pr-16 lg:pr-32 p-4 text-sm text-gray-900 border border-gray-300 rounded-lg bg-white focus:ring-[#FDF4CB] focus:border-[#FDF4CB] dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-[#FDF4CB] dark:focus:border-[#FDF4CB] drop-shadow-md"
         placeholder="Search for a user" required>
       <div class="absolute inset-y-0 right-0 flex items-center mr-2">
@@ -27,6 +27,16 @@
 <script>
 export default {
   name: "SearchBar",
+  data() {
+    return {
+      searchQuery: ""
+    };
+  },
+  methods: {
+    emitSearchQuery() {
+      this.$emit("search-query", this.searchQuery);
+    }
+  }
 };
 </script>
 
