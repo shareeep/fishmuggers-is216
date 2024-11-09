@@ -15,9 +15,12 @@
     </div>
     <div class="chat-messages" ref="messageContainer" @scroll="handleScroll">
       <div v-for="(message, index) in selectedFriend.messages" :key="index" class="message">
-        <!-- Render message HTML using v-html for clickable links -->
-        <p v-html="formatMessage(message.text)" :class="message.sentByYou ? 'message-you' : 'message-them'"></p>
+        <p v-html="formatMessage(message.text)" :class="[
+          message.sentByYou ? 'message-you' : 'message-them',
+          isLastInBatch(index, message.sentByYou) ? 'last-message' : ''
+        ]"></p>
       </div>
+
 
     </div>
     <div class="chat-input">
@@ -54,14 +57,14 @@ const props = defineProps({
   showFindChatPopup: {
     type: Function,
     required: true
-  }
+  },
+  loading: Boolean,
 });
 
 const newMessage = ref('');
 const userUid = ref(null);
 const messageContainer = ref(null);
 const isUserScrolledUp = ref(false);
-const loading = ref(true);  // Loading state
 
 // Watch for changes in selectedFriend to stop loading
 watch(() => props.selectedFriend, (newValue) => {
@@ -74,6 +77,9 @@ const switchToConversationsMode = () => {
   gridElement.classList.add("conversations-mode");
   gridElement.classList.remove("messages-mode");
 };
+
+
+
 
 // Send message logic with POST request to backend
 const sendMessage = async () => {
@@ -132,6 +138,11 @@ const scrollToBottom = () => {
   }
 };
 
+const isLastInBatch = (index, sentByYou) => {
+  const nextMessage = props.selectedFriend.messages[index + 1];
+  return !nextMessage || nextMessage.sentByYou !== sentByYou;
+};
+
 // Fetch Firebase Auth UID on mount
 onMounted(() => {
   const auth = getAuth();
@@ -151,7 +162,8 @@ onMounted(() => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh; /* Ensures it takes full height of the viewport */
+  height: 100vh;
+  /* Ensures it takes full height of the viewport */
 }
 
 .loading-text {
@@ -165,7 +177,8 @@ onMounted(() => {
 
 .loadinggif {
   margin-right: -30px;
-  width: 200px; /* Adjust the width as desired */
+  width: 200px;
+  /* Adjust the width as desired */
 }
 
 .dots::after {
@@ -179,12 +192,15 @@ onMounted(() => {
   0% {
     content: '';
   }
+
   33% {
     content: '.';
   }
+
   66% {
     content: '..';
   }
+
   100% {
     content: '...';
   }
@@ -282,41 +298,63 @@ input[type="text"]:focus {
   display: flex;
   width: 100%;
   /* Ensure the message takes the full width of the container */
-  margin-bottom: 10px;
+  margin-bottom: 5px;
 }
 
 .message-you {
   justify-content: flex-end;
-  /* Aligns your messages to the right */
-  align-items: flex-end;
-  /* Aligns the text at the bottom */
   background-color: #FFE047;
-  /* Yellow background */
-  padding: 8px;
-  border-radius: 10px;
+  padding: 10px 15px;
+  border-radius: 15px; /* More rounded corners */
   word-break: break-word;
   max-width: 75%;
   margin-left: auto;
-  /* Ensures the message aligns to the right */
-  color: black;
-  /* Black text color */
+  color: black; /* White text color for better contrast */
   text-align: left;
-  /* Aligns text to the right */
+  position: relative;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.15); 
+  z-index: 1;
+}
+
+.message-you.last-message::after {
+  content: '';
+  position: absolute;
+  right: -6px; /* Adjust the positioning for alignment */
+  bottom: 2px; /* Position closer to the bottom of the bubble */
+  width: 12px;
+  height: 12px;
+  background-color: #FFE047; /* Same color as bubble */
+  border-radius: 50%; /* Creates a smooth, rounded effect */
+  transform: rotate(196deg); /* Rotates to create a connected tail */
+  clip-path: polygon(0 50%, 100% 0, 100% 100%); /* Creates a teardrop-like shape */
+  z-index: 0;
 }
 
 .message-them {
   justify-content: flex-start;
-  align-items: flex-start;
-  /* Aligns the text at the top */
   background-color: #ececec;
-  padding: 8px;
-  border-radius: 10px;
+  padding: 10px 15px;
+  border-radius: 15px;
   max-width: 75%;
   margin-right: auto;
-  /* Ensures the message aligns to the left */
   color: #000;
-  /* Black text color */
+  position: relative;
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.15); 
 }
+
+.message-them.last-message::after {
+  content: '';
+  position: absolute;
+  left: -7px; /* Adjust the positioning for alignment */
+  bottom: 2px; /* Position closer to the bottom of the bubble */
+  width: 12px;
+  height: 12px;
+  background-color: #ececec; /* Same color as bubble */
+  border-radius: 50%; /* Creates a smooth, rounded effect */
+  transform: rotate(-18deg); /* Rotates to create a connected tail */
+  clip-path: polygon(0 50%, 100% 0, 100% 100%); /* Creates a teardrop-like shape */
+}
+
 
 .chat-input {
   padding: 15px;
@@ -383,7 +421,7 @@ input[type="text"]:focus {
   width: 100%;
   /* Take up the full width */
   background-image: url('../../../assets/images/chat_background.png');
-  background-size: 100% 100%;
+  background-size: cover;
   /* Ensure the background image fills the container */
   background-position: center;
   /* Center the image */
@@ -413,5 +451,10 @@ input[type="text"]:focus {
 
 .start-chat-btn:active {
   transform: scale(0.98);
+}
+
+a {
+  color: #fff;
+ text-decoration: underline;
 }
 </style>

@@ -13,8 +13,6 @@
     <EditPetModal v-if="showEditPetModal" :pet="currentEditPet" @close="closeEditPetModal"
       @update-pet="handlePetUpdate" />
 
-
-
     <PostModal v-if="showPostModal" :post="selectedPost" :userData="userData" :selectedPostIndex="selectedPostIndex"
       :totalPosts="userData.posts.length" @close="closePostModal" @prev="goToPrevPost" @next="goToNextPost"
       @like-toggle="handleLikeToggle" />

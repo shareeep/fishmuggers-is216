@@ -16,6 +16,8 @@
           <p>{{ friend.lastMessage }}</p>
         </div>
         <span class="time">{{ formatTimeOrDate(friend.latest) }}</span>
+        <span v-if="friend.unreadCount > 0" friend.unreadcoun class="unread-badge">{{ friend.unreadCount }}
+        </span>
 
         <!-- Three dots button for showing dropdown -->
         <!-- <button @click.stop="toggleDropdown(index)" class="delete-chat-button" title="Options">
@@ -33,8 +35,9 @@
 
     <!-- Button to find more friends to chat with -->
     <div class="find-more-friends">
-      <button @click="findMoreFriends">Find more friends to chat with!</button>
+      <button @click="findMoreFriends">{{ buttonText }}</button>
     </div>
+
   </div>
 </template>
 
@@ -76,6 +79,21 @@ const selectFriend = (friend) => {
 const findMoreFriends = () => {
   emit('showFindFriendsPopup');
 };
+
+const buttonText = ref(window.innerWidth <= 600 ? 'Start Chatting' : 'Find more friends to chat with!');
+
+function handleResize() {
+  buttonText.value = window.innerWidth <= 600 ? 'Start Chatting' : 'Find more friends to chat with!';
+}
+
+onMounted(() => {
+  window.addEventListener('resize', handleResize);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize);
+});
+
 
 // Toggle the dropdown menu visibility
 // const toggleDropdown = (index) => {
@@ -271,5 +289,21 @@ const formatTimeOrDate = (timestamp) => {
   .find-more-friends button {
     margin-bottom: 60px;
   }
+}
+
+
+.unread-badge {
+  margin-top: 20px;
+  margin-right: 5px;
+  background-color: #FFD700;
+  color: black;
+  font-weight: bold;
+  border-radius: 50%;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  font-size: 12px;
+  text-align: center;
+  line-height: 20px;
 }
 </style>

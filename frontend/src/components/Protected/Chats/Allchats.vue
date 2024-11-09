@@ -1,9 +1,9 @@
 <template>
   <div class="chat-container">
     <FriendsList :friends="sortedFriends" :selectedFriend="selectedFriend" @friendSelected="selectFriend"
-      @showFindFriendsPopup="showFindChatPopup" @switchToMessages="switchToMessagesMode" />
+      @showFindFriendsPopup="showFindChatPopup" @switchToMessages="switchToMessagesMode" :loading="loading"/>
 
-    <ChatPanel :selectedFriend="selectedFriend" :fetchFriends="fetchFriends" :showFindChatPopup="showFindChatPopup" />
+    <ChatPanel :selectedFriend="selectedFriend" :fetchFriends="fetchFriends" :showFindChatPopup="showFindChatPopup" :loading="loading"/>
   </div>
 </template>
 
@@ -19,7 +19,8 @@ const props = defineProps({
   showFindChatPopup: {
     type: Function,
     required: true
-  }
+  },
+  loading: Boolean
 });
 
 const selectedFriend = ref(null);
@@ -27,10 +28,44 @@ const friends = ref([]);
 const userUid = ref(null);
 let pollingInterval = null;
 
-const selectFriend = (friend) => {
-  selectedFriend.value = friend;
-  console.log("Selected Friend Updated:", selectedFriend.value);
+// const selectFriend = (friend) => {
+//   selectedFriend.value = friend;
+//   console.log("Selected Friend Updated:", selectedFriend.value);
+// };
+const markMessagesAsRead = async (uid, friendUid) => {
+  try {
+    const response = await axios.post('http://localhost:3000/api/messages/markAsRead', {
+      uid: uid,
+      friendUid: friendUid,
+    });
+    console.log(response.data.message);
+  } catch (error) {
+    console.error('Error marking messages as read:', error);
+  }
 };
+
+const selectFriend = async (friend) => {
+  selectedFriend.value = friend;
+  loading.value = false;
+  console.log("Selected Friend Updated:", selectedFriend.value);
+
+    // Immediately set the unread count to 0 for the selected friend
+  const friendIndex = friends.value.findIndex(f => f.senderUid === friend.senderUid);
+  if (friendIndex !== -1) {
+    friends.value[friendIndex].unreadCount = 0;
+  }
+  
+  // Call markMessagesAsRead after selecting a friend
+  if (userUid.value && selectedFriend.value) {
+    await markMessagesAsRead(userUid.value, selectedFriend.value.senderUid);
+    // Fetch the updated friends list to refresh unread counts
+    await fetchFriends();
+  }
+
+  // Switch to messages mode on mobile devices
+  switchToMessagesMode();
+};
+
 
 const fetchFriends = async () => {
   try {
