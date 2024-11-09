@@ -523,14 +523,14 @@ async mounted() {
   }
   .current-day h2{
     font-size: 2vw;
-    font-weight: bolder;
-    font-family: 'Arial Rounded MT';
+    font-weight: bold;
+    /* font-family: 'Poppins'; */
   }
   .current-day h3{
     font-size: 1.5vw;
     /* text-align: center; */
-    font-weight: bolder;
-    font-family: 'Arial Rounded MT';
+    font-weight: bold;
+    /* font-family: 'Poppins'; */
     color:#414141bf;
   }
   .side-panel hr{
@@ -540,18 +540,18 @@ async mounted() {
     width: 90%;
     margin-left: 4%;
     padding: 0.4vw;
-    font-family: 'Arial Rounded MT';
+    /* font-family: 'Poppins'; */
     font-size: 1vw;
     border-radius: 5px;
     border: 1px solid #ccc;
   }
   .filters h3{
     text-align: center;
-    font-family: 'Arial Rounded MT';
+    /* font-family: 'Poppins'; */
     font-size: 1.2vw;
   }
   .filters h4{
-    font-family: 'Arial Rounded MT';
+    /* font-family: 'Poppins'; */
     font-size: 1.2vw;
     padding-left: 5%;
     margin-top: 8px;
@@ -563,13 +563,13 @@ async mounted() {
     margin-bottom: 10px;
   }
   .date-range h4 {
-    font-family: 'Arial Rounded MT';
+    /* font-family: 'Poppins'; */
     font-size: 1.2vw;
     text-decoration: underline;
   }
 
   .date-range label {
-    font-family: 'Arial Rounded MT';
+    /* font-family: 'Poppins'; */
     font-weight: bold;
     font-size: 1vw;
     display: block;
@@ -581,7 +581,7 @@ async mounted() {
     width: 85%;
     height: 3vw;
     margin-left: 6%;
-    font-family: 'Arial Rounded MT';
+    /* font-family: 'Poppins'; */
     border-radius: 6px;
     border: 1px solid #ccc;
     font-size: 1.2vw;
@@ -623,7 +623,7 @@ async mounted() {
   }
   .calendar-header h1 {
     font-size: 7vw; /* Font size is now relative to the container size */
-    font-weight: bolder;
+    font-weight: bold;
     font-family: pawfont;
     color: black;
     text-shadow: 4px 3px white;
@@ -661,7 +661,7 @@ async mounted() {
     border-radius: 12px;
     /* Slightly bigger padding for the header */
     font-size: 2.2vw; /* Larger font size for the header */
-    font-family: "Arial Rounded MT";
+    font-family: "Poppins";
     text-align: center;
     width: calc(100% / 7);
   }
@@ -672,7 +672,7 @@ async mounted() {
     border: 1px solid black;
     border-radius: 12px;
     font-size: 1.5vw; /* Smaller font size for the day cells */
-    font-family: "Arial Rounded MT";
+    font-family: "Poppins";
     text-align: center;
   }
 
@@ -721,7 +721,7 @@ async mounted() {
   border: 1px solid black;
   color: black;
   font-size: 1.2vw;
-  font-family: "Arial Rounded MT";
+  font-family: "Poppins";
   padding: 12px 0px;
   border-radius: 8px;
   cursor: pointer;
@@ -760,14 +760,14 @@ async mounted() {
 
 .popup-content h3 {
   text-align: center;
-  font-family: "Arial Rounded MT";
+  font-family: "Poppins";
   font-size: 1.5vw;
   margin-bottom: 20px;
 }
 
 .popup-content label {
   display: block;
-  font-family: "Arial Rounded MT";
+  font-family: "Poppins";
   font-size: 1.1vw;
   margin-top: 10px;
 }
@@ -776,7 +776,7 @@ async mounted() {
   width: 100%;
   padding: 8px;
   margin-top: 5px;
-  font-family: "Arial Rounded MT";
+  font-family: "Poppins";
   font-size: 1vw;
   border: 1px solid #ccc;
   border-radius: 4px;
@@ -792,7 +792,7 @@ async mounted() {
   background-color: #ffd700; /* Same color scheme */
   border: 1px solid black;
   color: black;
-  font-family: "Arial Rounded MT";
+  font-family: "Poppins";
   font-size: 1vw;
   padding: 8px 12px;
   border-radius: 6px;
@@ -815,13 +815,13 @@ async mounted() {
 }
 
 .show-custom-events h4 {
-    font-family: 'Arial Rounded MT';
+    /* font-family: 'Poppins'; */
     font-size: 1.2vw;
     text-decoration: underline;
 }
 
 .show-custom-events label {
-    font-family: 'Arial Rounded MT';
+    /* font-family: 'Poppins'; */
     font-size: 1vw;
     margin-right: 1vw;
     display: inline-block;
@@ -857,14 +857,14 @@ async mounted() {
 
 .popup-content h3 {
   text-align: center;
-  font-family: "Arial Rounded MT";
+  font-family: "Poppins";
   font-size: 1.5vw;
   margin-bottom: 20px;
 }
 
 .popup-content label {
   display: block;
-  font-family: "Arial Rounded MT";
+  font-family: "Poppins";
   font-size: 1.1vw;
   margin-top: 10px;
 }
@@ -873,7 +873,7 @@ async mounted() {
   width: 100%;
   padding: 8px;
   margin-top: 5px;
-  font-family: "Arial Rounded MT";
+  font-family: "Poppins";
   font-size: 1vw;
   border: 1px solid #ccc;
   border-radius: 4px;
@@ -889,7 +889,7 @@ async mounted() {
   background-color: #ffd700;
   border: 1px solid black;
   color: black;
-  font-family: "Arial Rounded MT";
+  font-family: "Poppins";
   font-size: 1vw;
   padding: 8px 12px;
   border-radius: 6px;
@@ -909,7 +909,7 @@ async mounted() {
     border: 1px solid black;
     color: black;
     font-size: 1.3vw;
-    font-family: "Arial Rounded MT";
+    font-family: "Poppins";
     padding: 8px 0px;
     border-radius: 8px;
     cursor: pointer;
