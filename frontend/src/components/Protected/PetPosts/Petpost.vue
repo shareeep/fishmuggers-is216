@@ -12,7 +12,9 @@
         <div class="post-header">
           <div class="user-info">
             <img :src="post.user.avatar" alt="User Avatar" class="avatar" />
-            <h3 class="user-name">{{ post.user.name }}</h3>
+            <h3 class="user-name">
+              <a :href="`/friendprofile/${post.user.uid}`">{{ post.user.name }}</a>
+            </h3>
           </div>
           <div class="menu-container">
             <button @click="toggleMenu(post.postId)" class="menu-btn" hidden>•••</button>
