@@ -3,11 +3,11 @@
     <Navbar />
     <main>
       <!-- Pass the `showFindChatPopup` function as a prop to Allchats -->
-      <Allchats :showFindChatPopup="showFindChatPopup" :friends="friends" @deleteChat="deleteChat" />
+      <Allchats :showFindChatPopup="showFindChatPopup" :friends="friends" @deleteChat="deleteChat" :loading="loading" />
     </main>
     <!-- Show FindChatPopup when isFindChatPopupVisible is true -->
     <FindChatPopup v-if="isFindChatPopupVisible" :friends="friends" :activeChats="activeChatFriends"
-      @close="isFindChatPopupVisible = false" @startChat="startChatWithFriend" />
+      @close="isFindChatPopupVisible = false" @startChat="startChatWithFriend" :loading="loading" />
   </div>
 </template>
 
@@ -24,6 +24,7 @@ const isFindChatPopupVisible = ref(false);
 const friends = ref([]);
 const activeChatFriends = ref([]); // Array for friends with active chats
 const selectedFriend = ref(null);
+const loading = ref(true);
 
 // Function to show the FindChatPopup
 const showFindChatPopup = () => {
@@ -37,6 +38,7 @@ const fetchFriends = async () => {
 
     if (!userUid) {
       console.error("User is not authenticated.");
+      loading.value = false; 
       return;
     }
 
@@ -49,8 +51,19 @@ const fetchFriends = async () => {
     activeChatFriends.value = chatsResponse.data.map(chat =>
       chat.senderUid === userUid ? chat.receiverUid : chat.senderUid
     );
+
+    // Set selectedFriend to null if there are no active chats or friends
+    if (friends.value.length === 0 && activeChatFriends.value.length === 0) {
+      selectedFriend.value = null;
+    } else {
+      selectedFriend.value = friends.value[0] || null; // Select the first friend if available
+    }
+
   } catch (error) {
     console.error("Failed to fetch friends or chats:", error);
+  } finally {
+    // Set loading to false after data is fetched, even if empty
+    loading.value = false;
   }
 };
 
