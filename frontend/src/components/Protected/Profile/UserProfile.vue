@@ -80,9 +80,12 @@
 
               <div class="likes-container">
                 <p class="likes-caption">{{ userData.posts[selectedPostIndex].likes.length }} Likes</p>
-                <button @click="likePost(userData.posts[selectedPostIndex])" class="like-button">
-                  <i class="fas fa-thumbs-up" style="color:black;"></i>Like
-                </button>
+
+<button @click="handleLikeToggle(userData.posts[selectedPostIndex])" :class="['like-button', { 'liked': userData.posts[selectedPostIndex].isLiked }]">
+  <i class="fas fa-thumbs-up"></i> {{ userData.posts[selectedPostIndex].isLiked ? 'Unlike' : 'Like' }}
+</button>
+
+
               </div>
             </div>
           </div>
@@ -238,8 +241,14 @@ const fetchUserData = async () => {
       ...userData.value,
       ...userResponse.data,
     };
-    userData.value.posts = postsResponse.data || [];
-    posts.value = userData.value.posts.length;
+
+    // Set posts data and add `isLiked` property based on the user's likes
+    userData.value.posts = (postsResponse.data || []).map(post => ({
+      ...post,
+      isLiked: post.likes.includes(auth.currentUser.uid), // Set isLiked based on user's ID in likes array
+    }));
+
+    posts.value = userData.value.posts.length; // Update posts count
     userData.value.createdEvents = createdEventsResponse.data || [];
     userData.value.joinedEvents = joinedEventsResponse.data || [];
     pets.value = petsResponse.data || [];
@@ -254,6 +263,7 @@ const fetchUserData = async () => {
     console.error("Error fetching user data:", error);
   }
 };
+
 
 // Friend request and friendship status
 const isRequested = ref(false); // Track if a request is pending
@@ -375,29 +385,40 @@ const nextPost = () => {
     selectedPostIndex.value = 0;
   }
 };
-
 // Like Post Method
-const likePost = async (post) => {
+const handleLikeToggle = async (post) => {
+  if (!auth.currentUser) {
+    alert("You need to be logged in to like posts.");
+    return;
+  }
+
+  const userId = auth.currentUser.uid;
+  const isLiked = post.likes.includes(userId);
+  
   try {
     const token = await auth.currentUser.getIdToken();
-
-    // API endpoint for liking a post (adjust as per your backend)
-    const response = await axios.post(
-      `/api/posts/${post.id}/like`,
-      {},
+    
+    // Toggle like/unlike on the backend
+    await axios.post(
+      `/api/posts/${post.postId}/like`,
+      { like: !isLiked, userId: userId },
       { headers: { Authorization: `Bearer ${token}` } }
     );
 
-    if (response.status === 200) {
-      // Increment the local likes count
-      post.likes += 1;
-      console.log(`Post ${post.id} liked. Total likes: ${post.likes}`);
+    // Update likes locally
+    if (isLiked) {
+      post.likes = post.likes.filter(id => id !== userId); // Unlike
+    } else {
+      post.likes.push(userId); // Like
     }
+    post.isLiked = !isLiked; // Toggle isLiked status for the UI
+
   } catch (error) {
-    console.error("Error liking post:", error.response?.data || error);
-    alert("Unable to like the post. Please try again.");
+    console.error("Error toggling like:", error.response?.data || error);
+    alert("Unable to toggle like. Please try again.");
   }
 };
+
 
 // Fetch data on component mount
 onMounted(() => {
@@ -901,21 +922,53 @@ onMounted(() => {
   font-weight: bold;
   color: #666;
 }
-
 .like-button {
   display: flex;
   align-items: center;
   font-size: 1rem;
   font-weight: bold;
-  color: black;
+  color: #333; /* Default color for text and icon */
   background: none;
   border: none;
   cursor: pointer;
+  transition: color 0.3s ease, transform 0.2s ease;
 }
 
 .like-button i {
   margin-right: 5px;
+  color: #333; /* Default icon color */
+  transition: color 0.3s ease;
 }
+
+/* Hover effect for the like button */
+.like-button:hover {
+  color: #007bff; /* Hover color for text */
+  transform: scale(1.05); /* Slightly enlarge on hover */
+}
+
+.like-button:hover i {
+  color: #007bff; /* Hover color for icon */
+}
+
+/* Active state for pressing the button */
+.like-button:active {
+  transform: scale(0.95); /* Slightly shrink when clicked */
+}
+
+/* Styling when the post is liked */
+.like-button.liked {
+  color: #ff4500; /* Liked color for text */
+}
+
+.like-button.liked i {
+  color: #ff4500; /* Liked color for icon */
+}
+
+/* Add a subtle shadow to the button when liked */
+.like-button.liked {
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
 
 .nav-arrow {
   position: absolute;
