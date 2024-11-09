@@ -498,8 +498,8 @@ async mounted() {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 75%; /* Adjust as needed for sizing */
-    padding-top: 75%; /* This helps maintain a square ratio based on width */
+    width: 60%; /* Adjust as needed for sizing */
+    padding-top: 60%; /* This helps maintain a square ratio based on width */
     border-radius: 50%; /* Circular container */
     overflow: hidden; /* Ensures the image doesn’t overflow outside the circle */
     background-color: #f0f0f0; /* Optional background color */
@@ -522,15 +522,13 @@ async mounted() {
     text-align: center;
   }
   .current-day h2{
-    font-size: 2vw;
+    font-size: 1.5vw;
     font-weight: bold;
-    /* font-family: 'Poppins'; */
   }
   .current-day h3{
-    font-size: 1.5vw;
+    font-size: 1vw;
     /* text-align: center; */
     font-weight: bold;
-    /* font-family: 'Poppins'; */
     color:#414141bf;
   }
   .side-panel hr{
@@ -540,22 +538,20 @@ async mounted() {
     width: 90%;
     margin-left: 4%;
     padding: 0.4vw;
-    /* font-family: 'Poppins'; */
-    font-size: 1vw;
+    font-size: 0.8vw;
     border-radius: 5px;
     border: 1px solid #ccc;
   }
   .filters h3{
     text-align: center;
-    /* font-family: 'Poppins'; */
-    font-size: 1.2vw;
+    font-size: 1.1vw;
+    font-weight: bolder;
   }
   .filters h4{
-    /* font-family: 'Poppins'; */
-    font-size: 1.2vw;
+    font-size: 1vw;
     padding-left: 5%;
     margin-top: 8px;
-    text-decoration: underline;
+    font-weight: bold;
   }
 
   /* Date Range Filter styling */
@@ -563,34 +559,24 @@ async mounted() {
     margin-bottom: 10px;
   }
   .date-range h4 {
-    /* font-family: 'Poppins'; */
-    font-size: 1.2vw;
-    text-decoration: underline;
-  }
-
-  .date-range label {
-    /* font-family: 'Poppins'; */
-    font-weight: bold;
     font-size: 1vw;
+    font-weight: bold;
+  }
+  .date-range label {
+    font-size: 0.9vw;
     display: block;
-    margin-top:3px;
     margin-left: 6%;
   }
-
   .date-range input {
-    width: 85%;
-    height: 3vw;
-    margin-left: 6%;
+    width: 90%;
+    height: 2.3vw;
+    margin-left: 5%;
     /* font-family: 'Poppins'; */
     border-radius: 6px;
     border: 1px solid #ccc;
-    font-size: 1.2vw;
-    margin-bottom: 0px;
+    font-size: 0.85vw;
   }
   
-
-
-
   /* calendar */
   .calendar {
     flex: 1;
@@ -638,6 +624,7 @@ async mounted() {
     padding: 8px 20px;
     cursor: pointer;
     transition: background-color 0.3s;
+    border-radius: 5px;
   }
   .calendar-header button:hover {
     background-color: #89848c;
@@ -653,15 +640,14 @@ async mounted() {
 
   /* Header styling */
   thead{
-    height:17%;
+    height:15%;
   }
   th {
     background-color: #ffd700;
     border: 1.5px solid black;
     border-radius: 12px;
     /* Slightly bigger padding for the header */
-    font-size: 2.2vw; /* Larger font size for the header */
-    font-family: "Poppins";
+    font-size: 2vw; /* Larger font size for the header */
     text-align: center;
     width: calc(100% / 7);
   }
@@ -669,10 +655,9 @@ async mounted() {
   /* Day cell styling */
   td {
     background-color: #FCEFB4;
-    border: 1px solid black;
+    border: 1.5px solid black;
     border-radius: 12px;
     font-size: 1.5vw; /* Smaller font size for the day cells */
-    font-family: "Poppins";
     text-align: center;
   }
 
@@ -688,7 +673,7 @@ async mounted() {
     border-radius: 50%;
     /* background-color: #ff47dd8c; */
     background-color: rgba(0, 0, 255, 0.539);
-    color: white;
+    color: whitesmoke;
     text-decoration: underline;
   }
 
@@ -715,17 +700,15 @@ async mounted() {
   }
 
 
-/* ADD CUSTOM EVENTS CSSS */
+/* ADD CUSTOM EVENTS BUTTON CSS */
 .add-event-button {
   background-color: #ffd700; /* Date header color */
-  border: 1px solid black;
-  color: black;
-  font-size: 1.2vw;
-  font-family: "Poppins";
-  padding: 12px 0px;
+  font-size: 1vw;
+  font-weight: bold;
+  padding: 8px 0px;
   border-radius: 8px;
   cursor: pointer;
-  margin: 10px auto;
+  margin: 5px auto;
   display: block;
   width: 90%;
   text-align: center;
@@ -735,93 +718,19 @@ async mounted() {
 .add-event-button:hover {
   background-color: #e6c200; /* Slightly darker shade */
 }
-
-.popup-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.popup-content {
-  background-color: white;
-  padding: 20px;
-  border-radius: 12px;
-  width: 80%;
-  max-width: 400px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
-}
-
-.popup-content h3 {
-  text-align: center;
-  font-family: "Poppins";
-  font-size: 1.5vw;
-  margin-bottom: 20px;
-}
-
-.popup-content label {
-  display: block;
-  font-family: "Poppins";
-  font-size: 1.1vw;
-  margin-top: 10px;
-}
-
-.popup-content input, .popup-content textarea {
-  width: 100%;
-  padding: 8px;
-  margin-top: 5px;
-  font-family: "Poppins";
-  font-size: 1vw;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-}
-
-.popup-buttons {
-  display: flex;
-  justify-content: space-between;
-  margin-top: 20px;
-}
-
-.popup-buttons button {
-  background-color: #ffd700; /* Same color scheme */
-  border: 1px solid black;
-  color: black;
-  font-family: "Poppins";
-  font-size: 1vw;
-  padding: 8px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.popup-buttons button:hover {
-  background-color: #e6c200;
-}
-/* END ADD CUSTOM EVENTS CSS */
-
-
-
+/* END ADD CUSTOM EVENTS BUTTON CSS */
 
 /* CUSTOM EVENTS FILTER */
 .show-custom-events {
-
     margin-top: 8px;
 }
 
 .show-custom-events h4 {
-    /* font-family: 'Poppins'; */
-    font-size: 1.2vw;
-    text-decoration: underline;
+    font-size: 1vw;
+    font-weight: bold;
 }
 
 .show-custom-events label {
-    /* font-family: 'Poppins'; */
     font-size: 1vw;
     margin-right: 1vw;
     display: inline-block;
@@ -857,15 +766,14 @@ async mounted() {
 
 .popup-content h3 {
   text-align: center;
-  font-family: "Poppins";
-  font-size: 1.5vw;
+  font-size: 1.2vw;
   margin-bottom: 20px;
+  font-weight: bold;
 }
 
 .popup-content label {
   display: block;
-  font-family: "Poppins";
-  font-size: 1.1vw;
+  font-size: 0.9vw;
   margin-top: 10px;
 }
 
@@ -873,8 +781,7 @@ async mounted() {
   width: 100%;
   padding: 8px;
   margin-top: 5px;
-  font-family: "Poppins";
-  font-size: 1vw;
+  font-size: 0.9vw;
   border: 1px solid #ccc;
   border-radius: 4px;
 }
@@ -883,18 +790,17 @@ async mounted() {
   display: flex;
   justify-content: space-between;
   margin-top: 20px;
+  font-weight: bold;
 }
 
 .popup-buttons button {
   background-color: #ffd700;
-  border: 1px solid black;
-  color: black;
-  font-family: "Poppins";
   font-size: 1vw;
   padding: 8px 12px;
   border-radius: 6px;
   cursor: pointer;
   transition: background-color 0.3s;
+  font-weight: bold;
 }
 
 .popup-buttons button:hover {
@@ -906,14 +812,12 @@ async mounted() {
 /* New Reset Filters Button Style */
 .reset-filters-button {
     background-color: #ffd700;
-    border: 1px solid black;
-    color: black;
-    font-size: 1.3vw;
-    font-family: "Poppins";
+    font-weight: bold;
+    font-size: 1vw;
     padding: 8px 0px;
     border-radius: 8px;
     cursor: pointer;
-    margin: 5px auto;
+    margin: auto;
     display: block;
     width: 90%;
     text-align: center;
