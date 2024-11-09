@@ -1,18 +1,9 @@
 <template>
   <div class="chat-container">
-    <FriendsList 
-      :friends="sortedFriends" 
-      :selectedFriend="selectedFriend" 
-      @friendSelected="selectFriend"
-      @showFindFriendsPopup="showFindChatPopup"
-      @switchToMessages="switchToMessagesMode" 
-    />
+    <FriendsList :friends="sortedFriends" :selectedFriend="selectedFriend" @friendSelected="selectFriend"
+      @showFindFriendsPopup="showFindChatPopup" @switchToMessages="switchToMessagesMode" />
 
-    <ChatPanel 
-      :selectedFriend="selectedFriend" 
-      :fetchFriends="fetchFriends" 
-      :showFindChatPopup="showFindChatPopup" 
-    />
+    <ChatPanel :selectedFriend="selectedFriend" :fetchFriends="fetchFriends" :showFindChatPopup="showFindChatPopup" />
   </div>
 </template>
 
@@ -52,7 +43,10 @@ const fetchFriends = async () => {
           selectedFriend.value = updatedFriend;
         }
       } else if (friends.value.length > 0) {
-        selectedFriend.value = friends.value[0];
+        // Set selectedFriend to the latest chat
+        selectedFriend.value = friends.value.reduce((latestFriend, friend) => {
+          return new Date(friend.latest) > new Date(latestFriend.latest) ? friend : latestFriend;
+        });
       }
     }
   } catch (error) {
@@ -107,7 +101,7 @@ const switchToMessagesMode = () => {
   grid-template-rows: auto 1fr;
   height: 100vh;
   overflow-x: hidden;
-  transform: translateX(0); 
+  transform: translateX(0);
 }
 
 @media (max-width: 600px) {
@@ -116,6 +110,7 @@ const switchToMessagesMode = () => {
     grid-template-columns: 100vw 100vw;
     transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
   }
+
   .conversations-mode {
     transform: translateX(0);
   }
