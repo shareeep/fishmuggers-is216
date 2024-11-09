@@ -57,14 +57,14 @@ const props = defineProps({
   showFindChatPopup: {
     type: Function,
     required: true
-  }
+  },
+  loading: Boolean,
 });
 
 const newMessage = ref('');
 const userUid = ref(null);
 const messageContainer = ref(null);
 const isUserScrolledUp = ref(false);
-const loading = ref(true);  // Loading state
 
 // Watch for changes in selectedFriend to stop loading
 watch(() => props.selectedFriend, (newValue) => {
@@ -421,7 +421,7 @@ input[type="text"]:focus {
   width: 100%;
   /* Take up the full width */
   background-image: url('../../../assets/images/chat_background.png');
-  background-size: 100% 100%;
+  background-size: cover;
   /* Ensure the background image fills the container */
   background-position: center;
   /* Center the image */

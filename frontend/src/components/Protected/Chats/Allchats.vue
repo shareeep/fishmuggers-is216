@@ -1,9 +1,9 @@
 <template>
   <div class="chat-container">
     <FriendsList :friends="sortedFriends" :selectedFriend="selectedFriend" @friendSelected="selectFriend"
-      @showFindFriendsPopup="showFindChatPopup" @switchToMessages="switchToMessagesMode" />
+      @showFindFriendsPopup="showFindChatPopup" @switchToMessages="switchToMessagesMode" :loading="loading"/>
 
-    <ChatPanel :selectedFriend="selectedFriend" :fetchFriends="fetchFriends" :showFindChatPopup="showFindChatPopup" />
+    <ChatPanel :selectedFriend="selectedFriend" :fetchFriends="fetchFriends" :showFindChatPopup="showFindChatPopup" :loading="loading"/>
   </div>
 </template>
 
@@ -19,7 +19,8 @@ const props = defineProps({
   showFindChatPopup: {
     type: Function,
     required: true
-  }
+  },
+  loading: Boolean
 });
 
 const selectedFriend = ref(null);
@@ -45,6 +46,7 @@ const markMessagesAsRead = async (uid, friendUid) => {
 
 const selectFriend = async (friend) => {
   selectedFriend.value = friend;
+  loading.value = false;
   console.log("Selected Friend Updated:", selectedFriend.value);
 
     // Immediately set the unread count to 0 for the selected friend
