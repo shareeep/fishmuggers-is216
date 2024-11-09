@@ -73,9 +73,14 @@
         </div>
         <div class="likes-container">
           <p class="likes-caption">{{ userData.posts[selectedPostIndex].likes.length }} Likes</p>
-          <button @click="handleLikeToggle(userData.posts[selectedPostIndex])" :class="['like-button', { 'liked': userData.posts[selectedPostIndex].isLiked }]">
-            <i class="fas fa-thumbs-up"></i> {{ userData.posts[selectedPostIndex].isLiked ? 'Unlike' : 'Like' }}
-          </button>
+<button
+  @click="handleLikeToggle(userData.posts[selectedPostIndex])"
+  :class="['like-button', { liked: userData.posts[selectedPostIndex].isLiked }]"
+>
+  <i :class="userData.posts[selectedPostIndex].isLiked ? 'fas fa-thumbs-up' : 'far fa-thumbs-up'"></i>
+  {{ userData.posts[selectedPostIndex].isLiked ? 'Unlike' : 'Like' }}
+</button>
+
         </div>
       </div>
     </div>
@@ -773,8 +778,12 @@ onMounted(() => {
   font-weight: bold;
 }
 
-.fa-thumbs-up {
-  color: white;
+.far.fa-thumbs-up {
+  color: rgb(160, 160, 160);
+}
+
+.fas.fa-thumbs-up {
+    color: black;
 }
 
 .post-modal {
