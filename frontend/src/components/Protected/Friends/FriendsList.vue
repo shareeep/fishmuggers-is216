@@ -22,7 +22,7 @@
 
       <div class="friends-scroll">
           <!-- Display all suggested friends -->
-          <div v-for="friend in suggestedFriends" :key="friend.id" class="friend-item">
+          <div v-for="friend in limitedSuggestedFriends" :key="friend.id" class="friend-item">
               <router-link :to="{ name: 'friendProfile', params: { id: friend.id } }">
                   <img :src="friend.profileImage || 'default-avatar.jpg'" alt="Suggested Friend Profile Image" />
                   <p class="friend-username">{{ friend.username }}</p>
@@ -48,6 +48,9 @@ export default {
   computed: {
       limitedFriends() {
           return this.myFriends.slice(0, 8);
+      },
+      limitedSuggestedFriends() {
+          return this.suggestedFriends.slice(0, 8);
       },
   },
 };
@@ -77,15 +80,18 @@ h3 {
   gap: 20px;
   overflow-x: hidden;
   padding: 10px 0;
+  overflow: visible;
 }
 
 .friend-item {
-  display: flex;
+  display: inline-flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
   transition: transform 0.3s ease;
   flex-basis: 100px;
+  flex:0 0 auto;
+  overflow: visible;
 }
 
 .friend-item:hover {
@@ -113,6 +119,9 @@ h3 {
 .friend-username {
   color: #777;
   font-size: 0.85rem;
+  max-width: 80px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .see-all {

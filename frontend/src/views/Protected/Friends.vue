@@ -27,7 +27,7 @@
     </main>
 
     <!-- AllFriendsPopup component, visible only when showPopup is true -->
-    <AllFriendsPopup v-if="showPopup" :friends="suggestedFriends" @close="togglePopup(false)" />
+    <AllFriendsPopup v-if="showPopup" :friends="myFriends" @close="togglePopup(false)" />
   </div>
 </template>
 
