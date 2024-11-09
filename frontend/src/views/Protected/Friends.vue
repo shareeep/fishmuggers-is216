@@ -1,25 +1,33 @@
 <template>
   <div class="home-container">
-      <!-- Navbar component -->
-      <Navbar />
+    <!-- Navbar component -->
+    <Navbar />
+    <!-- Main content area with components -->
+    <main id="scrollable-element">
+      <div style="margin-top:40px;">
+        <h1 class="heading">Connect with Friends</h1>
+        <SearchBar />
+      </div>
 
-      <!-- Main content area with components -->
-      <main id="scrollable-element">
-          <h1 class="heading">Connect with Friends</h1>
-          <SearchBar />
-          <div style="align-items: center;">
-              <FriendRequests :requests="receivedRequests" @accept-request="handleAcceptRequest"
-                  @reject-request="handleRejectRequest" />
+      <div v-if="loading" class="loading-container">
+        <p class="loading-text">
+          <img src="../../assets/images/loading1.gif" alt="Loading" class="loadinggif" />
+          Fetching your friends<span class="dots"></span>
+        </p>
+      </div>
+      <div v-else style="align-items: center;">
+        <FriendRequests :requests="receivedRequests" @accept-request="handleAcceptRequest"
+          @reject-request="handleRejectRequest" />
 
-              <!-- FriendsList component with popup toggle function passed down -->
-              <FriendsList @popup-toggle="togglePopup" :myFriends="myFriends" :suggestedFriends="suggestedFriends" />
+        <!-- FriendsList component with popup toggle function passed down -->
+        <FriendsList @popup-toggle="togglePopup" :myFriends="myFriends" :suggestedFriends="suggestedFriends" />
 
-              <RequestsSent :sentRequests="sentRequests" @updateSentRequests="removeSentRequest" />
-          </div>
-      </main>
+        <RequestsSent :sentRequests="sentRequests" @updateSentRequests="removeSentRequest" />
+      </div>
+    </main>
 
-      <!-- AllFriendsPopup component, visible only when showPopup is true -->
-      <AllFriendsPopup v-if="showPopup" :friends="suggestedFriends" @close="togglePopup(false)" />
+    <!-- AllFriendsPopup component, visible only when showPopup is true -->
+    <AllFriendsPopup v-if="showPopup" :friends="suggestedFriends" @close="togglePopup(false)" />
   </div>
 </template>
 
@@ -48,10 +56,29 @@ const myFriends = ref([]); // This will remain empty as per requirement
 const suggestedFriends = ref([]); // Suggested friends list
 const sentRequests = ref([]);
 const receivedRequests = ref([]);
+const loading = ref(true); // Initialize loading as true
 
 // Get the current user ID from Firebase Auth
 const userId = auth.currentUser ? auth.currentUser.uid : null;
 console.log("Current user ID:", userId);
+
+
+// Wrap data fetching in a function that updates the loading state once all are complete
+async function fetchData() {
+  try {
+    await Promise.all([
+      fetchUsers(),
+      fetchSentRequests(),
+      fetchReceivedRequests(),
+      fetchMyFriends(),
+    ]);
+    loading.value = false; // Set loading to false once data has loaded
+  } catch (error) {
+    console.error("Error loading data:", error);
+    loading.value = false; // Ensure loading stops in case of error
+  }
+}
+
 
 // Function to toggle popup visibility
 function togglePopup(value) {
@@ -60,76 +87,76 @@ function togglePopup(value) {
 
 async function fetchReceivedRequests() {
   try {
-      const response = await axios.get(`http://localhost:3000/api/friends/requests/${userId}`);
-      receivedRequests.value = response.data.map(request => ({
-          id: request.requestId,
-          senderId: request.senderId,
-          name: request.name,
-          username: request.username,
-          avatar: request.avatar || 'default-avatar.jpg',
-          mutualFriends: request.mutualFriends, // This now includes mutual friend count from the backend
-      }));
+    const response = await axios.get(`http://localhost:3000/api/friends/requests/${userId}`);
+    receivedRequests.value = response.data.map(request => ({
+      id: request.requestId,
+      senderId: request.senderId,
+      name: request.name,
+      username: request.username,
+      avatar: request.avatar || 'default-avatar.jpg',
+      mutualFriends: request.mutualFriends, // This now includes mutual friend count from the backend
+    }));
   } catch (error) {
-      console.error("Error fetching received friend requests:", error);
+    console.error("Error fetching received friend requests:", error);
   }
 }
 
 async function handleAcceptRequest(requestId) {
   console.log("Received accept-request event with ID:", requestId);
   try {
-      // Send request to backend to accept friend
-      await axios.put(`http://localhost:3000/api/friends/request/accept/${requestId}`);
+    // Send request to backend to accept friend
+    await axios.put(`http://localhost:3000/api/friends/request/accept/${requestId}`);
 
-      // Find the accepted friend in `receivedRequests`
-      const acceptedFriend = receivedRequests.value.find(request => request.id === requestId);
-      console.log("Accepted friend data:", acceptedFriend); // Log acceptedFriend details
+    // Find the accepted friend in `receivedRequests`
+    const acceptedFriend = receivedRequests.value.find(request => request.id === requestId);
+    console.log("Accepted friend data:", acceptedFriend); // Log acceptedFriend details
 
-      if (acceptedFriend) {
-          // Add accepted friend to `myFriends`
-          myFriends.value.push({
-              id: acceptedFriend.senderId, // Assuming senderId is the friend's ID
-              name: acceptedFriend.name,
-              username: acceptedFriend.username,
-              profileImage: acceptedFriend.avatar,
-          });
+    if (acceptedFriend) {
+      // Add accepted friend to `myFriends`
+      myFriends.value.push({
+        id: acceptedFriend.senderId, // Assuming senderId is the friend's ID
+        name: acceptedFriend.name,
+        username: acceptedFriend.username,
+        profileImage: acceptedFriend.avatar,
+      });
 
-          console.log("Updated myFriends list after accepting:", myFriends.value); // Log myFriends
+      console.log("Updated myFriends list after accepting:", myFriends.value); // Log myFriends
 
-          // Remove from `receivedRequests`
-          receivedRequests.value = receivedRequests.value.filter(request => request.id !== requestId);
-      }
+      // Remove from `receivedRequests`
+      receivedRequests.value = receivedRequests.value.filter(request => request.id !== requestId);
+    }
 
-      console.log("Friend request accepted successfully and friend added to myFriends");
+    console.log("Friend request accepted successfully and friend added to myFriends");
   } catch (error) {
-      console.error("Error accepting friend request:", error);
+    console.error("Error accepting friend request:", error);
   }
 }
 
 async function handleRejectRequest(requestId) {
   console.log("Received reject-request event with ID:", requestId);
   try {
-      await axios.put(`http://localhost:3000/api/friends/request/reject/${requestId}`);
-      receivedRequests.value = receivedRequests.value.filter(request => request.id !== requestId);
-      console.log("Friend request rejected successfully");
+    await axios.put(`http://localhost:3000/api/friends/request/reject/${requestId}`);
+    receivedRequests.value = receivedRequests.value.filter(request => request.id !== requestId);
+    console.log("Friend request rejected successfully");
   } catch (error) {
-      console.error("Error rejecting friend request:", error);
+    console.error("Error rejecting friend request:", error);
   }
 }
 
 async function fetchMyFriends() {
   try {
-      const response = await axios.get(`http://localhost:3000/api/friends/${userId}`);
+    const response = await axios.get(`http://localhost:3000/api/friends/${userId}`);
 
-      // Map the response to myFriends
-      myFriends.value = response.data.map(friend => ({
-          id: friend.id,
-          name: friend.name,
-          username: friend.username,
-          profileImage: friend.profileImage || 'default-avatar.jpg',
-      }));
-      console.log("Mapped myFriends:", myFriends.value); // Log mapped friends
+    // Map the response to myFriends
+    myFriends.value = response.data.map(friend => ({
+      id: friend.id,
+      name: friend.name,
+      username: friend.username,
+      profileImage: friend.profileImage || 'default-avatar.jpg',
+    }));
+    console.log("Mapped myFriends:", myFriends.value); // Log mapped friends
   } catch (error) {
-      console.error("Error fetching friends:", error);
+    console.error("Error fetching friends:", error);
   }
 }
 
@@ -138,40 +165,40 @@ async function fetchMyFriends() {
 // Fetch all users and add them to suggested friends
 async function fetchUsers() {
   try {
-      const response = await axios.get('http://localhost:3000/api/users');
-      allUsers.value = response.data;
+    const response = await axios.get('http://localhost:3000/api/users');
+    allUsers.value = response.data;
 
-      // Fetch `myFriends` first to ensure the list is up-to-date
-      await fetchMyFriends();
+    // Fetch `myFriends` first to ensure the list is up-to-date
+    await fetchMyFriends();
 
-      // Filter suggestedFriends to exclude users already in myFriends
-      suggestedFriends.value = allUsers.value.filter(user =>
-          user.id !== userId && !myFriends.value.some(friend => friend.id === user.id)
-      );
+    // Filter suggestedFriends to exclude users already in myFriends
+    suggestedFriends.value = allUsers.value.filter(user =>
+      user.id !== userId && !myFriends.value.some(friend => friend.id === user.id)
+    );
 
-      console.log("Suggested Friends (excluding current friends):", suggestedFriends.value);
+    console.log("Suggested Friends (excluding current friends):", suggestedFriends.value);
   } catch (error) {
-      console.error("Error fetching users:", error);
+    console.error("Error fetching users:", error);
   }
 }
 
 async function fetchSentRequests() {
   try {
-      const response = await axios.get(`http://localhost:3000/api/friends/requests/sent/${userId}`);
-      console.log("Fetched sent requests from backend:", response.data);
+    const response = await axios.get(`http://localhost:3000/api/friends/requests/sent/${userId}`);
+    console.log("Fetched sent requests from backend:", response.data);
 
-      sentRequests.value = response.data.map(request => {
-          const user = allUsers.value.find(user => user.id === request.receiverId);
-          return {
-              ...request,
-              name: user ? user.name : 'Unknown',
-              username: user ? user.username : '',
-              avatar: user ? user.profileImage || 'default-avatar.jpg' : 'default-avatar.jpg',
-              daysAgo: calculateDaysAgo(request.createdAt),
-          };
-      });
+    sentRequests.value = response.data.map(request => {
+      const user = allUsers.value.find(user => user.id === request.receiverId);
+      return {
+        ...request,
+        name: user ? user.name : 'Unknown',
+        username: user ? user.username : '',
+        avatar: user ? user.profileImage || 'default-avatar.jpg' : 'default-avatar.jpg',
+        daysAgo: calculateDaysAgo(request.createdAt),
+      };
+    });
   } catch (error) {
-      console.error("Error fetching sent friend requests:", error);
+    console.error("Error fetching sent friend requests:", error);
   }
 }
 
@@ -182,11 +209,11 @@ function calculateDaysAgo(timestamp) {
 
   // Parse Firestore Timestamp (with _seconds and _nanoseconds)
   if (timestamp && typeof timestamp._seconds === 'number') {
-      createdAt = new Date(timestamp._seconds * 1000); // Convert seconds to milliseconds
-      console.log("Parsed Firestore Timestamp:", createdAt); // Log the parsed Firestore timestamp
+    createdAt = new Date(timestamp._seconds * 1000); // Convert seconds to milliseconds
+    console.log("Parsed Firestore Timestamp:", createdAt); // Log the parsed Firestore timestamp
   } else {
-      console.warn("Unrecognized timestamp format");
-      return "Unknown";
+    console.warn("Unrecognized timestamp format");
+    return "Unknown";
   }
 
   const now = new Date();
@@ -195,43 +222,89 @@ function calculateDaysAgo(timestamp) {
 
   // Return custom labels based on the number of days ago
   if (daysAgo === 0) {
-      return "Sent today";
+    return "Sent today";
   } else if (daysAgo === 1) {
-      return "Yesterday";
+    return "Yesterday";
   } else {
-      return `${daysAgo} days ago`;
+    return `${daysAgo} days ago`;
   }
 }
 
 function removeSentRequest(requestId) {
-    sentRequests.value = sentRequests.value.filter(request => request.id !== requestId);
+  sentRequests.value = sentRequests.value.filter(request => request.id !== requestId);
 }
 
 
 
 onMounted(() => {
   Scrollbar.init(document.querySelector('#scrollable-element'), {
-      damping: 0.05,
-      renderByPixels: true,
-      alwaysShowTracks: false,
-      continuousScrolling: true,
-      plugins: {
-          overscroll: {
-              effect: 'bounce',
-              damping: 0.2,
-              maxOverscroll: 70,
-          },
+    damping: 0.05,
+    renderByPixels: true,
+    alwaysShowTracks: false,
+    continuousScrolling: true,
+    plugins: {
+      overscroll: {
+        effect: 'bounce',
+        damping: 0.2,
+        maxOverscroll: 70,
       },
+    },
   });
 
-  fetchUsers(); // Fetch all users when the component mounts
-  fetchSentRequests(); // Fetch sent requests when the component mounts
-  fetchReceivedRequests();
-  fetchMyFriends();
+  fetchData();
 });
 </script>
 
 <style scoped>
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 70vh;
+  /* Ensures it takes full height of the viewport */
+}
+
+.loading-text {
+  font-size: 1.3rem;
+  font-weight: bold;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.loadinggif {
+  margin-right: -30px;
+  width: 200px;
+  /* Adjust the width as desired */
+}
+
+.dots::after {
+  content: '';
+  display: inline-block;
+  width: 1em;
+  animation: ellipsis 1.5s infinite;
+}
+
+@keyframes ellipsis {
+  0% {
+    content: '';
+  }
+
+  33% {
+    content: '.';
+  }
+
+  66% {
+    content: '..';
+  }
+
+  100% {
+    content: '...';
+  }
+}
+
 .home-container {
   display: flex;
   height: 100vh;

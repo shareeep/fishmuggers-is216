@@ -145,6 +145,7 @@ onMounted(() => {
 
 /* Main content area */
 main {
+  background-color: white;
   margin-left: 250px;
   flex-grow: 1;
   /* Take remaining space */
@@ -188,5 +189,11 @@ main {
     overflow-y: auto;
     /* Allow main to scroll if content overflows */
   }
+}
+
+html,
+body {
+  background-color: white !important;
+  /* Set the background color to white */
 }
 </style>

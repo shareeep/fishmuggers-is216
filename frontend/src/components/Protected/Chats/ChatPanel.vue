@@ -1,5 +1,11 @@
 <template>
-  <div class="chat-panel" v-if="selectedFriend">
+  <div v-if="loading" class="loading-container">
+    <p class="loading-text">
+      <img src="../../../assets/images/loading1.gif" alt="Loading" class="loadinggif" />
+      Loading chats<span class="dots"></span>
+    </p>
+  </div>
+  <div class="chat-panel" v-else-if="selectedFriend">
     <!-- Back Button -->
     <div class="chat-header">
       <button class="back-button" @click="switchToConversationsMode"><img src="../../../assets/images/back_arrow.png"
@@ -55,6 +61,12 @@ const newMessage = ref('');
 const userUid = ref(null);
 const messageContainer = ref(null);
 const isUserScrolledUp = ref(false);
+const loading = ref(true);  // Loading state
+
+// Watch for changes in selectedFriend to stop loading
+watch(() => props.selectedFriend, (newValue) => {
+  if (newValue) loading.value = false;
+});
 
 // Function to switch back to conversations mode
 const switchToConversationsMode = () => {
@@ -134,18 +146,63 @@ onMounted(() => {
 </script>
 
 <style scoped>
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh; /* Ensures it takes full height of the viewport */
+}
+
+.loading-text {
+  font-size: 1.3rem;
+  font-weight: bold;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.loadinggif {
+  margin-right: -30px;
+  width: 200px; /* Adjust the width as desired */
+}
+
+.dots::after {
+  content: '';
+  display: inline-block;
+  width: 1em;
+  animation: ellipsis 1.5s infinite;
+}
+
+@keyframes ellipsis {
+  0% {
+    content: '';
+  }
+  33% {
+    content: '.';
+  }
+  66% {
+    content: '..';
+  }
+  100% {
+    content: '...';
+  }
+}
+
+
 input[type="text"] {
-    width: 100%;
-    padding: 10px;
-    border: 2px solid #FFD700;
-    border-radius: 25px;
-    transition: border-color 0.3s, box-shadow 0.3s;
+  width: 100%;
+  padding: 10px;
+  border: 2px solid #FFD700;
+  border-radius: 25px;
+  transition: border-color 0.3s, box-shadow 0.3s;
 }
 
 input[type="text"]:focus {
-    border-color: #FAE588;
-    box-shadow: 0 0 0 2px #FFD700;
-    color: black;
+  border-color: #FAE588;
+  box-shadow: 0 0 0 2px #FFD700;
+  color: black;
 }
 
 .back-button {
@@ -212,7 +269,7 @@ input[type="text"]:focus {
   background-color: #fff;
   overflow-y: auto;
   background-image: url('../../../assets/images/chat_background.png');
-  background-size: cover; 
+  background-size: cover;
   /* Ensure the background image fills the container */
   background-position: center;
   /* Center the image */
@@ -294,12 +351,15 @@ input[type="text"]:focus {
 }
 
 .send-button svg {
-  fill: currentColor;  /* This ensures the SVG inherits the color from the button */
-  transition: fill 0.2s ease;  /* Smooth color transition */
+  fill: currentColor;
+  /* This ensures the SVG inherits the color from the button */
+  transition: fill 0.2s ease;
+  /* Smooth color transition */
 }
 
 .send-button:active svg {
-  fill: #533bca;  /* Change color of the SVG on press */
+  fill: #533bca;
+  /* Change color of the SVG on press */
 }
 
 .send-button i {

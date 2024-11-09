@@ -265,8 +265,9 @@ export default {
 }
 
 .card img {
-    width: 100%;
-    height: auto;
+    width: 550px;
+    height: 180px;
+    object-fit: cover;
 }
 
 /* Card Body Styles */

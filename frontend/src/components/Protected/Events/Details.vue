@@ -1,9 +1,6 @@
 <template>
   <div class="event-detail" v-if="event">
-    <!-- Back Button -->
-    <router-link to="/events" class="back-button">
-      <img src="@/assets/images/back_arrow.png" alt="back" width="40px" />
-    </router-link>
+
 
     <!-- Event Image -->
     <img class="event-image" :src="event.eventImage || 'https://via.placeholder.com/800x400'" alt="Event Image" />
@@ -207,6 +204,20 @@ onMounted(async () => {
   display: block;
 }
 
+@media (max-width: 927px) {
+  .event-image {
+    max-width: 100%; /* Ensure it stays within the screen */
+    width: 90%; /* Reduce width to make it smaller on smaller screens */
+  }
+}
+
+@media (max-width: 480px) {
+  .event-image {
+    max-width: 70%; /* Further reduce size on very small screens */
+    width: 70%;
+  }
+}
+
 /* Event Title */
 .event-title {
   font-family: 'Poppins', sans-serif;
@@ -238,11 +249,13 @@ onMounted(async () => {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 20px;
   overflow: hidden;
+  max-width:100%;
 }
 
-.right-block {
-  max-width: 100%;
+.right-block{
+  width:100%;
 }
+
 
 @media (min-width: 768px) {
   .right-block {

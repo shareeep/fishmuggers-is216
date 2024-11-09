@@ -249,7 +249,7 @@ const getCurrentLocation = () => {
       isGettingLocation.value = false;
     }
   );
-};
+}; 
 // Function to handle image upload and preview
 const handleImageUpload = (eventObj) => {
   const file = eventObj.target.files[0];

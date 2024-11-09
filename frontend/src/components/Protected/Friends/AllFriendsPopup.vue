@@ -10,7 +10,7 @@
 
             <div class="friends-list">
                 <div v-for="friend in filteredFriends" :key="friend.id" class="friend-item">
-                    <img :src="friend.avatar" alt="Friend Avatar" class="avatar" />
+                    <img :src="friend.profileImage" alt="Friend Avatar" class="avatar" />
                     <div class="friend-info">
                         <p class="friend-name">{{ friend.name }}</p>
                         <p class="friend-username">{{ friend.username }}</p>
@@ -41,16 +41,16 @@ export default {
         filteredFriends() {
             const query = this.searchQuery.toLowerCase();
             return this.friends.filter(friend =>
-                friend.name.toLowerCase().startsWith(query) ||
-                friend.username.toLowerCase().startsWith(query)
+                (friend.name && friend.name.toLowerCase().startsWith(query)) ||
+                (friend.username && friend.username.toLowerCase().startsWith(query))
             );
         }
     },
     methods: {
-    viewProfile(friendId) {
-      this.$router.push({ name: "friendProfile", params: { id: friendId } });
+        viewProfile(friendId) {
+            this.$router.push({ name: "friendProfile", params: { id: friendId } });
+        },
     },
-  },
 };
 </script>
 
@@ -160,23 +160,27 @@ input[type="search"]:focus {
 
 /* See Profile button styling */
 .see-profile-button {
-  padding: 5px 15px;
-  font-size: 1rem;
-  font-weight: bold;
-  color: #5A45D6; /* Deep purple color */
-  background-color: #f5f0ff; /* Light purple background */
-  border: 2px solid #7B61FF; /* Slightly darker purple border */
-  border-radius: 30px; /* Rounded corners */
-  cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+    padding: 5px 15px;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #5A45D6;
+    /* Deep purple color */
+    background-color: #f5f0ff;
+    /* Light purple background */
+    border: 2px solid #7B61FF;
+    /* Slightly darker purple border */
+    border-radius: 30px;
+    /* Rounded corners */
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .see-profile-button:hover {
-  transform: scale(1.05);
-  box-shadow: 0 4px 8px rgba(75, 0, 130, 0.2);
+    transform: scale(1.05);
+    box-shadow: 0 4px 8px rgba(75, 0, 130, 0.2);
 }
 
 .see-profile-button:active {
-  transform: scale(0.98);
+    transform: scale(0.98);
 }
 </style>

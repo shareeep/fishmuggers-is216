@@ -1,45 +1,43 @@
 <template>
   <div class="feed-container">
-    <div v-for="post in posts" :key="post.postId" class="post">
-      <div class="post-header">
-        <div class="user-info">
-          <img :src="post.user.avatar" alt="User Avatar" class="avatar" />
-          <h3 class="user-name">{{ post.user.name }}</h3>
-        </div>
-        <div class="menu-container">
-          <button @click="toggleMenu(post.postId)" class="menu-btn" hidden>•••</button>
-          <div v-if="post.postId === activeMenu" class="menu">
-            <button @click="editPost(post)">Edit</button>
-            <button @click="deletePost(post.postId)">Delete</button>
+    <!-- Show "Loading..." text with animation when loading is true -->
+    <div v-if="loading" class="loading-container">
+      <p class="loading-text">
+        <img src="../../../assets/images/loading1.gif" alt="Loading" class="loadinggif" />
+        Loading posts<span class="dots"></span>
+      </p>
+    </div>
+    <div v-else>
+      <div v-for="post in posts" :key="post.postId" class="post">
+        <div class="post-header">
+          <div class="user-info">
+            <img :src="post.user.avatar" alt="User Avatar" class="avatar" />
+            <h3 class="user-name">{{ post.user.name }}</h3>
+          </div>
+          <div class="menu-container">
+            <button @click="toggleMenu(post.postId)" class="menu-btn" hidden>•••</button>
+            <div v-if="post.postId === activeMenu" class="menu">
+              <button @click="editPost(post)">Edit</button>
+              <button @click="deletePost(post.postId)">Delete</button>
+            </div>
           </div>
         </div>
-      </div>
-      <img :src="post.image" alt="Post Image" class="post-image" />
-      <div class="post-footer">
-        <p>{{ post.caption }}</p>
-        <p class="likes">{{ post.likes ? post.likes.length : 0 }} likes</p>
+        <img :src="post.image" alt="Post Image" class="post-image" />
+        <div class="post-footer">
+          <p>{{ post.caption }}</p>
+          <p class="likes">{{ post.likes ? post.likes.length : 0 }} likes</p>
 
-        <!-- Like Button -->
-        <button @click="likePost(post)" class="like-button" style="display: inline-block; margin-right: 10px;">
-          <i :class="post.hasLiked ? 'fas fa-thumbs-up thumbs-up-icon' : 'far fa-thumbs-up thumbs-up-icon'"></i> Like
-        </button>
+          <!-- Like Button -->
+          <button @click="likePost(post)" class="like-button" style="display: inline-block; margin-right: 10px;">
+            <i :class="post.hasLiked ? 'fas fa-thumbs-up thumbs-up-icon' : 'far fa-thumbs-up thumbs-up-icon'"></i> Like
+          </button>
 
-        <!-- Share Button -->
-        <button @click="openSharePopup(post)" class="like-button" style="display: inline-block;">
-          <i class="fas fa-share"></i> Share
-        </button>
+          <!-- Share Button -->
+          <button @click="openSharePopup(post)" class="like-button" style="display: inline-block;">
+            <i class="fas fa-share"></i> Share
+          </button>
 
-        <!-- Share Popup Component -->
-        <!-- Update the :shareContent to use the correct URL dynamically -->
-        <!-- <HomeSharePopup
-          v-if="post.showPopup"
-          :friends="friends"
-          :shareContent="`http://localhost:5173/posts/${post.postId}`"
-          :postId="post.postId"
-          :userId="userId"
-          @close="post.showPopup = false"
-        /> -->
-
+        </div>
       </div>
     </div>
   </div>
@@ -58,10 +56,12 @@ export default {
       posts: [],
       friends: [],
       userId: null,
+      loading: true,
     };
   },
   methods: {
     async fetchPosts() {
+      this.loading = true;
       const auth = getAuth();
       const userId = auth.currentUser ? auth.currentUser.uid : null;
 
@@ -76,6 +76,8 @@ export default {
       } catch (error) {
         console.error("Failed to load posts:", error);
         alert("Failed to load posts.");
+      } finally {
+        this.loading = false;
       }
     },
     openSharePopup(post) {
@@ -134,11 +136,56 @@ export default {
 </script>
 
 
-
-
-
-
 <style scoped>
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 70vh;
+  /* Ensures it takes full height of the viewport */
+}
+
+.loading-text {
+  font-size: 1.3rem;
+  font-weight: bold;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.loadinggif {
+  margin-right: -30px;
+  width: 200px;
+  /* Adjust the width as desired */
+}
+
+.dots::after {
+  content: '';
+  display: inline-block;
+  width: 1em;
+  animation: ellipsis 1.5s infinite;
+}
+
+@keyframes ellipsis {
+  0% {
+    content: '';
+  }
+
+  33% {
+    content: '.';
+  }
+
+  66% {
+    content: '..';
+  }
+
+  100% {
+    content: '...';
+  }
+}
+
 .feed-container {
   display: flex;
   flex-direction: column;

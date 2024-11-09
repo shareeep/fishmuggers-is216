@@ -1,23 +1,19 @@
 <template>
 
-  <div class="carousel">
-    <!-- Profile Tabs -->
-    <!-- <div class="profile-tabs">
-      <button :class="{ active: activeTab === 'large' }" @click="switchTab('large')">Large Scale</button>
-      <button :class="{ active: activeTab === 'casual' }" @click="switchTab('casual')">Casual</button>
-    </div> -->
-    <!-- Loading Indicator -->
-    <div v-if="loading" class="loading-indicator">
-      Loading events...
-    </div>
-
+  <!-- Loading Indicator -->
+  <div v-if="loading" class="loading-container">
+    <p class="loading-text">
+      <img src="../../../assets/images/loading1.gif" alt="Loading" class="loadinggif" />
+      Loading events<span class="dots"></span>
+    </p>
+  </div>
+  <div v-else class="carousel">
     <!-- Error Message -->
     <div v-if="errorMessage" class="error-message">
       {{ errorMessage }}
     </div>
-
     <!-- Events Display -->
-    <div v-else>
+    <div>
       <!-- Tab Content (LARGE SCALE)-->
       <div class="tab-content">
         <div v-if="activeTab === 'large' && showCarousel">
@@ -444,6 +440,51 @@ export default defineComponent({
 </script>
 
 <style scoped>
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.loading-text {
+  font-size: 1.3rem;
+  font-weight: bold;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.loadinggif {
+  margin-right: -30px;
+  width: 200px; /* Adjust the width as desired */
+}
+
+.dots::after {
+  content: '';
+  display: inline-block;
+  width: 1em;
+  animation: ellipsis 1.5s infinite;
+}
+
+@keyframes ellipsis {
+  0% {
+    content: '';
+  }
+  33% {
+    content: '.';
+  }
+  66% {
+    content: '..';
+  }
+  100% {
+    content: '...';
+  }
+}
+
+
+
 body {
   overflow-x: hidden;
   /* Prevent horizontal scrolling on the whole page */
@@ -514,13 +555,6 @@ body {
   /* Color shadow on hover */
 }
 
-/* Loading Indicator and Error Message Styles */
-.loading-indicator,
-.error-message {
-  text-align: center;
-  font-size: 18px;
-  margin-top: 20px;
-}
 
 .error-message {
   color: red;
@@ -545,19 +579,25 @@ body {
   /* Responsive scaling */
   margin-top: -12px;
 }
+
 @media (min-width: 768px) {
+
   /* Medium screen and up (md) */
   .carousel {
-    overflow: visible; /* Allow visible overflow on medium screens */
+    overflow: visible;
+    /* Allow visible overflow on medium screens */
   }
 }
 
 @media (min-width: 1024px) {
+
   /* Large screen and up (lg) */
   .carousel {
-    overflow: hidden; /* Hide overflow on large screens */
+    overflow: hidden;
+    /* Hide overflow on large screens */
   }
 }
+
 /* Carousel Item Styles */
 .carousel__item {
   margin: 10px 15px;
@@ -650,8 +690,9 @@ body {
 }
 
 .card img {
-  width: 100%;
+  width: 550px;
   height: auto;
+  object-fit: cover;
 }
 
 /* Card Body Styles */
@@ -683,7 +724,7 @@ body {
   font-size: 17px;
   color: #777;
   color: black;
-  font-weight: none;
+  font-weight: bold;
 }
 
 /* Card Right Section */
@@ -704,6 +745,7 @@ body {
   color: #555;
   margin-top: 5px;
   font-weight: bold;
+  white-space: nowrap;
 }
 
 .event-title {

@@ -1,11 +1,19 @@
 <template>
   <div class="home-container">
+    <!-- Back Button -->
+    <router-link to="/events" class="back-button">
+      <img src="@/assets/images/back_arrow.png" alt="back" width="40px" />
+    </router-link>
     <RSVPBar v-if="event" :event="event" @showSharePopup="showPopup = true" />
     <main id="scrollable-element">
+
       <Details v-if="event" :event="event" />
+      <p v-else class="loading-text">
+        <img src="../../assets/images/loading4.gif" alt="Loading" class="loadinggif" />
+        Fetching event details<span class="dots"></span>
+      </p>
     </main>
-    <!-- Pass both friends and event to Share Popup -->
-    <!-- Pass both friends and event to Share Popup -->
+
     <ShareEventPopup v-if="showPopup" @close="showPopup = false" :friends="friends" :event="event" />
 
   </div>
@@ -17,7 +25,7 @@ import { useRoute } from "vue-router";
 import axios from "axios";
 import Details from "@/components/Protected/Events/Details.vue";
 import RSVPBar from "@/components/Protected/Events/RSVPbar.vue";
-import ShareEventPopup from "@/components/Protected/Events/ShareEventPopup.vue"; 
+import ShareEventPopup from "@/components/Protected/Events/ShareEventPopup.vue";
 import { getAuth } from "firebase/auth";
 
 import Scrollbar from 'smooth-scrollbar';
@@ -72,7 +80,6 @@ const fetchEvent = async () => {
 //   }
 // };
 
-// fake data for now
 const fetchFriends = async () => {
   try {
     // Get the authenticated user's UID
@@ -101,6 +108,86 @@ onMounted(() => {
 
 
 <style scoped>
+.back-button {
+  position: fixed;
+  /* Fixes the position relative to the viewport */
+  top: 20px;
+  /* Adjusts distance from the top */
+  left: 10px;
+  /* Adjusts distance from the left */
+  z-index: 1000;
+  /* Ensures it stays above other content */
+  padding: 5px;
+  transition: transform 0.2s ease;
+}
+
+.back-button img {
+  width: 40px;
+}
+
+.back-button:hover {
+  transform: scale(1.1);
+  /* Slightly enlarges on hover */
+}
+
+
+.loadinggif {
+  width: 400px;
+}
+
+.loading-text {
+  font-size: 1.2rem;
+  text-align: center;
+  margin-top: 70px;
+  font-weight: bold;
+  align-items: center;
+  text-align: center;
+  justify-content: center;
+}
+
+.dots::after {
+  content: '';
+  display: inline-block;
+  width: 1em;
+  animation: ellipsis 1.5s infinite;
+}
+
+@keyframes ellipsis {
+  0% {
+    content: "";
+  }
+
+  33% {
+    content: ".";
+  }
+
+  66% {
+    content: "..";
+  }
+
+  100% {
+    content: "...";
+  }
+}
+
+@keyframes ellipsis {
+  0% {
+    content: "";
+  }
+
+  25% {
+    content: ".";
+  }
+
+  50% {
+    content: "..";
+  }
+
+  75% {
+    content: "...";
+  }
+}
+
 .home-container {
   display: flex;
   height: 100vh;
@@ -133,7 +220,7 @@ h1 {
     text-align: center; */
 /* Center text in the main area */
 /* } */
-
+ 
 html,
 body {
   background-color: white !important;

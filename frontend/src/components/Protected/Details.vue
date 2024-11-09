@@ -1,8 +1,6 @@
 <template>
     <div class="event-detail" v-if="event">
-        <!--back button-->
-        <router-link to="/events" class="back-button"><img src="../../assets/images/back_arrow.png" alt="back"
-                width="40px"></router-link>
+
         <!--image-->
         <img class="event-image" :src="event.image" alt="Event Image" />
 
