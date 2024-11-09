@@ -50,46 +50,40 @@
         </div>
       </div>
 
-      <!-- Modal -->
-      <div v-if="isModalOpen && userData.posts[selectedPostIndex]" class="post-modal" @click.self="closeModal">
-        <div class="modal-content">
-
-          <div class="modal-left">
-            <img :src="userData.posts[selectedPostIndex].image" alt="Selected Post" class="modal-image" />
-          </div>
-
-          <div class="modal-right">
-
-            <div class="post-header">
-              <div class="user-info">
-                <img :src="userData.profileImage || 'https://via.placeholder.com/50?text=Avatar'" alt="User Avatar"
-                  class="avatar" />
-                <h3 class="user-name">{{ userData.username }}</h3>
-              </div>
-            </div>
-
-            <div class="post-footer">
-              <div class="caption-container">
-                <img :src="userData.profileImage || 'https://via.placeholder.com/50?text=Avatar'" alt="User Avatar"
-                  class="avatar-caption" />
-                <span class="caption-text">
-                  <span class="user-name-caption">{{ userData.username }}</span>
-                  {{ userData.posts[selectedPostIndex].caption }}
-                </span>
-              </div>
-
-              <div class="likes-container">
-                <p class="likes-caption">{{ userData.posts[selectedPostIndex].likes.length }} Likes</p>
-
-<button @click="handleLikeToggle(userData.posts[selectedPostIndex])" :class="['like-button', { 'liked': userData.posts[selectedPostIndex].isLiked }]">
-  <i class="fas fa-thumbs-up"></i> {{ userData.posts[selectedPostIndex].isLiked ? 'Unlike' : 'Like' }}
-</button>
-
-
-              </div>
-            </div>
-          </div>
-
+      <!-- UserProfile.vue Modal -->
+<div v-if="isModalOpen && userData.posts[selectedPostIndex]" class="post-modal" @click.self="closeModal">
+  <div class="modal-content">
+    <div class="modal-left">
+      <img :src="userData.posts[selectedPostIndex].image" alt="Selected Post" class="modal-image" />
+    </div>
+    <div class="modal-right">
+      <div class="post-header">
+        <div class="user-info">
+          <img :src="userData.profileImage || 'https://via.placeholder.com/50?text=Avatar'" alt="User Avatar" class="avatar" />
+          <h3 class="user-name">{{ userData.username }}</h3>
+        </div>
+      </div>
+      <div class="post-footer">
+        <div class="caption-container">
+          <img :src="userData.profileImage || 'https://via.placeholder.com/50?text=Avatar'" alt="User Avatar" class="avatar-caption" />
+          <span class="caption-text">
+            <span class="user-name-caption">{{ userData.username }}</span>
+            {{ userData.posts[selectedPostIndex].caption }}
+          </span>
+        </div>
+        <div class="likes-container">
+          <p class="likes-caption">{{ userData.posts[selectedPostIndex].likes.length }} Likes</p>
+          <button @click="handleLikeToggle(userData.posts[selectedPostIndex])" :class="['like-button', { 'liked': userData.posts[selectedPostIndex].isLiked }]">
+            <i class="fas fa-thumbs-up"></i> {{ userData.posts[selectedPostIndex].isLiked ? 'Unlike' : 'Like' }}
+          </button>
+        </div>
+      </div>
+    </div>
+    <i class="fas fa-chevron-left nav-arrow" @click="selectedPostIndex > 0 && prevPost()" :class="{ disabled: selectedPostIndex === 0 }" />
+    <i class="fas fa-chevron-right nav-arrow" @click="selectedPostIndex < userData.posts.length - 1 && nextPost()" :class="{ disabled: selectedPostIndex === userData.posts.length - 1 }" />
+    <i class="fas fa-times close-modal" @click="closeModal"></i>
+  </div>
+  </div>
           <!-- Navigation Arrows and Close Button -->
           <i class="fas fa-chevron-left nav-arrow" @click="selectedPostIndex > 0 && prevPost()"
             :class="{ disabled: selectedPostIndex === 0 }" />
@@ -157,8 +151,6 @@
         </div>
       </div>
 
-    </div>
-  </div>
 </template>
 
 <script setup>
@@ -786,223 +778,294 @@ onMounted(() => {
 }
 
 .post-modal {
-  display: flex;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.7);
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
+    display: flex;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
 }
 
 .modal-content {
-  display: flex;
-  background: #fff;
-  border-radius: 10px;
-  max-height: 90vh;
-  overflow: hidden;
-  padding: 0;
-  width: auto;
+    display: flex;
+    background: #fff;
+    border-radius: 10px;
+    max-height: 90vh;
+    overflow: hidden;
+    width: auto;
 }
 
 .modal-left {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  height: 500px;
-  background-color: #f8f8f8;
-  overflow: hidden;
-  flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 500px;
+    background-color: #f8f8f8;
+    overflow: hidden;
+    flex: 0 0 auto;
 }
 
 .modal-image {
-  width: auto;
-  height: 100%;
-  object-fit: cover;
+    width: auto;
+    height: 100%;
+    object-fit: cover;
 }
 
 .modal-right {
-  flex: 0 0 auto;
-  width: 400px;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  max-width: 400px;
-  padding: 20px;
+    flex: 0 0 auto;
+    width: 400px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    max-width: 400px;
+    padding: 20px;
 }
 
 .post-header {
-  display: flex;
-  align-items: center;
-  margin-bottom: 10px;
-  border-bottom: 1px solid #ddd;
-  /* Divider color */
-  width: 100%;
-  /* Full width */
-  padding-bottom: 10px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+    width: 100%;
 }
 
 .user-info {
-  display: flex;
-  align-items: center;
+    display: flex;
+    align-items: center;
 }
 
 .avatar {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  margin-right: 10px;
-  object-fit: cover;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 10px;
+    object-fit: cover;
 }
 
 .user-name {
-  font-size: 1.2rem;
-  font-weight: bold;
-}
-
-.menu-container {
-  margin-left: auto;
+    font-size: 1.2rem;
+    font-weight: bold;
 }
 
 .post-footer {
-  display: flex;
-  flex-direction: column;
-  position: relative;
-  height: 100%;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    height: 100%;
 }
 
 .caption-container {
-  display: flex;
-  max-width: 100%;
-  align-items: flex-start;
-  margin-bottom: 10px;
-
-}
-
-.user-name-caption {
-  font-weight: bold;
-  margin-right: 5px;
-  color: black;
+    display: flex;
+    align-items: flex-start;
+    margin-bottom: 10px;
 }
 
 .avatar-caption {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  margin-right: 10px;
-  object-fit: cover;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+    object-fit: cover;
+}
+
+.user-name-caption {
+    font-weight: bold;
+    margin-right: 5px;
+    color: black;
 }
 
 .caption-text {
-  font-size: 1rem;
-  color: #333;
-  line-height: 1.5;
-  overflow-wrap: break-word;
-  white-space: normal;
-  text-align: left;
+    margin-top: 6px;
+    font-size: 1rem;
+    color: #333;
+    line-height: 1.5;
+    overflow-wrap: break-word;
+    white-space: normal;
+    text-align: left;
 }
 
 .likes-container {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 5px;
-  border-top: 1px solid #ddd;
-  /* Divider line */
-  padding-top: 10px;
-  width: 100%;
-  margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+    border-top: 1px solid #ddd;
+    padding-top: 10px;
+    width: 100%;
+    margin-top: auto;
 }
 
 .likes-caption {
-  font-size: 1rem;
-  font-weight: bold;
-  color: #666;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #666;
 }
+
 .like-button {
-  display: flex;
-  align-items: center;
-  font-size: 1rem;
-  font-weight: bold;
-  color: #333; /* Default color for text and icon */
-  background: none;
-  border: none;
-  cursor: pointer;
-  transition: color 0.3s ease, transform 0.2s ease;
+    display: flex;
+    align-items: center;
+    font-size: 1rem;
+    font-weight: bold;
+    color: black;
+    background: none;
+    border: none;
+    cursor: pointer;
 }
 
-.like-button i {
-  margin-right: 5px;
-  color: #333; /* Default icon color */
-  transition: color 0.3s ease;
-}
-
-/* Hover effect for the like button */
 .like-button:hover {
-  color: #007bff; /* Hover color for text */
-  transform: scale(1.05); /* Slightly enlarge on hover */
+    transform: scale(1.05);
 }
 
-.like-button:hover i {
-  color: #007bff; /* Hover color for icon */
-}
-
-/* Active state for pressing the button */
 .like-button:active {
-  transform: scale(0.95); /* Slightly shrink when clicked */
+    transform: scale(0.98);
 }
 
-/* Styling when the post is liked */
-.like-button.liked {
-  color: #ff4500; /* Liked color for text */
+.thumbs-up-icon {
+    color: grey;
+    transition: color 0.2s ease;
+    cursor: pointer;
 }
 
-.like-button.liked i {
-  color: #ff4500; /* Liked color for icon */
+.fas.fa-thumbs-up {
+    color: black;
 }
-
-/* Add a subtle shadow to the button when liked */
-.like-button.liked {
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
-}
-
 
 .nav-arrow {
-  position: absolute;
-  top: 50%;
-  font-size: 2rem;
-  color: #fff;
-  cursor: pointer;
-  user-select: none;
+    position: absolute;
+    top: 50%;
+    font-size: 2rem;
+    color: #fff;
+    cursor: pointer;
+    user-select: none;
 }
 
 .nav-arrow:hover {
-  color: #ddd;
+    color: #ddd;
 }
 
 .fa-chevron-left {
-  left: 10px;
+    left: 10px;
 }
 
 .fa-chevron-right {
-  right: 10px;
+    right: 10px;
 }
 
 .close-modal {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  font-size: 1.5rem;
-  color: #fff;
-  cursor: pointer;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 1.5rem;
+    color: #fff;
+    cursor: pointer;
 }
 
 .nav-arrow.disabled {
-  opacity: 0.3;
-  cursor: not-allowed;
-  pointer-events: none;
+    opacity: 0.3;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+/* Responsive adjustments */
+@media (min-width: 767px) {
+    .modal-content {
+        flex-direction: row;
+        max-width: 80vw;
+        max-height: 80vh;
+    }
+
+    .modal-left {
+        height: auto;
+        flex: 1;
+    }
+
+    .modal-image {
+        width: 100%;
+        height: 100%;
+        overflow: scroll;
+    }
+
+    .modal-right {
+        padding: 20px;
+        flex: 1;
+    }
+
+    .post-header {
+        display: flex;
+    }
+
+    .user-name {
+        font-size: 1.4rem;
+    }
+
+    .likes-caption,
+    .like-button,
+    .caption-text {
+        font-size: 1.1rem;
+    }
+
+    .nav-arrow {
+        font-size: 2.5rem;
+    }
+}
+
+@media (max-width: 767px) {
+    .modal-content {
+        flex-direction: column;
+        width: 100%;
+        max-width: 350px;
+        height: auto;
+    }
+
+    .modal-left,
+    .modal-right {
+        width: 100%;
+    }
+
+    .modal-right {
+        padding: 10px;
+    }
+
+    .modal-left {
+        height: auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .modal-image {
+        width: 100%;
+        height: auto;
+    }
+
+    .avatar,
+    .avatar-caption {
+        width: 40px;
+        height: 40px;
+    }
+
+    .user-name,
+    .likes-caption {
+        font-size: 1rem;
+    }
+
+    .like-button,
+    .caption-text {
+        font-size: 0.9rem;
+    }
+
+    .nav-arrow {
+        font-size: 1.5rem;
+    }
+
+    /* Hide the post-header on small screens */
+    .post-header {
+        display: none;
+    }
 }
 </style>
