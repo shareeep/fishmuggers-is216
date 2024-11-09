@@ -123,15 +123,14 @@ export default {
 
 .popup-content {
   background: #fff;
-  border-radius: 12px;
+  border-radius: 10px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-  border: 3px solid #4b4b4b;
+  border: 2px solid #4b4b4b;
   width: 800px;
   max-width: 90%;
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  font-family: 'Arial Rounded MT', sans-serif;
   position: relative;
 }
 
@@ -193,7 +192,6 @@ export default {
   border: 1px solid #ccc;
   resize: none;
   background-color: #f9f9f9;
-  font-family: Arial, sans-serif;
   color: #4b4b4b;
   margin-bottom: 8px;
   margin-top: 4px;
@@ -202,7 +200,6 @@ export default {
 p {
   color: #4b4b4b;
   font-size: 1.1rem;
-  font-family: 'Arial Rounded MT', sans-serif;
 }
 
 /* Right Side: Map Placeholder */
@@ -228,19 +225,17 @@ p {
   background-color: #ffd700;
   color: #4b4b4b;
   font-weight: bold;
-  border: 1px solid #4b4b4b;
   border-radius: 8px;
   cursor: pointer;
   font-size: 1.2rem;
   transition: background-color 0.3s, color 0.3s;
+  text-align: center;
 }
 
 .close-button:hover {
-  background-color: #f0e68c;
+  background-color: #e6c200;
   color: #333;
 }
-
-
 
 /* Styles for delete button */
 .popup-buttons {
@@ -251,15 +246,15 @@ p {
 .delete-button {
   align-self: flex-start;
   margin: 16px;
-  padding: 6px 16px;
+  padding: 5px 15px;
   background-color: red;
   color: white;
   font-weight: bold;
-  border: 1px solid #4b4b4b;
-  border-radius: 8px;
+  border-radius: 5px;
   cursor: pointer;
   font-size: 1.2rem;
   transition: background-color 0.3s;
+  text-align: center;
 }
 .delete-button:hover {
   background-color: darkred;
@@ -281,21 +276,25 @@ p {
   border: 2px solid #ccc;
 }
 
+.delete-confirm-popup p {
+  font-weight: bold;
+  font-size: 1rem;
+}
+
 .delete-confirm-popup button {
   background-color: #ffd700;
   width: 100%;
   color: #4b4b4b;
   font-weight: bold;
-  font-size: 1rem;
+  font-size: 0.9rem;
   padding: 6px 12px;
   border-radius: 8px;
   cursor: pointer;
-  border: 1px solid #4b4b4b; /* Adds the border */
   transition: background-color 0.3s, color 0.3s;
 }
 
 .delete-confirm-popup button:hover {
-  background-color: #f0e68c;
+  background-color: #e6c200;
   color: #333;
 }
 
