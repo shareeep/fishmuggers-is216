@@ -688,9 +688,12 @@ async mounted() {
   .clickable-date:hover {
     cursor: pointer;
     /* background-color: rgb(126, 165, 255); */
-    background-color: rgba(0, 0, 255, 0.539);
-    color: white;
+    background-color: #fde785;
     /* border: 2px solid #7b61ff; */
+  }
+  .joined-event-date:hover {
+    background-color: #bfb2fd;
+    cursor: pointer;
   }
   .current-month {
     color: #000;
