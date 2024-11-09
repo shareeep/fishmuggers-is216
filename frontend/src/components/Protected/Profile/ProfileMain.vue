@@ -252,7 +252,10 @@ const openModal = (post) => {
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   margin-bottom: 15px;
-  /* Adds space below the button */
+}
+
+.profile-header .edit-btn {
+  margin-bottom: 0;
 }
 
 .edit-btn:hover {
