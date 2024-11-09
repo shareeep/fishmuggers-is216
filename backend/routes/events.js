@@ -304,7 +304,7 @@ router.post(
         eventSize, // Store event size as an integer
         eventType, // Include eventType
         eventImage: imageUrl,
-        interestedUsers: [], // Initialize as empty array
+        interestedUsers: [req.user.uid], // Initialize with the host as the first interested user
         createdAt: admin.firestore.FieldValue.serverTimestamp(),
         updatedAt: admin.firestore.FieldValue.serverTimestamp(),
       };
@@ -527,16 +527,25 @@ router.delete("/:id", authenticate, async (req, res) => {
         const batchSize = 10; // Firestore limits 'in' queries to 10
         for (let i = 0; i < eventData.interestedUsers.length; i += batchSize) {
           const batch = eventData.interestedUsers.slice(i, i + batchSize);
-          const userIds = batch.map((user) => user.userId);
-          const usersSnapshot = await db
-            .collection("users")
-            .where(admin.firestore.FieldPath.documentId(), "in", userIds)
-            .get();
-          usersSnapshot.forEach((userDoc) => {
-            transaction.update(userDoc.ref, {
-              joinedEvents: admin.firestore.FieldValue.arrayRemove(eventId),
+
+          // Map user IDs and filter out any undefined or null values
+          const userIds = batch
+            .map((user) => user.userId)
+            .filter((id) => id !== undefined && id !== null);
+
+          // Only proceed if there are valid user IDs
+          if (userIds.length > 0) {
+            const usersSnapshot = await db
+              .collection("users")
+              .where(admin.firestore.FieldPath.documentId(), "in", userIds)
+              .get();
+
+            usersSnapshot.forEach((userDoc) => {
+              transaction.update(userDoc.ref, {
+                joinedEvents: admin.firestore.FieldValue.arrayRemove(eventId),
+              });
             });
-          });
+          }
         }
       }
     });

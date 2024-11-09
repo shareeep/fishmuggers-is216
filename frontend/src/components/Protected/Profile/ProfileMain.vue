@@ -129,7 +129,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, defineEmits, defineProps, watch } from 'vue';
+import { ref, onMounted, defineEmits, defineProps, watch, computed } from 'vue';
 import axios from 'axios';
 import { getAuth } from 'firebase/auth';
 import { useRouter } from 'vue-router';
@@ -139,35 +139,36 @@ import JoinedEventsList from "@/components/Protected/EventsAdmin/JoinedEventsLis
 // Define props
 const props = defineProps({
   userData: Object,
+  posts: Array,
   pets: Array,
   isOwnProfile: Boolean,
   createdEvents: Array,
   joinedEvents: Array,
 });
 
-const posts = ref([]);
-onMounted(() => {
-  if (props.userData && props.userData.userId) {
-    fetchPosts(props.userData.userId);
-  }
-});
-
-// Optionally, add a watcher to re-fetch posts if userData changes
-watch(() => props.userData, (newData) => {
-  if (newData && newData.userId) {
-    fetchPosts(newData.userId);
-  }
-});
+watch(
+  () => props.userData.userId,
+  (newUserId) => {
+    if (newUserId) {
+      fetchPosts(newUserId);
+    }
+  },
+  { immediate: true }
+);
 
 const fetchPosts = async (userId) => {
+  console.log(`Fetching posts for userId: ${userId}`); // Debugging log
   try {
     const response = await axios.get(`/api/posts/user/${userId}/posts`);
-    posts.value = response.data || []; // Ensure posts is always an array
-    console.log("Fetched Posts:", posts.value); // Debugging log
+    posts.value = response.data || [];
+    console.log("Fetched Posts:", posts.value);
   } catch (error) {
     console.error("Error fetching posts:", error);
   }
 };
+
+const posts = computed(() => props.userData.posts || []);
+
 
 // Define emits
 const emit = defineEmits(['edit-event', 'delete-event', 'open-post','edit-pet']);
@@ -251,7 +252,10 @@ const openModal = (post) => {
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
   margin-bottom: 15px;
-  /* Adds space below the button */
+}
+
+.profile-header .edit-btn {
+  margin-bottom: 0;
 }
 
 .edit-btn:hover {
