@@ -30,7 +30,7 @@
 </template>
 
 <script setup>
-import { defineProps, ref, onMounted } from 'vue';
+import { watch, defineProps, ref, onMounted } from 'vue';
 import { getAuth } from 'firebase/auth';
 import EventCard from './EventCard.vue';
 
@@ -67,6 +67,18 @@ onMounted(() => {
     console.log('Is Own Profile:', isOwnProfile.value); // Check if set correctly
   }
 });
+
+
+watch(
+  () => props.events,
+  (newEvents) => {
+    // Update the display when the events list changes
+    events.value = newEvents;
+  },
+  { deep: true }
+);
+
+
 </script>
 
 
