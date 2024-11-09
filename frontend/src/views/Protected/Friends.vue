@@ -286,7 +286,7 @@ onMounted(() => {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 70vh;
+  height: 50vh;
   /* Ensures it takes full height of the viewport */
 }
 
