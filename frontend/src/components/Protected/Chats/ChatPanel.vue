@@ -414,4 +414,9 @@ input[type="text"]:focus {
 .start-chat-btn:active {
   transform: scale(0.98);
 }
+
+a {
+  color: #fff;
+ text-decoration: underline;
+}
 </style>

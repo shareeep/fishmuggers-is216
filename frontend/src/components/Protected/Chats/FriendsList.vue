@@ -16,6 +16,10 @@
           <p>{{ friend.lastMessage }}</p>
         </div>
         <span class="time">{{ formatTimeOrDate(friend.latest) }}</span>
+        <span
+          v-if="friend.unreadCount > 0"          
+          friend.unreadcoun class="unread-badge">{{ friend.unreadCount }}
+        </span>
 
         <!-- Three dots button for showing dropdown -->
         <!-- <button @click.stop="toggleDropdown(index)" class="delete-chat-button" title="Options">
@@ -271,5 +275,21 @@ const formatTimeOrDate = (timestamp) => {
   .find-more-friends button {
     margin-bottom: 60px;
   }
+}
+
+
+.unread-badge {
+  margin-top: 20px;
+  margin-right:5px;
+  background-color: #FFD700;
+  color: black;
+  font-weight: bold;
+  border-radius: 50%;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  font-size: 12px;
+  text-align: center;
+  line-height: 20px;
 }
 </style>

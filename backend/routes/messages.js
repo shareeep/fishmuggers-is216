@@ -17,6 +17,7 @@ router.post("/send", async (req, res) => {
       receiverUid,
       messageText,
       timestamp: new Date(),
+      read: [senderUid], // Initialize 'read' array with senderUid
     };
 
     const messageRef = await db.collection("messages").add(newMessage);
@@ -30,7 +31,6 @@ router.post("/send", async (req, res) => {
     res.status(500).json({ error: "Failed to send message" });
   }
 });
-
 
 // Route to get all messages involving a specific user (either as sender or receiver)
 router.get("/user/:uid", async (req, res) => {
@@ -50,7 +50,10 @@ router.get("/user/:uid", async (req, res) => {
       .get();
 
     // Await both queries in parallel
-    const [sentMessagesSnapshot, receivedMessagesSnapshot] = await Promise.all([sentMessagesPromise, receivedMessagesPromise]);
+    const [sentMessagesSnapshot, receivedMessagesSnapshot] = await Promise.all([
+      sentMessagesPromise,
+      receivedMessagesPromise,
+    ]);
 
     const messages = [];
 
@@ -61,6 +64,7 @@ router.get("/user/:uid", async (req, res) => {
         id: doc.id,
         ...messageData,
         timestamp: new Date(messageData.timestamp._seconds * 1000), // Convert Firestore timestamp to JS Date
+        read: messageData.read || [], // Ensure 'read' is an array
       };
       messages.push(message);
     });
@@ -72,6 +76,7 @@ router.get("/user/:uid", async (req, res) => {
         id: doc.id,
         ...messageData,
         timestamp: new Date(messageData.timestamp._seconds * 1000), // Convert Firestore timestamp to JS Date
+        read: messageData.read || [], // Ensure 'read' is an array
       };
       messages.push(message);
     });
@@ -83,34 +88,48 @@ router.get("/user/:uid", async (req, res) => {
     const formatMessages = (uid, messages) => {
       // Group messages by the other person (either senderUid or receiverUid that isn't you)
       const conversations = {};
-    
+
       messages.forEach((message) => {
-        const otherPersonUid = message.senderUid === uid ? message.receiverUid : message.senderUid;
-    
+        const otherPersonUid =
+          message.senderUid === uid ? message.receiverUid : message.senderUid;
+
         // If there's no conversation with this person yet, initialize it
         if (!conversations[otherPersonUid]) {
           conversations[otherPersonUid] = {
-            senderUid: otherPersonUid,
-            lastMessage: '',
+            senderUid: otherPersonUid, // This represents the other person's UID
+            lastMessage: "",
             latest: null,
+            unreadCount: 0, // Initialize unreadCount
             messages: [],
           };
         }
-    
+
         // Add message to the conversation
         conversations[otherPersonUid].messages.push({
           text: message.messageText,
           sentByYou: message.senderUid === uid, // true if you are the sender
+          timestamp: message.timestamp, // Include timestamp
         });
-    
+
+        // Ensure 'message.read' is an array
+        const readArray = message.read || [];
+
+        // Check if the message is unread by the user and increment unreadCount
+        if (!readArray.includes(uid)) {
+          conversations[otherPersonUid].unreadCount++;
+        }
+
         // Update lastMessage and latest if this message is the most recent
         const messageTimestamp = new Date(message.timestamp);
-        if (!conversations[otherPersonUid].latest || messageTimestamp > new Date(conversations[otherPersonUid].latest)) {
+        if (
+          !conversations[otherPersonUid].latest ||
+          messageTimestamp > new Date(conversations[otherPersonUid].latest)
+        ) {
           conversations[otherPersonUid].lastMessage = message.messageText;
           conversations[otherPersonUid].latest = messageTimestamp;
         }
       });
-    
+
       // Sort messages within each conversation by timestamp
       Object.keys(conversations).forEach((personUid) => {
         conversations[personUid].messages.sort((a, b) => {
@@ -119,7 +138,7 @@ router.get("/user/:uid", async (req, res) => {
           return timestampA - timestampB;
         });
       });
-    
+
       // Convert conversations object to an array
       return Object.values(conversations);
     };
@@ -128,37 +147,38 @@ router.get("/user/:uid", async (req, res) => {
 
     // Function to append user details to conversations
     const appendUserDetailsToMessages = async (conversations) => {
-      // Loop through each conversation and fetch user details for the senderUid
+      // Loop through each conversation and fetch user details for the other person
       for (const conversation of conversations) {
-        const senderUid = conversation.senderUid;
-    
+        const otherPersonUid = conversation.senderUid;
+
         try {
-          // Query the users collection to get the user details for senderUid
-          const userDoc = await db.collection('users').doc(senderUid).get();
-    
+          // Query the users collection to get the user details
+          const userDoc = await db.collection("users").doc(otherPersonUid).get();
+
           if (userDoc.exists) {
             const userData = userDoc.data();
-    
+
             // Append username and profileImage to the conversation
-            conversation.name = userData.username || 'Unknown User';
-            conversation.avatar = userData.profileImage || '';
+            conversation.name = userData.username || "Unknown User";
+            conversation.avatar = userData.profileImage || "";
           } else {
             // In case user data is not found, set default values
-            conversation.name = 'Unknown User';
-            conversation.avatar = '';
+            conversation.name = "Unknown User";
+            conversation.avatar = "";
           }
         } catch (error) {
-          console.error('Error fetching user data:', error);
+          console.error("Error fetching user data:", error);
           // Handle the error by setting default values
-          conversation.username = 'Unknown User';
-          conversation.profileImage = '';
+          conversation.name = "Unknown User";
+          conversation.avatar = "";
         }
       }
-    
       return conversations; // Return updated conversations array
     };
-    
-    const updatedConversations = await appendUserDetailsToMessages(formattedConversations);
+
+    const updatedConversations = await appendUserDetailsToMessages(
+      formattedConversations
+    );
 
     res.status(200).json(updatedConversations);
   } catch (error) {
@@ -167,6 +187,56 @@ router.get("/user/:uid", async (req, res) => {
   }
 });
 
+
+
+// Route to mark messages as read between two users
+router.post('/markAsRead', async (req, res) => {
+  const { uid, friendUid } = req.body;
+
+  if (!uid || !friendUid) {
+    return res.status(400).json({ error: 'Missing required fields' });
+  }
+
+  try {
+    // Fetch messages where the friend is the sender and you are the receiver
+    const messagesSentByFriend = await db
+      .collection('messages')
+      .where('senderUid', '==', friendUid)
+      .where('receiverUid', '==', uid)
+      .get();
+
+    // Fetch messages where you are the sender and the friend is the receiver
+    const messagesSentByYou = await db
+      .collection('messages')
+      .where('senderUid', '==', uid)
+      .where('receiverUid', '==', friendUid)
+      .get();
+
+    const batch = db.batch();
+
+    // Update messages sent by the friend
+    messagesSentByFriend.forEach((doc) => {
+      const messageRef = doc.ref;
+      // Update 'read' array to include both UIDs
+      batch.update(messageRef, { read: [uid, friendUid] });
+    });
+
+    // Update messages sent by you (optional, for consistency)
+    messagesSentByYou.forEach((doc) => {
+      const messageRef = doc.ref;
+      // Update 'read' array to include both UIDs
+      batch.update(messageRef, { read: [uid, friendUid] });
+    });
+
+    // Commit the batch update
+    await batch.commit();
+
+    res.status(200).json({ message: 'Messages marked as read' });
+  } catch (error) {
+    console.error('Error marking messages as read:', error);
+    res.status(500).json({ error: 'Failed to mark messages as read' });
+  }
+});
 
 
 module.exports = router;
