@@ -1093,4 +1093,18 @@ td {
     font-size: 0.8em !important;
   }
 }
+
+
+@media (max-width: 480px) {
+  /* Adjust the bottom margin of the calendar container for smaller screens */
+  .calendar-container {
+    margin-bottom: 0; /* Remove any extra margin at the bottom */
+    padding-bottom: 5px; /* Optional: add minimal padding if needed */
+  }
+
+  /* Adjust the bottom margin of other elements inside the calendar if needed */
+  .side-panel, .calendar {
+    margin-bottom: 0; /* Remove any extra margin at the bottom */
+  }
+}
 </style>

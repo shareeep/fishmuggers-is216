@@ -119,6 +119,7 @@ export default {
   justify-content: center;
   align-items: center;
   z-index: 1000;
+  overflow-y: auto; /* Enable scrolling for overflow content */
 }
 
 .popup-content {
@@ -126,33 +127,28 @@ export default {
   border-radius: 10px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
   border: 2px solid #4b4b4b;
-  width: 800px;
-  max-width: 90%;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh; /* Ensure popup doesn't exceed viewport height */
+  overflow-y: auto; /* Enable vertical scrolling within popup content */
   display: flex;
   flex-direction: column;
   position: relative;
-  overflow-y: auto;
 }
 
-.custom-event {
-  width: 600px;
-  /* Smaller width for custom events */
-}
-
-
-/* Conditionally displayed image container */
 .popup-image-container {
   position: relative;
   width: 100%;
-  height: 200px;
+  max-height: 200px; /* Restrict image height to prevent excessive space usage */
   overflow: hidden;
   background-color: #FCEFB4;
+  flex-shrink: 0; /* Prevents the image container from shrinking when scrolling */
 }
 
 .popup-image {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
+  height: auto; /* Maintains aspect ratio */
+  object-fit: cover; /* Ensures the image covers the area */
 }
 
 .popup-title {
@@ -160,198 +156,149 @@ export default {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 100%;
-  max-height: 100%;
-  /* font-family: 'pawfont'; */
   color: white;
   text-shadow: 2px 2px black;
   text-align: center;
   font-weight: bold;
-  font-size: 2.5rem;
+  font-size: 2rem;
   margin: 0;
   padding: 10px;
-  border-radius: 8px;
 }
 
-/* Layout for the body content with event details and map */
 .popup-body {
   display: flex;
   padding: 16px;
-  padding-bottom: 0px;
-  overflow-y: auto;
+  overflow-y: auto; /* Allows scrolling within popup body */
+  flex-direction: column;
+  flex-grow: 1; /* Fills remaining space in popup for content */
 }
 
-/* Left Side: Event Details */
 .event-details {
-  flex: 2;
+  width: 100%;
   padding-right: 16px;
 }
 
 .popup-description {
   width: 100%;
-  height: 150px;
-  padding: 12px;
+  height: 120px;
+  padding: 10px;
   border-radius: 8px;
   border: 1px solid #ccc;
   resize: none;
   background-color: #f9f9f9;
   color: #4b4b4b;
   margin-bottom: 8px;
-  margin-top: 4px;
 }
 
 p {
   color: #4b4b4b;
-  font-size: 1.1rem;
-}
-
-/* Right Side: Map Placeholder */
-.map-placeholder {
-  flex: 1;
-  height: 100%;
-  background-color: #e0e0e0;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  color: #4b4b4b;
   font-size: 1rem;
-  text-align: center;
 }
 
-/* Small Close Button in Bottom Right */
-.close-button {
-  align-self: flex-end;
-  margin: 16px;
-  padding: 6px 16px;
-  background-color: #ffd700;
-  color: #4b4b4b;
-  font-weight: bold;
-  border-radius: 8px;
-  cursor: pointer;
-  font-size: 1.2rem;
-  transition: background-color 0.3s, color 0.3s;
-  text-align: center;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-
+.map-placeholder, #map {
+  width: 100%;
+  min-height: 200px;
+  margin-top: 12px;
 }
 
-.close-button:hover {
-  background-color: #E6C200;
-  transform: scale(1.02);
-  box-shadow: 0 4px 8px rgba(75, 0, 130, 0.2);
-}
-
-.close-button:active {
-  transform: scale(0.98);
-
-}
-
-/* Styles for delete button */
 .popup-buttons {
   display: flex;
   justify-content: space-between;
+  padding: 16px;
+  flex-shrink: 0; /* Prevents buttons from shrinking when scrolling */
+}
 
+.delete-button, .close-button {
+  padding: 8px 12px;
+  font-size: 0.9rem;
+  border-radius: 6px;
+  cursor: pointer;
 }
 
 .delete-button {
-  align-self: flex-start;
-  margin: 16px;
-  padding: 5px 15px;
   background-color: #ff7b7b;
   color: white;
-  font-weight: bold;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 1.2rem;
-  transition: background-color 0.3s;
-  text-align: center;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-
 }
 
-.delete-button:hover {
-  background-color: #d06c6c;
-  transform: scale(1.02);
-  box-shadow: 0 4px 8px rgba(75, 0, 130, 0.2);
-
-}
-
-.delete-button:active {
-  transform: scale(0.98);
-}
-
-/* Styles for delete confirmation popup */
-.delete-confirm-popup {
-  background-color: white;
-  padding: 10px;
-  border-radius: 6px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  position: absolute;
-  bottom: 50px;
-  left: 10px;
-  border: 2px solid #ccc;
-}
-
-.delete-confirm-popup p {
-  font-weight: bold;
-  font-size: 1rem;
-}
-
-.delete-confirm-popup button {
+.close-button {
   background-color: #ffd700;
-  width: 100%;
   color: #4b4b4b;
-  font-weight: bold;
-  font-size: 0.9rem;
-  padding: 6px 12px;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.3s, color 0.3s;
-  z-index: 1;
 }
 
-.delete-confirm-popup button:hover {
-  background-color: #e6c200;
-  color: #333;
-}
-
-#map {
-  height: 300px;
-  width: 400px;
-}
-
-/* Media query for medium screens */
+/* Media query for tablet screens */
 @media (max-width: 768px) {
-
   .popup-content {
-    width: 100%;
-    max-height: 90vh;
-    /* Keep within 90% of screen height */
+    max-width: 90%;
+    max-height: 85vh; /* Reduce max-height to fit smaller screens */
   }
 
-  .popup-body {
-    flex-direction: column;
-    max-height: calc(90vh - 200px);
-    /* Adjust max-height to control scroll area */
-    overflow-y: scroll;
-    /* Enable scrolling for overflow content */
-  }
-
-  #map {
-    width: 100%;
-    height: 500px;
-    margin-top: 20px;
-    z-index: 0;
+  .popup-title {
+    font-size: 1.5rem;
   }
 
   .popup-description {
-    height: 120px;
+    height: 100px;
+  }
+
+  #map {
+    height: 150px;
   }
 }
+
+/* Media query for mobile screens */
+@media (max-width: 480px) {
+  .popup-content {
+    max-width: 100%;
+    max-height: 85vh;
+    padding: 10px; /* Reduce padding */
+  }
+
+  .popup-image-container {
+    height: 120px; /* Adjust image height for small screens */
+  }
+
+  .popup-title {
+    font-size: 1.2rem;
+    padding: 5px;
+  }
+
+  .popup-description {
+    height: 70px; /* Reduce description height */
+  }
+
+  .delete-button, .close-button {
+    font-size: 0.8rem;
+    padding: 6px 10px;
+  }
+
+  #map {
+    height: 120px; /* Reduce map height for small screens */
+  }
+}
+
+/* Media query for extra small mobile screens */
+@media (max-width: 320px) {
+  .popup-content {
+    padding: 5px;
+    max-height: 80vh;
+  }
+
+  .popup-title {
+    font-size: 1rem;
+  }
+
+  .popup-description {
+    height: 60px; /* Further reduce description height */
+  }
+
+  #map {
+    height: 100px; /* Further reduce map height */
+  }
+
+  .delete-button, .close-button {
+    font-size: 0.7rem;
+    padding: 5px 8px;
+  }
+}
+
 </style>
