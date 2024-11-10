@@ -127,6 +127,7 @@
 <script>
 import EventPopup from './EventPopup.vue';
 import { db, auth } from '../../../../firebase';
+import api from '@/services/api';
 
 export default {
   data() {
@@ -170,31 +171,25 @@ export default {
         const uid = user.uid;
 
         // Fetch profile image
-        const userResponse = await fetch(`/api/users/${uid}`, {
-          headers: {
-            'Authorization': `Bearer ${token}` // Add the token to the request
-          }
-        });
+        const userResponse = await api.get(`/api/users/${uid}`);
 
-        if (userResponse.ok) {
-          const userData = await userResponse.json();
+        if (userResponse.status === 200) {
+          const userData = userResponse.data;
           this.profileImage = userData.profileImage;
         } else {
-          console.error("Failed to fetch user profile:", await userResponse.text());
+          console.error("Failed to fetch user profile:", userResponse.statusText);
         }
 
         // Fetch joined events
-        const eventsResponse = await fetch(`/api/calendar/joined-events/${uid}`);
-        const events = await eventsResponse.json();
-        this.events = events.map(event => ({
+        const events = await api.get(`/api/calendar/joined-events/${uid}`)
+        this.events = events.data.map(event => ({
           ...event,
           EventDate: new Date(event.date._seconds * 1000)
         }));
 
         // Fetch custom events
-        const customEventsResponse = await fetch(`/api/calendar/custom-events/${uid}`);
-        const customEvents = await customEventsResponse.json();
-        this.customEvents = customEvents.map(event => ({
+        const customEvents = await api.get(`/api/calendar/custom-events/${uid}`);
+        this.customEvents = customEvents.data.map(event => ({
           ...event,
           EventDate: new Date(event.date._seconds * 1000)
         }));
@@ -377,24 +372,19 @@ export default {
         const user = auth.currentUser;
         if (user) {
           const uid = user.uid;
-          const response = await fetch(`/api/calendar/custom-events`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              ...this.newCustomEvent,
-              uid: uid
-            })
+          const result = await api.post(`/api/calendar/custom-events`, {
+            ...this.newCustomEvent,
+            uid: uid
           });
+          console.log("API Response:", result);  // Check the full response here
 
-          const result = await response.json();
-          if (response.ok) {
+
+          if (result && result.status >= 200 && result.status < 300) {
             // Add the new event to customEvents and update the calendar
             this.customEvents.push({
               ...this.newCustomEvent,
               EventDate: new Date(this.newCustomEvent.datetime),
-              customEventId: result.customEventId
+              customEventId: result.data.customEventId
             });
 
             // Close the popup
@@ -427,16 +417,12 @@ export default {
         const isCustomEvent = this.customEvents.some(e => e.customEventId === event.customEventId);
 
         // Send delete request to the backend
-        await fetch(`/api/calendar/delete-event`, {
-          method: "DELETE",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
+        await api.delete(`/api/calendar/delete-event`, {
+          data: {
             uid,
             eventId: isCustomEvent ? event.customEventId : event.eventId,
             isCustomEvent,
-          }),
+          },
         });
 
         // Remove the event from the local data

@@ -72,8 +72,7 @@ const deleteChat = async (friend) => {
     const userUid = getAuth().currentUser.uid;
 
     // Make a request to delete the chat
-    await axios({
-      method: "delete",
+    await api.delete({
       url: `/api/messages/delete`,
       data: {
         userUid: userUid,
