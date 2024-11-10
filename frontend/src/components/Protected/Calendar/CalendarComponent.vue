@@ -736,7 +736,9 @@ td {
   padding: 8px 0px;
   border-radius: 8px;
   cursor: pointer;
-  margin: 5px auto;
+  margin: auto;
+  margin-top: 5px;
+  margin-bottom: 10px;
   display: block;
   width: 90%;
   text-align: center;
@@ -851,6 +853,8 @@ td {
   border-radius: 8px;
   cursor: pointer;
   margin: auto;
+  margin-top: 0px;
+  margin-bottom: 5px;
   display: block;
   width: 90%;
   text-align: center;
