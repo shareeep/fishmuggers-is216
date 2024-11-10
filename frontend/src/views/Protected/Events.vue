@@ -176,7 +176,7 @@ main {
   margin-bottom: 55px;
 }
 
-.floating-btn {
+.floating-btn { 
   position: fixed !important;
   bottom: 20px;
   right: 20px;

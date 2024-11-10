@@ -38,7 +38,7 @@ const fetchFriends = async () => {
 
     if (!userUid) {
       console.error("User is not authenticated.");
-      loading.value = false; 
+      loading.value = false;
       return;
     }
 
@@ -201,6 +201,14 @@ main {
     flex-grow: 1;
     overflow-y: auto;
     /* Allow main to scroll if content overflows */
+  }
+}
+
+@media (max-width: 600px) {
+  .home-container {
+    max-width: 100vw;
+    overflow: hidden;
+    position: relative;
   }
 }
 

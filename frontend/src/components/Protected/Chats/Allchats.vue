@@ -144,6 +144,7 @@ const switchToMessagesMode = () => {
 @media (max-width: 600px) {
   .chat-container {
     gap: 0;
+    position: absolute;
     grid-template-columns: 100vw 100vw;
     transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
   }

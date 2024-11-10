@@ -1,42 +1,45 @@
 <template>
-  <div v-if="loading" class="loading-container">
-    <p class="loading-text">
-      <img src="../../../assets/images/loading1.gif" alt="Loading" class="loadinggif" />
-      Loading chats<span class="dots"></span>
-    </p>
-  </div>
-  <div class="chat-panel" v-else-if="selectedFriend">
-    <!-- Back Button -->
-    <div class="chat-header">
-      <button class="back-button" @click="switchToConversationsMode"><img src="../../../assets/images/back_arrow.png"
-          alt="back"></button>
-      <img :src="selectedFriend.avatar" alt="Avatar" class="chat-avatar" />
-      <h3>{{ selectedFriend.name }}</h3>
+
+  <div>
+    <div v-if="loading" class="loading-container">
+      <p class="loading-text">
+        <img src="../../../assets/images/loading1.gif" alt="Loading" class="loadinggif" />
+        Loading chats<span class="dots"></span>
+      </p>
     </div>
-    <div class="chat-messages" ref="messageContainer" @scroll="handleScroll">
-      <div v-for="(message, index) in selectedFriend.messages" :key="index" class="message">
-        <p v-html="formatMessage(message.text)" :class="[
-          message.sentByYou ? 'message-you' : 'message-them',
-          isLastInBatch(index, message.sentByYou) ? 'last-message' : ''
-        ]"></p>
+    <div class="chat-panel" v-else-if="selectedFriend">
+      <!-- Back Button -->
+      <div class="chat-header">
+        <button class="back-button" @click="switchToConversationsMode"><img src="../../../assets/images/back_arrow.png"
+            alt="back"></button>
+        <img :src="selectedFriend.avatar" alt="Avatar" class="chat-avatar" />
+        <h3>{{ selectedFriend.name }}</h3>
       </div>
+      <div class="chat-messages" ref="messageContainer" @scroll="handleScroll">
+        <div v-for="(message, index) in selectedFriend.messages" :key="index" class="message">
+          <p v-html="formatMessage(message.text)" :class="[
+            message.sentByYou ? 'message-you' : 'message-them',
+            isLastInBatch(index, message.sentByYou) ? 'last-message' : ''
+          ]"></p>
+        </div>
 
 
-    </div>
-    <div class="chat-input">
-      <div class="input-container">
-        <input type="text" v-model="newMessage" placeholder="Type a message..." @keyup.enter="sendMessage" />
-        <button @click="sendMessage" class="send-button">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-            <path d="M2 21l3-9-3-9 18 9-18 9z" />
-          </svg>
-        </button>
       </div>
+      <div class="chat-input">
+        <div class="input-container">
+          <input type="text" v-model="newMessage" placeholder="Type a message..." @keyup.enter="sendMessage" />
+          <button @click="sendMessage" class="send-button">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+              <path d="M2 21l3-9-3-9 18 9-18 9z" />
+            </svg>
+          </button>
+        </div>
 
+      </div>
     </div>
-  </div>
-  <div class="no-chat-selected" v-else>
-    <button @click='showFindChatPopup' class="start-chat-btn">Start Chatting!</button>
+    <div class="no-chat-selected" v-else>
+      <button @click='showFindChatPopup' class="start-chat-btn">Start Chatting!</button>
+    </div>
   </div>
 </template>
 
@@ -308,14 +311,15 @@ input[type="text"]:focus {
   justify-content: flex-end;
   background-color: #FFE047;
   padding: 10px 15px;
-  border-radius: 15px; /* More rounded corners */
+  border-radius: 15px;
+  /* More rounded corners */
   word-break: break-word;
   max-width: 75%;
   margin-left: auto;
-  color: black; 
+  color: black;
   text-align: left;
   position: relative;
-  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.15); 
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.15);
   z-index: 1;
 }
 
@@ -327,14 +331,20 @@ input[type="text"]:focus {
 .message-you.last-message::after {
   content: '';
   position: absolute;
-  right: -6px; /* Adjust the positioning for alignment */
-  bottom: 2px; /* Position closer to the bottom of the bubble */
+  right: -6px;
+  /* Adjust the positioning for alignment */
+  bottom: 2px;
+  /* Position closer to the bottom of the bubble */
   width: 12px;
   height: 12px;
-  background-color: #FFE047; /* Same color as bubble */
-  border-radius: 50%; /* Creates a smooth, rounded effect */
-  transform: rotate(196deg); /* Rotates to create a connected tail */
-  clip-path: polygon(0 50%, 100% 0, 100% 100%); /* Creates a teardrop-like shape */
+  background-color: #FFE047;
+  /* Same color as bubble */
+  border-radius: 50%;
+  /* Creates a smooth, rounded effect */
+  transform: rotate(196deg);
+  /* Rotates to create a connected tail */
+  clip-path: polygon(0 50%, 100% 0, 100% 100%);
+  /* Creates a teardrop-like shape */
   z-index: 0;
 }
 
@@ -347,20 +357,26 @@ input[type="text"]:focus {
   margin-right: auto;
   color: #000;
   position: relative;
-  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.15); 
+  box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.15);
 }
 
 .message-them.last-message::after {
   content: '';
   position: absolute;
-  left: -7px; /* Adjust the positioning for alignment */
-  bottom: 2px; /* Position closer to the bottom of the bubble */
+  left: -7px;
+  /* Adjust the positioning for alignment */
+  bottom: 2px;
+  /* Position closer to the bottom of the bubble */
   width: 12px;
   height: 12px;
-  background-color: #ececec; /* Same color as bubble */
-  border-radius: 50%; /* Creates a smooth, rounded effect */
-  transform: rotate(-18deg); /* Rotates to create a connected tail */
-  clip-path: polygon(0 50%, 100% 0, 100% 100%); /* Creates a teardrop-like shape */
+  background-color: #ececec;
+  /* Same color as bubble */
+  border-radius: 50%;
+  /* Creates a smooth, rounded effect */
+  transform: rotate(-18deg);
+  /* Rotates to create a connected tail */
+  clip-path: polygon(0 50%, 100% 0, 100% 100%);
+  /* Creates a teardrop-like shape */
 }
 
 
@@ -463,6 +479,6 @@ input[type="text"]:focus {
 
 a {
   color: #fff;
- text-decoration: underline;
+  text-decoration: underline;
 }
 </style>
