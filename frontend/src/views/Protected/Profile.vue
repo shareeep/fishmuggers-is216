@@ -7,6 +7,10 @@
         @open-post="openModal" @edit-pet="openEditPetModal" @delete-pet="deletePet" @delete-event="handleEventDeleted"/>
 
     </main>
+    <router-link to="/addpost">
+      <button class="floating-btn">🐾</button>
+    </router-link>
+
     <EditEventModal v-if="showEditModal" :eventData="editEventData" @close="closeEditEventModal"
       @event-updated="handleEventUpdated" />
 
@@ -325,6 +329,31 @@ main {
   box-sizing: border-box;
 }
 
+.floating-btn {
+  position: fixed !important;
+  bottom: 20px;
+  right: 20px;
+  background-color: gold;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  font-size: 30px;
+  text-align: center;
+  cursor: pointer;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.floating-btn:hover {
+  background-color: #e6c200;
+  transform: scale(1.05);
+  box-shadow: 0 4px 8px rgba(75, 0, 130, 0.2);
+}
+
 /* Responsive Adjustments */
 @media (max-width: 991px) {
   .navbar {
@@ -334,6 +363,12 @@ main {
   main {
     margin-left: 80px;
     padding: 15px;
+  }
+
+  .floating-btn {
+    width: 50px;
+    height: 50px;
+    font-size: 30px;
   }
 }
 
@@ -358,6 +393,15 @@ main {
     padding: 15px;
     height: calc(100vh - 50px);
     overflow-y: auto;
+  }
+
+  .floating-btn {
+    bottom: 60px;
+    /* Place above mobile navbar */
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    font-size: 30px;
   }
 }
 </style>
