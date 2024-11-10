@@ -1,5 +1,5 @@
 <template>
-  <div class="popup">
+  <div class="popup" @click.self="$emit('close')">
     <div :class="['popup-content', { 'custom-event': isCustomEvent }]">
       <!-- Image container with conditional image rendering -->
       <div class="popup-image-container">
@@ -71,7 +71,7 @@ export default {
       const [lat, lng] = this.event.locationData;
       this.map = L.map('map').setView([lat, lng], 13);
 
-      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      L.tileLayer('https://www.onemap.gov.sg/maps/tiles/Default/{z}/{x}/{y}.png', {
         maxZoom: 19,
         attribution: '&copy; OpenStreetMap contributors',
       }).addTo(this.map);
@@ -87,7 +87,7 @@ export default {
       // Add a marker with the custom icon
       this.marker = L.marker([lat, lng], { icon: customIcon })
         .addTo(this.map)
-        .bindPopup(this.event.location)
+        .bindPopup(`<b>${this.event.location}</b>`)
         .openPopup();
     },
     confirmDeletion() {
@@ -128,15 +128,17 @@ export default {
   border: 2px solid #4b4b4b;
   width: 800px;
   max-width: 90%;
-  overflow: hidden;
   display: flex;
   flex-direction: column;
   position: relative;
+  overflow-y: auto;
 }
 
 .custom-event {
-  width: 600px; /* Smaller width for custom events */
+  width: 600px;
+  /* Smaller width for custom events */
 }
+
 
 /* Conditionally displayed image container */
 .popup-image-container {
@@ -144,7 +146,7 @@ export default {
   width: 100%;
   height: 200px;
   overflow: hidden;
-  background-color: #ffd700;
+  background-color: #FCEFB4;
 }
 
 .popup-image {
@@ -176,6 +178,7 @@ export default {
   display: flex;
   padding: 16px;
   padding-bottom: 0px;
+  overflow-y: auto;
 }
 
 /* Left Side: Event Details */
@@ -230,11 +233,19 @@ p {
   font-size: 1.2rem;
   transition: background-color 0.3s, color 0.3s;
   text-align: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
 }
 
 .close-button:hover {
-  background-color: #e6c200;
-  color: #333;
+  background-color: #E6C200;
+  transform: scale(1.02);
+  box-shadow: 0 4px 8px rgba(75, 0, 130, 0.2);
+}
+
+.close-button:active {
+  transform: scale(0.98);
+
 }
 
 /* Styles for delete button */
@@ -243,11 +254,12 @@ p {
   justify-content: space-between;
 
 }
+
 .delete-button {
   align-self: flex-start;
   margin: 16px;
   padding: 5px 15px;
-  background-color: red;
+  background-color: #ff7b7b;
   color: white;
   font-weight: bold;
   border-radius: 5px;
@@ -255,9 +267,19 @@ p {
   font-size: 1.2rem;
   transition: background-color 0.3s;
   text-align: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
 }
+
 .delete-button:hover {
-  background-color: darkred;
+  background-color: #d06c6c;
+  transform: scale(1.02);
+  box-shadow: 0 4px 8px rgba(75, 0, 130, 0.2);
+
+}
+
+.delete-button:active {
+  transform: scale(0.98);
 }
 
 /* Styles for delete confirmation popup */
@@ -291,6 +313,7 @@ p {
   border-radius: 8px;
   cursor: pointer;
   transition: background-color 0.3s, color 0.3s;
+  z-index: 1;
 }
 
 .delete-confirm-popup button:hover {
@@ -298,8 +321,37 @@ p {
   color: #333;
 }
 
-#map{
+#map {
   height: 300px;
   width: 400px;
+}
+
+/* Media query for medium screens */
+@media (max-width: 768px) {
+
+  .popup-content {
+    width: 100%;
+    max-height: 90vh;
+    /* Keep within 90% of screen height */
+  }
+
+  .popup-body {
+    flex-direction: column;
+    max-height: calc(90vh - 200px);
+    /* Adjust max-height to control scroll area */
+    overflow-y: scroll;
+    /* Enable scrolling for overflow content */
+  }
+
+  #map {
+    width: 100%;
+    height: 500px;
+    margin-top: 20px;
+    z-index: 0;
+  }
+
+  .popup-description {
+    height: 120px;
+  }
 }
 </style>
