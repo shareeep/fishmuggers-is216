@@ -179,12 +179,18 @@ input[type="search"]:focus {
 .friend-name {
     font-weight: bold;
     margin: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .friend-username {
     color: #888;
     font-size: 0.9rem;
     margin: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 /* See Profile button styling */
@@ -220,6 +226,12 @@ input[type="search"]:focus {
 @media (max-width: 768px) {
     .popup-content {
         width:400px;
+    }
+}
+
+@media (max-width: 375px) {
+    .popup-content {
+        width:350px;
     }
 }
 </style>

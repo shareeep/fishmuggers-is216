@@ -150,12 +150,18 @@ input[type="search"]:focus {
 .friend-name {
     font-weight: bold;
     margin: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 .friend-username {
     color: #888;
     font-size: 0.9rem;
     margin: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
 }
 
 /* See Profile button styling */
@@ -173,6 +179,7 @@ input[type="search"]:focus {
     /* Rounded corners */
     cursor: pointer;
     transition: transform 0.2s ease, box-shadow 0.2s ease;
+
 }
 
 .see-profile-button:hover {
@@ -182,5 +189,10 @@ input[type="search"]:focus {
 
 .see-profile-button:active {
     transform: scale(0.98);
+}
+@media (max-width: 375px) {
+    .popup-content {
+        width:350px;
+    }
 }
 </style>

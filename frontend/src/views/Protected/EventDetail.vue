@@ -129,6 +129,34 @@ onMounted(() => {
   fetchEvent(); // Fetch event details on mount
   fetchFriends(); // Fetch friends for share popup
 });
+
+import Scrollbar from 'smooth-scrollbar';
+import OverscrollPlugin from 'smooth-scrollbar/plugins/overscroll';
+// Function to go back to the previous page
+
+// Initialize Smooth Scrollbar for main content
+Scrollbar.use(OverscrollPlugin);
+
+
+onMounted(() => {
+  const scrollbar = Scrollbar.init(document.querySelector('#scrollable-element'), {
+    damping: 0.05,
+    renderByPixels: true,
+    alwaysShowTracks: false,
+    continuousScrolling: true,
+    plugins: {
+      overscroll: {
+        effect: 'bounce',
+        damping: 0.2,
+        maxOverscroll: 70,
+      },
+    },
+  });
+
+  // Hide the scrollbar track by setting its opacity to 0
+  scrollbar.track.xAxis.element.style.opacity = '0';
+  scrollbar.track.yAxis.element.style.opacity = '0';
+});
 </script>
 
 

@@ -9,7 +9,7 @@
     <button class="icon share-icon" @click="$emit('showSharePopup')">
       <img src="../../../assets/images/send.png" width="30px" alt="send">
     </button>
-    <button class="rsvp-button" @click="$emit('seeInterestedUsers')">
+    <button class="see-int-btn" @click="$emit('seeInterestedUsers')">
       See Interested Users
     </button>
     <span class="slots-left">{{ remainingSlots }} slots left</span>
@@ -102,6 +102,7 @@ const toggleInterested = async () => {
   text-align: center;
 }
 
+.see-int-btn,
 .rsvp-button {
   padding: 10px 15px;
   border: none;
@@ -115,16 +116,73 @@ const toggleInterested = async () => {
   font-size: large;
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
+  overflow: hidden; /* Hide overflow */
+
 }
 
+.see-int-btn:hover,
 .rsvp-button:hover {
   background-color: #e6c200;
   transform: scale(1.05);
   box-shadow: 0 4px 8px rgba(75, 0, 130, 0.2);
 }
 
-
+.see-int-btn,
 .rsvp-button:active {
   transform: scale(0.98);
+}
+
+/* Media query for smaller screens */
+@media (max-width: 562px) {
+  .see-int-btn,
+  .rsvp-button,
+  .slots-left {
+    font-size: small; /* Reduce font size for buttons */
+  }
+}
+
+@media (max-width: 472px) {
+  .see-int-btn,
+  .rsvp-button,
+  .slots-left {
+    font-size: 12px; /* Reduce font size for buttons */
+  }
+}
+
+@media (max-width: 375px) {
+  .bottom-bar {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 5px 0; /* Compact padding */
+    gap: 5px;
+  }
+
+  .icon.share-icon {
+    flex: 1;
+    text-align: center;
+    max-width: 20%; /* Limit width for icon */
+  }
+
+  .rsvp-button {
+    flex: 1;
+    font-size: 10px;
+    padding: 10px; /* Increase padding for consistent button height */
+    text-align: center;
+    white-space: nowrap;
+    max-width: 30%; /* Limit button width */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .slots-left {
+    flex: 1;
+    font-size: 10px;
+    text-align: center;
+    line-height: 1.2;
+    max-width: 20%; /* Limit width */
+  }
+
 }
 </style>
