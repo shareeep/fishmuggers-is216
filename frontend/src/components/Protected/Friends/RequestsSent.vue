@@ -60,7 +60,7 @@ export default {
     },
     async cancelRequest() {
       try {
-        await axios.delete(`http://localhost:3000/api/friends/request/${this.requestIdToCancel}`);
+        await axios.delete(`https://fishmuggers-is216-express.onrender.com/api/friends/request/${this.requestIdToCancel}`);
         // Remove the canceled request from sentRequests by emitting an event
         this.$emit('updateSentRequests', this.requestIdToCancel);
       } catch (error) {

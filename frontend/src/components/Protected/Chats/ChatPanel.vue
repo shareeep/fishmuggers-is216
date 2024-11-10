@@ -91,7 +91,7 @@ const switchToConversationsMode = () => {
 const sendMessage = async () => {
   if (newMessage.value.trim() !== '' && props.selectedFriend && userUid.value) {
     try {
-      await axios.post('http://localhost:3000/api/messages/send', {
+      await axios.post('https://fishmuggers-is216-express.onrender.com/api/messages/send', {
         senderUid: userUid.value,
         receiverUid: props.selectedFriend.senderUid,
         messageText: newMessage.value

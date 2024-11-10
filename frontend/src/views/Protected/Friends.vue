@@ -112,7 +112,7 @@ function togglePopup(value) {
 
 async function fetchReceivedRequests() {
   try {
-    const response = await axios.get(`http://localhost:3000/api/friends/requests/${userId}`);
+    const response = await axios.get(`https://fishmuggers-is216-express.onrender.com/api/friends/requests/${userId}`);
     receivedRequests.value = response.data.map(request => ({
       id: request.requestId,
       senderId: request.senderId,
@@ -130,7 +130,7 @@ async function handleAcceptRequest(requestId) {
   console.log("Received accept-request event with ID:", requestId);
   try {
     // Send request to backend to accept friend
-    await axios.put(`http://localhost:3000/api/friends/request/accept/${requestId}`);
+    await axios.put(`https://fishmuggers-is216-express.onrender.com/api/friends/request/accept/${requestId}`);
 
     // Find the accepted friend in `receivedRequests`
     const acceptedFriend = receivedRequests.value.find(request => request.id === requestId);
@@ -160,7 +160,7 @@ async function handleAcceptRequest(requestId) {
 async function handleRejectRequest(requestId) {
   console.log("Received reject-request event with ID:", requestId);
   try {
-    await axios.put(`http://localhost:3000/api/friends/request/reject/${requestId}`);
+    await axios.put(`https://fishmuggers-is216-express.onrender.com/api/friends/request/reject/${requestId}`);
     receivedRequests.value = receivedRequests.value.filter(request => request.id !== requestId);
     console.log("Friend request rejected successfully");
   } catch (error) {
@@ -170,7 +170,7 @@ async function handleRejectRequest(requestId) {
 
 async function fetchMyFriends() {
   try {
-    const response = await axios.get(`http://localhost:3000/api/friends/${userId}`);
+    const response = await axios.get(`https://fishmuggers-is216-express.onrender.com/api/friends/${userId}`);
 
     // Map the response to myFriends
     myFriends.value = response.data.map(friend => ({
@@ -190,7 +190,7 @@ async function fetchMyFriends() {
 // Fetch all users and add them to suggested friends
 async function fetchUsers() {
   try {
-    const response = await axios.get('http://localhost:3000/api/users');
+    const response = await axios.get('https://fishmuggers-is216-express.onrender.com/api/users');
     allUsers.value = response.data;
 
     // Fetch `myFriends` first to ensure the list is up-to-date
@@ -209,7 +209,7 @@ async function fetchUsers() {
 
 async function fetchSentRequests() {
   try {
-    const response = await axios.get(`http://localhost:3000/api/friends/requests/sent/${userId}`);
+    const response = await axios.get(`https://fishmuggers-is216-express.onrender.com/api/express.onrender.com/api/express.onrender.com/api/express.onrender.com/api/express.onrender.com/api/express.onrender.com/api/express.onrender.com/api/express.onrender.com/api/friends/requests/sent/${userId}`);
     console.log("Fetched sent requests from backend:", response.data);
 
     sentRequests.value = response.data.map(request => {

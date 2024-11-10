@@ -318,7 +318,7 @@ const handleEditEvent = async () => {
 
     // Send PUT request to update event
     await axios.put(
-      `http://localhost:3000/api/events/${editEvent.value.eventId}`,
+      `https://fishmuggers-is216-express.onrender.com/api/events/${editEvent.value.eventId}`,
       formData,
       {
         headers: {

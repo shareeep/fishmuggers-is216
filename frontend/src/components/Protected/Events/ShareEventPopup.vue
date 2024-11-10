@@ -68,7 +68,7 @@ export default {
         
         const messageText = `Join me at <a href="../eventdetail/${this.event.eventId}" target="_blank">${this.event.title}</a>`;
         
-        await axios.post('http://localhost:3000/api/messages/send', {
+        await axios.post('https://fishmuggers-is216-express.onrender.com/api/messages/send', {
           senderUid,
           receiverUid: friend.id,
           messageText,

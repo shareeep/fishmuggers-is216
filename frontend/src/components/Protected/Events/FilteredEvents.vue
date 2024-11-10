@@ -71,7 +71,7 @@ export default {
         async fetchEvents() {
             this.loading = true;
             try {
-                const response = await axios.get('http://localhost:3000/api/events');
+                const response = await axios.get('https://fishmuggers-is216-express.onrender.com/api/events');
                 this.events = response.data;
                 console.log(this.events);
             } catch (error) {

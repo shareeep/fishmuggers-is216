@@ -45,7 +45,7 @@ const toggleInterested = async () => {
   }
   try {
     isInterested.value = !isInterested.value;
-    const endpoint = `http://localhost:3000/api/events/${eventId}/interested`;
+    const endpoint = `https://fishmuggers-is216-express.onrender.com/api/events/${eventId}/interested`;
 
     if (isInterested.value) {
       await axios.post(endpoint);

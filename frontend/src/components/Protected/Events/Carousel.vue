@@ -364,7 +364,7 @@ export default defineComponent({
 
     async fetchEvents() {
       try {
-        const response = await axios.get('http://localhost:3000/api/events');
+        const response = await axios.get('https://fishmuggers-is216-express.onrender.com/api/events');
         this.events = response.data;
         console.log('Fetched Events:', this.events); // Add this line
       } catch (error) {

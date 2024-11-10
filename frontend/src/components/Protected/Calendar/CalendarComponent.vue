@@ -170,7 +170,7 @@ export default {
         const uid = user.uid;
 
         // Fetch profile image
-        const userResponse = await fetch(`http://localhost:3000/api/users/${uid}`, {
+        const userResponse = await fetch(`https://fishmuggers-is216-express.onrender.com/api/users/${uid}`, {
           headers: {
             'Authorization': `Bearer ${token}` // Add the token to the request
           }
@@ -184,7 +184,7 @@ export default {
         }
 
         // Fetch joined events
-        const eventsResponse = await fetch(`http://localhost:3000/api/calendar/joined-events/${uid}`);
+        const eventsResponse = await fetch(`https://fishmuggers-is216-express.onrender.com/api/calendar/joined-events/${uid}`);
         const events = await eventsResponse.json();
         this.events = events.map(event => ({
           ...event,
@@ -192,7 +192,7 @@ export default {
         }));
 
         // Fetch custom events
-        const customEventsResponse = await fetch(`http://localhost:3000/api/calendar/custom-events/${uid}`);
+        const customEventsResponse = await fetch(`https://fishmuggers-is216-express.onrender.com/api/calendar/custom-events/${uid}`);
         const customEvents = await customEventsResponse.json();
         this.customEvents = customEvents.map(event => ({
           ...event,
@@ -377,7 +377,7 @@ export default {
         const user = auth.currentUser;
         if (user) {
           const uid = user.uid;
-          const response = await fetch(`http://localhost:3000/api/calendar/custom-events`, {
+          const response = await fetch(`https://fishmuggers-is216-express.onrender.com/api/calendar/custom-events`, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json'
@@ -427,7 +427,7 @@ export default {
         const isCustomEvent = this.customEvents.some(e => e.customEventId === event.customEventId);
 
         // Send delete request to the backend
-        await fetch(`http://localhost:3000/api/calendar/delete-event`, {
+        await fetch(`https://fishmuggers-is216-express.onrender.com/api/calendar/delete-event`, {
           method: "DELETE",
           headers: {
             "Content-Type": "application/json",
