@@ -1,17 +1,31 @@
 // services/firebase.js
 const admin = require("firebase-admin");
-const path = require("path");
 require("dotenv").config();
 
-const serviceAccountPath = path.resolve(
-  __dirname,
-  "../firebase/serviceAccountKey.json"
-);
+// Ensure SERVICE_ACCOUNT_KEY is set
+if (!process.env.SERVICE_ACCOUNT_KEY) {
+  throw new Error("SERVICE_ACCOUNT_KEY environment variable is not set.");
+}
+
+// Decode the Base64-encoded service account key from environment variable
+const serviceAccountKeyBase64 = process.env.SERVICE_ACCOUNT_KEY;
+const serviceAccountKeyJson = Buffer.from(
+  serviceAccountKeyBase64,
+  "base64"
+).toString("utf8");
+
+let serviceAccount;
+try {
+  serviceAccount = JSON.parse(serviceAccountKeyJson);
+} catch (error) {
+  console.error("Failed to parse SERVICE_ACCOUNT_KEY:", error);
+  throw error;
+}
 
 // Initialize Firebase Admin SDK
 admin.initializeApp({
-  credential: admin.credential.cert(require(serviceAccountPath)),
-  storageBucket: `${process.env.FIREBASE_PROJECT_ID}.appspot.com`, // This should be correctly configured
+  credential: admin.credential.cert(serviceAccount),
+  storageBucket: `${process.env.FIREBASE_PROJECT_ID}.appspot.com`, // Ensure FIREBASE_PROJECT_ID is set
 });
 
 const db = admin.firestore();
