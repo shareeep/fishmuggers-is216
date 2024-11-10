@@ -23,7 +23,7 @@
 
       <!-- Buttons container for Delete and Close -->
       <div class="popup-buttons">
-        <button class="delete-button" @click="showDeleteConfirm = true">Delete</button>
+        <button class="delete-button" @click="showDeleteConfirm = true">Remove</button>
         <button class="close-button" @click="$emit('close')">Close</button>
       </div>
 
