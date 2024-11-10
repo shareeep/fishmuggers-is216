@@ -114,9 +114,16 @@ const sendMessage = async () => {
 
 // Function to format messages for clickable links
 const formatMessage = (messageText) => {
-  const urlRegex = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
-  return messageText.replace(urlRegex, (url) => `<a href="${url}" target="_blank" class="message-link">${url}</a>`);
+  // Regular expression to detect [text](url) format
+  const customLinkRegex = /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g;
+  
+  // Replace each match with an <a> tag
+  return messageText.replace(customLinkRegex, (match, text, url) => {
+    return `<a href="${url}" target="_blank" class="message-link">${text}</a>`;
+  });
 };
+
+
 
 
 // Watch for changes in selectedFriend's messages and scroll to bottom if needed
@@ -308,15 +315,22 @@ input[type="text"]:focus {
   margin-bottom: 5px;
 }
 
-.message-link {
-  color: #1E90FF; /* Choose a color for the link */
+/* Override inherited styles for links within message components */
+::v-deep .message a {
+  color: #1E90FF;
   text-decoration: underline;
   cursor: pointer;
 }
 
-.message-link:hover {
+::v-deep .message a:hover {
   color: #104E8B; /* Optional: darker color on hover */
 }
+
+::v-deep .message a:visited {
+  color: #800080; /* Optional: darker color on hover */
+}
+
+
 
 
 .message-you {
