@@ -39,7 +39,7 @@ router.post("/upload", authenticate, upload.single("image"), async (req, res) =>
         userId: req.user.uid, // From the authenticated user
         userName: req.user.name || "", // Optional, you can fetch the username if available
         createdAt: new Date(),
-        likes: 0,
+        likes: [],
       };
 
       const postRef = await db.collection("posts").add(newPost);
@@ -242,6 +242,56 @@ router.get("/single/:postId", async (req, res) => {
   }
 });
 
+// Route to delete all posts for a specific userId without authentication
+router.delete("/deleteUserPosts/:userId", async (req, res) => {
+  const { userId } = req.params;
 
+  // Ensure userId is provided
+  if (!userId) {
+    return res.status(400).json({ error: "User ID is required" });
+  }
+
+  try {
+    const batchSize = 500; // Firestore batch limit
+    let totalDeleted = 0;
+
+    // Define the query to select posts by the user
+    const query = db.collection("posts").where("userId", "==", userId);
+
+    // Function to delete documents in batches
+    async function deletePostsBatch(query) {
+      const snapshot = await query.limit(batchSize).get();
+
+      // If there are no documents, we're done
+      if (snapshot.size === 0) {
+        return;
+      }
+
+      // Begin a new batch
+      const batch = db.batch();
+
+      snapshot.docs.forEach((doc) => {
+        batch.delete(doc.ref);
+      });
+
+      // Commit the batch
+      await batch.commit();
+
+      totalDeleted += snapshot.size;
+      console.log(`Deleted ${snapshot.size} posts. Total deleted: ${totalDeleted}`);
+
+      // Recurse to delete the next batch
+      await deletePostsBatch(query);
+    }
+
+    // Start the deletion process
+    await deletePostsBatch(query);
+
+    res.status(200).json({ message: `Successfully deleted ${totalDeleted} posts for user ${userId}` });
+  } catch (error) {
+    console.error("Error deleting posts:", error);
+    res.status(500).json({ error: "Failed to delete posts" });
+  }
+});
 
 module.exports = router;

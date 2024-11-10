@@ -4,22 +4,22 @@
 
     <!-- Current Profile Information -->
     <div class="current-info mb-6 p-4 bg-gray-100 rounded-md">
-      <h3 class="text-lg font-semibold mb-2">Current Profile Information</h3>
+      <h3 class="text-lg font-semibold mb-2 text-center">Current Profile Information:</h3>
       <div class="flex items-center mb-2">
         <img :src="userData.profileImage || 'https://via.placeholder.com/300?text=Profile+Image'"
           alt="Current Profile Image" class="w-16 h-16 rounded-full mr-4" />
         <div>
           <p><strong>Email:</strong> {{ userData.email }}</p>
           <p><strong>Username:</strong> {{ userData.username }}</p>
-          <p><strong>Points:</strong> {{ userData.points }}</p>
-          <p><strong>Joined Events:</strong>
+          <!-- <p><strong>Points:</strong> {{ userData.points }}</p> -->
+          <!-- <p><strong>Joined Events:</strong>
             <span v-if="userData.joinedEvents.length">
               <span v-for="(event, index) in userData.joinedEvents" :key="index">
                 {{ event }}<span v-if="index < userData.joinedEvents.length - 1">, </span>
               </span>
             </span>
             <span v-else> No events joined.</span>
-          </p>
+          </p> -->
         </div>
       </div>
     </div>
@@ -53,14 +53,9 @@
       </div>
  
       <!-- Points Field -->
-      <div class="mb-4">
-        <label class="block text-gray-700">Points:</label>
-        <input v-model.number="points" type="number" min="0" class="border border-gray-300 rounded-md py-2 px-4 w-full"
-          readonly />
-      </div>
-
+      
       <!-- Joined Events Field -->
-      <div class="mb-4">
+      <!-- <div class="mb-4">
         <label class="block text-gray-700">Joined Events:</label>
         <div class="flex flex-wrap">
           <div v-for="(event, index) in joinedEvents" :key="index"
@@ -71,13 +66,12 @@
             </button>
           </div>
         </div>
-        <!-- Add New Event -->
         <div class="flex mt-2">
           <input v-model="newEvent" type="text" placeholder="Add new event ID"
             class="border border-gray-300 rounded-md py-2 px-4 w-full mr-2" />
           <button type="button" @click="addEvent" class="edit-btn">Add</button>
         </div>
-      </div>
+      </div> -->
 
       <!-- Submit Button -->
       <button type="submit" class="edit-btn w-full" :disabled="isSubmitting">
