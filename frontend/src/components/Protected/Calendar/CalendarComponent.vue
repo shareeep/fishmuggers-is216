@@ -701,8 +701,6 @@ td {
   cursor: pointer;
 }
 
-/* CUSTOM EVENT DATE */
-
 .clickable-date:hover {
   cursor: pointer;
   /* background-color: rgb(126, 165, 255); */
@@ -712,6 +710,11 @@ td {
 
 .joined-event-date:hover {
   background-color: #bfb2fd;
+  cursor: pointer;
+}
+
+.custom-event-date:hover {
+  background-color: #aed6f7;
   cursor: pointer;
 }
 
@@ -735,7 +738,7 @@ td {
   cursor: pointer;
   margin: 5px auto;
   display: block;
-  width: 95%;
+  width: 90%;
   text-align: center;
   transition: background-color 0.3s;
   white-space: nowrap;
@@ -745,7 +748,6 @@ td {
   background-color: #e6c200;
   /* Slightly darker shade */
 }
-
 /* END ADD CUSTOM EVENTS BUTTON CSS */
 
 /* CUSTOM EVENTS FILTER */
