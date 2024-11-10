@@ -39,7 +39,7 @@
                         </div>
                         <div class="event-subtitle">
                           <i class="fas fa-star star-icon"></i>
-                          {{ event.interestedUsers ? event.interestedUsers.length : 0 }} Interested
+                          {{ event.interestedUsers ? event.interestedUsers.length : 0 }} RSVPed
                         </div>
                       </div>
                     </div>
@@ -72,7 +72,7 @@
                           </div>
                           <div class="event-subtitle">
                             <i class="fas fa-star star-icon"></i>
-                            {{ event.interestedUsers ? event.interestedUsers.length : 0 }} Interested
+                            {{ event.interestedUsers ? event.interestedUsers.length : 0 }} RSPVed
                           </div>
                         </div>
                       </div>
@@ -120,7 +120,7 @@
                           </div>
                           <div class="event-subtitle">
                             <i class="fas fa-star star-icon"></i>
-                            {{ event.interestedUsers ? event.interestedUsers.length : 0 }} Interested
+                            {{ event.interestedUsers ? event.interestedUsers.length : 0 }} RSVPed
                           </div>
                         </div>
                       </div>
@@ -172,7 +172,7 @@
                         </div>
                         <div class="event-subtitle">
                           <i class="fas fa-star star-icon"></i>
-                          {{ event.interestedUsers ? event.interestedUsers.length : 0 }} Interested
+                          {{ event.interestedUsers ? event.interestedUsers.length : 0 }} RSVPed
                         </div>
                       </div>
                     </div>
@@ -205,7 +205,7 @@
                           </div>
                           <div class="event-subtitle">
                             <i class="fas fa-star star-icon"></i>
-                            {{ event.interestedUsers ? event.interestedUsers.length : 0 }} Interested
+                            {{ event.interestedUsers ? event.interestedUsers.length : 0 }} RSVPed
                           </div>
                         </div>
                       </div>
@@ -253,7 +253,7 @@
                           </div>
                           <div class="event-subtitle">
                             <i class="fas fa-star star-icon"></i>
-                            {{ event.interestedUsers ? event.interestedUsers.length : 0 }} Interested
+                            {{ event.interestedUsers ? event.interestedUsers.length : 0 }} RSVPed
                           </div>
                         </div>
                       </div>

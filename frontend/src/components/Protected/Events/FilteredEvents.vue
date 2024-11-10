@@ -28,7 +28,7 @@
                                         </div>
                                         <div class="event-subtitle">
                                             <i class="fas fa-star star-icon"></i>
-                                            {{ event.interestedUsers ? event.interestedUsers.length : 0 }} Interested
+                                            {{ event.interestedUsers ? event.interestedUsers.length : 0 }} RSVPed
                                         </div>
                                     </div>
                                 </div>
@@ -249,6 +249,7 @@ export default {
 
 /* Card Styles */
 .card {
+    text-align: center;
     transform: scale(0.95);
     border-radius: 15px;
     overflow: hidden;

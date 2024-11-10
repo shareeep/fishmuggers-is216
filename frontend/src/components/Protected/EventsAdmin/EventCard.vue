@@ -7,7 +7,7 @@
         <p><strong>Date:</strong> {{ formatEventDate(event.date) }}</p>
         <p><strong>Time:</strong> {{ formatEventTime(event.date) }}</p>
         <p><strong>Location:</strong> {{ event.location }}</p>
-        <p> <strong>Interested Users:</strong> {{ event.interestedUsers.length }}</p>
+        <p> <strong>RSVPed Users:</strong> {{ event.interestedUsers.length }}</p>
       </div>
       <div class="action-buttons" v-if="showActions || isEventHost">
         <!-- Stop propagation on these buttons to prevent navigation -->

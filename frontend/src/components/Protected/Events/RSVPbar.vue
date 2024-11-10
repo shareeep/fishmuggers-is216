@@ -1,16 +1,16 @@
 <template>
   <div class="bottom-bar">
-    <span @click="toggleInterested" class="icon star-icon" :class="{ 'filled': isInterested }">
+    <!-- <span @click="toggleInterested" class="icon star-icon" :class="{ 'filled': isInterested }">
       <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24" width="30" height="30">
         <path
           d="M12 .587l3.668 7.568 8.332 1.203-6.002 5.854 1.417 8.338L12 18.896l-7.415 3.885 1.417-8.338-6.002-5.854 8.332-1.203L12 .587z" />
       </svg>
-    </span>
+    </span> -->
     <button class="icon share-icon" @click="$emit('showSharePopup')">
       <img src="../../../assets/images/send.png" width="30px" alt="send">
     </button>
     <span class="slots-left">{{ remainingSlots }} slots left</span>
-    <button class="rsvp-button">{{ isInterested ? "Un-RSVP" : "RSVP" }}</button>
+    <button class="rsvp-button" @click="toggleInterested">{{ isInterested ? "Un-RSVP" : "RSVP" }}</button>
   </div>
 </template>
 

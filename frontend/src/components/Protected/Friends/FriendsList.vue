@@ -10,7 +10,7 @@
           <!-- Display only the first 8 friends -->
           <div v-for="friend in limitedFriends" :key="friend.id" class="friend-item">
               <router-link :to="{ name: 'friendProfile', params: { id: friend.id } }">
-                  <img :src="friend.profileImage || 'default-avatar.jpg'" alt="Friend Profile Image" />
+                  <img :src="friend.profileImage || noProfileImage" alt="Friend Profile Image" />
                   <p class="friend-username">{{ friend.username }}</p>
               </router-link>
           </div>
@@ -24,7 +24,7 @@
           <!-- Display all suggested friends -->
           <div v-for="friend in limitedSuggestedFriends" :key="friend.id" class="friend-item">
               <router-link :to="{ name: 'friendProfile', params: { id: friend.id } }">
-                  <img :src="friend.profileImage || 'default-avatar.jpg'" alt="Suggested Friend Profile Image" />
+                  <img :src="friend.profileImage || noProfileImage" alt="Suggested Friend Profile Image" />
                   <p class="friend-username">{{ friend.username }}</p>
               </router-link>
           </div>
@@ -33,6 +33,8 @@
 </template>
 
 <script>
+import noProfileImage from '@/assets/images/no_profile.jpg';
+
 export default {
   name: "FriendsList",
   props: {

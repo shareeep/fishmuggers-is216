@@ -903,6 +903,7 @@ export default {
             }
         },
         resetFilters() {
+            this.searchQuery='';
             this.closeAllDropdowns();
             this.selectedCats = false;
             this.selectedDogs = false;

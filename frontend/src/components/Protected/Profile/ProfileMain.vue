@@ -29,7 +29,7 @@
     </div>
 
     <!-- Tab Content -->
-    <div class="tab-content"> 
+    <div class="tab-content">
       <div v-if="activeTab === 'posts'">
         <div v-if="posts.length === 0" class="no-posts">
           <i class="no-posts-pic"><img src="../../../assets/images/camera.png" alt=""></i>
