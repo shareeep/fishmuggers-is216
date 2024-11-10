@@ -117,6 +117,8 @@ const openModal = (post) => {
   showPostModal.value = true;
 };
 
+
+
 const closePostModal = () => {
   showPostModal.value = false;
   selectedPost.value = null;

@@ -5,7 +5,7 @@
             <div class="modal-left">
                 <img :src="post.image" alt="Selected Post" class="modal-image" />
             </div>
-
+ 
             <!-- Right Column: User Info, Caption, and Likes -->
             <div class="modal-right">
                 <!-- User Info Header -->
@@ -29,7 +29,8 @@
                     </div>
 
                     <div class="likes-container">
-                        <p class="likes-caption">{{ post.likes.length }} Likes</p>
+                        <p class="likes-caption">{{ Array.isArray(post.likes) ? post.likes.length : 0 }} Likes</p>
+
                         <button @click="toggleLike" class="like-button">
                             <i
                                 :class="isLiked ? 'fas fa-thumbs-up thumbs-up-icon' : 'far fa-thumbs-up thumbs-up-icon'"></i>
@@ -67,9 +68,10 @@ const currentUserId = currentUser ? currentUser.uid : null;
 
 // Computed property to check if current user has liked the post
 const isLiked = computed(() => {
-    if (!currentUserId) return false;
-    return props.post.likes.includes(currentUserId);
+  if (!currentUserId || !Array.isArray(props.post.likes)) return false;
+  return props.post.likes.includes(currentUserId);
 });
+
 
 const closeModal = () => {
     emit('close');

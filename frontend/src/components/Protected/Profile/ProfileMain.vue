@@ -1,6 +1,6 @@
 <template>
   <div class="profile-page" v-if="userData">
-    <!-- Profile Header -->
+    <!-- Profile Header --> 
     <div class="profile-header">
       <div class="profile-picture">
         <img :src="userData.profileImage || 'https://via.placeholder.com/150?text=Profile+Image'" alt="Profile Picture"
@@ -40,7 +40,7 @@
           </router-link>
         </div>
         <div v-else class="posts-grid">
-          <div v-for="(post, index) in posts" :key="post.id" class="post-item" @click="openModal(post)">
+          <div v-for="(post, index) in posts" :key="post.id" class="post-item" @click="openModal(post,index)">
             <img :src="post.image" alt="User Post" class="post-image" />
             <div class="post-overlay">
               <i class="fas fa-thumbs-up"></i>
