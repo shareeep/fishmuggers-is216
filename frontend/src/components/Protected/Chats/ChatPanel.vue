@@ -41,9 +41,11 @@
 </template>
 
 <script setup>
-import { ref, onMounted, nextTick, watch, defineProps } from 'vue';
+import { ref, onMounted, nextTick, watch, defineProps, defineEmits } from 'vue';
 import axios from 'axios';
 import { getAuth, onAuthStateChanged } from "firebase/auth";
+
+const emit = defineEmits(['updateLoading']);
 
 const props = defineProps({
   selectedFriend: {
@@ -66,10 +68,14 @@ const userUid = ref(null);
 const messageContainer = ref(null);
 const isUserScrolledUp = ref(false);
 
-// Watch for changes in selectedFriend to stop loading
+// Watch for changes in selectedFriend and emit an event to stop loading
 watch(() => props.selectedFriend, (newValue) => {
-  if (newValue) loading.value = false;
+  if (newValue) {
+    // Emit an event to notify the parent to stop loading
+    emit('updateLoading', false); // Replace `updateLoading` with any event name you prefer
+  }
 });
+
 
 // Function to switch back to conversations mode
 const switchToConversationsMode = () => {
@@ -77,9 +83,6 @@ const switchToConversationsMode = () => {
   gridElement.classList.add("conversations-mode");
   gridElement.classList.remove("messages-mode");
 };
-
-
-
 
 // Send message logic with POST request to backend
 const sendMessage = async () => {

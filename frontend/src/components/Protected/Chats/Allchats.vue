@@ -3,7 +3,7 @@
     <FriendsList :friends="sortedFriends" :selectedFriend="selectedFriend" @friendSelected="selectFriend"
       @showFindFriendsPopup="showFindChatPopup" @switchToMessages="switchToMessagesMode" :loading="loading"/>
 
-    <ChatPanel :selectedFriend="selectedFriend" :fetchFriends="fetchFriends" :showFindChatPopup="showFindChatPopup" :loading="loading"/>
+    <ChatPanel :selectedFriend="selectedFriend" :fetchFriends="fetchFriends" :showFindChatPopup="showFindChatPopup" :loading="loading"  @updateLoading="loading = false"/>
   </div>
 </template>
 
