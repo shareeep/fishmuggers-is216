@@ -84,7 +84,7 @@ export default {
         await axios.post('http://localhost:3000/api/messages/send', {
           senderUid: this.userId,
           receiverUid: friend.id,
-          messageText: `Check this <a href="${this.shareContent}" target="_blank">post out</a>`,
+          messageText: `Check this <a href="${this.shareContent}" target="_blank">post</a> out`,
 
           // messageText: `Check this out <a href="../eventdetail/${this.event.eventId}" target="_blank">${this.event.title}</a>`,
 
