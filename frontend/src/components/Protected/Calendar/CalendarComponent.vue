@@ -69,9 +69,9 @@
 
     <div class="calendar">
       <div class="calendar-header">
-        <button @click="prevMonth">Prev</button>
+        <button @click="prevMonth" class="prev-button">Prev</button>
         <h1>{{ currentMonth }}</h1>
-        <button @click="nextMonth">Next</button>
+        <button @click="nextMonth" class="next-button">Next</button>
       </div>
       <table>
         <thead>
@@ -735,9 +735,10 @@ td {
   cursor: pointer;
   margin: 5px auto;
   display: block;
-  width: 90%;
+  width: 95%;
   text-align: center;
   transition: background-color 0.3s;
+  white-space: nowrap;
 }
 
 .add-event-button:hover {
@@ -878,13 +879,13 @@ td {
   /* Enlarge headers in side panel */
   .filters h3 {
     font-size: 0.5em;
-    margin-top:5px;
+    margin-top: 5px;
 
   }
 
   .filters h4 {
     font-size: 0.5em;
-    margin-top:5px;
+    margin-top: 5px;
 
   }
 
@@ -903,11 +904,13 @@ td {
     font-size: 0.5em;
   }
 
-  .from, .to{
-    font-size:0.5em !important;
-    display: inline-block; /* Ensures proper spacing */
-    margin-top:5px;
-    margin-bottom:-5px;
+  .from,
+  .to {
+    font-size: 0.5em !important;
+    display: inline-block;
+    /* Ensures proper spacing */
+    margin-top: 5px;
+    margin-bottom: -5px;
   }
 
   /* Adjust font size for the calendar header title */
@@ -925,17 +928,177 @@ td {
 
 @media (max-width: 480px) {
   .calendar-container {
-    transform: scale(0.7);
-    /* Scale down to 70% on smaller screens */
+    transform: scale(0.9);
+    transform-origin: center;
+    height: auto;
+    width: 600px;
+    overflow: hidden;
   }
 
+  /* Side panel font and input adjustments for 768px screens */
+  .side-panel {
+    font-size: 1.2em;
+  }
+
+  /* Enlarge headers in side panel */
+  .filters h3 {
+    font-size: 0.5em;
+    margin-top: 5px;
+
+  }
+
+  .filters h4 {
+    font-size: 0.5em;
+    margin-top: 5px;
+
+  }
+
+  /* Enlarge select dropdowns and input fields */
+  label,
+  .side-panel select,
+  .side-panel input[type="date"],
+  .side-panel input[type="radio"] {
+    font-size: 0.5em;
+
+  }
+
+  /* Adjust the buttons in the side panel */
+  .reset-filters-button,
+  .add-event-button {
+    font-size: 0.5em;
+  }
+
+  .from,
+  .to {
+    font-size: 0.5em !important;
+    display: inline-block;
+    /* Ensures proper spacing */
+
+  }
+
+  /* Adjust font size for the calendar header title */
   .calendar-header h1 {
-    font-size: 6vw;
+    font-size: 10vw;
   }
 
+  /* Adjust calendar table font size */
   th,
   td {
-    font-size: 3vw;
+    font-size: 3.5vw;
+  }
+
+  /* Increase radio button size */
+  .show-custom-events input[type="radio"] {
+    transform: scale(0.8);
+    /* Make radio buttons 1.5x their original size */
+
+  }
+
+  .show-custom-events label {
+    font-size: 0.4em;
+    /* Make Yes/No labels larger */
+    font-weight: bold;
+    /* Optional: add bold text for emphasis */
+  }
+
+  .show-custom-events {
+    text-align: center;
+    margin-left: -10px;
+    /* Adjust left margin to move closer to the left */
+
+  }
+
+  .next-button,
+  .prev-button {
+    font-size: 0.8em !important;
+  }
+}
+
+@media (max-width: 320px) {
+  .calendar-container {
+    transform: scale(0.9);
+    transform-origin: center;
+    height: auto;
+    width: 600px;
+    overflow: hidden;
+  }
+
+  /* Side panel font and input adjustments for 768px screens */
+  .side-panel {
+    font-size: 1.2em;
+  }
+
+  /* Enlarge headers in side panel */
+  .filters h3 {
+    font-size: 0.5em;
+    margin-top: 5px;
+
+  }
+
+  .filters h4 {
+    font-size: 0.5em;
+    margin-top: 5px;
+
+  }
+
+  /* Enlarge select dropdowns and input fields */
+  label,
+  .side-panel select,
+  .side-panel input[type="date"],
+  .side-panel input[type="radio"] {
+    font-size: 0.5em;
+
+  }
+
+  /* Adjust the buttons in the side panel */
+  .reset-filters-button,
+  .add-event-button {
+    font-size: 0.5em;
+  }
+
+  .from,
+  .to {
+    font-size: 0.5em !important;
+    display: inline-block;
+    /* Ensures proper spacing */
+
+  }
+
+  /* Adjust font size for the calendar header title */
+  .calendar-header h1 {
+    font-size: 10vw;
+  }
+
+  /* Adjust calendar table font size */
+  th,
+  td {
+    font-size: 3.5vw;
+  }
+
+  /* Increase radio button size */
+  .show-custom-events input[type="radio"] {
+    transform: scale(0.8);
+    /* Make radio buttons 1.5x their original size */
+
+  }
+
+  .show-custom-events label {
+    font-size: 0.4em;
+    /* Make Yes/No labels larger */
+    font-weight: bold;
+    /* Optional: add bold text for emphasis */
+  }
+
+  .show-custom-events {
+    text-align: center;
+    margin-left: -10px;
+    /* Adjust left margin to move closer to the left */
+
+  }
+
+  .next-button,
+  .prev-button {
+    font-size: 0.8em !important;
   }
 }
 </style>
