@@ -1,6 +1,6 @@
 <template>
   <div class="profile-page" v-if="userData">
-    <!-- Profile Header --> 
+    <!-- Profile Header -->
     <div class="profile-header">
       <div class="profile-picture">
         <img :src="userData.profileImage || 'https://via.placeholder.com/150?text=Profile+Image'" alt="Profile Picture"
@@ -40,7 +40,7 @@
           </router-link>
         </div>
         <div v-else class="posts-grid">
-          <div v-for="(post, index) in posts" :key="post.id" class="post-item" @click="openModal(post,index)">
+          <div v-for="(post, index) in posts" :key="post.id" class="post-item" @click="openModal(post, index)">
             <img :src="post.image" alt="User Post" class="post-image" />
             <div class="post-overlay">
               <i class="fas fa-thumbs-up"></i>
@@ -69,7 +69,8 @@
             <button class="edit-btn">Create Event</button>
           </router-link>
 
-          <CreatedEventsList :events="createdEvents" @edit-event="handleEditEvent" @delete-event="handleDeleteEvent" @event-updated="fetchEvents" />
+          <CreatedEventsList :events="createdEvents" @edit-event="handleEditEvent" @delete-event="handleDeleteEvent"
+            @event-updated="fetchEvents" />
         </div>
 
 
@@ -171,7 +172,7 @@ const posts = computed(() => props.userData.posts || []);
 
 
 // Define emits
-const emit = defineEmits(['edit-event', 'delete-event', 'open-post','edit-pet']);
+const emit = defineEmits(['edit-event', 'delete-event', 'open-post', 'edit-pet']);
 
 // Define reactive properties
 const eventsView = ref('createdEvents');
@@ -393,7 +394,7 @@ const openModal = (post) => {
 }
 
 /* Actions */
-.action-buttons{
+.action-buttons {
   display: flex;
   justify-content: center;
   gap: 10px;
@@ -404,13 +405,14 @@ const openModal = (post) => {
 .edit-button,
 .remove-button {
   padding: 5px 15px;
-  height:100%;
+  height: 100%;
   border: none;
   border-radius: 5px;
   font-weight: bold;
   cursor: pointer;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
-  width: 80px; /* Set a fixed width for consistency */
+  width: 80px;
+  /* Set a fixed width for consistency */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -824,8 +826,9 @@ const openModal = (post) => {
   }
 
   .edit-btn {
-    margin-top: 0; /* Remove extra margin */
-    margin-left:5px;
+    margin-top: 0;
+    /* Remove extra margin */
+    margin-left: 5px;
   }
 
 
@@ -851,4 +854,47 @@ const openModal = (post) => {
   }
 }
 
+@media (max-width: 414px) {
+  .posts-grid{
+    transform: scale(1.3);
+  }
+  .toggle-buttons {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 20px;
+  }
+
+  .toggle-buttons button {
+    padding: 8px 10px;
+    font-size: 14px;
+    /* Adjust font size to fit */
+    white-space: nowrap;
+    /* Prevent text from wrapping */
+    text-align: center;
+    width: 50%;
+    /* Ensure buttons take up space without overflowing */
+    overflow: hidden;
+    text-overflow: ellipsis;
+    /* Add ellipsis if text is still too long */
+  }
+
+  .pets-wrapper {
+    display: flex;
+    justify-content: flex-start;
+    width: 100%;
+    margin:0 auto;
+    /* Optional: add padding to keep it slightly inset from the edge */
+  }
+
+}
+
+@media (max-width: 414px) {
+  .pets-wrapper {
+    display: flex;
+    justify-content: flex-start;
+    width: 100%;
+    margin:-30px;
+    /* Optional: add padding to keep it slightly inset from the edge */
+  }
+}
 </style>

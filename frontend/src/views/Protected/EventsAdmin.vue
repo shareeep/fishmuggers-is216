@@ -254,4 +254,45 @@ main {
 }
 
 /* Add any additional styles if needed */
+@media (max-width: 414px) {
+  main {
+    width: 100%;
+    /* Full width for main container */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    margin-bottom: -20px;
+  }
+
+}
+
+@media (max-width: 375px) {
+  .home-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100vh;
+    padding-bottom:-10px;
+    /* Space for bottom navbar if needed */
+  }
+  main {
+    width: 100%;
+    /* Full width for main container */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    margin-bottom: -20px;
+    margin-top:0;
+  }
+
+
+}
 </style>

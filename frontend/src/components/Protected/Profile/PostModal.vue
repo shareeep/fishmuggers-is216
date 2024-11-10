@@ -390,4 +390,15 @@ const isLastPost = computed(() => props.selectedPostIndex === props.totalPosts -
         display: none;
     }
 }
+
+@media (max-width: 414px) {
+    .fa-chevron-right {
+        right: 1px; /* Adjust the value to move the arrow closer to the right edge */
+    }
+
+    .fa-chevron-left {
+        left: 15px; /* Optional: Adjust the left arrow if you want it closer to the left edge */
+    }
+}
+
 </style>

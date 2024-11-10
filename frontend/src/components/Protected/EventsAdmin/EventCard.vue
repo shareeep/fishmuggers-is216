@@ -208,4 +208,12 @@ h3.text-lg {
   max-width: 100%;
   height: auto;
 }
+
+@media (max-width: 414px) {
+  .event-card {
+    width: 95%; /* Increase the width to 95% of the viewport */
+    margin: 0 auto; /* Center the card within the screen */
+  }
+}
+
 </style>

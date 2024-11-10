@@ -500,4 +500,5 @@ button[type="submit"]:hover,
 button[type="button"].cancel-btn:hover {
   cursor: pointer;
 }
+
 </style>

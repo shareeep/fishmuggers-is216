@@ -173,4 +173,11 @@ h2 {
   color: red;
   margin-bottom: 1rem;
 }
+@media (max-width: 414px) {
+  .events-list {
+    max-width: 800px; /* Adjust this value as needed */
+    margin: 0 auto;
+  }
+}
+
 </style>

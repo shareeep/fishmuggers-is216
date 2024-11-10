@@ -125,4 +125,21 @@ main {
     font-size: 30px;
   }
 }
+
+@media (max-width: 482px) {
+  .back-button {
+    top: 10px; /* Adjust to position it at the top of the screen */
+    left: 10px; /* Align it to the left side */
+    position: relative; /* Make it relative so it appears above the form */
+    margin-bottom: 0px; /* Add some space between the back button and the form */
+  }
+
+
+
+  main {
+    margin-left: 0;
+    padding-top: 2px; /* Add padding to create space for the back button */
+  }
+}
+
 </style>
