@@ -13,7 +13,7 @@ const PORT = process.env.PORT || 3000;
 // Middleware
 app.use(
   cors({
-    origin: "http://localhost:5173", // Replace with your frontend's URL
+    origin: process.env.FRONTEND_URL || "https://petconnect-is216.onrender.com", // Use environment variable or fallback
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })

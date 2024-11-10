@@ -18,7 +18,7 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_APP_FIREBASE_APP_ID,
 };
 
-axios.defaults.baseURL = 'http://localhost:3000'; // Replace with your backend URL
+axios.defaults.baseURL = import.meta.env.VITE_APP_API_URL; // Use the environment variable
 
 initializeApp(firebaseConfig);
 const app = createApp(App)
