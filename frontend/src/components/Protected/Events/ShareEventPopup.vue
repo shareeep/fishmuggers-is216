@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import api from '@/services/api';
 import { getAuth } from 'firebase/auth';
 
 export default {
@@ -68,7 +68,7 @@ export default {
         
         const messageText = `Join me at <a href="../eventdetail/${this.event.eventId}" target="_blank">${this.event.title}</a>`;
         
-        await axios.post('http://localhost:3000/api/messages/send', {
+        await api.post('/api/messages/send', {
           senderUid,
           receiverUid: friend.id,
           messageText,

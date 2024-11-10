@@ -14,7 +14,7 @@
 // Any Home page-specific logic
 import { useRoute } from 'vue-router';  // Import useRouter
 import { onMounted, ref } from 'vue';
-import axios from 'axios';
+import api from '@/services/api';
 import Navbar from '@/components/Protected/Navbar.vue';
 import PetpostDetail from '@/components/Protected/PetPosts/PetpostDetail.vue';
 

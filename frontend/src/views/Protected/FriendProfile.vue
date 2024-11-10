@@ -18,7 +18,7 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue';
 import { useRoute } from 'vue-router';
-import axios from 'axios';
+import api from '@/services/api';
 import { getAuth } from 'firebase/auth';
 import Navbar from '@/components/Protected/Navbar.vue';
 import UserProfile from '@/components/Protected/Profile/UserProfile.vue';
@@ -59,11 +59,11 @@ const fetchUserData = async () => {
       joinedEventsResponse,
       petsResponse,
     ] = await Promise.all([
-      axios.get(`/api/users/${userId}`, { headers }),
-      axios.get(`/api/posts/user/${userId}/posts`, { headers }),
-      axios.get(`/api/events/created/${userId}`, { headers }),
-      axios.get(`/api/events/joined/${userId}`, { headers }),
-      axios.get(`/api/pets/user/${userId}`, { headers }),
+      api.get(`/api/users/${userId}`, { headers }),
+      api.get(`/api/posts/user/${userId}/posts`, { headers }),
+      api.get(`/api/events/created/${userId}`, { headers }),
+      api.get(`/api/events/joined/${userId}`, { headers }),
+      api.get(`/api/pets/user/${userId}`, { headers }),
     ]);
 
     userData.value = { ...userData.value, ...userResponse.data };
@@ -83,13 +83,13 @@ const fetchUserData = async () => {
 const checkFriendStatus = async () => {
   try {
     const token = await auth.currentUser.getIdToken();
-    const friendsResponse = await axios.get(`/api/friends/${auth.currentUser.uid}`, {
+    const friendsResponse = await api.get(`/api/friends/${auth.currentUser.uid}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     isFriend.value = friendsResponse.data.some(friend => friend.id === userId);
 
     if (!isFriend.value) {
-      const requestsResponse = await axios.get(`/api/friends/requests/${auth.currentUser.uid}`, {
+      const requestsResponse = await api.get(`/api/friends/requests/${auth.currentUser.uid}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       isRequested.value = requestsResponse.data.some(request =>
@@ -135,7 +135,7 @@ const goToNextPost = () => {
 const handleLikeToggle = async ({ postId, isLiked }) => {
   try {
     const token = await auth.currentUser.getIdToken();
-    await axios.post(
+    await api.post(
       `/api/posts/${postId}/like`,
       { like: isLiked, userId: auth.currentUser.uid },
       { headers: { Authorization: `Bearer ${token}` } }

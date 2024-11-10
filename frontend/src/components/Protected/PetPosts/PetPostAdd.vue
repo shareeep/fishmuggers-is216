@@ -23,7 +23,7 @@
 </template>
 
 <script>
-import axios from "axios";
+import api from '@/services/api';
 import { auth } from "../../../../firebase"; // Import Firebase auth
 
 export default {
@@ -73,7 +73,7 @@ export default {
         const token = await currentUser.getIdToken();
 
         // Send request to backend
-        await axios.post("http://localhost:3000/api/posts/upload", formData, {
+        await api.post("/api/posts/upload", formData, {
           headers: {
             "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${token}`,

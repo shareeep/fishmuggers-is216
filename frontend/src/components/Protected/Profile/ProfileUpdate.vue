@@ -87,7 +87,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import axios from 'axios'; // Ensure axios is installed: npm install axios
+import api from '@/services/api';
 import { getAuth } from 'firebase/auth';
 import { useRouter } from 'vue-router';
 
@@ -122,7 +122,7 @@ const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/;
 // Function to check if the username is already taken
 const isUsernameTaken = async (desiredUsername) => {
   try {
-    const response = await axios.get(`http://localhost:3000/api/users/checkUsername`, {
+    const response = await api.get(`/api/users/checkUsername`, {
       params: { username: desiredUsername },
       headers: {
         'Authorization': `Bearer ${await auth.currentUser.getIdToken()}`
@@ -235,7 +235,7 @@ const handleProfileUpdate = async () => {
     }
 
     // Send PUT request to Express.js backend to update profile
-    const response = await axios.put(`http://localhost:3000/api/users/${currentUser.uid}`, formData, {
+    const response = await api.put(`/api/users/${currentUser.uid}`, formData, {
       headers: {
         'Authorization': `Bearer ${await currentUser.getIdToken()}`,
         'Content-Type': 'multipart/form-data'
@@ -266,7 +266,7 @@ const fetchUserData = async () => {
   }
 
   try {
-    const response = await axios.get(`http://localhost:3000/api/users/${currentUser.uid}`, {
+    const response = await api.get(`/api/users/${currentUser.uid}`, {
       headers: {
         'Authorization': `Bearer ${await currentUser.getIdToken()}`
       }

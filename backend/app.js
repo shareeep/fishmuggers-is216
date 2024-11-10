@@ -10,10 +10,22 @@ dotenv.config(); // Load environment variables from .env
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Middleware
+const allowedOrigins = [
+  process.env.FRONTEND_URL,
+  "http://localhost:5173", // Local development origin
+  "https://petconnect-is216.onrender.com", // Production origin
+];
+
+// Middleware to allow only specific origins
 app.use(
   cors({
-    origin: "http://localhost:5173", // Replace with your frontend's URL
+    origin: (origin, callback) => {
+      if (allowedOrigins.includes(origin) || !origin) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })

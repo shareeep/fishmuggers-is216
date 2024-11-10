@@ -63,7 +63,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue';
-import axios from 'axios';
+import api from '@/services/api';
 import { getAuth } from 'firebase/auth';
 
 // Initialize Firebase Auth
@@ -126,7 +126,7 @@ const addPet = async () => {
     }
 
     // Send POST request to add pet
-    const response = await axios.post('/api/pets', formData, {
+    const response = await api.post('/api/pets', formData, {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
@@ -166,12 +166,12 @@ const fetchPets = async () => {
   }
 
   try {
-    const response = await axios.get(`/api/users/${currentUser.uid}`);
+    const response = await api.get(`/api/users/${currentUser.uid}`);
     const userPets = response.data.pets || [];
 
     // Fetch pet details
     const petPromises = userPets.map(async (petId) => {
-      const petResponse = await axios.get(`/api/pets/${petId}`);
+      const petResponse = await api.get(`/api/pets/${petId}`);
       return { id: petId, ...petResponse.data };
     });
 

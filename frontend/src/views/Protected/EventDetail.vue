@@ -37,7 +37,7 @@
 import { ref, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
 
-import axios from "axios";
+import api from '@/services/api';
 import Details from "@/components/Protected/Events/Details.vue";
 import RSVPBar from "@/components/Protected/Events/RSVPbar.vue";
 import ShareEventPopup from "@/components/Protected/Events/ShareEventPopup.vue";
@@ -81,7 +81,7 @@ function goBack() {
 // Function to fetch event details
 const fetchEvent = async () => {
   try {
-    const response = await axios.get(`http://localhost:3000/api/events/${eventId}`);
+    const response = await api.get(`/api/events/${eventId}`);
     event.value = response.data; // Store the event data once fetched
   } catch (error) {
     console.error("Failed to fetch event:", error);
@@ -96,7 +96,7 @@ const fetchInterestedUsers = async () => {
 
     // Fetch user details for each ID
     const responses = await Promise.all(
-      userIds.map(uid => axios.get(`http://localhost:3000/api/users/${uid}`))
+      userIds.map(uid => api.get(`/api/users/${uid}`))
     );
 
     // Extract user data from each response
@@ -120,7 +120,7 @@ const fetchFriends = async () => {
       return;
     }
 
-    const response = await axios.get(`http://localhost:3000/api/events/${userUid}/friends`);
+    const response = await api.get(`/api/events/${userUid}/friends`);
     friends.value = response.data;
   } catch (error) {
     console.error("Failed to fetch friends:", error);

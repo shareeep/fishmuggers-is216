@@ -20,7 +20,7 @@
 <script setup>
 import { ref, computed } from "vue";
 import { defineProps } from "vue";
-import axios from "axios";
+import api from '@/services/api';
 
 const props = defineProps({
   event: {
@@ -45,13 +45,13 @@ const toggleInterested = async () => {
   }
   try {
     isInterested.value = !isInterested.value;
-    const endpoint = `http://localhost:3000/api/events/${eventId}/interested`;
+    const endpoint = `/api/events/${eventId}/interested`;
 
     if (isInterested.value) {
-      await axios.post(endpoint);
+      await api.post(endpoint);
       localInterestedUsers.value.push("your-user-id"); // Placeholder; backend manages actual user
     } else {
-      await axios.delete(endpoint);
+      await api.delete(endpoint);
       localInterestedUsers.value = localInterestedUsers.value.filter((id) => id !== "your-user-id");
     }
   } catch (error) {

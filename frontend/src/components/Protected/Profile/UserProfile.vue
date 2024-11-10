@@ -98,7 +98,7 @@
 
 <script setup>
 import { ref, onMounted, watch, computed } from 'vue';
-import axios from 'axios';
+import api from '@/services/api';
 import { getAuth } from 'firebase/auth';
 import { useRouter } from 'vue-router';
 import JoinedEventsList from '../EventsAdmin/JoinedEventsList.vue';
@@ -145,7 +145,7 @@ watch(
 const fetchPosts = async (userId) => {
   console.log(`Fetching posts for userId: ${userId}`); // Debugging log
   try {
-    const response = await axios.get(`/api/posts/user/${userId}/posts`);
+    const response = await api.get(`/api/posts/user/${userId}/posts`);
     posts.value = response.data || [];
     console.log("Fetched Posts:", posts.value);
   } catch (error) {
@@ -184,12 +184,12 @@ const checkFriendStatus = async () => {
     const headers = { Authorization: `Bearer ${token}` };
 
     // Check if they are friends
-    const friendsResponse = await axios.get(`/api/friends/${auth.currentUser.uid}`, { headers });
+    const friendsResponse = await api.get(`/api/friends/${auth.currentUser.uid}`, { headers });
     isFriend.value = friendsResponse.data.some(friend => friend.id === props.userData.uid);
 
     // Check if there is a pending friend request if they are not friends
     if (!isFriend.value) {
-      const requestsResponse = await axios.get(`/api/friends/requests/${auth.currentUser.uid}`, { headers });
+      const requestsResponse = await api.get(`/api/friends/requests/${auth.currentUser.uid}`, { headers });
       isRequested.value = requestsResponse.data.some(
         request => request.senderId === auth.currentUser.uid && request.receiverId === props.userData.uid
       );
@@ -212,7 +212,7 @@ const toggleFollow = async () => {
       await removeFriend();
     } else if (!isRequested.value) {
       // No existing request, send a friend request
-      const response = await axios.post(
+      const response = await api.post(
         "/api/friends/request",
         { senderId: auth.currentUser.uid, receiverId: props.userData.uid },
         { headers }
@@ -235,7 +235,7 @@ const removeFriend = async () => {
     const token = await auth.currentUser.getIdToken();
     const headers = { Authorization: `Bearer ${token}` };
 
-    await axios.delete(`/api/friends/${auth.currentUser.uid}/remove/${props.userData.uid}`, { headers });
+    await api.delete(`/api/friends/${auth.currentUser.uid}/remove/${props.userData.uid}`, { headers });
     isFriend.value = false; // Update UI to reflect friendship status
     isRequested.value = false; // Reset request status
   } catch (error) {

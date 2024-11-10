@@ -27,7 +27,7 @@
 
 <script>
 import ConfirmationModal from './ConfirmationModal.vue';
-import axios from 'axios';
+import api from '@/services/api';
 
 export default {
   name: "RequestsSent",
@@ -60,7 +60,7 @@ export default {
     },
     async cancelRequest() {
       try {
-        await axios.delete(`http://localhost:3000/api/friends/request/${this.requestIdToCancel}`);
+        await api.delete(`/api/friends/request/${this.requestIdToCancel}`);
         // Remove the canceled request from sentRequests by emitting an event
         this.$emit('updateSentRequests', this.requestIdToCancel);
       } catch (error) {

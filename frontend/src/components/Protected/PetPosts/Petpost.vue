@@ -47,8 +47,9 @@
 
 
 <script>
-import axios from "axios";
 import { getAuth } from "firebase/auth"; // Use getAuth directly here
+import api from '@/services/api';
+
 // import HomeSharePopup from './PetpostShare.vue';
 
 export default {
@@ -68,7 +69,7 @@ export default {
       const userId = auth.currentUser ? auth.currentUser.uid : null;
 
       try {
-        const response = await axios.get("http://localhost:3000/api/posts/feed");
+        const response = await api.get("/api/posts/feed");
         this.posts = response.data.map(post => ({
           ...post,
           hasLiked: post.likes && post.likes.includes(userId),
@@ -111,7 +112,7 @@ export default {
 
       try {
         // Send the like request to the backend
-        const response = await axios.post(`http://localhost:3000/api/posts/${post.postId}/like`, { userId });
+        const response = await api.post(`/api/posts/${post.postId}/like`, { userId });
 
         // If the post was liked successfully, update the local post state
         if (response.status === 200) {

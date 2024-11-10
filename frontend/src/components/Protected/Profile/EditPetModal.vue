@@ -71,7 +71,7 @@
 
 <script setup>
 import { ref, watch } from 'vue';
-import axios from 'axios';
+import api from '@/services/api';
 
 // Props and emits
 const props = defineProps({
@@ -140,7 +140,7 @@ const updatePet = async () => {
         console.log("Updating pet with ID:", props.pet.petId);
 
         // Make the API call
-        const response = await axios.put(`/api/pets/${props.pet.petId}`, formData, {
+        const response = await api.put(`/api/pets/${props.pet.petId}`, formData, {
             headers: { 'Content-Type': 'multipart/form-data' },
         });
 
