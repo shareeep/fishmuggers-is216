@@ -77,7 +77,7 @@
           <router-link v-if="isOwnProfile" to="/events">
             <button class="edit-btn">Join Event</button>
           </router-link>
-          <JoinedEventsList :events="joinedEvents" />
+          <JoinedEventsList :events="filteredJoinedEvents" />
         </div>
       </div>
 
@@ -176,6 +176,19 @@ const emit = defineEmits(['edit-event', 'delete-event', 'open-post','edit-pet'])
 // Define reactive properties
 const eventsView = ref('createdEvents');
 const activeTab = ref('posts');
+
+const filteredJoinedEvents = computed(() => {
+  // Check for valid events and filter to exclude those created by the current user
+  console.log("User Data:", props.userData); // This should include userId
+
+  const currentUserId = props.userData.uid;
+  console.log(currentUserId);
+  return props.joinedEvents.filter(event => {
+    const isNotCreatedByUser = event.host !== currentUserId;
+    console.log(`current user ID: ${currentUserId}, Host: ${event.host}, isNotCreatedByUser: ${isNotCreatedByUser}`);
+    return isNotCreatedByUser;
+  });
+});
 
 // Handle edit event from CreatedEventsList.vue
 const handleEditEvent = (event) => {

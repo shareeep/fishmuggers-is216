@@ -159,6 +159,8 @@ h2 {
   width: 100%;
   height: auto;
   border-radius: 5px;
+  object-fit: cover;
+
 }
 
 /* Message styling */

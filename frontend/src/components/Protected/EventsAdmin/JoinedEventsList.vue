@@ -6,7 +6,7 @@
       <h2 class="text-xl font-semibold mb-4">Joined Events</h2>
 
       <!-- Check if there are events -->
-      <div v-if="events.length">
+      <div v-if="props.events.length">
         <div class="event-cards-grid">
           <!-- Make each EventCard clickable by wrapping it in a router-link -->
           <router-link 
@@ -30,7 +30,7 @@
 </template>
 
 <script setup>
-import { watch, defineProps, ref, onMounted } from 'vue';
+import { watch, defineProps, ref, onMounted, computed } from 'vue';
 import { getAuth } from 'firebase/auth';
 import EventCard from './EventCard.vue';
 
@@ -68,12 +68,11 @@ onMounted(() => {
   }
 });
 
-
 watch(
   () => props.events,
   (newEvents) => {
     // Update the display when the events list changes
-    events.value = newEvents;
+    props.events.value = newEvents;
   },
   { deep: true }
 );
@@ -125,13 +124,13 @@ h2 {
 /* Responsive grid layout */
 @media (min-width: 640px) {
   .event-cards-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(1fr);
   }
 }
 
 @media (min-width: 1024px) {
   .event-cards-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(1fr);
   }
 }
 
