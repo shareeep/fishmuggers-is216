@@ -114,9 +114,10 @@ const sendMessage = async () => {
 
 // Function to format messages for clickable links
 const formatMessage = (messageText) => {
-  // Sanitize or modify if necessary to avoid XSS, otherwise trust the message content
-  return messageText;
+  const urlRegex = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+  return messageText.replace(urlRegex, (url) => `<a href="${url}" target="_blank" class="message-link">${url}</a>`);
 };
+
 
 // Watch for changes in selectedFriend's messages and scroll to bottom if needed
 watch(() => props.selectedFriend?.messages.length, () => {
@@ -306,6 +307,17 @@ input[type="text"]:focus {
   /* Ensure the message takes the full width of the container */
   margin-bottom: 5px;
 }
+
+.message-link {
+  color: #1E90FF; /* Choose a color for the link */
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.message-link:hover {
+  color: #104E8B; /* Optional: darker color on hover */
+}
+
 
 .message-you {
   justify-content: flex-end;

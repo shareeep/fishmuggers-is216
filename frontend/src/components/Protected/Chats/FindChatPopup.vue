@@ -247,4 +247,10 @@ input[type="search"]:focus {
         width: 400px;
     }
 }
+
+@media (max-width: 375px) {
+    .popup-content {
+        width:350px;
+    }
+}
 </style>
