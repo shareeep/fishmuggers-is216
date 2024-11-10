@@ -25,7 +25,7 @@ api.interceptors.request.use(
   async (config) => {
     const user = auth.currentUser;
     if (user) {
-      const token = await user.getIdToken(/* forceRefresh */ true);
+      const token = await user.getIdToken(/* forceRefresh */ false);
       config.headers.Authorization = `Bearer ${token}`;
     }
     return config;
