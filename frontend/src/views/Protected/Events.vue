@@ -70,7 +70,7 @@ function handleFiltersApplied(filters) {
     filters.dateRange.startDate ||
     filters.dateRange.endDate ||
     (filters.location && filters.location.lat && filters.location.lng);
-    console.log('This is the location lat: ' + filters.location?.lat + ', lng: ' + filters.location?.lng);
+  console.log('This is the location lat: ' + filters.location?.lat + ', lng: ' + filters.location?.lng);
 
   filtersApplied.value = hasFilters;
   appliedFilters.value = filters;
@@ -92,13 +92,16 @@ function setEventType(type) {
 
 
 <style scoped>
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   width: 100%;
   height: 100%;
-  overflow-x: hidden; /* Disable horizontal scroll on the entire page */
+  overflow-x: hidden;
+  /* Disable horizontal scroll on the entire page */
 }
+
 .title {
   color: rgb(46, 46, 46);
   text-align: center;
@@ -159,7 +162,7 @@ html, body {
 }
 
 
-main { 
+main {
   align-items: center;
   margin-left: 250px;
   flex-grow: 1;
@@ -176,7 +179,7 @@ main {
   margin-bottom: 55px;
 }
 
-.floating-btn { 
+.floating-btn {
   position: fixed !important;
   bottom: 20px;
   right: 20px;
@@ -258,7 +261,7 @@ main {
   }
 }
 
- 
+
 /* Center the content-container */
 .content-container {
   max-width: 1400px;
@@ -275,6 +278,74 @@ main {
   z-index: 1000;
 }
 
+/* Targeting small screens for centering adjustments */
+@media (max-width: 414px) {
+  .home-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100vh;
+    padding-bottom: 60px;
+    /* Space for bottom navbar if needed */
+  }
 
+  main {
+    width: 100%;
+    /* Full width for main container */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    margin-bottom: -20px;
+  }
+
+  /* Center search filter container */
+  .search-filter-container {
+    width: 100%;
+    max-width: 350px;
+    /* Constrain max width for small screens */
+    margin: 0 auto;
+    text-align: center;
+    transform: scale(0.9);
+  }
+
+  /* Center profile-tabs container */
+  .profile-tabs {
+    width: 100%;
+    max-width: 350px;
+    margin: 0 auto;
+    text-align: center;
+    display: flex;
+    justify-content: space-around;
+  }
+
+  /* Center content container */
+  .content-container {
+    width: 100%;
+    max-width: 350px;
+    margin: 0 auto;
+    padding-top: 20px;
+    text-align: center;
+  }
+
+  .title {
+    font-size: 24px;
+    /* Adjust font size for smaller screens */
+    text-align: center;
+  }
+
+  .navbar {
+    width: 100%;
+    height: 50px;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    background-color: #f9f9f9;
+    z-index: 10;
+  }
+}
 </style>
-

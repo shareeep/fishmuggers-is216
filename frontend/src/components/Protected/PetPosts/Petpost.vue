@@ -322,4 +322,10 @@ export default {
   color: black;
   /* Filled color */
 }
+
+@media(max-width:414px){
+  .loading-container{
+    margin-left:-50px;
+  }
+}
 </style>

@@ -6,7 +6,9 @@
     <main id="scrollable-element">
       <div style="margin-top:40px;">
         <h1 class="heading">Connect with Friends</h1>
-        <SearchBar :fetchedUsers="filteredFriends" @search-query="filterFriends" />
+        <div class="search-bar-container">
+          <SearchBar :fetchedUsers="filteredFriends" @search-query="filterFriends" />
+        </div>
 
         <SearchedUsers v-if="searchQuery.length > 0" :users="filteredFriends" />
 
@@ -20,13 +22,17 @@
         </p>
       </div>
       <div v-else style="align-items: center;">
-        <FriendRequests :requests="receivedRequests" @accept-request="handleAcceptRequest"
-          @reject-request="handleRejectRequest" />
-
-        <!-- FriendsList component with popup toggle function passed down -->
-        <FriendsList @popup-toggle="togglePopup" :myFriends="myFriends" :suggestedFriends="suggestedFriends" />
-
-        <RequestsSent :sentRequests="sentRequests" @updateSentRequests="removeSentRequest" />
+        <div class="friend-requests-container">
+          <FriendRequests :requests="receivedRequests" @accept-request="handleAcceptRequest"
+            @reject-request="handleRejectRequest" />
+        </div>
+        <div class="friends-list">
+          <!-- FriendsList component with popup toggle function passed down -->
+          <FriendsList @popup-toggle="togglePopup" :myFriends="myFriends" :suggestedFriends="suggestedFriends" />
+        </div>
+        <div class="requests-sent-container">
+          <RequestsSent :sentRequests="sentRequests" @updateSentRequests="removeSentRequest" />
+        </div>
       </div>
     </main>
 
@@ -92,7 +98,7 @@ const filteredFriends = ref([]);
 
 function filterFriends(query) {
   searchQuery.value = query;  // Update searchQuery directly
-  
+
   // Clear results if query is empty or only one character
   if (query.trim() === "" || query.length <= 0) {
     filteredFriends.value = [];
@@ -420,6 +426,90 @@ main {
     width: 50px;
     height: 50px;
     font-size: 30px;
+  }
+}
+
+@media (max-width: 375px) {
+  .home-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100vh;
+    padding-bottom: 60px;
+  }
+
+  main {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    margin-bottom: -20px;
+
+  }
+
+  /* Center and constrain width of heading */
+  .heading {
+    font-size: 1.2rem;
+    /* Adjust font size for smaller screens */
+    text-align: center;
+    margin: 10px 0;
+    max-width: 350px;
+  }
+
+  /* Center SearchBar container */
+  .search-filter-container {
+    width: 100%;
+    max-width: 350px;
+    /* Constrain max width for small screens */
+    margin: 0 auto;
+    text-align: center;
+    transform: scale(0.9);
+  }
+
+  /* Center the FriendsList container */
+  .friends-list {
+    width: 100%;
+    max-width: 350px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
+  /* Adjust loading container for centering */
+  .loading-container {
+    width: 100%;
+    max-width: 350px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-left:-20px;
+  }
+
+  /* Center the content container with friend requests */
+  .content-container,
+  .friend-requests-container,
+  .searched-users-container,
+  .requests-sent-container {
+    width: 100%;
+    max-width: 350px;
+    margin: 0 auto;
+    padding-top: 20px;
+    text-align: center;
+  }
+
+  .navbar {
+    width: 100%;
+    height: 50px;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    background-color: #f9f9f9;
+    z-index: 10;
   }
 }
 </style>

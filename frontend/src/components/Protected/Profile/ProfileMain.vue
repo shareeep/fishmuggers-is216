@@ -805,4 +805,50 @@ const openModal = (post) => {
   cursor: not-allowed;
   pointer-events: none;
 }
+
+@media (max-width: 414px) {
+  .profile-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  .profile-picture img {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .edit-btn {
+    margin-top: 0; /* Remove extra margin */
+    margin-left:5px;
+  }
+
+
+  .profile-info {
+    text-align: center;
+  }
+
+  .profile-stats {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    width: 100%;
+    max-width: 300px;
+    font-size: 14px;
+    margin-top: 10px;
+  }
+
+  /* Ensure that each stat item (number and label) stacks vertically */
+  .profile-stats span {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
 </style>

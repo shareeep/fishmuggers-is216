@@ -1106,4 +1106,36 @@ button {
     transform: scale(0.98);
 
 }
+
+/* Adjust dropdown menu for 375px screens */
+@media (max-width: 375px) {
+    .custom-dropdown {
+        width: 200px; /* Reduce width */
+        padding: 0.5rem; /* Reduce padding for smaller screens */
+    }
+
+    /* Dropdown header */
+    .custom-dropdown h6 {
+        font-size: 0.9rem; /* Reduce font size */
+    }
+
+    /* List items */
+    .custom-dropdown ul li label {
+        font-size: 0.8rem; /* Smaller font for list items */
+    }
+
+    /* Apply button in dropdown */
+    .custom-dropdown button {
+        padding: 0.5rem; /* Reduce padding */
+        font-size: 0.9rem; /* Smaller font size */
+    }
+
+    /* Dropdown buttons (outside the dropdown menu) */
+   
+    /* Adjust search bar width */
+    input[type="search"] {
+        width: 350px; /* Narrower search bar width */
+    }
+}
+
 </style>

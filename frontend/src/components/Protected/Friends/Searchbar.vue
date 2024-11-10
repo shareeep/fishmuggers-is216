@@ -101,4 +101,11 @@ button:active {
     /* Adjust width as needed */
   }
 }
+
+@media (min-width: 375px) {
+  input[type="search"] {
+    width: 270px;
+    /* Adjust width as needed */
+  }
+}
 </style>
