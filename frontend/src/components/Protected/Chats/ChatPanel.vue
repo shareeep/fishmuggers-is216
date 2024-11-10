@@ -312,11 +312,16 @@ input[type="text"]:focus {
   word-break: break-word;
   max-width: 75%;
   margin-left: auto;
-  color: black; /* White text color for better contrast */
+  color: black; 
   text-align: left;
   position: relative;
   box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.15); 
   z-index: 1;
+}
+
+.message-you:active {
+  color: #533bca;
+  text-decoration: underline;
 }
 
 .message-you.last-message::after {
