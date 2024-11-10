@@ -9,6 +9,9 @@
     <button class="icon share-icon" @click="$emit('showSharePopup')">
       <img src="../../../assets/images/send.png" width="30px" alt="send">
     </button>
+    <button class="rsvp-button" @click="$emit('seeInterestedUsers')">
+      See Interested Users
+    </button>
     <span class="slots-left">{{ remainingSlots }} slots left</span>
     <button class="rsvp-button" @click="toggleInterested">{{ isInterested ? "Un-RSVP" : "RSVP" }}</button>
   </div>

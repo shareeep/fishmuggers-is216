@@ -4,7 +4,8 @@
     <router-link to="" class="back-button" @click.prevent="goBack">
       <img src="../../assets/images/back_arrow.png" alt="back" width="40px" />
     </router-link>
-    <RSVPBar v-if="event" :event="event" @showSharePopup="showPopup = true" />
+    <RSVPBar v-if="event" :event="event" @showSharePopup="showPopup = true"
+      @seeInterestedUsers="fetchInterestedUsers" />
     <main id="scrollable-element">
 
       <Details v-if="event" :event="event" />
@@ -15,6 +16,10 @@
     </main>
 
     <ShareEventPopup v-if="showPopup" @close="showPopup = false" :friends="friends" :event="event" />
+
+    <!-- Interested Users Popup -->
+    <InterestedUsersPopup v-if="showInterestedUsersPopup" :friends="interestedUsers"
+      @close="showInterestedUsersPopup = false" />
 
   </div>
 </template>
@@ -27,8 +32,12 @@ import axios from "axios";
 import Details from "@/components/Protected/Events/Details.vue";
 import RSVPBar from "@/components/Protected/Events/RSVPbar.vue";
 import ShareEventPopup from "@/components/Protected/Events/ShareEventPopup.vue";
+import InterestedUsersPopup from "@/components/Protected/Events/InterestedUsersPopup.vue"; // Import the popup component
+
 import { getAuth } from "firebase/auth";
 const router = useRouter(); // Get the router instance
+const showInterestedUsersPopup = ref(false);
+const interestedUsers = ref([]); // Holds interested users data
 
 import Scrollbar from 'smooth-scrollbar';
 import OverscrollPlugin from 'smooth-scrollbar/plugins/overscroll';
@@ -74,6 +83,30 @@ const fetchEvent = async () => {
     console.error("Failed to fetch event:", error);
   }
 };
+
+// Function to fetch interested users for the event
+const fetchInterestedUsers = async () => {
+  try {
+    // Fake data for interested users
+    const fakeData = [
+      { id: "user1", name: "Alice Johnson", username: "alice_j", profileImage: "https://via.placeholder.com/50" },
+      { id: "user2", name: "Bob Smith", username: "bob_smith", profileImage: "https://via.placeholder.com/50" },
+      { id: "user3", name: "Charlie Brown", username: "charlie_b", profileImage: "https://via.placeholder.com/50" },
+      { id: "user4", name: "Daisy Ridley", username: "daisy_r", profileImage: "https://via.placeholder.com/50" },
+      { id: "user4", name: "Daisy Ridley", username: "daisy_r", profileImage: "https://via.placeholder.com/50" },
+      { id: "user4", name: "Daisy Ridley", username: "daisy_r", profileImage: "https://via.placeholder.com/50" },
+      { id: "user4", name: "Daisy Ridley", username: "daisy_r", profileImage: "https://via.placeholder.com/50" },
+      { id: "user4", name: "Daisy Ridley", username: "daisy_r", profileImage: "https://via.placeholder.com/50" },
+    ];
+
+    // Assign the fake data to `interestedUsers`
+    interestedUsers.value = fakeData;
+    showInterestedUsersPopup.value = true; // Show the popup
+  } catch (error) {
+    console.error("Failed to fetch interested users:", error);
+  }
+};
+
 
 // Fetch friends for popup
 // const fetchFriends = async () => {
