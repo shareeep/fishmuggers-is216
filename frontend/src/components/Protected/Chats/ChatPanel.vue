@@ -133,8 +133,8 @@ const handleScroll = () => {
 
 // Scroll to bottom function
 const scrollToBottom = () => {
-  if (!isUserScrolledUp.value) {
-    const container = messageContainer.value;
+  const container = messageContainer.value;
+  if (container && !isUserScrolledUp.value) { // Ensure container is defined
     nextTick(() => {
       container.scrollTop = container.scrollHeight;
     });

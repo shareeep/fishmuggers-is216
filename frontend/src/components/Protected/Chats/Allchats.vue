@@ -20,9 +20,9 @@ const props = defineProps({
     type: Function,
     required: true
   },
-  loading: Boolean
 });
 
+const loading = ref(true); // Define loading as a local ref
 const selectedFriend = ref(null);
 const friends = ref([]);
 const userUid = ref(null);
@@ -86,6 +86,8 @@ const fetchFriends = async () => {
     }
   } catch (error) {
     console.error('Error fetching friends:', error);
+  } finally {
+    loading.value = false; // Stop loading after fetching friends
   }
 };
 

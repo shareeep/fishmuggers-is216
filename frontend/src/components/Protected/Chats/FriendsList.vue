@@ -1,8 +1,16 @@
 <template>
   <div class="friends-list">
+   
     <!-- Search bar -->
     <div class="search-bar">
       <input type="text" v-model="searchQuery" placeholder="Search" class="search-input" />
+    </div>
+
+    <div v-if="isMobileAndLoading" class="loading-container">
+      <p class="loading-text">
+        <img src="../../../assets/images/loading1.gif" alt="Loading" class="loadinggif" />
+        Loading chats<span class="dots"></span>
+      </p>
     </div>
 
     <!-- List of friends/chats -->
@@ -42,7 +50,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted, watch } from 'vue';
 
 // Props to receive from the parent component
 const props = defineProps({
@@ -53,8 +61,13 @@ const props = defineProps({
   selectedFriend: {
     type: Object,
     required: false
+  },
+  loading: {
+    type: Boolean,
+    required: true
   }
 });
+const isMobileAndLoading = computed(() => window.innerWidth <= 600 && props.loading);
 
 const searchQuery = ref('');
 const activeDropdown = ref(null); // Track the index of the active dropdown
@@ -80,15 +93,32 @@ const findMoreFriends = () => {
   emit('showFindFriendsPopup');
 };
 
-const buttonText = ref(window.innerWidth <= 600 ? 'Start Chatting' : 'Find more friends to chat with!');
+const buttonText = ref('');
 
-function handleResize() {
-  buttonText.value = window.innerWidth <= 600 ? 'Start Chatting' : 'Find more friends to chat with!';
+function updateButtonText() {
+  buttonText.value =
+    window.innerWidth <= 600 && props.friends.length === 0
+      ? 'Start Chatting'
+      : 'Find more friends to chat with!';
 }
 
+// Initial button text check on mount
 onMounted(() => {
-  window.addEventListener('resize', handleResize);
+  updateButtonText(); // Set initial button text
+  window.addEventListener('resize', handleResize); // Listen for resizing
 });
+
+function handleResize() {
+  updateButtonText(); // Re-evaluate button text on resize
+}
+
+// Watch for changes in the friends array to update button text accordingly
+watch(
+  () => props.friends.length,
+  () => {
+    updateButtonText(); // Update button text if friends list changes
+  }
+);
 
 onUnmounted(() => {
   window.removeEventListener('resize', handleResize);
@@ -143,6 +173,57 @@ const formatTimeOrDate = (timestamp) => {
 </script>
 
 <style scoped>
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  transform: translateX(-20px);
+  /* Ensures it takes full height of the viewport */
+}
+
+.loading-text {
+  font-family: poppins;
+  font-size: 1.3rem;
+  font-weight: bold;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.loadinggif {
+  margin-right: -20px;
+  width: 200px;
+  /* Adjust the width as desired */
+}
+
+.dots::after {
+  content: '';
+  display: inline-block;
+  width: 1em;
+  animation: ellipsis 1.5s infinite;
+}
+
+@keyframes ellipsis {
+  0% {
+    content: '';
+  }
+
+  33% {
+    content: '.';
+  }
+
+  66% {
+    content: '..';
+  }
+
+  100% {
+    content: '...';
+  }
+}
+
 .friend-item.selected {
   background-color: #f0f0f0;
   /* Background for selected friend */
@@ -233,6 +314,10 @@ const formatTimeOrDate = (timestamp) => {
   margin: 0;
   font-size: 16px;
   font-weight: 500;
+  overflow:hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-width: 60%;
 }
 
 .friend-info p {
