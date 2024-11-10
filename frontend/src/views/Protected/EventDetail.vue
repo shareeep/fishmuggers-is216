@@ -91,16 +91,19 @@ const fetchEvent = async () => {
 // Function to fetch interested users for the event (using fake data)
 const fetchInterestedUsers = async () => {
   try {
-    // Fake data for interested users
-    const fakeData = [
-      { id: "user1", name: "Alice Johnson", username: "alice_j", profileImage: "https://via.placeholder.com/50" },
-      { id: "user2", name: "Bob Smith", username: "bob_smith", profileImage: "https://via.placeholder.com/50" },
-      { id: "user3", name: "Charlie Brown", username: "charlie_b", profileImage: "https://via.placeholder.com/50" },
-      { id: "user4", name: "Daisy Ridley", username: "daisy_r", profileImage: "https://via.placeholder.com/50" },
-    ];
+    // Retrieve the user IDs from the event's interestedUsers array
+    const userIds = event.value.interestedUsers;
 
-    interestedUsers.value = fakeData;
-    showInterestedUsersPopup.value = true; // Show the popup
+    // Fetch user details for each ID
+    const responses = await Promise.all(
+      userIds.map(uid => axios.get(`http://localhost:3000/api/users/${uid}`))
+    );
+
+    // Extract user data from each response
+    interestedUsers.value = responses.map(response => response.data);
+
+    // Show the popup with the fetched user data
+    showInterestedUsersPopup.value = true;
   } catch (error) {
     console.error("Failed to fetch interested users:", error);
   }

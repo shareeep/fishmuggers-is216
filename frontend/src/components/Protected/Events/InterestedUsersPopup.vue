@@ -12,11 +12,12 @@
                 <div v-for="friend in filteredFriends" :key="friend.id" class="friend-item">
                     <img :src="friend.profileImage" alt="Friend Avatar" class="avatar" />
                     <div class="friend-info">
-                        <p class="friend-name">{{ friend.name }}</p>
+                        <!-- "friend-name" doesnt exist so I put both username -->
+                        <p class="friend-name">{{ friend.username }}</p>
                         <p class="friend-username">{{ friend.username }}</p>
                     </div>
                     <!-- "See Profile" button -->
-                    <button class="see-profile-button" @click="viewProfile(friend.id)">See Profile</button>
+                    <button class="see-profile-button" @click="viewProfile(friend)">See Profile</button>
                 </div>
             </div>
         </div>
@@ -47,8 +48,9 @@ export default {
         }
     },
     methods: {
-        viewProfile(friendId) {
-            this.$router.push({ name: "friendProfile", params: { id: friendId } });
+        viewProfile(friend) {
+            // console.log(friend.uid);
+            this.$router.push({ name: "friendProfile", params: { id: friend.uid } });
         },
     },
 };
