@@ -1,8 +1,8 @@
 <template>
   <div class="home-container">
     <!-- Back Button -->
-    <router-link to="/events" class="back-button">
-      <img src="@/assets/images/back_arrow.png" alt="back" width="40px" />
+    <router-link to="" class="back-button" @click.prevent="goBack">
+      <img src="../../assets/images/back_arrow.png" alt="back" width="40px" />
     </router-link>
     <RSVPBar v-if="event" :event="event" @showSharePopup="showPopup = true" />
     <main id="scrollable-element">
@@ -21,16 +21,21 @@
 
 <script setup>
 import { ref, onMounted } from "vue";
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
+
 import axios from "axios";
 import Details from "@/components/Protected/Events/Details.vue";
 import RSVPBar from "@/components/Protected/Events/RSVPbar.vue";
 import ShareEventPopup from "@/components/Protected/Events/ShareEventPopup.vue";
 import { getAuth } from "firebase/auth";
+const router = useRouter(); // Get the router instance
 
 import Scrollbar from 'smooth-scrollbar';
 import OverscrollPlugin from 'smooth-scrollbar/plugins/overscroll';
-
+// Function to go back to the previous page
+function goBack() {
+  router.go(-1); // Go back to the previous page in the browser history
+}
 // Initialize Smooth Scrollbar for main content
 Scrollbar.use(OverscrollPlugin);
 
@@ -220,7 +225,7 @@ h1 {
     text-align: center; */
 /* Center text in the main area */
 /* } */
- 
+
 html,
 body {
   background-color: white !important;

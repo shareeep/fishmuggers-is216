@@ -3,23 +3,22 @@
     <!-- Profile Header -->
     <div class="profile-header">
       <div class="profile-picture">
-        <img :src="userData.profileImage || 'https://via.placeholder.com/150?text=Profile+Image'" alt="Profile Picture"
-          class="profile-image" />
+        <img :src="userData.profileImage || 'https://via.placeholder.com/150?text=Profile+Image'" alt="Profile Picture" class="profile-image" />
       </div>
       <div class="profile-info">
         <div class="profile-details">
-          <h2 class="username">{{ userData.username }}</h2>
+          <h2 class="username">{{ props.userData.username }}</h2>
 
-          <!-- Conditional button display -->
+          <!-- Conditional button display for follow/unfollow based on props -->
           <button :class="['edit-btn', { 'requested': isRequested || isFriend }]"
             @click="isFriend ? removeFriend() : toggleFollow()" :disabled="isRequested && !isFriend">
             {{ isFriend ? 'Remove Friend' : (isRequested ? 'Friend Request Sent' : 'Follow') }}
           </button>
         </div>
         <div class="profile-stats">
-          <span><b>{{ posts }}</b> Posts</span>
-          <span><b>{{ userData.joinedEvents.length }}</b> Events Joined</span>
-          <span><b>{{ friends }}</b> Friends</span>
+          <span><b>{{ userData?.posts?.length || 0 }}</b> Posts</span>
+          <span><b>{{ userData?.joinedEvents?.length || 0 }}</b> Events Joined</span>
+          <span><b>{{ userData?.friends?.length || 0 }}</b> Friends</span>
         </div>
       </div>
     </div>
@@ -35,107 +34,49 @@
     <div class="tab-content">
       <!-- Posts Tab -->
       <div v-if="activeTab === 'posts'">
-        <div v-if="posts === 0" class="no-posts">
+        <div v-if="posts.length === 0" class="no-posts">
           <i class="no-posts-pic"><img src="../../../assets/images/camera.png" alt=""></i>
           <h3>No posts yet</h3>
         </div>
         <div v-else class="posts-grid">
-          <div v-for="(post, index) in userData.posts" :key="post.id" class="post-item" @click="openModal(index)">
+          <div v-for="(post, index) in userData.posts" :key="post.id" class="post-item" @click="$emit('open-post', post)">
             <img :src="post.image" alt="User Post" class="post-image" />
             <div class="overlay">
               <i class="fas fa-thumbs-up"></i>
-               <span class="likes-count">{{ post.likes.length }}</span>
+              <span class="likes-count">{{ post.likes.length }}</span>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- UserProfile.vue Modal -->
-<div v-if="isModalOpen && userData.posts[selectedPostIndex]" class="post-modal" @click.self="closeModal">
-  <div class="modal-content">
-    <div class="modal-left">
-      <img :src="userData.posts[selectedPostIndex].image" alt="Selected Post" class="modal-image" />
-    </div>
-    <div class="modal-right">
-      <div class="post-header">
-        <div class="user-info">
-          <img :src="userData.profileImage || 'https://via.placeholder.com/50?text=Avatar'" alt="User Avatar" class="avatar" />
-          <h3 class="user-name">{{ userData.username }}</h3>
-        </div>
-      </div>
-      <div class="post-footer">
-        <div class="caption-container">
-          <img :src="userData.profileImage || 'https://via.placeholder.com/50?text=Avatar'" alt="User Avatar" class="avatar-caption" />
-          <span class="caption-text">
-            <span class="user-name-caption">{{ userData.username }}</span>
-            {{ userData.posts[selectedPostIndex].caption }}
-          </span>
-        </div>
-        <div class="likes-container">
-          <p class="likes-caption">{{ userData.posts[selectedPostIndex].likes.length }} Likes</p>
-<button
-  @click="handleLikeToggle(userData.posts[selectedPostIndex])"
-  :class="['like-button', { liked: userData.posts[selectedPostIndex].isLiked }]"
->
-  <i :class="userData.posts[selectedPostIndex].isLiked ? 'fas fa-thumbs-up' : 'far fa-thumbs-up'"></i>
-  {{ userData.posts[selectedPostIndex].isLiked ? 'Unlike' : 'Like' }}
-</button>
-
-        </div>
-      </div>
-    </div>
-    <i class="fas fa-chevron-left nav-arrow" @click="selectedPostIndex > 0 && prevPost()" :class="{ disabled: selectedPostIndex === 0 }" />
-    <i class="fas fa-chevron-right nav-arrow" @click="selectedPostIndex < userData.posts.length - 1 && nextPost()" :class="{ disabled: selectedPostIndex === userData.posts.length - 1 }" />
-    <i class="fas fa-times close-modal" @click="closeModal"></i>
-  </div>
-  </div>
-          <!-- Navigation Arrows and Close Button -->
-          <i class="fas fa-chevron-left nav-arrow" @click="selectedPostIndex > 0 && prevPost()"
-            :class="{ disabled: selectedPostIndex === 0 }" />
-          <i class="fas fa-chevron-right nav-arrow" @click="selectedPostIndex < userData.posts.length - 1 && nextPost()"
-            :class="{ disabled: selectedPostIndex === userData.posts.length - 1 }" />
-          <i class="fas fa-times close-modal" @click="closeModal"></i>
-        </div>
-      </div>
-
-<!-- PETS -->
-<div v-if="activeTab === 'pets'">
-  <!-- Conditionally render Manage Pets button if viewing own profile -->
-  <router-link v-if="isOwnProfile" to="/manage-pets">
-    <button class="edit-btn">Manage Pets</button>
-  </router-link>
-  
-  <div class="pets-wrapper">
-    <!-- Check if there are pets to display -->
-    <div v-if="pets.length > 0" class="pets-grid">
-      <div v-for="(pet, index) in pets" :key="index" class="pet-card"
-        :style="{ animationDelay: `${index * 0.2}s` }">
-        <img 
-          :src="pet.profileImage || 'https://via.placeholder.com/150?text=No+Image'" 
-          alt="Pet Image" 
-          class="pet-avatar" 
-        />
-        <div class="info-container">
-          <div class="details">
-            <h4>{{ pet.name }}</h4>
-            <p>Type: {{ pet.type }}</p>
-            <p>Breed: {{ pet.breed }}</p>
-            <p>Age: {{ pet.age }} years</p>
+      <!-- Pets Tab -->
+      <div v-if="activeTab === 'pets'">
+        <router-link v-if="isOwnProfile" to="/manage-pets">
+          <button class="edit-btn">Manage Pets</button>
+        </router-link>
+        <div class="pets-wrapper">
+          <div v-if="props.pets.length > 0" class="pets-grid">
+            <div v-for="(pet, index) in props.pets" :key="index" class="pet-card" :style="{ animationDelay: `${index * 0.2}s` }">
+              <img :src="pet.profileImage || 'https://via.placeholder.com/150?text=No+Image'" alt="Pet Image" class="pet-avatar" />
+              <div class="info-container">
+                <div class="details">
+                  <h4>{{ pet.name }}</h4>
+                  <p>Type: {{ pet.type }}</p>
+                  <p>Breed: {{ pet.breed }}</p>
+                  <p>Age: {{ pet.age }} years</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div v-else class="no-pets">
+            <i class="no-pets-pic"><img src="../../../assets/images/no-events.png" alt=""></i>
+            <h3>No pets yet</h3>
           </div>
         </div>
       </div>
-    </div>
-    <!-- Display message if no pets are available -->
-    <div v-else class="no-pets">
-      <i class="no-pets-pic"><img src="../../../assets/images/no-events.png" alt=""></i>
-      <h3>No pets yet</h3>
-    </div>
-  </div>
-</div>
 
-      <!-- EVENTS JOINED -->
+      <!-- Events Joined Tab -->
       <div v-if="activeTab === 'eventsJoined'">
-        <!-- Buttons for toggling views -->
         <div class="toggle-buttons">
           <button :class="{ active: eventsView === 'createdEvents' }" @click="eventsView = 'createdEvents'">
             Created Events
@@ -144,22 +85,19 @@
             Joined Events
           </button>
         </div>
-
-        <!-- Display CreatedEvents or JoinedEvents based on eventsView -->
         <div v-if="eventsView === 'createdEvents'">
-          <CreatedEventsList :events="userData.createdEvents" @edit-event="handleEditEvent" @delete-event="deleteEvent" />
+          <CreatedEventsList :events="createdEvents" @edit-event="handleEditEvent" @delete-event="deleteEvent" />
         </div>
         <div v-if="eventsView === 'joinedEvents'">
-          <JoinedEventsList 
-            :events="userData.joinedEvents" 
-          />
+          <JoinedEventsList :events="filteredJoinedEvents" />
         </div>
       </div>
-
+    </div>
+  </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watch, computed } from 'vue';
 import axios from 'axios';
 import { getAuth } from 'firebase/auth';
 import { useRouter } from 'vue-router';
@@ -169,19 +107,23 @@ import CreatedEventsList from '../EventsAdmin/CreatedEventsList.vue';
 const auth = getAuth();
 const router = useRouter();
 
-// Define props to accept data from FriendProfile.vue
+// Define props for data coming from FriendProfile.vue
 const props = defineProps({
-  userId: {
-    type: [String, Number],
+  userData: {
+    type: Object,
     required: true
   },
-  username: {
-    type: String,
-    default: 'User'
+  createdEvents: {
+    type: Array,
+    required: true
   },
-  avatar: {
-    type: String,
-    default: 'https://via.placeholder.com/150?text=Profile+Image'
+  joinedEvents: {
+    type: Array,
+    required: true
+  },
+  pets: {
+    type: Array,
+    required: true
   },
   isOwnProfile: {
     type: Boolean,
@@ -189,239 +131,123 @@ const props = defineProps({
   }
 });
 
-// Initialize userData with fallback default values
-const userData = ref({
-  username: props.username || "Unknown User",
-  profileImage: props.avatar || "https://via.placeholder.com/150?text=Profile+Image",
-  joinedEvents: [],
-  createdEvents: [], // Added to handle created events
-  posts: []
-});
 
-const friends = ref(0); // Placeholder for the friends count
-const posts = ref(userData.value.posts.length);
-const activeTab = ref('posts');
-const selectedPostIndex = ref(0);
-const isModalOpen = ref(false);
+watch(
+  () => props.userData.userId,
+  (newUserId) => {
+    if (newUserId) {
+      fetchPosts(newUserId);
+    }
+  },
+  { immediate: true }
+);
 
-// Placeholder for the pets 
-const pets = ref([
-  // Example pet data
-  // { name: 'Woofie', type: 'Dog', breed: 'Golden Retriever', age: 3, image: 'https://via.placeholder.com/150?text=Dog' },
-  // { name: 'Meowers', type: 'Cat', breed: 'Siamese', age: 2, image: 'https://via.placeholder.com/150?text=Cat' }
-]);
-
-// Additional events view state
-const eventsView = ref('createdEvents');
-
-// Fetch user data from the backend
-const fetchUserData = async () => {
+const fetchPosts = async (userId) => {
+  console.log(`Fetching posts for userId: ${userId}`); // Debugging log
   try {
-    const token = await auth.currentUser.getIdToken();
-    const headers = { Authorization: `Bearer ${token}` };
-
-    const [
-      userResponse,
-      postsResponse,
-      createdEventsResponse,
-      joinedEventsResponse,
-      petsResponse,
-    ] = await Promise.all([
-      axios.get(`/api/users/${props.userId}`, { headers }),
-      axios.get(`/api/posts/user/${props.userId}/posts`, { headers }),
-      axios.get(`/api/events/created/${props.userId}`, { headers }),
-      axios.get(`/api/events/joined/${props.userId}`, { headers }),
-      axios.get(`/api/pets/user/${props.userId}`, { headers }),
-    ]);
-
-    userData.value = {
-      ...userData.value,
-      ...userResponse.data,
-    };
-
-    // Set posts data and add `isLiked` property based on the user's likes
-    userData.value.posts = (postsResponse.data || []).map(post => ({
-      ...post,
-      isLiked: post.likes.includes(auth.currentUser.uid), // Set isLiked based on user's ID in likes array
-    }));
-
-    posts.value = userData.value.posts.length; // Update posts count
-    userData.value.createdEvents = createdEventsResponse.data || [];
-    userData.value.joinedEvents = joinedEventsResponse.data || [];
-    pets.value = petsResponse.data || [];
-
-    // Debugging logs
-    console.log("User Data:", userData.value);
-    console.log("Posts:", userData.value.posts);
-    console.log("Created Events:", userData.value.createdEvents);
-    console.log("Joined Events:", userData.value.joinedEvents);
-    console.log("Pets:", pets.value);
+    const response = await axios.get(`/api/posts/user/${userId}/posts`);
+    posts.value = response.data || [];
+    console.log("Fetched Posts:", posts.value);
   } catch (error) {
-    console.error("Error fetching user data:", error);
+    console.error("Error fetching posts:", error);
   }
 };
 
+const posts = computed(() => props.userData.posts || []);
 
-// Friend request and friendship status
-const isRequested = ref(false); // Track if a request is pending
-const isFriend = ref(false); // Track friendship status
+const activeTab = ref('posts');
+const eventsView = ref('createdEvents');
+
+// Additional states for friends and requests
+const isRequested = ref(false);
+const isFriend = ref(false);
+const friends = ref(0); // Placeholder for friend count
+
+const filteredJoinedEvents = computed(() => {
+  // Check for valid events and filter to exclude those created by the current user
+  console.log("User Data:", props.userData); // This should include userId
+
+  const currentUserId = props.userData.uid;
+  console.log(currentUserId);
+  return props.joinedEvents.filter(event => {
+    const isNotCreatedByUser = event.host !== currentUserId;
+    console.log(`current user ID: ${currentUserId}, Host: ${event.host}, isNotCreatedByUser: ${isNotCreatedByUser}`);
+    return isNotCreatedByUser;
+  });
+});
+
 
 // Check if users are friends or if a friend request is pending
 const checkFriendStatus = async () => {
   try {
     const token = await auth.currentUser.getIdToken();
+    const headers = { Authorization: `Bearer ${token}` };
 
     // Check if they are friends
-    const friendsResponse = await axios.get(`/api/friends/${auth.currentUser.uid}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    isFriend.value = friendsResponse.data.some(friend => friend.id === props.userId);
+    const friendsResponse = await axios.get(`/api/friends/${auth.currentUser.uid}`, { headers });
+    isFriend.value = friendsResponse.data.some(friend => friend.id === props.userData.uid);
 
-    // Check if there is a pending friend request
+    // Check if there is a pending friend request if they are not friends
     if (!isFriend.value) {
-      const requestsResponse = await axios.get(`/api/friends/requests/${auth.currentUser.uid}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      // Set isRequested to true if there's a pending request from current user to this user
-      isRequested.value = requestsResponse.data.some(request => 
-        request.senderId === auth.currentUser.uid && 
-        request.receiverId === props.userId &&
-        request.status === "pending" // Ensure the request status is "pending"
+      const requestsResponse = await axios.get(`/api/friends/requests/${auth.currentUser.uid}`, { headers });
+      isRequested.value = requestsResponse.data.some(
+        request => request.senderId === auth.currentUser.uid && request.receiverId === props.userData.uid
       );
+    } else {
+      isRequested.value = false; // Reset request status if they are friends
     }
   } catch (error) {
-    console.error("Error checking friend or request status:", error);
+    console.error("Error checking friend status:", error);
   }
 };
 
 // Toggle follow (send friend request or remove friend)
-async function toggleFollow() {
+const toggleFollow = async () => {
   try {
     const token = await auth.currentUser.getIdToken();
-
-    // Check if there is an existing request
-    if (isRequested.value) {
-      alert("You already have a pending friend request with this user.");
-      return; // Stop further actions if there's an existing request
-    }
+    const headers = { Authorization: `Bearer ${token}` };
 
     if (isFriend.value) {
-      // Remove friend if already friends
-      await axios.delete(`/api/friends/${auth.currentUser.uid}/remove/${props.userId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      isFriend.value = false; // Update UI
-    } else {
-      // Send follow request if not already requested
+      // Already friends, initiate friend removal
+      await removeFriend();
+    } else if (!isRequested.value) {
+      // No existing request, send a friend request
       const response = await axios.post(
         "/api/friends/request",
-        { senderId: auth.currentUser.uid, receiverId: props.userId },
-        { headers: { Authorization: `Bearer ${token}` } }
+        { senderId: auth.currentUser.uid, receiverId: props.userData.uid },
+        { headers }
       );
       if (response.status === 201) {
-        isRequested.value = true; // Disable button after request is sent
+        isRequested.value = true; // Update UI to show request is sent
       }
+    } else {
+      // Request already sent, prevent duplicate
+      alert("Friend request already sent");
     }
   } catch (error) {
-    console.error("Error in follow/unfollow action:", error.response?.data || error);
-    alert("Friend request already sent");
+    console.error("Error in toggleFollow:", error.response?.data || error);
   }
 };
 
-// Remove friend method
+// Remove friend
 const removeFriend = async () => {
   try {
     const token = await auth.currentUser.getIdToken();
-    await axios.delete(`/api/friends/${auth.currentUser.uid}/remove/${props.userId}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    isFriend.value = false;
+    const headers = { Authorization: `Bearer ${token}` };
+
+    await axios.delete(`/api/friends/${auth.currentUser.uid}/remove/${props.userData.uid}`, { headers });
+    isFriend.value = false; // Update UI to reflect friendship status
+    isRequested.value = false; // Reset request status
   } catch (error) {
     console.error("Error removing friend:", error.response?.data || error);
   }
 };
 
-// Handle event edit (if applicable)
-const handleEditEvent = (event) => {
-  // Implement your edit event logic here
-};
-
-// Handle event deletion (if applicable)
-const deleteEvent = (eventId) => {
-  // Implement your delete event logic here
-};
-
-// Modal handling for posts
-const openModal = (index) => {
-  console.log(`Post clicked. Index: ${index}`); // Debugging Line
-  if (userData.value.posts[index]) {
-    selectedPostIndex.value = index;
-    isModalOpen.value = true;
-    console.log(`Modal opened for post index: ${index}`); // Debugging Line
-  } else {
-    console.error(`Post at index ${index} does not exist.`);
-  }
-};
-
-const closeModal = () => {
-  isModalOpen.value = false;
-};
-
-const prevPost = () => {
-  if (selectedPostIndex.value > 0) {
-    selectedPostIndex.value--;
-  } else {
-    selectedPostIndex.value = userData.value.posts.length - 1;
-  }
-};
-
-const nextPost = () => {
-  if (selectedPostIndex.value < userData.value.posts.length - 1) {
-    selectedPostIndex.value++;
-  } else {
-    selectedPostIndex.value = 0;
-  }
-};
-// Like Post Method
-const handleLikeToggle = async (post) => {
-  if (!auth.currentUser) {
-    alert("You need to be logged in to like posts.");
-    return;
-  }
-
-  const userId = auth.currentUser.uid;
-  const isLiked = post.likes.includes(userId);
-  
-  try {
-    const token = await auth.currentUser.getIdToken();
-    
-    // Toggle like/unlike on the backend
-    await axios.post(
-      `/api/posts/${post.postId}/like`,
-      { like: !isLiked, userId: userId },
-      { headers: { Authorization: `Bearer ${token}` } }
-    );
-
-    // Update likes locally
-    if (isLiked) {
-      post.likes = post.likes.filter(id => id !== userId); // Unlike
-    } else {
-      post.likes.push(userId); // Like
-    }
-    post.isLiked = !isLiked; // Toggle isLiked status for the UI
-
-  } catch (error) {
-    console.error("Error toggling like:", error.response?.data || error);
-    alert("Unable to toggle like. Please try again.");
-  }
-};
-
-
-// Fetch data on component mount
+// Fetch friend status on mount
 onMounted(() => {
-  fetchUserData();
   checkFriendStatus();
 });
+
 </script>
 
 <style scoped>
@@ -457,6 +283,7 @@ onMounted(() => {
   background-color: #333;
   color: white;
 }
+
 .profile-page {
   max-width: 800px;
   margin: 0 auto;
@@ -568,7 +395,7 @@ onMounted(() => {
 /* Pets grid layout */
 .pets-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 16px;
   margin-top: 20px;
 }
@@ -782,299 +609,301 @@ onMounted(() => {
   color: rgb(160, 160, 160);
 }
 
-.fas.fa-thumbs-up {
-    color: black;
+.overlay .fa-thumbs-up {
+  color: white;
+}
+
+.fa-thumbs-up {
+  color: black;
 }
 
 .post-modal {
-    display: flex;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.7);
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
+  display: flex;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
 }
 
 .modal-content {
-    display: flex;
-    background: #fff;
-    border-radius: 10px;
-    max-height: 90vh;
-    overflow: hidden;
-    width: auto;
+  display: flex;
+  background: #fff;
+  border-radius: 10px;
+  max-height: 90vh;
+  overflow: hidden;
+  width: auto;
 }
 
 .modal-left {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 500px;
-    background-color: #f8f8f8;
-    overflow: hidden;
-    flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 500px;
+  background-color: #f8f8f8;
+  overflow: hidden;
+  flex: 0 0 auto;
 }
 
 .modal-image {
-    width: auto;
-    height: 100%;
-    object-fit: cover;
+  width: auto;
+  height: 100%;
+  object-fit: cover;
 }
 
 .modal-right {
-    flex: 0 0 auto;
-    width: 400px;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    max-width: 400px;
-    padding: 20px;
+  flex: 0 0 auto;
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  max-width: 400px;
+  padding: 20px;
 }
 
 .post-header {
-    display: flex;
-    align-items: center;
-    margin-bottom: 10px;
-    border-bottom: 1px solid #ddd;
-    padding-bottom: 10px;
-    width: 100%;
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+  width: 100%;
 }
 
 .user-info {
-    display: flex;
-    align-items: center;
+  display: flex;
+  align-items: center;
 }
 
 .avatar {
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    margin-right: 10px;
-    object-fit: cover;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 10px;
+  object-fit: cover;
 }
 
 .user-name {
-    font-size: 1.2rem;
-    font-weight: bold;
+  font-size: 1.2rem;
+  font-weight: bold;
 }
 
 .post-footer {
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    height: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  height: 100%;
 }
 
 .caption-container {
-    display: flex;
-    align-items: flex-start;
-    margin-bottom: 10px;
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 10px;
 }
 
 .avatar-caption {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    margin-right: 10px;
-    object-fit: cover;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+  object-fit: cover;
 }
 
 .user-name-caption {
-    font-weight: bold;
-    margin-right: 5px;
-    color: black;
+  font-weight: bold;
+  margin-right: 5px;
+  color: black;
 }
 
 .caption-text {
-    margin-top: 6px;
-    font-size: 1rem;
-    color: #333;
-    line-height: 1.5;
-    overflow-wrap: break-word;
-    white-space: normal;
-    text-align: left;
+  margin-top: 6px;
+  font-size: 1rem;
+  color: #333;
+  line-height: 1.5;
+  overflow-wrap: break-word;
+  white-space: normal;
+  text-align: left;
 }
 
 .likes-container {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 5px;
-    border-top: 1px solid #ddd;
-    padding-top: 10px;
-    width: 100%;
-    margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
+  border-top: 1px solid #ddd;
+  padding-top: 10px;
+  width: 100%;
+  margin-top: auto;
 }
 
 .likes-caption {
-    font-size: 1rem;
-    font-weight: bold;
-    color: #666;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #666;
 }
 
 .like-button {
-    display: flex;
-    align-items: center;
-    font-size: 1rem;
-    font-weight: bold;
-    color: black;
-    background: none;
-    border: none;
-    cursor: pointer;
+  display: flex;
+  align-items: center;
+  font-size: 1rem;
+  font-weight: bold;
+  color: black;
+  background: none;
+  border: none;
+  cursor: pointer;
 }
 
 .like-button:hover {
-    transform: scale(1.05);
+  transform: scale(1.05);
 }
 
 .like-button:active {
-    transform: scale(0.98);
+  transform: scale(0.98);
 }
 
 .thumbs-up-icon {
-    color: grey;
-    transition: color 0.2s ease;
-    cursor: pointer;
+  color: grey;
+  transition: color 0.2s ease;
+  cursor: pointer;
 }
 
-.fas.fa-thumbs-up {
-    color: black;
-}
+
 
 .nav-arrow {
-    position: absolute;
-    top: 50%;
-    font-size: 2rem;
-    color: #fff;
-    cursor: pointer;
-    user-select: none;
+  position: absolute;
+  top: 50%;
+  font-size: 2rem;
+  color: #fff;
+  cursor: pointer;
+  user-select: none;
 }
 
 .nav-arrow:hover {
-    color: #ddd;
+  color: #ddd;
 }
 
 .fa-chevron-left {
-    left: 10px;
+  left: 10px;
 }
 
 .fa-chevron-right {
-    right: 10px;
+  right: 10px;
 }
 
 .close-modal {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    font-size: 1.5rem;
-    color: #fff;
-    cursor: pointer;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 1.5rem;
+  color: #fff;
+  cursor: pointer;
 }
 
 .nav-arrow.disabled {
-    opacity: 0.3;
-    cursor: not-allowed;
-    pointer-events: none;
+  opacity: 0.3;
+  cursor: not-allowed;
+  pointer-events: none;
 }
 
 /* Responsive adjustments */
 @media (min-width: 767px) {
-    .modal-content {
-        flex-direction: row;
-        max-width: 80vw;
-        max-height: 80vh;
-    }
+  .modal-content {
+    flex-direction: row;
+    max-width: 80vw;
+    max-height: 80vh;
+  }
 
-    .modal-left {
-        height: auto;
-        flex: 1;
-    }
+  .modal-left {
+    height: auto;
+    flex: 1;
+  }
 
-    .modal-image {
-        width: 100%;
-        height: 100%;
-        overflow: scroll;
-    }
+  .modal-image {
+    width: 100%;
+    height: 100%;
+    overflow: scroll;
+  }
 
-    .modal-right {
-        padding: 20px;
-        flex: 1;
-    }
+  .modal-right {
+    padding: 20px;
+    flex: 1;
+  }
 
-    .post-header {
-        display: flex;
-    }
+  .post-header {
+    display: flex;
+  }
 
-    .user-name {
-        font-size: 1.4rem;
-    }
+  .user-name {
+    font-size: 1.4rem;
+  }
 
-    .likes-caption,
-    .like-button,
-    .caption-text {
-        font-size: 1.1rem;
-    }
+  .likes-caption,
+  .like-button,
+  .caption-text {
+    font-size: 1.1rem;
+  }
 
-    .nav-arrow {
-        font-size: 2.5rem;
-    }
+  .nav-arrow {
+    font-size: 2.5rem;
+  }
 }
 
 @media (max-width: 767px) {
-    .modal-content {
-        flex-direction: column;
-        width: 100%;
-        max-width: 350px;
-        height: auto;
-    }
+  .modal-content {
+    flex-direction: column;
+    width: 100%;
+    max-width: 350px;
+    height: auto;
+  }
 
-    .modal-left,
-    .modal-right {
-        width: 100%;
-    }
+  .modal-left,
+  .modal-right {
+    width: 100%;
+  }
 
-    .modal-right {
-        padding: 10px;
-    }
+  .modal-right {
+    padding: 10px;
+  }
 
-    .modal-left {
-        height: auto;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
+  .modal-left {
+    height: auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
 
-    .modal-image {
-        width: 100%;
-        height: auto;
-    }
+  .modal-image {
+    width: 100%;
+    height: auto;
+  }
 
-    .avatar,
-    .avatar-caption {
-        width: 40px;
-        height: 40px;
-    }
+  .avatar,
+  .avatar-caption {
+    width: 40px;
+    height: 40px;
+  }
 
-    .user-name,
-    .likes-caption {
-        font-size: 1rem;
-    }
+  .user-name,
+  .likes-caption {
+    font-size: 1rem;
+  }
 
-    .like-button,
-    .caption-text {
-        font-size: 0.9rem;
-    }
+  .like-button,
+  .caption-text {
+    font-size: 0.9rem;
+  }
 
-    .nav-arrow {
-        font-size: 1.5rem;
-    }
+  .nav-arrow {
+    font-size: 1.5rem;
+  }
 
-    /* Hide the post-header on small screens */
-    .post-header {
-        display: none;
-    }
+  /* Hide the post-header on small screens */
+  .post-header {
+    display: none;
+  }
 }
 </style>
