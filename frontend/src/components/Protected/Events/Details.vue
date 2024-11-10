@@ -1,7 +1,5 @@
 <template>
   <div class="event-detail" v-if="event">
-
-
     <!-- Event Image -->
     <img class="event-image" :src="event.eventImage || 'https://via.placeholder.com/800x400'" alt="Event Image" />
 
@@ -18,18 +16,16 @@
         <!-- Host -->
         <h3 style="padding-top:15px;">Hosted by:</h3>
         <div class="host-info">
-          <img
-            class="profile-pic"
-            :src="event.host.profilePic || 'https://via.placeholder.com/50'"
-            alt="Profile Picture"
-          />
-          <div class="host-details">
-            <strong>{{ event.host.username }}</strong>
-            <div class="host-buttons">
-              <button class="contact-button">Contact</button>
-              <button class="follow-button">+ Follow</button>
+          <img class="profile-pic" :src="event.host.profilePic || 'https://via.placeholder.com/50'"
+            alt="Profile Picture" />
+
+          <router-link :to="`/friendprofile/${event.host.uid}`">
+            <div class="host-details">
+              <strong>{{ event.host.username }}</strong>
+              <div class="host-buttons">
+              </div>
             </div>
-          </div>
+          </router-link>
         </div>
 
         <!-- Pet Type -->
@@ -64,7 +60,7 @@
           </div>
         </div>
         <!-- Add to Calendar -->
-        <button class="add-to-calendar">+Add to Calendar</button>
+
 
         <!-- Location -->
         <h3>Location</h3>
@@ -175,6 +171,7 @@ onMounted(async () => {
 .back-button:hover {
   transform: scale(1.1);
 }
+
 /* Loading Indicator Style */
 .loading-indicator {
   text-align: center;
@@ -206,14 +203,17 @@ onMounted(async () => {
 
 @media (max-width: 927px) {
   .event-image {
-    max-width: 100%; /* Ensure it stays within the screen */
-    width: 90%; /* Reduce width to make it smaller on smaller screens */
+    max-width: 100%;
+    /* Ensure it stays within the screen */
+    width: 90%;
+    /* Reduce width to make it smaller on smaller screens */
   }
 }
 
 @media (max-width: 480px) {
   .event-image {
-    max-width: 70%; /* Further reduce size on very small screens */
+    max-width: 70%;
+    /* Further reduce size on very small screens */
     width: 70%;
   }
 }
@@ -249,11 +249,11 @@ onMounted(async () => {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 20px;
   overflow: hidden;
-  max-width:100%;
+  max-width: 100%;
 }
 
-.right-block{
-  width:100%;
+.right-block {
+  width: 100%;
 }
 
 
@@ -273,6 +273,10 @@ onMounted(async () => {
   height: 90px;
 }
 
+.host-info:hover{
+  transform: scale(1.01);
+}
+
 .profile-pic {
   margin-left: 10px;
   border-radius: 50%;
@@ -283,6 +287,14 @@ onMounted(async () => {
 
 .host-details {
   flex-grow: 1;
+}
+
+.host-user:hover {
+  transform: scale(1.01);
+}
+
+.host-user {
+  margin-top: 5px;
 }
 
 .host-buttons {
