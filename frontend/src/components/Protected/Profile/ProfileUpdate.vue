@@ -27,10 +27,10 @@
     <!-- Update Form -->
     <form @submit.prevent="handleProfileUpdate" enctype="multipart/form-data">
       <!-- Email Field -->
-      <div class="mb-4">
+      <!-- <div class="mb-4">
         <label class="block text-gray-700">Email:</label>
         <input v-model="email" type="email" required class="border border-gray-300 rounded-md py-2 px-4 w-full" />
-      </div>
+      </div> -->
 
       <!-- Username Field -->
       <div class="mb-4">
