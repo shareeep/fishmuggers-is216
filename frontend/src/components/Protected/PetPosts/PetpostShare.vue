@@ -73,7 +73,7 @@ export default {
           return;
         }
 
-        const response = await api.get(`https://fishmuggers-is216-express.onrender.com/api/events/${userUid}/friends`);
+        const response = await api.get(`/api/events/${userUid}/friends`);
         this.friends = response.data; // Update local friends data property
       } catch (error) {
         console.error("Failed to fetch friends:", error);
@@ -81,7 +81,7 @@ export default {
     },
     async shareWithFriend(friend) {
       try {
-        await api.post('https://fishmuggers-is216-express.onrender.com/api/messages/send', {
+        await api.post('/api/messages/send', {
           senderUid: this.userId,
           receiverUid: friend.id,
           messageText: `Check this <a href="${this.shareContent}" target="_blank">post</a> out`,

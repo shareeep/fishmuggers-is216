@@ -60,7 +60,7 @@ export default {
     },
     async cancelRequest() {
       try {
-        await api.delete(`https://fishmuggers-is216-express.onrender.com/api/friends/request/${this.requestIdToCancel}`);
+        await api.delete(`/api/friends/request/${this.requestIdToCancel}`);
         // Remove the canceled request from sentRequests by emitting an event
         this.$emit('updateSentRequests', this.requestIdToCancel);
       } catch (error) {

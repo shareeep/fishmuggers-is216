@@ -43,11 +43,11 @@ const fetchFriends = async () => {
     }
 
     // Fetch friends list
-    const friendsResponse = await api.get(`https://fishmuggers-is216-express.onrender.com/api/events/${userUid}/friends`);
+    const friendsResponse = await api.get(`/api/events/${userUid}/friends`);
     friends.value = friendsResponse.data;
 
     // Fetch existing chats and extract friend IDs
-    const chatsResponse = await api.get(`https://fishmuggers-is216-express.onrender.com/api/messages/user/${userUid}`);
+    const chatsResponse = await api.get(`/api/messages/user/${userUid}`);
     activeChatFriends.value = chatsResponse.data.map(chat =>
       chat.senderUid === userUid ? chat.receiverUid : chat.senderUid
     );
@@ -74,7 +74,7 @@ const deleteChat = async (friend) => {
     // Make a request to delete the chat
     await axios({
       method: "delete",
-      url: `https://fishmuggers-is216-express.onrender.com/api/messages/delete`,
+      url: `/api/messages/delete`,
       data: {
         userUid: userUid,
         friendUid: friend.senderUid, // Adjust according to the correct friend ID field
@@ -104,7 +104,7 @@ const startChatWithFriend = async (friend) => {
     const userUid = getAuth().currentUser.uid;
 
     // Check if a conversation with this friend already exists
-    const response = await api.get(`https://fishmuggers-is216-express.onrender.com/api/messages/user/${userUid}`);
+    const response = await api.get(`/api/messages/user/${userUid}`);
     const existingChat = response.data.find(chat => chat.senderUid === friend.id || chat.receiverUid === friend.id);
 
     if (existingChat) {
@@ -112,7 +112,7 @@ const startChatWithFriend = async (friend) => {
       selectedFriend.value = friend;
     } else {
       // No existing chat found, send the initial message to start a new chat
-      await api.post(`https://fishmuggers-is216-express.onrender.com/api/messages/send`, {
+      await api.post(`/api/messages/send`, {
         senderUid: userUid,
         receiverUid: friend.id,
         messageText: "Hello! Let's start chatting!"

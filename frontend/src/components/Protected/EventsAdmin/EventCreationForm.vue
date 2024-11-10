@@ -322,7 +322,7 @@ const handleCreateEvent = async () => {
     }
 
     // Send POST request to create event
-    await api.post("https://fishmuggers-is216-express.onrender.com/api/events", formData, {
+    await api.post("/api/events", formData, {
       headers: {
         Authorization: `Bearer ${await currentUser.getIdToken()}`,
         "Content-Type": "multipart/form-data",

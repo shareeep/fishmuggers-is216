@@ -73,7 +73,7 @@ export default {
         const token = await currentUser.getIdToken();
 
         // Send request to backend
-        await api.post("https://fishmuggers-is216-express.onrender.com/api/posts/upload", formData, {
+        await api.post("/api/posts/upload", formData, {
           headers: {
             "Content-Type": "multipart/form-data",
             Authorization: `Bearer ${token}`,

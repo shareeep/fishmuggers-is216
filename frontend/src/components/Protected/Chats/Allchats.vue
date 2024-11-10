@@ -34,7 +34,7 @@ let pollingInterval = null;
 // };
 const markMessagesAsRead = async (uid, friendUid) => {
   try {
-    const response = await api.post('https://fishmuggers-is216-express.onrender.com/api/messages/markAsRead', {
+    const response = await api.post('/api/messages/markAsRead', {
       uid: uid,
       friendUid: friendUid,
     });
@@ -70,7 +70,7 @@ const selectFriend = async (friend) => {
 const fetchFriends = async () => {
   try {
     if (userUid.value) {
-      const response = await api.get(`https://fishmuggers-is216-express.onrender.com/api/messages/user/${userUid.value}`);
+      const response = await api.get(`/api/messages/user/${userUid.value}`);
       friends.value = response.data;
       if (selectedFriend.value) {
         const updatedFriend = friends.value.find(friend => friend.senderUid === selectedFriend.value.senderUid);

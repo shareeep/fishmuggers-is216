@@ -39,7 +39,7 @@ export default {
   async mounted() {
     try {
       console.log('Post id:', this.postId);
-      const response = await api.get(`https://fishmuggers-is216-express.onrender.com/api/posts/single/${this.postId}`);
+      const response = await api.get(`/api/posts/single/${this.postId}`);
       this.post = response.data;
     } catch (error) {
       console.error("Failed to load post:", error);
@@ -57,7 +57,7 @@ export default {
 
       try {
         // Send the like request to the backend
-        const response = await api.post(`https://fishmuggers-is216-express.onrender.com/api/posts/${post.postId}/like`, { userId });
+        const response = await api.post(`/api/posts/${post.postId}/like`, { userId });
 
         // If the post was liked successfully, update the local post state
         if (response.status === 200) {

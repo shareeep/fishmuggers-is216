@@ -364,7 +364,7 @@ export default defineComponent({
 
     async fetchEvents() {
       try {
-        const response = await api.get('https://fishmuggers-is216-express.onrender.com/api/events');
+        const response = await api.get('/api/events');
         this.events = response.data;
         console.log('Fetched Events:', this.events); // Add this line
       } catch (error) {

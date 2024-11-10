@@ -45,7 +45,7 @@ const toggleInterested = async () => {
   }
   try {
     isInterested.value = !isInterested.value;
-    const endpoint = `https://fishmuggers-is216-express.onrender.com/api/events/${eventId}/interested`;
+    const endpoint = `/api/events/${eventId}/interested`;
 
     if (isInterested.value) {
       await api.post(endpoint);

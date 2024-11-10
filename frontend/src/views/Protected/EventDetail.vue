@@ -81,7 +81,7 @@ function goBack() {
 // Function to fetch event details
 const fetchEvent = async () => {
   try {
-    const response = await api.get(`https://fishmuggers-is216-express.onrender.com/api/events/${eventId}`);
+    const response = await api.get(`/api/events/${eventId}`);
     event.value = response.data; // Store the event data once fetched
   } catch (error) {
     console.error("Failed to fetch event:", error);
@@ -96,7 +96,7 @@ const fetchInterestedUsers = async () => {
 
     // Fetch user details for each ID
     const responses = await Promise.all(
-      userIds.map(uid => api.get(`https://fishmuggers-is216-express.onrender.com/api/users/${uid}`))
+      userIds.map(uid => api.get(`/api/users/${uid}`))
     );
 
     // Extract user data from each response
@@ -120,7 +120,7 @@ const fetchFriends = async () => {
       return;
     }
 
-    const response = await api.get(`https://fishmuggers-is216-express.onrender.com/api/events/${userUid}/friends`);
+    const response = await api.get(`/api/events/${userUid}/friends`);
     friends.value = response.data;
   } catch (error) {
     console.error("Failed to fetch friends:", error);

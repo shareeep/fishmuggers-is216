@@ -68,7 +68,7 @@ export default {
         
         const messageText = `Join me at <a href="../eventdetail/${this.event.eventId}" target="_blank">${this.event.title}</a>`;
         
-        await api.post('https://fishmuggers-is216-express.onrender.com/api/messages/send', {
+        await api.post('/api/messages/send', {
           senderUid,
           receiverUid: friend.id,
           messageText,
