@@ -1,13 +1,22 @@
 <template>
   <div class="home-container">
+    <!-- Interested Users Popup -->
+    <InterestedUsersPopup
+      v-if="showInterestedUsersPopup"
+      :friends="interestedUsers"
+      @close="showInterestedUsersPopup = false"
+    />
     <!-- Back Button -->
     <router-link to="" class="back-button" @click.prevent="goBack">
       <img src="../../assets/images/back_arrow.png" alt="back" width="40px" />
     </router-link>
-    <RSVPBar v-if="event" :event="event" @showSharePopup="showPopup = true"
-      @seeInterestedUsers="fetchInterestedUsers" />
+    <RSVPBar
+      v-if="event"
+      :event="event"
+      @showSharePopup="openSharePopup"
+      @seeInterestedUsers="openInterestedUsersPopup"
+    />
     <main id="scrollable-element">
-
       <Details v-if="event" :event="event" />
       <p v-else class="loading-text">
         <img src="../../assets/images/loading4.gif" alt="Loading" class="loadinggif" />
@@ -15,12 +24,12 @@
       </p>
     </main>
 
-    <ShareEventPopup v-if="showPopup" @close="showPopup = false" :friends="friends" :event="event" />
-
-    <!-- Interested Users Popup -->
-    <InterestedUsersPopup v-if="showInterestedUsersPopup" :friends="interestedUsers"
-      @close="showInterestedUsersPopup = false" />
-
+    <ShareEventPopup
+      v-if="showPopup"
+      @close="showPopup = false"
+      :friends="friends"
+      :event="event"
+    />
   </div>
 </template>
 
@@ -32,49 +41,44 @@ import axios from "axios";
 import Details from "@/components/Protected/Events/Details.vue";
 import RSVPBar from "@/components/Protected/Events/RSVPbar.vue";
 import ShareEventPopup from "@/components/Protected/Events/ShareEventPopup.vue";
-import InterestedUsersPopup from "@/components/Protected/Events/InterestedUsersPopup.vue"; // Import the popup component
+import InterestedUsersPopup from "@/components/Protected/Events/InterestedUsersPopup.vue";
 
 import { getAuth } from "firebase/auth";
-const router = useRouter(); // Get the router instance
-const showInterestedUsersPopup = ref(false);
-const interestedUsers = ref([]); // Holds interested users data
+const router = useRouter();
 
-import Scrollbar from 'smooth-scrollbar';
-import OverscrollPlugin from 'smooth-scrollbar/plugins/overscroll';
+const showInterestedUsersPopup = ref(false);
+const showPopup = ref(false); // For share popup
+const interestedUsers = ref([]); // Holds interested users data
+const event = ref(null); // Event data
+const friends = ref([]); // Friends list for ShareEventPopup
+
+const route = useRoute();
+const eventId = route.params.id;
+
+// Function to close all popups
+const closeAllPopups = () => {
+  showInterestedUsersPopup.value = false;
+  showPopup.value = false;
+};
+
+// Open the Share Popup, closing other popups if necessary
+const openSharePopup = () => {
+  closeAllPopups();
+  showPopup.value = true;
+};
+
+// Open the Interested Users Popup, closing other popups if necessary
+const openInterestedUsersPopup = () => {
+  closeAllPopups();
+  fetchInterestedUsers(); // Fetch and show interested users
+};
+
 // Function to go back to the previous page
 function goBack() {
   router.go(-1); // Go back to the previous page in the browser history
 }
-// Initialize Smooth Scrollbar for main content
-Scrollbar.use(OverscrollPlugin);
 
-
-onMounted(() => {
-  const scrollbar = Scrollbar.init(document.querySelector('#scrollable-element'), {
-    damping: 0.05,
-    renderByPixels: true,
-    alwaysShowTracks: false,
-    continuousScrolling: true,
-    plugins: {
-      overscroll: {
-        effect: 'bounce',
-        damping: 0.2,
-        maxOverscroll: 70,
-      },
-    },
-  });
-
-  // Hide the scrollbar track by setting its opacity to 0
-  scrollbar.track.xAxis.element.style.opacity = '0';
-  scrollbar.track.yAxis.element.style.opacity = '0';
-});
-
-const route = useRoute();
-const eventId = route.params.id; // Capture eventId from the route
-const event = ref(null); // Initialize the event data as null
-const showPopup = ref(false); // State to control popup visibility
-const friends = ref([]); // Sample friends list for ShareEventPopup
-
+// Function to fetch event details
 const fetchEvent = async () => {
   try {
     const response = await axios.get(`http://localhost:3000/api/events/${eventId}`);
@@ -84,7 +88,7 @@ const fetchEvent = async () => {
   }
 };
 
-// Function to fetch interested users for the event
+// Function to fetch interested users for the event (using fake data)
 const fetchInterestedUsers = async () => {
   try {
     // Fake data for interested users
@@ -93,13 +97,8 @@ const fetchInterestedUsers = async () => {
       { id: "user2", name: "Bob Smith", username: "bob_smith", profileImage: "https://via.placeholder.com/50" },
       { id: "user3", name: "Charlie Brown", username: "charlie_b", profileImage: "https://via.placeholder.com/50" },
       { id: "user4", name: "Daisy Ridley", username: "daisy_r", profileImage: "https://via.placeholder.com/50" },
-      { id: "user4", name: "Daisy Ridley", username: "daisy_r", profileImage: "https://via.placeholder.com/50" },
-      { id: "user4", name: "Daisy Ridley", username: "daisy_r", profileImage: "https://via.placeholder.com/50" },
-      { id: "user4", name: "Daisy Ridley", username: "daisy_r", profileImage: "https://via.placeholder.com/50" },
-      { id: "user4", name: "Daisy Ridley", username: "daisy_r", profileImage: "https://via.placeholder.com/50" },
     ];
 
-    // Assign the fake data to `interestedUsers`
     interestedUsers.value = fakeData;
     showInterestedUsersPopup.value = true; // Show the popup
   } catch (error) {
@@ -107,20 +106,9 @@ const fetchInterestedUsers = async () => {
   }
 };
 
-
-// Fetch friends for popup
-// const fetchFriends = async () => {
-//   try {
-//     const response = await axios.get('http://localhost:3000/api/friends');
-//     friends.value = response.data;
-//   } catch (error) {
-//     console.error("Failed to fetch friends:", error);
-//   }
-// };
-
+// Fetch friends for the share popup
 const fetchFriends = async () => {
   try {
-    // Get the authenticated user's UID
     const auth = getAuth();
     const userUid = auth.currentUser?.uid;
 
@@ -129,7 +117,6 @@ const fetchFriends = async () => {
       return;
     }
 
-    // Make the request with the user's UID
     const response = await axios.get(`http://localhost:3000/api/events/${userUid}/friends`);
     friends.value = response.data;
   } catch (error) {
@@ -137,12 +124,13 @@ const fetchFriends = async () => {
   }
 };
 
-
+// Initial data fetch
 onMounted(() => {
-  fetchEvent(); // Fetch the event data on mount
-  fetchFriends();
+  fetchEvent(); // Fetch event details on mount
+  fetchFriends(); // Fetch friends for share popup
 });
 </script>
+
 
 
 <style scoped>
