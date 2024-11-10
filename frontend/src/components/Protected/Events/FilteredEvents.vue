@@ -46,7 +46,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import api from '@/services/api';
 export default {
     props: {
         filters: {
@@ -71,7 +71,7 @@ export default {
         async fetchEvents() {
             this.loading = true;
             try {
-                const response = await axios.get('https://fishmuggers-is216-express.onrender.com/api/events');
+                const response = await api.get('https://fishmuggers-is216-express.onrender.com/api/events');
                 this.events = response.data;
                 console.log(this.events);
             } catch (error) {

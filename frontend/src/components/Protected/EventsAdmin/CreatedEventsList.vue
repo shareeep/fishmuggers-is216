@@ -23,7 +23,7 @@
 <script setup>
 import { defineProps, defineEmits, ref } from "vue";
 import { getAuth } from "firebase/auth";
-import axios from "axios";
+import api from '@/services/api';
 import EventCard from "./EventCard.vue";
 import { useRouter } from "vue-router";
 
@@ -61,7 +61,7 @@ const handleDeleteEvent = async (eventId) => {
   }
 
   try {
-    await axios.delete(`/api/events/${eventId}`, {
+    await api.delete(`/api/events/${eventId}`, {
       headers: { Authorization: `Bearer ${await user.getIdToken()}` },
     });
     successMessage.value = "Event deleted successfully!";

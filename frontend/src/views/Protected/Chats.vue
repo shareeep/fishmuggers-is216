@@ -14,7 +14,7 @@
 <script setup>
 import { ref, onMounted } from "vue";
 import { getAuth } from "firebase/auth";
-import axios from "axios";
+import api from '@/services/api';
 
 import Navbar from '@/components/Protected/Navbar.vue';
 import Allchats from '@/components/Protected/Chats/Allchats.vue';
@@ -43,11 +43,11 @@ const fetchFriends = async () => {
     }
 
     // Fetch friends list
-    const friendsResponse = await axios.get(`https://fishmuggers-is216-express.onrender.com/api/events/${userUid}/friends`);
+    const friendsResponse = await api.get(`https://fishmuggers-is216-express.onrender.com/api/events/${userUid}/friends`);
     friends.value = friendsResponse.data;
 
     // Fetch existing chats and extract friend IDs
-    const chatsResponse = await axios.get(`https://fishmuggers-is216-express.onrender.com/api/messages/user/${userUid}`);
+    const chatsResponse = await api.get(`https://fishmuggers-is216-express.onrender.com/api/messages/user/${userUid}`);
     activeChatFriends.value = chatsResponse.data.map(chat =>
       chat.senderUid === userUid ? chat.receiverUid : chat.senderUid
     );
@@ -104,7 +104,7 @@ const startChatWithFriend = async (friend) => {
     const userUid = getAuth().currentUser.uid;
 
     // Check if a conversation with this friend already exists
-    const response = await axios.get(`https://fishmuggers-is216-express.onrender.com/api/messages/user/${userUid}`);
+    const response = await api.get(`https://fishmuggers-is216-express.onrender.com/api/messages/user/${userUid}`);
     const existingChat = response.data.find(chat => chat.senderUid === friend.id || chat.receiverUid === friend.id);
 
     if (existingChat) {
@@ -112,7 +112,7 @@ const startChatWithFriend = async (friend) => {
       selectedFriend.value = friend;
     } else {
       // No existing chat found, send the initial message to start a new chat
-      await axios.post(`https://fishmuggers-is216-express.onrender.com/api/messages/send`, {
+      await api.post(`https://fishmuggers-is216-express.onrender.com/api/messages/send`, {
         senderUid: userUid,
         receiverUid: friend.id,
         messageText: "Hello! Let's start chatting!"

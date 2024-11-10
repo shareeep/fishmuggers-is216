@@ -136,7 +136,7 @@
 <script setup>
 import { ref, watch } from "vue";
 import { getAuth } from "firebase/auth";
-import axios from "axios";
+import api from '@/services/api';
 
 // Helper function to convert Firestore timestamp to a formatted date string
 function formatFirestoreTimestamp(timestamp) {
@@ -317,7 +317,7 @@ const handleEditEvent = async () => {
     }
 
     // Send PUT request to update event
-    await axios.put(
+    await api.put(
       `https://fishmuggers-is216-express.onrender.com/api/events/${editEvent.value.eventId}`,
       formData,
       {

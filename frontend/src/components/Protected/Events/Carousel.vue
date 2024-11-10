@@ -287,7 +287,7 @@
 
 <script>
 import { defineComponent, ref, watch } from 'vue';
-import axios from 'axios';
+import api from '@/services/api';
 import { Carousel, Navigation, Pagination, Slide } from 'vue3-carousel';
 import 'vue3-carousel/dist/carousel.css';
 
@@ -364,7 +364,7 @@ export default defineComponent({
 
     async fetchEvents() {
       try {
-        const response = await axios.get('https://fishmuggers-is216-express.onrender.com/api/events');
+        const response = await api.get('https://fishmuggers-is216-express.onrender.com/api/events');
         this.events = response.data;
         console.log('Fetched Events:', this.events); // Add this line
       } catch (error) {

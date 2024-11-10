@@ -26,7 +26,7 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue';
 import { useRoute } from 'vue-router';
-import axios from 'axios';
+import api from '@/services/api';
 import { getAuth } from 'firebase/auth';
 import Navbar from '@/components/Protected/Navbar.vue';
 import ProfileMain from '@/components/Protected/Profile/ProfileMain.vue';
@@ -68,22 +68,22 @@ const fetchUserProfile = async () => {
 
   try {
     // Fetch user data
-    const userResponse = await axios.get(`/api/users/${uid}`);
+    const userResponse = await api.get(`/api/users/${uid}`);
     userData.value = userResponse.data;
 
     // Fetch user's posts
-    const postsResponse = await axios.get(`/api/posts/user/${uid}/posts`);
+    const postsResponse = await api.get(`/api/posts/user/${uid}/posts`);
     userData.value.posts = postsResponse.data;
 
     // Fetch user's pets
-    const petsResponse = await axios.get(`/api/pets/user/${uid}`);
+    const petsResponse = await api.get(`/api/pets/user/${uid}`);
     pets.value = petsResponse.data;
 
     // Fetch created and joined events
-    const createdEventsResponse = await axios.get(`/api/events/created/${uid}`);
+    const createdEventsResponse = await api.get(`/api/events/created/${uid}`);
     createdEvents.value = createdEventsResponse.data;
 
-    const joinedEventsResponse = await axios.get(`/api/events/joined/${uid}`);
+    const joinedEventsResponse = await api.get(`/api/events/joined/${uid}`);
     joinedEvents.value = joinedEventsResponse.data;
 
   } catch (error) {
@@ -164,7 +164,7 @@ const deletePet = async (petId) => {
   }
 
   try {
-    await axios.delete(`/api/pets/${petId}`);
+    await api.delete(`/api/pets/${petId}`);
     await fetchPets(); // Refresh pets list after deletion
   } catch (error) {
     console.error('Error deleting pet:', error);
@@ -180,12 +180,12 @@ const fetchPets = async () => {
   }
 
   try {
-    const response = await axios.get(`/api/users/${currentUser.uid}`);
+    const response = await api.get(`/api/users/${currentUser.uid}`);
     const userPets = response.data.pets || [];
 
     // Fetch pet details
     const petPromises = userPets.map(async (petId) => {
-      const petResponse = await axios.get(`/api/pets/${petId}`);
+      const petResponse = await api.get(`/api/pets/${petId}`);
       return { id: petId, ...petResponse.data };
     });
 
@@ -215,7 +215,7 @@ const handleLikeToggle = async ({ postId, isLiked }) => {
     console.log("User ID:", userId); // Debugging
 
     // Send like/unlike request to the backend with userId
-    const response = await axios.post(
+    const response = await api.post(
       `/api/posts/${postId}/like`,
       { like: isLiked, userId: userId }, // Included userId
       { headers: { Authorization: `Bearer ${token}` } }
@@ -264,7 +264,7 @@ const fetchEvents = async () => {
   if (!uid) return;
 
   try {
-    const response = await axios.get(`/api/events/created/${uid}`);
+    const response = await api.get(`/api/events/created/${uid}`);
     createdEvents.value = response.data;
   } catch (error) {
     console.error("Error fetching events:", error);

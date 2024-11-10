@@ -20,7 +20,7 @@
 <script setup>
 import { ref, computed } from "vue";
 import { defineProps } from "vue";
-import axios from "axios";
+import api from '@/services/api';
 
 const props = defineProps({
   event: {
@@ -48,10 +48,10 @@ const toggleInterested = async () => {
     const endpoint = `https://fishmuggers-is216-express.onrender.com/api/events/${eventId}/interested`;
 
     if (isInterested.value) {
-      await axios.post(endpoint);
+      await api.post(endpoint);
       localInterestedUsers.value.push("your-user-id"); // Placeholder; backend manages actual user
     } else {
-      await axios.delete(endpoint);
+      await api.delete(endpoint);
       localInterestedUsers.value = localInterestedUsers.value.filter((id) => id !== "your-user-id");
     }
   } catch (error) {

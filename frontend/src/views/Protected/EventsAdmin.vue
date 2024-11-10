@@ -58,7 +58,7 @@ onMounted(() => {
 });
 
 import { getAuth } from "firebase/auth";
-import axios from "axios";
+import api from '@/services/api';
 
 const auth = getAuth();
 const currentUser = auth.currentUser;
@@ -72,7 +72,7 @@ const isSubmitting = ref(false);
 
 const fetchEvents = async () => {
   try {
-    const response = await axios.get("https://fishmuggers-is216-express.onrender.com/api/events");
+    const response = await api.get("https://fishmuggers-is216-express.onrender.com/api/events");
     events.value = response.data;
     console.log("Fetched Events:", events.value); // Add this line
   } catch (error) {
@@ -109,7 +109,7 @@ const deleteEvent = async (eventId) => {
 
   try {
     // Send DELETE request to delete event
-    await axios.delete(`https://fishmuggers-is216-express.onrender.com/api/events/${eventId}`, {
+    await api.delete(`https://fishmuggers-is216-express.onrender.com/api/events/${eventId}`, {
       headers: {
         Authorization: `Bearer ${await user.getIdToken()}`,
       },

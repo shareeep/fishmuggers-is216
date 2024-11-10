@@ -45,7 +45,8 @@
 
 <script setup>
 import { ref, onMounted, nextTick, watch, defineProps, defineEmits } from 'vue';
-import axios from 'axios';
+import api from '@/services/api';
+
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 const emit = defineEmits(['updateLoading']);
@@ -91,7 +92,7 @@ const switchToConversationsMode = () => {
 const sendMessage = async () => {
   if (newMessage.value.trim() !== '' && props.selectedFriend && userUid.value) {
     try {
-      await axios.post('https://fishmuggers-is216-express.onrender.com/api/messages/send', {
+      await api.post('https://fishmuggers-is216-express.onrender.com/api/messages/send', {
         senderUid: userUid.value,
         receiverUid: props.selectedFriend.senderUid,
         messageText: newMessage.value

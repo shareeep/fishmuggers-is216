@@ -126,7 +126,7 @@
 <script setup>
 import { ref, watch } from "vue";
 import { getAuth } from "firebase/auth";
-import axios from "axios";
+import api from '@/services/api';
 import googleMapsLoader from "../../../../googleMapsLoader.js";
 
 
@@ -322,7 +322,7 @@ const handleCreateEvent = async () => {
     }
 
     // Send POST request to create event
-    await axios.post("https://fishmuggers-is216-express.onrender.com/api/events", formData, {
+    await api.post("https://fishmuggers-is216-express.onrender.com/api/events", formData, {
       headers: {
         Authorization: `Bearer ${await currentUser.getIdToken()}`,
         "Content-Type": "multipart/form-data",

@@ -130,7 +130,7 @@
 
 <script setup>
 import { ref, onMounted, defineEmits, defineProps, watch, computed } from 'vue';
-import axios from 'axios';
+import api from '@/services/api';
 import { getAuth } from 'firebase/auth';
 import { useRouter } from 'vue-router';
 import CreatedEventsList from "@/components/Protected/EventsAdmin/CreatedEventsList.vue";
@@ -159,7 +159,7 @@ watch(
 const fetchPosts = async (userId) => {
   console.log(`Fetching posts for userId: ${userId}`); // Debugging log
   try {
-    const response = await axios.get(`/api/posts/user/${userId}/posts`);
+    const response = await api.get(`/api/posts/user/${userId}/posts`);
     posts.value = response.data || [];
     console.log("Fetched Posts:", posts.value);
   } catch (error) {

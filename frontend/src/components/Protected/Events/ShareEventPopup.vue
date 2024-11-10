@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import axios from 'axios';
+import api from '@/services/api';
 import { getAuth } from 'firebase/auth';
 
 export default {
@@ -68,7 +68,7 @@ export default {
         
         const messageText = `Join me at <a href="../eventdetail/${this.event.eventId}" target="_blank">${this.event.title}</a>`;
         
-        await axios.post('https://fishmuggers-is216-express.onrender.com/api/messages/send', {
+        await api.post('https://fishmuggers-is216-express.onrender.com/api/messages/send', {
           senderUid,
           receiverUid: friend.id,
           messageText,
