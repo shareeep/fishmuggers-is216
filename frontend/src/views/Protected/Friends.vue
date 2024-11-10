@@ -190,7 +190,7 @@ async function fetchMyFriends() {
 // Fetch all users and add them to suggested friends
 async function fetchUsers() {
   try {
-    const response = await api.get('/users')
+    const response = await api.get('/api/users')
     allUsers.value = response.data;
 
     // Fetch `myFriends` first to ensure the list is up-to-date
