@@ -398,6 +398,7 @@ main {
 @media (max-width: 767px) {
   .home-container {
     flex-direction: column;
+    padding-bottom: 40px;
   }
 
   .navbar {
