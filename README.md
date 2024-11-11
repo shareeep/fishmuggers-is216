@@ -70,7 +70,7 @@ Solution: Pet Connect aims to help owners find events, organise playdates and co
         npm install
         ```
 3. **Frontend environment setup**:
-   - Place the .env file in the frontend folder (request from @binkicentre or @cityboykiki from telegram)
+   - Copy the .env.example to a .env file in the root of the frontend folder (request for the values from @binkicentre or @cityboykiki from telegram)
    Frontend .env should consist of firebase private keys, google maps private keys and the backend url
 4. **Start the Development Server**:
    - Run the following command to serve the frontend application:
@@ -80,7 +80,7 @@ Solution: Pet Connect aims to help owners find events, organise playdates and co
 5. **Backend setup**:
    - Navigate to the project directory and cd into the backend directory and install dependencies:
         ```bash
-        cd frontend
+        cd backend
         npm install
         ```
 6. **Backend environment setup**:
@@ -106,25 +106,18 @@ Solution: Pet Connect aims to help owners find events, organise playdates and co
      ```
 
 #### Deployment Setup
-1. **Configure Environment Variables**:
-  - Adjust your .env files for both the frontend and backend to meet deployment requirements. Ensure you have:
-	
-	- Firebase private keys
-	- Google Maps API keys
-	- Backend URL (for the frontend .env)
-	- Firebase serviceAccountKey in base64 and project ID (for the backend .env)
 
-2. **Deploy the Backend on Render**:
+1. **Deploy the Backend as a Web Service on Render**:
   - Go to your Render dashboard and select **New + > Web Service**.
-  - Connect the service to your repository and select the backend folder for deployment.
+  - Connect the service to your repository set the **Root Directory** as 'backend'.
   - Configure the environment:
     -   **Build Command**: `npm install`
     -   **Start Command**: `node app.js`
-- Add your environment variables (from the backend `.env` file) in the **Environment** section on Render.
+- Add your environment variables (reference the backend `.env.example` file, populated with values - request for the values from @binkicentre or @cityboykiki from telegram) in the **Environment Variables** section on Render.
 
 - Deploy the backend and note the URL, which you’ll need for the frontend setup.
 
-3. **Deploy the Frontend as a Static Site on Render**:
+2. **Deploy the Frontend as a Static Site on Render**:
   - In your Render dashboard, select **New + > Static Site**.
 
 -   Connect the service to your repository and select the frontend folder for deployment.
@@ -133,7 +126,7 @@ Solution: Pet Connect aims to help owners find events, organise playdates and co
     -   **Build Command**: `npm install && npm run build`
     -   **Publish Directory**: `dist`
 
--   Add the environment variables needed for the frontend `.env` file (including the backend URL from the previous step).
+-   Add the environment variables needed for the frontend referencing what is in the `.env.example` file (including the backend URL from the previous step).
 
 -   In the **Redirect and Rewrite Rules** section, add the following rule:
     -   **Source**: `/*`
