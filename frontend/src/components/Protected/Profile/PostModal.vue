@@ -271,11 +271,11 @@ const isLastPost = computed(() => props.selectedPostIndex === props.totalPosts -
 }
 
 .fa-chevron-left {
-    left: 10px;
+    left: 0px;
 }
 
 .fa-chevron-right {
-    right: 10px;
+    right: -10px;
 }
 
 .close-modal {
@@ -331,9 +331,11 @@ const isLastPost = computed(() => props.selectedPostIndex === props.totalPosts -
         font-size: 1.1rem;
     }
 
-    .nav-arrow {
+    /* .nav-arrow {
         font-size: 2.5rem;
-    }
+    } */
+   
+
 }
 
 @media (max-width: 767px) {
@@ -389,16 +391,19 @@ const isLastPost = computed(() => props.selectedPostIndex === props.totalPosts -
     .post-header {
         display: none;
     }
+    .fa-chevron-right {
+    right: -12px;
+}
 }
 
-@media (max-width: 414px) {
+/* @media (max-width: 414px) {
     .fa-chevron-right {
-        right: 1px; /* Adjust the value to move the arrow closer to the right edge */
+        right: 1px; 
     }
 
     .fa-chevron-left {
-        left: 15px; /* Optional: Adjust the left arrow if you want it closer to the left edge */
+        left: 15px; 
     }
 }
-
+ */
 </style>
