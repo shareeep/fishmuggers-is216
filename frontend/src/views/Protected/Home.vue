@@ -147,7 +147,7 @@ main {
 /* Responsive Adjustments */
 @media (max-width: 991px) {
   .navbar {
-    width: 100%;
+    width: 80px;
   }
 
   main {
