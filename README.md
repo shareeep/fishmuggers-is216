@@ -1,8 +1,9 @@
-# Petconnect
+
+# PetConnect
 
 ![Project Logo](/frontend//src/assets/images/logo.png)
 
-**Access Petconnect:** [Website Link](https://petconnect-is216.onrender.com/) 
+**Access PetConnect:** [Website Link](https://petconnect-is216.onrender.com/) 
 
 
 ## Table of Contents
@@ -12,9 +13,7 @@
 - [Installation Guide](#installation-guide)
   - [Project Setup](#project-setup)
   - [Local Setup](#local-setup)
-  - [Google Firebase Setup](#google-firebase-setup)
-  - [Online Hosting](#online-hosting)
-  - [Dependencies & Libraries Installation](#dependencies--libraries-installation)
+  - [Cloud Deployment Guide](#cloud-deployment-guide)
 - [Test-Users Account](#test-users-account)
 
 ---
@@ -27,7 +26,7 @@
 | Sim Yingyi Tabitha   | 01489282   | tabitha.sim.2023@scis.smu.edu.sg    |
 | Ng Hui Ting   | 01481249   | huiting.ng.2023@scis.smu.edu.sg    |
 | Axel Teo Pin Bo   | 01413416   | pinbo.teo.2022@scis.smu.edu.sg    |
-| Muhammad Shariff Bin Abdul Rashido   | 01443150   | shariffar.2023@scis.smu.edu.sg    |
+| Muhammad Shariff Bin Abdul Rashid   | 01443150   | shariffar.2023@scis.smu.edu.sg    |
 
 
 
@@ -92,9 +91,64 @@ Solution: Pet Connect aims to help owners find events, organise playdates and co
         ```bash
         node app.js
         ```
-    
+
+
+
+### Cloud Deployment Guide
+
+#### Prerequisites
+1. **Render Account**: Make sure you have a render account set up [https://render.com/]
+
+2. **Repository Access**:
+   - Clone the repository to your local device if you haven’t already:
+     ```bash
+     git clone https://github.com/shareeep/fishmuggers-is216.git
+     ```
+
+#### Deployment Setup
+1. **Configure Environment Variables**:
+  - Adjust your .env files for both the frontend and backend to meet deployment requirements. Ensure you have:
+	
+	- Firebase private keys
+	- Google Maps API keys
+	- Backend URL (for the frontend .env)
+	- Firebase serviceAccountKey in base64 and project ID (for the backend .env)
+
+2. **Deploy the Backend on Render**:
+  - Go to your Render dashboard and select **New + > Web Service**.
+  - Connect the service to your repository and select the backend folder for deployment.
+  - Configure the environment:
+    -   **Build Command**: `npm install`
+    -   **Start Command**: `node app.js`
+- Add your environment variables (from the backend `.env` file) in the **Environment** section on Render.
+
+- Deploy the backend and note the URL, which you’ll need for the frontend setup.
+
+3. **Deploy the Frontend as a Static Site on Render**:
+  - Place the .env file in the frontend folder (request -   In your Render dashboard, select **New + > Static Site**.
+
+-   Connect the service to your repository and select the frontend folder for deployment.
+
+-   Configure the environment:
+    -   **Build Command**: `npm install && npm run build`
+    -   **Publish Directory**: `dist`
+
+-   Add the environment variables needed for the frontend `.env` file (including the backend URL from the previous step).
+
+-   In the **Redirect and Rewrite Rules** section, add the following rule:
+    -   **Source**: `/*`
+    -   **Destination**: `/index.html`
+    -   **Action**: `Rewrite`
+
+5. **Verify Deployment**:
+-   Once both services are deployed, verify that the backend API is accessible and that the frontend is able to communicate with it.
+
+-   Test key features to confirm that everything is functioning correctly.
+
+
 ### Test-Users Account
 | User  | Email            | Password    |
 |-------|---------------------|-------------|
-| User 1| mokkie@gmail.com     | xx    |
+| User 1| shariff@events.com     | shariff@events.com    |
 | User 2| tabithasim@gmail.com      | 1234567    |
+| User 3| mason@jar.com      | mason@jar.com    |
