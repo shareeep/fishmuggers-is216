@@ -353,5 +353,12 @@ main {
     width: 375px;
   }
 }
+
+@media (max-width: 360px) {
+  .home-container {
+    width: 360px;
+    height: 740px;
+  }
+}
 }
 </style>
