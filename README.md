@@ -1,10 +1,12 @@
 # Petconnect
 
-**Access SustainablEats:** [Website Link](https://petconnect-is216.onrender.com/)  
+![Project Logo](/frontend//src/assets/images/logo.png)
+
+**Access Petconnect:** [Website Link](https://petconnect-is216.onrender.com/) 
+
 
 ## Table of Contents
 - [Group Members](#group-members)
-- [Important Notes](#important-notes)
 - [Project Overview](#project-overview)
   - [Features](#features)
 - [Installation Guide](#installation-guide)
@@ -24,13 +26,10 @@
 | Koh Choon Kiat   | 01483384   | ck.koh.2023@scis.smu.edu.sg    |
 | Sim Yingyi Tabitha   | 01489282   | tabitha.sim.2023@scis.smu.edu.sg    |
 | Ng Hui Ting   | 01481249   | huiting.ng.2023@scis.smu.edu.sg    |
+| Axel Teo Pin Bo   | 01413416   | pinbo.teo.2022@scis.smu.edu.sg    |
+| Muhammad Shariff Bin Abdul Rashido   | 01443150   | shariffar.2023@scis.smu.edu.sg    |
 
 
----
-
-### Important Notes
-- **Image Upload Limitation:** Users must upload images manually for recipe generation due to API constraints.
-- **Bandwidth Limitations:** Limited bandwidth on the free Firebase plan may result in image loading delays. Please allow up to 24 hours for bandwidth reset.
 
 ---
 
@@ -61,36 +60,41 @@ Solution: Pet Connect aims to help owners find events, organise playdates and co
 
 #### Local Setup
 1. **Clone Repository**:
-   - Run:
-     ```bash
-     git clone [https://github.com/shareeep/fishmuggers-is216.git]
-     ```
+    - Run:
+        ```bash
+        git clone [https://github.com/shareeep/fishmuggers-is216.git]
+        ```
 2. **Frontend setup**:
    - Navigate to the project directory and cd into the frontend directory and install dependencies:
-     ```bash
-    cd frontend
-    npm install
-     ```
+        ```bash
+        cd frontend
+        npm install
+        ```
 3. **Frontend environment setup**:
    - Place the .env file in the frontend folder (request from @binkicentre or @cityboykiki from telegram)
    Frontend .env should consist of firebase private keys, google maps private keys and the backend url
 4. **Start the Development Server**:
    - Run the following command to serve the frontend application:
-     ```bash
-    npm run dev
-     ```
+        ```bash
+        npm run dev
+        ```
 5. **Backend setup**:
    - Navigate to the project directory and cd into the backend directory and install dependencies:
-     ```bash
-    cd frontend
-    npm install
-     ```
+        ```bash
+        cd frontend
+        npm install
+        ```
 6. **Backend environment setup**:
    - Place the .env file in the backend folder (request from @binkicentre or @cityboykiki from telegram)
    Backend .env should consist of firebase serviceaccountkey and firebase project ID 
 7. **Start the Backend Server**:
     - Start the backend server using node app.js:
-    ```bash
-    node app.js
-     ```
+        ```bash
+        node app.js
+        ```
     
+### Test-Users Account
+| User  | Email            | Password    |
+|-------|---------------------|-------------|
+| User 1| mokkie@gmail.com     | xx    |
+| User 2| tabithasim@gmail.com      | 1234567    |
