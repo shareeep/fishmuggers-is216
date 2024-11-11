@@ -151,8 +151,10 @@ body {
 .home-container {
   display: flex;
   height: 100vh;
+  max-height: 100vh;
   overflow-x: hidden;
   width: 100%;
+  max-width: 100vw;
 }
 
 .navbar {
@@ -170,6 +172,7 @@ main {
   flex-direction: column;
   gap: 5px;
   background-color: #FCEFB4;
+  width: 100vw;
   height: 100vh;
   overflow-y: scroll;
   overflow-x: hidden;
@@ -347,18 +350,5 @@ main {
     background-color: #f9f9f9;
     z-index: 10;
   }
-
-@media (max-width: 375px) {
-  .home-container {
-    width: 375px;
-  }
-}
-
-@media (max-width: 360px) {
-  .home-container {
-    width: 360px;
-    height: 740px;
-  }
-}
 }
 </style>
