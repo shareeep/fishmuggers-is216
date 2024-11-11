@@ -156,6 +156,11 @@ input[type="search"]:focus {
     color: #888;
     font-size: 0.9rem;
     margin: 0;
+    overflow:hidden;
+    white-space: nowrap;     /* Prevent text from wrapping to the next line */
+    text-overflow: ellipsis; /* Show ellipsis (...) when text overflows */
+    width: 100px;  
+
 }
 
 /* See Profile button styling */
@@ -182,5 +187,11 @@ input[type="search"]:focus {
 
 .see-profile-button:active {
     transform: scale(0.98);
+}
+
+@media (max-width: 430px) {
+    .popup-content {
+        width:350px;
+    }
 }
 </style>

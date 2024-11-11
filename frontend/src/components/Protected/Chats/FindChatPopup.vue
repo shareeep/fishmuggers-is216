@@ -209,12 +209,17 @@ input[type="search"]:focus {
 .friend-name {
     font-weight: bold;
     margin: 0;
+    
 }
 
 .friend-username {
     color: #888;
     font-size: 0.9rem;
     margin: 0;
+    overflow:hidden;
+    white-space: nowrap;     /* Prevent text from wrapping to the next line */
+    text-overflow: ellipsis; /* Show ellipsis (...) when text overflows */
+    width: 100px; 
 }
 
 .see-profile-button {
@@ -248,7 +253,7 @@ input[type="search"]:focus {
     }
 }
 
-@media (max-width: 375px) {
+@media (max-width: 430px) {
     .popup-content {
         width:350px;
     }

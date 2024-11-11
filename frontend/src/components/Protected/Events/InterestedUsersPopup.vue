@@ -192,7 +192,7 @@ input[type="search"]:focus {
 .see-profile-button:active {
     transform: scale(0.98);
 }
-@media (max-width: 375px) {
+@media (max-width: 430px) {
     .popup-content {
         width:350px;
     }

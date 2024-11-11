@@ -78,7 +78,7 @@ export default {
       } catch (error) {
         console.error("Failed to fetch friends:", error);
       }
-    },
+    }, 
     async shareWithFriend(friend) {
       try {
         await api.post('/api/messages/send', {
