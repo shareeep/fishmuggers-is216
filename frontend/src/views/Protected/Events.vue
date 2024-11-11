@@ -348,10 +348,10 @@ main {
     z-index: 10;
   }
 
-  @media (max-width: 375px) {
-    .navbar {
-      overflow-y: hidden;
-    }
+@media (max-width: 375px) {
+  .home-container {
+    width: 375px;
   }
+}
 }
 </style>
