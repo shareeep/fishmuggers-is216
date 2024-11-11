@@ -96,7 +96,7 @@
         </tbody>
       </table>
 
-      <EventPopup v-if="showPopup" :event="selectedEvent" @close="showPopup = false" @delete-event="deleteEvent" />
+      <!-- <EventPopup v-if="showPopup" :event="selectedEvent" @close="showPopup = false" @delete-event="deleteEvent" /> -->
     </div>
     <!-- CUSTOMEVENTFORM -->
     <div v-if="showAddEventPopup" class="popup-overlay">
@@ -339,7 +339,13 @@ export default {
       const selectedDate = new Date(this.currentYear, this.currentMonthIndex, date).toDateString();
       this.selectedEvent = this.filteredEvents.find(event => event.EventDate.toDateString() === selectedDate) ||
         (this.showCustomEvents === 'yes' && this.customEvents.find(event => event.EventDate.toDateString() === selectedDate)); // Support both event types, respecting the filter
-      if (this.selectedEvent) this.showPopup = true;
+      if (this.selectedEvent) {
+        // Emit the selected event to parent component
+        this.$emit('day-clicked', this.selectedEvent);
+      } else {
+        console.log("No event found for clicked date."); // Debugging statement
+      }
+
     },
     prevMonth() {
       if (this.currentMonthIndex === 0) {
@@ -736,6 +742,7 @@ td {
   background-color: #e6c200;
   /* Slightly darker shade */
 }
+
 /* END ADD CUSTOM EVENTS BUTTON CSS */
 
 /* CUSTOM EVENTS FILTER */
@@ -1096,15 +1103,20 @@ td {
 
 
 @media (max-width: 480px) {
+
   /* Adjust the bottom margin of the calendar container for smaller screens */
   .calendar-container {
-    margin-bottom: 0; /* Remove any extra margin at the bottom */
-    padding-bottom: 5px; /* Optional: add minimal padding if needed */
+    margin-bottom: 0;
+    /* Remove any extra margin at the bottom */
+    padding-bottom: 5px;
+    /* Optional: add minimal padding if needed */
   }
 
   /* Adjust the bottom margin of other elements inside the calendar if needed */
-  .side-panel, .calendar {
-    margin-bottom: 0; /* Remove any extra margin at the bottom */
+  .side-panel,
+  .calendar {
+    margin-bottom: 0;
+    /* Remove any extra margin at the bottom */
   }
 }
 </style>

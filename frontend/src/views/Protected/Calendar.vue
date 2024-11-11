@@ -2,15 +2,35 @@
   <div class="home-container"> <!-- Use a wrapper for flex layout -->
     <Navbar />
     <main> <!-- Wrap content in a main tag -->
-      <CalendarComponent />
+      <CalendarComponent @day-clicked="handleOpenEvent" />
+
+      <!-- Render EventPopup only in Calendar.vue -->
+      <EventPopup v-if="showPopup" :event="selectedEvent" @close="closePopup" @delete-event="deleteEvent" />
     </main>
   </div>
 </template>
 
 <script setup>
+import { ref } from 'vue';
+
 // Any Home page-specific logic
 import Navbar from '@/components/Protected/Navbar.vue';
 import CalendarComponent from '@/components/Protected/Calendar/CalendarComponent.vue';
+import EventPopup from '@/components/Protected/Calendar/EventPopup.vue';
+
+const showPopup = ref(false);
+const selectedEvent = ref(null);
+
+function handleOpenEvent(event) {
+  console.log("Event received in Calendar.vue:", event); // Debugging statement
+  selectedEvent.value = event;
+  showPopup.value = true;
+}
+
+
+function closePopup() {
+  showPopup.value = false;
+}
 
 </script>
 
@@ -82,7 +102,7 @@ h1 {
     margin-left: 0;
     margin-top: 0;
     padding: 15px;
-    padding-bottom:45px;
+    padding-bottom: 45px;
     height: calc(100vh - 50px);
     overflow-y: auto;
   }
