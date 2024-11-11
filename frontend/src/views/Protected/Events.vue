@@ -347,5 +347,11 @@ main {
     background-color: #f9f9f9;
     z-index: 10;
   }
+
+  @media (max-width: 375px) {
+    .navbar {
+      overflow-y: hidden;
+    }
+  }
 }
 </style>
