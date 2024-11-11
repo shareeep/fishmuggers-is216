@@ -150,7 +150,7 @@ body {
 
 .home-container {
   display: flex;
-  height: 100vh;
+  height: 100%;
   max-height: 100vh;
   overflow-x: hidden;
   width: 100%;
