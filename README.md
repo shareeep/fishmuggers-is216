@@ -125,7 +125,7 @@ Solution: Pet Connect aims to help owners find events, organise playdates and co
 - Deploy the backend and note the URL, which you’ll need for the frontend setup.
 
 3. **Deploy the Frontend as a Static Site on Render**:
-  - Place the .env file in the frontend folder (request -   In your Render dashboard, select **New + > Static Site**.
+  - In your Render dashboard, select **New + > Static Site**.
 
 -   Connect the service to your repository and select the frontend folder for deployment.
 
